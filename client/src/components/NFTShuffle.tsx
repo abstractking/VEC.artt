@@ -33,66 +33,8 @@ export default function NFTShuffle({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   
-  // Create demo NFTs for testing if none are provided
-  const displayNfts = nfts.length > 0 ? nfts : [
-    {
-      id: 1,
-      name: "Cosmic Wanderer #371",
-      description: "A unique digital collectible exploring the boundaries of space and time.",
-      imageUrl: "https://placehold.co/600x400/darkgray/white?text=Cosmic+Wanderer",
-      price: "5.2",
-      currency: "VET",
-      creatorId: 1,
-      ownerId: 1,
-      createdAt: new Date(),
-      isForSale: true,
-      isBiddable: false,
-      metadata: { category: "art" },
-      collectionId: 1,
-      tokenId: "371",
-      metadataHash: "0x123hash",
-      lastSoldPrice: null,
-      lastSoldAt: null
-    },
-    {
-      id: 2,
-      name: "Digital Horizon #42",
-      description: "An abstract representation of the digital frontier.",
-      imageUrl: "https://placehold.co/600x400/3949ab/white?text=Digital+Horizon",
-      price: "3.7",
-      currency: "VET",
-      creatorId: 1,
-      ownerId: 1,
-      createdAt: new Date(),
-      isForSale: true,
-      isBiddable: false,
-      metadata: { category: "art" },
-      collectionId: 1,
-      tokenId: "42",
-      metadataHash: "0x456hash",
-      lastSoldPrice: null,
-      lastSoldAt: null
-    },
-    {
-      id: 3,
-      name: "Neon Dreams #108",
-      description: "A vibrant exploration of color and light in the digital realm.",
-      imageUrl: "https://placehold.co/600x400/e91e63/white?text=Neon+Dreams",
-      price: "2.8",
-      currency: "VET", 
-      creatorId: 1,
-      ownerId: 1,
-      createdAt: new Date(),
-      isForSale: true, 
-      isBiddable: false,
-      metadata: { category: "art" },
-      collectionId: 1,
-      tokenId: "108",
-      metadataHash: "0x789hash",
-      lastSoldPrice: null,
-      lastSoldAt: null
-    }
-  ];
+  // Use only the provided NFTs, no mock data
+  const displayNfts = nfts;
 
   // Get the current NFT to display
   const getCurrentNFTs = useCallback(() => {
@@ -163,8 +105,17 @@ export default function NFTShuffle({
 
   // We no longer need the error state since we're not doing our own query
 
-  // We're using demo NFTs so no need for this empty state check anymore
-  // The displayNfts variable will always have content
+  // Add an empty state check
+  if (displayNfts.length === 0) {
+    return (
+      <div className="rounded-lg overflow-hidden border border-border bg-card flex flex-col items-center justify-center p-8 h-[300px]">
+        <div className="text-center">
+          <h3 className="text-xl font-bold text-foreground mb-2">No NFTs Available</h3>
+          <p className="text-muted-foreground mb-4">There are no NFTs to display at this time.</p>
+        </div>
+      </div>
+    );
+  }
 
   const currentNFTs = getCurrentNFTs();
 
