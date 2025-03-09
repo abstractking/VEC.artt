@@ -4,8 +4,9 @@
 
 @layer base {
   :root {
+    /* Light mode - improved contrast */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 222.2 84% 4.9%; /* Near-black text for better readability */
 
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -13,46 +14,49 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 221.2 83.2% 53.3%;
+    --primary: 210 100% 45%; /* Increased saturation for better visibility */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 210 40% 90%; /* Lightened for better contrast with text */
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 40% 90%; /* Lightened for better contrast */
+    --muted-foreground: 215.4 16.3% 30%; /* Darkened muted text for better readability */
 
-    --accent: 210 40% 96.1%;
+    --accent: 210 40% 90%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84.2% 50%; /* Darkened for better contrast */
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 214.3 31.8% 80%; /* Darkened for better visibility */
+    --input: 214.3 31.8% 80%; /* Darkened for better visibility */
+    --ring: 210 100% 45%;
 
     --radius: 0.5rem;
 
-    --chart-1: 221.2 83.2% 53.3%;
-    --chart-2: 280 83.2% 53.3%;
-    --chart-3: 331 83.2% 53.3%;
-    --chart-4: 40 83.2% 53.3%;
-    --chart-5: 150 83.2% 53.3%;
+    /* Chart colors - more vibrant for better distinction */
+    --chart-1: 210 100% 45%;
+    --chart-2: 280 83.2% 45%;
+    --chart-3: 331 83.2% 45%;
+    --chart-4: 40 83.2% 45%;
+    --chart-5: 150 83.2% 45%;
 
+    /* Sidebar - maintaining brand consistency */
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222.2 84% 4.9%;
-    --sidebar-primary: 221.2 83.2% 53.3%;
+    --sidebar-primary: 210 100% 45%;
     --sidebar-primary-foreground: 210 40% 98%;
-    --sidebar-accent: 210 40% 96.1%;
+    --sidebar-accent: 210 40% 90%;
     --sidebar-accent-foreground: 222.2 47.4% 11.2%;
-    --sidebar-border: 214.3 31.8% 91.4%;
-    --sidebar-ring: 221.2 83.2% 53.3%;
+    --sidebar-border: 214.3 31.8% 80%;
+    --sidebar-ring: 210 100% 45%;
   }
 
   .dark {
+    /* Dark mode - improved contrast */
     --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --foreground: 210 40% 98%; /* Bright white text for better readability */
 
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
@@ -60,39 +64,41 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217.2 91.2% 59.8%;
+    --primary: 217.2 91.2% 65%; /* Brightened for better visibility on dark bg */
     --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 217.2 32.6% 20%; /* Slightly lighter for better contrast */
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 217.2 32.6% 20%; 
+    --muted-foreground: 215 20.2% 75%; /* Brightened for better readability */
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 217.2 32.6% 20%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62.8% 40%; /* Brightened for better visibility */
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 217.2 32.6% 25%; /* Lightened for better visibility */
+    --input: 217.2 32.6% 25%; /* Lightened for better visibility */
+    --ring: 224.3 76.3% 60%; /* Brightened for better focus indication */
 
-    --chart-1: 217.2 91.2% 59.8%;
-    --chart-2: 280 91.2% 59.8%;
-    --chart-3: 331 91.2% 59.8%;
-    --chart-4: 40 91.2% 59.8%;
-    --chart-5: 150 91.2% 59.8%;
+    /* Chart colors - more vibrant for better visibility in dark mode */
+    --chart-1: 217.2 91.2% 65%;
+    --chart-2: 280 91.2% 65%;
+    --chart-3: 331 91.2% 65%;
+    --chart-4: 40 91.2% 65%;
+    --chart-5: 150 91.2% 65%;
 
+    /* Sidebar - maintaining brand consistency */
     --sidebar-background: 222.2 84% 4.9%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary: 217.2 91.2% 65%;
     --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent: 217.2 32.6% 20%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 224.3 76.3% 48%;
+    --sidebar-border: 217.2 32.6% 25%;
+    --sidebar-ring: 224.3 76.3% 60%;
   }
 
   * {
@@ -101,5 +107,15 @@
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  /* Improved focus states for accessibility */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Improved hover states for better visual feedback */
+  .hover-highlight:hover {
+    @apply bg-accent text-accent-foreground transition-colors;
   }
 }
