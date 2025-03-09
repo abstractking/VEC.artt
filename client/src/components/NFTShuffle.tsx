@@ -32,50 +32,117 @@ export default function NFTShuffle({
 }: NFTShuffleProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  
+  // Create demo NFTs for testing if none are provided
+  const displayNfts = nfts.length > 0 ? nfts : [
+    {
+      id: 1,
+      name: "Cosmic Wanderer #371",
+      description: "A unique digital collectible exploring the boundaries of space and time.",
+      imageUrl: "https://placehold.co/600x400/darkgray/white?text=Cosmic+Wanderer",
+      price: "5.2",
+      creatorId: 1,
+      ownerId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      status: "available",
+      metadata: { category: "art" },
+      collectionId: 1,
+      tokenId: "371",
+      contractAddress: "0x123",
+      royaltyPercentage: 5,
+      mintTransaction: "0xabc",
+    },
+    {
+      id: 2,
+      name: "Digital Horizon #42",
+      description: "An abstract representation of the digital frontier.",
+      imageUrl: "https://placehold.co/600x400/3949ab/white?text=Digital+Horizon",
+      price: "3.7",
+      creatorId: 1,
+      ownerId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      status: "available",
+      metadata: { category: "art" },
+      collectionId: 1,
+      tokenId: "42",
+      contractAddress: "0x123",
+      royaltyPercentage: 5,
+      mintTransaction: "0xdef",
+    },
+    {
+      id: 3,
+      name: "Neon Dreams #108",
+      description: "A vibrant exploration of color and light in the digital realm.",
+      imageUrl: "https://placehold.co/600x400/e91e63/white?text=Neon+Dreams",
+      price: "2.8",
+      creatorId: 1,
+      ownerId: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      status: "available",
+      metadata: { category: "art" },
+      collectionId: 1,
+      tokenId: "108",
+      contractAddress: "0x123",
+      royaltyPercentage: 5,
+      mintTransaction: "0xghi",
+    }
+  ];
 
   // Get the current NFT to display
   const getCurrentNFTs = useCallback(() => {
-    if (!nfts || nfts.length === 0) return [];
+    if (displayNfts.length === 0) return [];
     
     const result = [];
     for (let i = 0; i < displayCount; i++) {
-      const index = (currentIndex + i) % nfts.length;
-      result.push(nfts[index]);
+      const index = (currentIndex + i) % displayNfts.length;
+      result.push(displayNfts[index]);
     }
     return result;
-  }, [nfts, currentIndex, displayCount]);
+  }, [displayNfts, currentIndex, displayCount]);
 
   // Function to advance to the next NFT
   const goToNext = useCallback(() => {
-    if (!nfts || nfts.length === 0) return;
+    if (displayNfts.length === 0) return;
     
     setIsTransitioning(true);
     setTimeout(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % nfts.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % displayNfts.length);
       setIsTransitioning(false);
     }, 300); // Match this with the animation duration
-  }, [nfts]);
+  }, [displayNfts]);
 
   // Function to go to the previous NFT
   const goToPrevious = useCallback(() => {
-    if (!nfts || nfts.length === 0) return;
+    if (displayNfts.length === 0) return;
     
     setIsTransitioning(true);
     setTimeout(() => {
-      setCurrentIndex((prevIndex) => (prevIndex - 1 + nfts.length) % nfts.length);
+      setCurrentIndex((prevIndex) => (prevIndex - 1 + displayNfts.length) % displayNfts.length);
       setIsTransitioning(false);
     }, 300); // Match this with the animation duration
-  }, [nfts]);
+  }, [displayNfts]);
 
   // Set up the automatic rotation timer
   useEffect(() => {
-    if (!nfts || nfts.length <= 1) return; // Don't rotate if there's only one NFT or none
+    // Log to verify the component is initializing properly
+    console.log('NFTShuffle mounted, setting up rotation with interval:', interval);
     
-    const timer = setInterval(goToNext, interval);
+    if (displayNfts.length <= 1) return; // Don't rotate if there's only one NFT or none
+    
+    const timer = setInterval(() => {
+      console.log('Rotation timer triggered, advancing to next NFT');
+      goToNext();
+    }, interval);
     
     // Clean up the timer when the component unmounts
-    return () => clearInterval(timer);
-  }, [nfts, interval, goToNext]);
+    return () => {
+      console.log('NFTShuffle unmounted, clearing rotation timer');
+      clearInterval(timer);
+    };
+  }, [displayNfts, interval, goToNext]);
 
   // Loading state
   if (isLoading) {
