@@ -263,7 +263,7 @@ export default function NFTDetail() {
 
   if (nftLoading || creatorLoading || ownerLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-16 pb-16">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 pb-16">
         <div className="container mx-auto px-4">
           <Button
             variant="ghost"
@@ -303,7 +303,7 @@ export default function NFTDetail() {
 
   if (!nft) {
     return (
-      <div className="min-h-screen bg-gray-50 pt-16 pb-16 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 pb-16 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-secondary mb-4">NFT Not Found</h1>
           <p className="text-gray-600 mb-6">The NFT you're looking for doesn't exist.</p>
@@ -324,7 +324,7 @@ export default function NFTDetail() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16 pb-16">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 pb-16">
       <div className="container mx-auto px-4">
         <Button
           variant="ghost"
@@ -337,7 +337,7 @@ export default function NFTDetail() {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* NFT Image */}
-          <div className="bg-white rounded-xl shadow-sm p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
             <img
               src={nft.imageUrl}
               alt={nft.name}
@@ -381,7 +381,7 @@ export default function NFTDetail() {
               </div>
             </div>
             
-            <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6">
               {nft.isForSale ? (
                 <>
                   <div className="flex items-center mb-4">
@@ -500,28 +500,28 @@ export default function NFTDetail() {
                 <TabsTrigger value="history">History</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="details" className="bg-white rounded-xl shadow-sm p-6">
-                <h3 className="font-bold text-secondary mb-4">Description</h3>
-                <p className="text-gray-600 whitespace-pre-line mb-6">
+              <TabsContent value="details" className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
+                <h3 className="font-bold text-secondary dark:text-white mb-4">Description</h3>
+                <p className="text-gray-600 dark:text-gray-300 whitespace-pre-line mb-6">
                   {nft.description || "No description provided."}
                 </p>
                 
-                <h3 className="font-bold text-secondary mb-4">Properties</h3>
+                <h3 className="font-bold text-secondary dark:text-white mb-4">Properties</h3>
                 {nft.metadata && Object.keys(nft.metadata).length > 0 ? (
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {Object.entries(nft.metadata).map(([key, value]) => (
-                      <div key={key} className="bg-gray-50 rounded-lg p-3 text-center">
-                        <p className="text-xs text-gray-500 uppercase">{key}</p>
-                        <p className="font-semibold text-secondary">{String(value)}</p>
+                      <div key={key} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 text-center">
+                        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">{key}</p>
+                        <p className="font-semibold text-secondary dark:text-gray-200">{String(value)}</p>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-gray-500">No properties</p>
+                  <p className="text-gray-500 dark:text-gray-400">No properties</p>
                 )}
               </TabsContent>
               
-              <TabsContent value="bids" className="bg-white rounded-xl shadow-sm p-6">
+              <TabsContent value="bids" className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
                 {bidsLoading ? (
                   Array.from({ length: 3 }).map((_, i) => (
                     <div key={i} className="flex justify-between items-center py-4 border-b">
@@ -560,7 +560,7 @@ export default function NFTDetail() {
                 )}
               </TabsContent>
               
-              <TabsContent value="history" className="bg-white rounded-xl shadow-sm p-6">
+              <TabsContent value="history" className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6">
                 {transactionsLoading ? (
                   Array.from({ length: 3 }).map((_, i) => (
                     <div key={i} className="flex justify-between items-center py-4 border-b">
