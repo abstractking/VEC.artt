@@ -1,0 +1,27 @@
+client:536  WebSocket connection to 'wss://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/?token=JWAS1xJN012s' failed: 
+setupWebSocket @ client:536
+(anonymous) @ client:531
+client:536  Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=JWAS1xJN012s' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+setupWebSocket @ client:536
+fallback @ client:509
+(anonymous) @ client:555
+polyfills.ts:19 Polyfills loaded: Buffer is now available in the browser environment
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+NFTDetail.tsx:36 NFTDetail - Location object: /nft/2
+NFTDetail.tsx:39 NFTDetail - User object: null
+NFTDetail.tsx:42 NFTDetail - Wallet info: {walletAddress: '0xd41a7Be0D607e4cB8940DDf7E9Dc0657B91B4511', isConnected: true}
+2NotificationCenter.tsx:61 WebSocket connected
+NFTDetail.tsx:36 NFTDetail - Location object: /nft/2
+NFTDetail.tsx:39 NFTDetail - User object: null
+NFTDetail.tsx:42 NFTDetail - Wallet info: {walletAddress: '0xd41a7Be0D607e4cB8940DDf7E9Dc0657B91B4511', isConnected: true}
+NFTDetail.tsx:36 NFTDetail - Location object: /nft/2
+NFTDetail.tsx:39 NFTDetail - User object: {id: 1, username: 'DebugUser', email: 'DebugUser@example.com', walletAddress: '0xd41a7Be0D607e4cB8940DDf7E9Dc0657B91B4511', profileImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABsgA…lDfp65513Ip/Px7Rp0+L/A3gEppn/9WRMAAAAAElFTkSuQmCC', …}
+NFTDetail.tsx:42 NFTDetail - Wallet info: {walletAddress: '0xd41a7Be0D607e4cB8940DDf7E9Dc0657B91B4511', isConnected: true}
+2NotificationCenter.tsx:103 WebSocket disconnected, reconnecting in 5s... 1005 
+NFTDetail.tsx:36 NFTDetail - Location object: /nft/2
+NFTDetail.tsx:39 NFTDetail - User object: {id: 1, username: 'DebugUser', email: 'DebugUser@example.com', walletAddress: '0xd41a7Be0D607e4cB8940DDf7E9Dc0657B91B4511', profileImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABsgA…lDfp65513Ip/Px7Rp0+L/A3gEppn/9WRMAAAAAElFTkSuQmCC', …}
+NFTDetail.tsx:42 NFTDetail - Wallet info: {walletAddress: '0xd41a7Be0D607e4cB8940DDf7E9Dc0657B91B4511', isConnected: true}
+4NotificationCenter.tsx:61 WebSocket connected
