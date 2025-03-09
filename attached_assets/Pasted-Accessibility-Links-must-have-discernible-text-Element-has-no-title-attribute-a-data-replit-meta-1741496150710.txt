@@ -1,0 +1,90 @@
+Accessibility
+Links must have discernible text: Element has no title attribute
+<a data-replit-metadata="client/src/components/Footer.tsx:16:14" data-component-name="a" href="#" class="text-gray-400 hover:text-white transition-colors">
+Open in Elements
+Request
+https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/create
+Further Reading
+Learn more about this axe rule at Deque University
+Learn why this is important and how to fix it on webhint.io
+<a data-replit-metadata="client/src/components/Footer.tsx:19:14" data-component-name="a" href="#" class="text-gray-400 hover:text-white transition-colors">
+Open in Elements
+Request
+https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/create
+Further Reading
+Learn more about this axe rule at Deque University
+Learn why this is important and how to fix it on webhint.io
+<a data-replit-metadata="client/src/components/Footer.tsx:22:14" data-component-name="a" href="#" class="text-gray-400 hover:text-white transition-colors">
+Open in Elements
+Request
+https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/create
+Further Reading
+Learn more about this axe rule at Deque University
+Learn why this is important and how to fix it on webhint.io
+<a data-replit-metadata="client/src/components/Footer.tsx:25:14" data-component-name="a" href="#" class="text-gray-400 hover:text-white transition-colors">
+Open in Elements
+Request
+https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/create
+Further Reading
+Learn more about this axe rule at Deque University
+Learn why this is important and how to fix it on webhint.io
+Compatibility
+'-webkit-text-size-adjust' is not supported by Chrome, Chrome Android, Edge 79+, Firefox, Safari. Add 'text-size-adjust' to support Chrome 54+, Chrome Android 54+, Edge 79+.
+html,
+:host {
+    -webkit-text-size-adjust: 100%;
+}
+Request
+https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/create
+Further Reading
+Learn more about this CSS feature on MDN
+Learn why this is important and how to fix it on webhint.io
+'charset' meta element should be the first thing in '<head>'.
+<meta charset="UTF-8">
+Open in Sources
+Request
+https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/create
+Further Reading
+Learn why this is important and how to fix it on webhint.io
+'content-type' header media type value should be 'font/woff2', not 'application/octet-stream'.
+Content-Type: application/octet-stream; charset=utf-8
+Open in
+Network
+Request
+https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-brands-400.woff2
+Further Reading
+Learn why this is important and how to fix it on webhint.io
+'content-type' header media type value should be 'image/x-icon', not 'text/html'.
+Content-Type: text/html; charset=utf-8
+Open in
+Network
+Request
+https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/favicon.ico
+Further Reading
+Learn why this is important and how to fix it on webhint.io
+'content-type' header media type value should be 'text/css', not 'text/javascript'.
+Content-Type: text/javascript
+Open in
+Network
+Request
+https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/src/index.css?v=V_bE-lIQct8caLcKBeWN4
+Further Reading
+Learn why this is important and how to fix it on webhint.io
+'content-type' header value should not contain 'charset=utf-8'.
+Content-Type: application/octet-stream; charset=utf-8
+Open in
+Network
+Request
+https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/webfonts/fa-brands-400.woff2
+Further Reading
+Learn why this is important and how to fix it on webhint.io
+Performance
+'height' changes to this property will trigger: 'Layout', which can impact performance when used inside @keyframes.
+Response should not include unneeded headers: x-xss-protection
+'height' changes to this property will trigger: 'Paint', which can impact performance when used inside @keyframes.
+'transform' changes to this property will trigger: 'Paint', which can impact performance when used inside @keyframes.
+Static resources should use a 'cache-control' header with 'max-age=31536000' or more.
+Static resources should use a 'cache-control' header with the 'immutable' directive.
+Security
+The 'Expires' header should not be used, 'Cache-Control' should be preferred.
+The 'X-Frame-Options' header should not be used. A similar effect, with more consistent support and stronger checks, can be achieved with the 'Content-Security-Policy' header and 'frame-ancestors' directive.
