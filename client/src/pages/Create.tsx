@@ -146,15 +146,6 @@ export default function Create() {
       return;
     }
 
-    if (!user) {
-      toast({
-        title: "User not authenticated",
-        description: "Please log in to create an NFT",
-        variant: "destructive",
-      });
-      return;
-    }
-
     if (!walletAddress) {
       toast({
         title: "Wallet address not found",
@@ -167,6 +158,39 @@ export default function Create() {
     setIsSubmitting(true);
 
     try {
+      // Ensure user exists, create if not exists
+      let currentUser = user;
+      if (!currentUser) {
+        try {
+          console.log("Attempting to create or fetch user account with wallet:", walletAddress);
+          // Generate random username if needed
+          const username = `user_${Math.random().toString(36).substring(2, 10)}`;
+          await login(username, walletAddress);
+          // Refetch the user data after login
+          const userResponse = await apiRequest("GET", `/api/users/wallet/${walletAddress}`);
+          currentUser = await userResponse.json();
+        } catch (error) {
+          console.error("Error creating/fetching user account:", error);
+          toast({
+            title: "Account Creation Failed",
+            description: "Could not create or fetch user account. Please try again.",
+            variant: "destructive",
+          });
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+      if (!currentUser) {
+        toast({
+          title: "User not authenticated",
+          description: "Please log in to create an NFT",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       // Show minting status toast
       const mintingToast = toast({
         title: "Minting NFT",
@@ -174,16 +198,18 @@ export default function Create() {
         duration: 10000,
       });
 
-      // Upload file to IPFS/storage (mock for now)
-      // In a real implementation, we would upload to IPFS or similar service
-      const mockIpfsUrl = `https://ipfs.example.com/${Date.now()}`;
+      // Use a real image URL or a base64 encoded placeholder image for development
+      // In production, we would upload to IPFS or similar service
+      const imageUrl = file ? 
+        URL.createObjectURL(file) : 
+        "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM5OTk5OTkiPk5GVCBJPC90ZXh0Pjwvc3ZnPg==";
       
       // Prepare NFT data
       const nftData = {
         ...values,
-        imageUrl: mockIpfsUrl,
-        creatorId: user.id,
-        ownerId: user.id,
+        imageUrl: imageUrl,
+        creatorId: currentUser.id,
+        ownerId: currentUser.id,
         metadata: {
           category: values.category,
           createdAt: new Date().toISOString(),
@@ -539,15 +565,17 @@ export default function Create() {
                             render={({ field }) => (
                               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 dark:border-gray-700">
                                 <div className="space-y-0.5">
-                                  <FormLabel className="text-base">Put on sale</FormLabel>
+                                  <FormLabel htmlFor="nft-for-sale" className="text-base">Put on sale</FormLabel>
                                   <FormDescription>
                                     List your NFT for sale on the marketplace
                                   </FormDescription>
                                 </div>
                                 <FormControl>
                                   <Switch
+                                    id="nft-for-sale"
                                     checked={field.value}
                                     onCheckedChange={field.onChange}
+                                    aria-label="Put NFT for sale"
                                   />
                                 </FormControl>
                               </FormItem>
@@ -561,13 +589,17 @@ export default function Create() {
                                 name="price"
                                 render={({ field }) => (
                                   <FormItem>
-                                    <FormLabel>Price (VET)</FormLabel>
+                                    <FormLabel htmlFor="nft-price">Price (VET)</FormLabel>
                                     <FormControl>
                                       <Input
+                                        id="nft-price"
                                         type="number"
                                         placeholder="Enter price in VET"
                                         min="0"
                                         step="0.01"
+                                        autoComplete="off"
+                                        inputMode="decimal"
+                                        aria-label="NFT price in VET"
                                         {...field}
                                       />
                                     </FormControl>
@@ -582,15 +614,17 @@ export default function Create() {
                                 render={({ field }) => (
                                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 dark:border-gray-700">
                                     <div className="space-y-0.5">
-                                      <FormLabel className="text-base">Allow bids</FormLabel>
+                                      <FormLabel htmlFor="nft-biddable" className="text-base">Allow bids</FormLabel>
                                       <FormDescription>
                                         Allow users to place bids on your NFT
                                       </FormDescription>
                                     </div>
                                     <FormControl>
                                       <Switch
+                                        id="nft-biddable"
                                         checked={field.value}
                                         onCheckedChange={field.onChange}
+                                        aria-label="Allow bids on NFT"
                                       />
                                     </FormControl>
                                   </FormItem>
