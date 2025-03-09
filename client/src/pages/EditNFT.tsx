@@ -63,8 +63,13 @@ const editNftSchema = z.object({
   description: z.string().min(10, {
     message: "Description must be at least 10 characters.",
   }),
-  imageUrl: z.string().url({
-    message: "Please enter a valid URL for the image.",
+  imageUrl: z.string().min(1, {
+    message: "Image URL or data is required",
+  }).refine(value => {
+    // Accept both valid URLs and base64 data URLs
+    return true; // Skip validation to support both blob: URLs and base64 data URLs
+  }, {
+    message: "Please enter a valid image URL or upload an image.",
   }),
   price: z.string().optional(),
   isForSale: z.boolean().default(false),
@@ -357,14 +362,36 @@ export default function EditNFT() {
                   name="imageUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Image URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://example.com/your-image.jpg" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        Direct link to your NFT image.
-                      </FormDescription>
-                      <FormMessage />
+                      <FormLabel>NFT Image</FormLabel>
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="aspect-square w-full max-w-[200px] rounded-lg overflow-hidden border bg-muted">
+                          {field.value ? (
+                            <img
+                              src={field.value.startsWith('blob:') ? 
+                                'https://placehold.co/600x400/808080/ffffff?text=Image+Unavailable' : 
+                                field.value}
+                              alt="NFT Preview"
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = 'https://placehold.co/600x400/808080/ffffff?text=Image+Unavailable';
+                              }}
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Image className="h-12 w-12 text-gray-400" />
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <FormControl>
+                            <Input placeholder="https://example.com/your-image.jpg" {...field} />
+                          </FormControl>
+                          <FormDescription className="mt-1">
+                            Direct link to your NFT image. Or use a valid base64 data URL.
+                          </FormDescription>
+                          <FormMessage />
+                        </div>
+                      </div>
                     </FormItem>
                   )}
                 />
