@@ -11,6 +11,10 @@ export const users = pgTable("users", {
   profileImage: text("profile_image"),
   coverImage: text("cover_image"),
   bio: text("bio"),
+  isVerified: boolean("is_verified").default(false),
+  verificationRequestDate: timestamp("verification_request_date"),
+  verificationApprovedDate: timestamp("verification_approved_date"),
+  socialLinks: jsonb("social_links").default({}),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -53,7 +57,12 @@ export const nfts = pgTable("nfts", {
   isBiddable: boolean("is_biddable").default(false),
   metadataHash: text("metadata_hash"),
   metadata: jsonb("metadata"),
-  // Adding transaction-related fields
+  royaltyPercentage: text("royalty_percentage").default("0"),
+  collaborators: jsonb("collaborators").default({}),
+  tags: jsonb("tags").default([]),
+  isEdited: boolean("is_edited").default(false),
+  lastEditedAt: timestamp("last_edited_at"),
+  // Transaction-related fields
   lastSoldPrice: text("last_sold_price"),
   lastSoldAt: timestamp("last_sold_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
