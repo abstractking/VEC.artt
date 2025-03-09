@@ -31,22 +31,22 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-lg mb-4">Marketplace</h3>
             <ul className="space-y-2">
-              <li><Link href="/explore"><a className="text-gray-400 hover:text-white transition-colors">All NFTs</a></Link></li>
-              <li><Link href="/explore?category=art"><a className="text-gray-400 hover:text-white transition-colors">Art</a></Link></li>
-              <li><Link href="/explore?category=collectibles"><a className="text-gray-400 hover:text-white transition-colors">Collectibles</a></Link></li>
-              <li><Link href="/explore?category=photography"><a className="text-gray-400 hover:text-white transition-colors">Photography</a></Link></li>
-              <li><Link href="/explore?category=music"><a className="text-gray-400 hover:text-white transition-colors">Music</a></Link></li>
+              <li><Link href="/explore" className="text-gray-400 hover:text-white transition-colors">All NFTs</Link></li>
+              <li><Link href="/explore?category=art" className="text-gray-400 hover:text-white transition-colors">Art</Link></li>
+              <li><Link href="/explore?category=collectibles" className="text-gray-400 hover:text-white transition-colors">Collectibles</Link></li>
+              <li><Link href="/explore?category=photography" className="text-gray-400 hover:text-white transition-colors">Photography</Link></li>
+              <li><Link href="/explore?category=music" className="text-gray-400 hover:text-white transition-colors">Music</Link></li>
             </ul>
           </div>
 
           <div>
             <h3 className="font-bold text-lg mb-4">My Account</h3>
             <ul className="space-y-2">
-              <li><Link href="/profile"><a className="text-gray-400 hover:text-white transition-colors">Profile</a></Link></li>
-              <li><Link href="/profile"><a className="text-gray-400 hover:text-white transition-colors">My Collections</a></Link></li>
-              <li><Link href="/profile"><a className="text-gray-400 hover:text-white transition-colors">Favorites</a></Link></li>
-              <li><Link href="/create"><a className="text-gray-400 hover:text-white transition-colors">Create</a></Link></li>
-              <li><Link href="/profile"><a className="text-gray-400 hover:text-white transition-colors">Settings</a></Link></li>
+              <li><Link href="/profile" className="text-gray-400 hover:text-white transition-colors">Profile</Link></li>
+              <li><Link href="/profile" className="text-gray-400 hover:text-white transition-colors">My Collections</Link></li>
+              <li><Link href="/profile" className="text-gray-400 hover:text-white transition-colors">Favorites</Link></li>
+              <li><Link href="/create" className="text-gray-400 hover:text-white transition-colors">Create</Link></li>
+              <li><Link href="/profile" className="text-gray-400 hover:text-white transition-colors">Settings</Link></li>
             </ul>
           </div>
 

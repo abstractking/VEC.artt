@@ -708,6 +708,141 @@ export default function Create() {
                                   </FormItem>
                                 )}
                               />
+
+                              {/* NFT Revenue Settings Section */}
+                              <div className="mt-6 pt-6 border-t dark:border-gray-700">
+                                <h3 className="text-base font-semibold mb-4 dark:text-white">Revenue Settings</h3>
+                                
+                                {/* Initial Sale Split Section */}
+                                <div className="mb-8">
+                                  <h4 className="text-sm font-medium mb-4 text-gray-700 dark:text-gray-300">Initial Sale Split</h4>
+                                  
+                                  {/* Collab Percentage Slider */}
+                                  <FormField
+                                    control={form.control}
+                                    name="collabPercentage"
+                                    render={({ field }) => (
+                                      <FormItem className="space-y-4 mb-4">
+                                        <div>
+                                          <FormLabel>
+                                            Collaborator Percentage: {field.value}%
+                                          </FormLabel>
+                                          <FormDescription>
+                                            Set how much of the initial sale proceeds go to a collaborator
+                                          </FormDescription>
+                                        </div>
+                                        <FormControl>
+                                          <div className="pt-2">
+                                            <Slider
+                                              min={0}
+                                              max={100}
+                                              step={1}
+                                              defaultValue={[field.value]}
+                                              onValueChange={(vals) => {
+                                                field.onChange(vals[0]);
+                                              }}
+                                              aria-label="Collaborator Percentage"
+                                            />
+                                            <div className="flex justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                              <span>0%</span>
+                                              <span>50%</span>
+                                              <span>100%</span>
+                                            </div>
+                                          </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+
+                                  {/* Your/Collaborator Split Preview */}
+                                  <div className="flex justify-between items-center mb-4 px-2">
+                                    <div className="text-sm">
+                                      <span className="text-gray-600 dark:text-gray-400">You receive: </span>
+                                      <span className="font-medium dark:text-white">{100 - form.watch("collabPercentage")}%</span>
+                                    </div>
+                                    <div className="text-sm">
+                                      <span className="text-gray-600 dark:text-gray-400">Collaborator receives: </span>
+                                      <span className="font-medium dark:text-white">{form.watch("collabPercentage")}%</span>
+                                    </div>
+                                  </div>
+
+                                  {/* Collaborator Wallet Address */}
+                                  {form.watch("collabPercentage") > 0 && (
+                                    <FormField
+                                      control={form.control}
+                                      name="collabWalletAddress"
+                                      render={({ field }) => (
+                                        <FormItem>
+                                          <FormLabel>Collaborator Wallet Address</FormLabel>
+                                          <FormDescription>
+                                            Enter the wallet address of your collaborator
+                                          </FormDescription>
+                                          <FormControl>
+                                            <Input
+                                              placeholder="0x..."
+                                              {...field}
+                                              className="font-mono text-sm"
+                                            />
+                                          </FormControl>
+                                          <FormMessage />
+                                        </FormItem>
+                                      )}
+                                    />
+                                  )}
+                                </div>
+                                
+                                {/* Secondary Sales Royalties Section */}
+                                <div>
+                                  <h4 className="text-sm font-medium mb-4 text-gray-700 dark:text-gray-300">Secondary Sales Royalties</h4>
+                                  
+                                  {/* Royalty Percentage Slider */}
+                                  <FormField
+                                    control={form.control}
+                                    name="royaltyPercentage"
+                                    render={({ field }) => (
+                                      <FormItem className="space-y-4">
+                                        <div>
+                                          <FormLabel>
+                                            Royalty Percentage: {field.value}%
+                                          </FormLabel>
+                                          <FormDescription>
+                                            Set the percentage (0-10%) that will apply as royalties on all future secondary sales
+                                          </FormDescription>
+                                        </div>
+                                        <FormControl>
+                                          <div className="pt-2">
+                                            <Slider
+                                              min={0}
+                                              max={10}
+                                              step={0.5}
+                                              defaultValue={[field.value]}
+                                              onValueChange={(vals) => {
+                                                field.onChange(vals[0]);
+                                              }}
+                                              aria-label="Royalty Percentage"
+                                            />
+                                            <div className="flex justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                              <span>0%</span>
+                                              <span>5%</span>
+                                              <span>10%</span>
+                                            </div>
+                                          </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  
+                                  {/* Royalty Info Text */}
+                                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+                                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                                      Royalties are automatically distributed on secondary sales. If you have a collaborator, 
+                                      the royalties will be split according to the initial sale percentage set above.
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
                             </>
                           )}
                         </>
@@ -751,6 +886,24 @@ export default function Create() {
                                     <p className="text-sm text-gray-500 dark:text-gray-400">Allow Bids</p>
                                     <p className="font-medium dark:text-white">{form.getValues("isBiddable") ? "Yes" : "No"}</p>
                                   </div>
+                                  <div>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">Royalty Percentage</p>
+                                    <p className="font-medium dark:text-white">{form.getValues("royaltyPercentage")}%</p>
+                                  </div>
+                                  {form.getValues("collabPercentage") > 0 && (
+                                    <>
+                                      <div>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">Collaboration Split</p>
+                                        <p className="font-medium dark:text-white">{form.getValues("collabPercentage")}%</p>
+                                      </div>
+                                      <div className="md:col-span-2">
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">Collaborator Wallet</p>
+                                        <p className="font-medium dark:text-white font-mono text-sm truncate">
+                                          {form.getValues("collabWalletAddress") || "Not specified"}
+                                        </p>
+                                      </div>
+                                    </>
+                                  )}
                                 </>
                               )}
                             </div>
