@@ -2,15 +2,25 @@ import { Framework } from '@vechain/connex-framework';
 import { Driver, SimpleNet, SimpleWallet } from '@vechain/connex-driver';
 import { utils } from '@vechain.energy/connex-utils';
 
-// Define network options
+// Define network options (from https://docs.vechain.org/developer-resources/how-to-build-on-vechain/connect-to-the-network)
 export const NETWORKS = {
   main: {
-    url: 'https://mainnet.veblocks.net',
-    chainId: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a'
+    // Official Public Node for MainNet
+    url: 'https://mainnet.vechain.org',
+    chainId: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
+    name: 'MainNet'
   },
   test: {
-    url: 'https://testnet.veblocks.net',
-    chainId: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'
+    // Official Public Node for TestNet
+    url: 'https://testnet.vechain.org',
+    chainId: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
+    name: 'TestNet'
+  },
+  solo: {
+    // Local solo network for development (if needed)
+    url: 'http://localhost:8669',
+    chainId: '0x00000000973ceb7f343a58b08f0693d6701a5fd354ff73dc1bcfb261a985b234',
+    name: 'Solo'
   }
 };
 
@@ -73,34 +83,26 @@ export const connectWallet = async (privateKey?: string) => {
     // Check if Thor wallet is available in the browser
     if (typeof window !== 'undefined' && (window as any).thor) {
       try {
+        console.log("VeChain Thor wallet found, attempting to enable...");
         const vendor = await (window as any).thor.enable();
+        if (!vendor) {
+          throw new Error("Failed to enable Thor wallet. The wallet may have denied the connection request.");
+        }
+        
         const connex = await initializeConnex();
+        console.log("Thor wallet enabled and Connex initialized successfully");
         return { connex, vendor };
       } catch (err) {
-        console.error('Browser wallet not available:', err);
-        // Fall back to mock for development
-        const mockVendorInstance = mockVendor();
-        return { 
-          connex: mockConnex(), 
-          vendor: mockVendorInstance 
-        };
+        console.error('Browser wallet connection failed:', err);
+        throw new Error("Failed to connect to VeChain Thor wallet. Please make sure your wallet is unlocked and try again.");
       }
     } else {
-      // Return mock for development if no wallet is available
-      console.warn('No wallet detected, using mock wallet for development');
-      const mockVendorInstance = mockVendor();
-      return { 
-        connex: mockConnex(), 
-        vendor: mockVendorInstance 
-      };
+      console.error('Thor wallet not available in browser');
+      throw new Error("VeChain Thor wallet extension not detected. Please install the VeChain Thor wallet extension and refresh the page.");
     }
   } catch (error) {
     console.error('Failed to connect wallet:', error);
-    const mockVendorInstance = mockVendor();
-    return { 
-      connex: mockConnex(), 
-      vendor: mockVendorInstance 
-    };
+    throw error; // Re-throw the error to handle it in the caller
   }
 };
 
@@ -109,22 +111,25 @@ export const getWalletAddress = async () => {
   try {
     // Check if Thor wallet is available
     if (typeof window !== 'undefined' && (window as any).thor) {
-      const vendor = await (window as any).thor.enable();
-      if (vendor && vendor.address) {
-        console.log('Retrieved actual wallet address:', vendor.address);
-        return vendor.address;
-      } else {
-        console.error('Thor wallet enabled but no address available');
+      try {
+        const vendor = await (window as any).thor.enable();
+        if (vendor && vendor.address) {
+          console.log('Retrieved actual wallet address:', vendor.address);
+          return vendor.address;
+        } else {
+          console.error('Thor wallet enabled but no address available');
+          return null;
+        }
+      } catch (err) {
+        console.error('Failed to enable Thor wallet:', err);
         return null;
       }
     } else {
       console.warn('Thor wallet not available in browser');
-      // Return null to indicate wallet connection is required
       return null;
     }
   } catch (error) {
     console.error('Failed to get wallet address:', error);
-    // Return null to indicate failure
     return null;
   }
 };
