@@ -51,22 +51,22 @@ export default function Header() {
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="text-primary font-bold text-2xl cursor-pointer">
-              <span className="text-secondary">Ve</span>Collab
+              <span className="text-foreground">Ve</span>Collab
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/" className="font-medium text-secondary hover:text-primary transition-colors">
+            <Link href="/" className="font-medium text-foreground hover:text-primary transition-colors">
               Home
             </Link>
-            <Link href="/explore" className="font-medium text-secondary hover:text-primary transition-colors">
+            <Link href="/explore" className="font-medium text-foreground hover:text-primary transition-colors">
               Explore
             </Link>
-            <Link href="/create" className="font-medium text-secondary hover:text-primary transition-colors">
+            <Link href="/create" className="font-medium text-foreground hover:text-primary transition-colors">
               Create
             </Link>
-            <Link href="/artists" className="font-medium text-secondary hover:text-primary transition-colors">
+            <Link href="/artists" className="font-medium text-foreground hover:text-primary transition-colors">
               Artists
             </Link>
           </nav>
@@ -77,11 +77,11 @@ export default function Header() {
               <Input
                 type="text"
                 placeholder="Search items, collections, and accounts"
-                className="border border-gray-300 rounded-full px-4 py-2 pl-10 w-64 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="border border-input rounded-full px-4 py-2 pl-10 w-64 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <Search className="absolute left-3 top-2.5 text-gray-400 h-5 w-5" />
+              <Search className="absolute left-3 top-2.5 text-muted-foreground h-5 w-5" />
             </form>
           </div>
 
@@ -103,17 +103,17 @@ export default function Header() {
                 href={user ? `/profile/${user.id}` : "/profile"} 
                 className="hidden md:flex items-center"
               >
-                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold mr-2">
+                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold mr-2">
                   {user?.username?.charAt(0).toUpperCase() || "U"}
                 </div>
-                <span className="font-medium text-secondary">
+                <span className="font-medium text-foreground">
                   {user?.username || "Profile"}
                 </span>
               </Link>
             ) : (
               <Button
                 onClick={handleConnectWallet}
-                className="hidden md:block bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-full transition-colors font-poppins font-semibold"
+                className="hidden md:block bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
                 Connect Wallet
               </Button>
@@ -121,7 +121,7 @@ export default function Header() {
             
             <button
               onClick={toggleMenu}
-              className="md:hidden text-secondary"
+              className="md:hidden text-foreground"
               aria-label="Toggle menu"
             >
               {isMenuOpen ? (
@@ -142,16 +142,16 @@ export default function Header() {
               <Input
                 type="text"
                 placeholder="Search items, collections, and accounts"
-                className="border border-gray-300 rounded-full px-4 py-2 pl-10 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="border border-input rounded-full px-4 py-2 pl-10 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <Search className="absolute left-3 top-2.5 text-gray-400 h-5 w-5" />
+              <Search className="absolute left-3 top-2.5 text-muted-foreground h-5 w-5" />
             </form>
             
             <Link 
               href="/" 
-              className="font-medium text-secondary hover:text-primary transition-colors py-2"
+              className="font-medium text-foreground hover:text-primary transition-colors py-2"
               onClick={() => setIsMenuOpen(false)}
             >
               Home
@@ -159,7 +159,7 @@ export default function Header() {
             
             <Link 
               href="/explore" 
-              className="font-medium text-secondary hover:text-primary transition-colors py-2"
+              className="font-medium text-foreground hover:text-primary transition-colors py-2"
               onClick={() => setIsMenuOpen(false)}
             >
               Explore
@@ -167,7 +167,7 @@ export default function Header() {
             
             <Link 
               href="/create" 
-              className="font-medium text-secondary hover:text-primary transition-colors py-2"
+              className="font-medium text-foreground hover:text-primary transition-colors py-2"
               onClick={() => setIsMenuOpen(false)}
             >
               Create
@@ -175,7 +175,7 @@ export default function Header() {
             
             <Link 
               href="/artists" 
-              className="font-medium text-secondary hover:text-primary transition-colors py-2"
+              className="font-medium text-foreground hover:text-primary transition-colors py-2"
               onClick={() => setIsMenuOpen(false)}
             >
               Artists
@@ -184,10 +184,10 @@ export default function Header() {
             {isConnected ? (
               <Link 
                 href={user ? `/profile/${user.id}` : "/profile"}
-                className="font-medium text-secondary hover:text-primary transition-colors py-2 flex items-center"
+                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
                 onClick={() => setIsMenuOpen(false)}
               >
-                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold mr-2">
+                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold mr-2">
                   {user?.username?.charAt(0).toUpperCase() || "U"}
                 </div>
                 <span>{user?.username || "Profile"}</span>
@@ -195,7 +195,7 @@ export default function Header() {
             ) : (
               <Button
                 onClick={handleConnectWallet}
-                className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-full transition-colors font-poppins font-semibold"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
                 Connect Wallet
               </Button>
