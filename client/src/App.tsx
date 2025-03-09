@@ -24,7 +24,7 @@ function Router() {
         <Route path="/profile/:id?" component={Profile} />
         <Route path="/nft/:id" component={NFTDetail} />
         <Route path="/artists" component={Artists} />
-        <Route component={NotFound} />
+        <Route path="/:rest*" component={NotFound} />
       </Switch>
     </Layout>
   );
