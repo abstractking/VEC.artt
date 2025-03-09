@@ -37,12 +37,12 @@ export default function Hero() {
                     </svg>
                   </div>
                 </div>
-                <div className="absolute bottom-6 left-6 right-6 bg-black/70 backdrop-blur-sm p-4 rounded-lg text-white">
-                  <h3 className="font-poppins font-bold">Cosmic Wanderer #371</h3>
+                <div className="absolute bottom-6 left-6 right-6 bg-background/90 backdrop-blur-sm p-4 rounded-lg border border-border">
+                  <h3 className="font-poppins font-bold text-foreground">Cosmic Wanderer #371</h3>
                   <div className="flex justify-between items-center mt-2">
                     <div className="flex items-center">
                       <div className="rounded-full w-8 h-8 bg-muted"></div>
-                      <span className="ml-2 text-sm">@digitalartist</span>
+                      <span className="ml-2 text-sm text-muted-foreground">@digitalartist</span>
                     </div>
                     <div className="text-primary font-semibold">5.2 VET</div>
                   </div>
