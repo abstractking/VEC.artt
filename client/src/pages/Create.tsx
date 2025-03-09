@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,6 +10,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { insertNftSchema } from "@shared/schema";
 import { mintNFT, generateMetadataURI } from "@/lib/nftUtils";
+import { AuthContext } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -74,6 +75,10 @@ export default function Create() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState<'details' | 'pricing' | 'review'>('details');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Access the AuthContext for login functionality
+  const authContext = useContext(AuthContext);
+  const login = authContext ? authContext.login : null;
 
   // Initialize form with default values
   const form = useForm<CreateNftFormValues>({
@@ -165,7 +170,11 @@ export default function Create() {
           console.log("Attempting to create or fetch user account with wallet:", walletAddress);
           // Generate random username if needed
           const username = `user_${Math.random().toString(36).substring(2, 10)}`;
-          await login(username, walletAddress);
+          if (authContext && authContext.login) {
+            await authContext.login(username, walletAddress);
+          } else {
+            throw new Error("Authentication service is not available");
+          }
           // Refetch the user data after login
           const userResponse = await apiRequest("GET", `/api/users/wallet/${walletAddress}`);
           currentUser = await userResponse.json();
@@ -200,8 +209,9 @@ export default function Create() {
 
       // Use a real image URL or a base64 encoded placeholder image for development
       // In production, we would upload to IPFS or similar service
-      const imageUrl = file ? 
-        URL.createObjectURL(file) : 
+      const files = form.getValues("file") as unknown as FileList;
+      const imageUrl = files && files.length > 0 ? 
+        URL.createObjectURL(files[0]) : 
         "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM5OTk5OTkiPk5GVCBJPC90ZXh0Pjwvc3ZnPg==";
       
       // Prepare NFT data

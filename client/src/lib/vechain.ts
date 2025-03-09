@@ -110,15 +110,22 @@ export const getWalletAddress = async () => {
     // Check if Thor wallet is available
     if (typeof window !== 'undefined' && (window as any).thor) {
       const vendor = await (window as any).thor.enable();
-      return vendor.address;
+      if (vendor && vendor.address) {
+        console.log('Retrieved actual wallet address:', vendor.address);
+        return vendor.address;
+      } else {
+        console.error('Thor wallet enabled but no address available');
+        return null;
+      }
     } else {
-      // For development, return a mock address
-      return '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed';
+      console.warn('Thor wallet not available in browser');
+      // Return null to indicate wallet connection is required
+      return null;
     }
   } catch (error) {
     console.error('Failed to get wallet address:', error);
-    // For development, return a mock address
-    return '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed';
+    // Return null to indicate failure
+    return null;
   }
 };
 
