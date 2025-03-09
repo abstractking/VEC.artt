@@ -41,14 +41,15 @@ import {
   SheetDescription,
   SheetFooter,
 } from "@/components/ui/sheet";
+import { FileUpload } from "@/components/ui/file-upload";
 
 // Form validation schema
 const profileFormSchema = z.object({
   username: z.string().min(3).max(30),
   email: z.string().email(),
   bio: z.string().max(500).optional(),
-  profileImage: z.string().url().optional().or(z.literal("")),
-  coverImage: z.string().url().optional().or(z.literal("")),
+  profileImage: z.string().optional().or(z.literal("")), // Allow both URLs and base64
+  coverImage: z.string().optional().or(z.literal("")), // Allow both URLs and base64
   website: z.string().url().optional().or(z.literal("")),
   twitter: z.string().optional(),
   instagram: z.string().optional(),
@@ -328,20 +329,29 @@ export default function EditProfile() {
                     name="profileImage"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Profile Image URL</FormLabel>
+                        <FormLabel>Profile Image</FormLabel>
                         <FormControl>
-                          <div className="flex gap-2">
-                            <Input placeholder="https://example.com/your-image.jpg" {...field} />
-                            {field.value && (
-                              <Avatar className="w-10 h-10 flex-shrink-0">
-                                <AvatarImage src={field.value} />
-                                <AvatarFallback><Image className="h-4 w-4" /></AvatarFallback>
-                              </Avatar>
-                            )}
+                          <div className="space-y-4">
+                            <FileUpload 
+                              onChange={field.onChange}
+                              value={field.value}
+                              type="profile"
+                              label="Upload profile image"
+                            />
+                            <div className="flex items-center">
+                              <span className="text-sm text-muted-foreground mr-2">or</span>
+                              <div className="flex-1">
+                                <Input 
+                                  placeholder="https://example.com/your-image.jpg" 
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                />
+                              </div>
+                            </div>
                           </div>
                         </FormControl>
                         <FormDescription>
-                          URL to your profile picture.
+                          Upload or provide a URL for your profile picture.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -353,12 +363,29 @@ export default function EditProfile() {
                     name="coverImage"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Cover Image URL</FormLabel>
+                        <FormLabel>Cover Image</FormLabel>
                         <FormControl>
-                          <Input placeholder="https://example.com/your-cover.jpg" {...field} />
+                          <div className="space-y-4">
+                            <FileUpload 
+                              onChange={field.onChange}
+                              value={field.value}
+                              type="cover"
+                              label="Upload cover image"
+                            />
+                            <div className="flex items-center">
+                              <span className="text-sm text-muted-foreground mr-2">or</span>
+                              <div className="flex-1">
+                                <Input 
+                                  placeholder="https://example.com/your-cover.jpg" 
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                />
+                              </div>
+                            </div>
+                          </div>
                         </FormControl>
                         <FormDescription>
-                          URL to your profile banner image.
+                          Upload or provide a URL for your profile banner image.
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
