@@ -34,23 +34,24 @@ export default function Newsletter() {
   };
 
   return (
-    <section className="py-16 bg-secondary">
+    <section className="py-16 bg-primary">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-bold font-poppins text-white mb-4">Stay in the loop</h2>
-          <p className="text-gray-300 mb-8">Join our mailing list to get the latest updates on new NFT drops, featured artists, and platform news.</p>
+          <h2 className="text-3xl font-bold font-poppins text-primary-foreground mb-4">Stay in the loop</h2>
+          <p className="text-primary-foreground/80 mb-8">Join our mailing list to get the latest updates on new NFT drops, featured artists, and platform news.</p>
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 justify-center">
             <Input
               type="email"
               placeholder="Enter your email address"
-              className="px-4 py-3 rounded-full w-full sm:w-96 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="px-4 py-3 rounded-full w-full sm:w-96 focus:outline-none focus:ring-2 focus:ring-card"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isSubmitting}
             />
             <Button 
               type="submit"
-              className="bg-primary hover:bg-primary-dark text-white font-poppins font-semibold px-6 py-3 rounded-full transition-colors whitespace-nowrap"
+              variant="secondary"
+              className="font-poppins font-semibold px-6 py-3 rounded-full whitespace-nowrap"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Subscribing..." : "Subscribe"}

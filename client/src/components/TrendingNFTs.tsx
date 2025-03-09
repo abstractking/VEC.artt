@@ -17,7 +17,11 @@ export default function TrendingNFTs({ nfts, isLoading }: TrendingNFTsProps) {
   // Filter NFTs by category if needed
   const filteredNFTs = nfts?.filter((nft) => {
     if (activeCategory === "all") return true;
-    return nft.metadata?.category === activeCategory;
+    if (!nft.metadata) return false;
+    
+    // Safely access category by casting metadata to any
+    const metadata = nft.metadata as any;
+    return metadata.category === activeCategory;
   });
   
   // Display up to 4 NFTs
@@ -25,7 +29,7 @@ export default function TrendingNFTs({ nfts, isLoading }: TrendingNFTsProps) {
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-gray-50">
+      <section className="py-16 bg-background">
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-10">
             <Skeleton className="h-10 w-64" />
@@ -38,7 +42,7 @@ export default function TrendingNFTs({ nfts, isLoading }: TrendingNFTsProps) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-sm">
+              <div key={index} className="bg-card rounded-xl shadow-sm border border-border">
                 <Skeleton className="w-full h-64 rounded-t-xl" />
                 <div className="p-5">
                   <div className="flex items-center mb-3">
@@ -66,38 +70,46 @@ export default function TrendingNFTs({ nfts, isLoading }: TrendingNFTsProps) {
   }
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-background">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-10">
-          <h2 className="text-3xl font-bold font-poppins text-secondary">Trending NFTs</h2>
+          <h2 className="text-3xl font-bold font-poppins text-foreground">Trending NFTs</h2>
           <div className="hidden md:flex space-x-2">
             <button 
-              className={`bg-white border border-gray-300 rounded-full px-4 py-2 font-medium text-secondary hover:bg-gray-100 transition-colors ${activeCategory === 'all' ? 'bg-primary text-white border-primary' : ''}`}
+              className={`bg-card border border-border rounded-full px-4 py-2 font-medium text-foreground hover:bg-muted transition-colors ${
+                activeCategory === 'all' ? 'bg-primary text-primary-foreground border-primary' : ''
+              }`}
               onClick={() => setActiveCategory('all')}
             >
               All
             </button>
             <button 
-              className={`bg-white border border-gray-300 rounded-full px-4 py-2 font-medium text-secondary hover:bg-gray-100 transition-colors ${activeCategory === 'art' ? 'bg-primary text-white border-primary' : ''}`}
+              className={`bg-card border border-border rounded-full px-4 py-2 font-medium text-foreground hover:bg-muted transition-colors ${
+                activeCategory === 'art' ? 'bg-primary text-primary-foreground border-primary' : ''
+              }`}
               onClick={() => setActiveCategory('art')}
             >
               Art
             </button>
             <button 
-              className={`bg-white border border-gray-300 rounded-full px-4 py-2 font-medium text-secondary hover:bg-gray-100 transition-colors ${activeCategory === 'collectibles' ? 'bg-primary text-white border-primary' : ''}`}
+              className={`bg-card border border-border rounded-full px-4 py-2 font-medium text-foreground hover:bg-muted transition-colors ${
+                activeCategory === 'collectibles' ? 'bg-primary text-primary-foreground border-primary' : ''
+              }`}
               onClick={() => setActiveCategory('collectibles')}
             >
               Collectibles
             </button>
             <button 
-              className={`bg-white border border-gray-300 rounded-full px-4 py-2 font-medium text-secondary hover:bg-gray-100 transition-colors ${activeCategory === 'photography' ? 'bg-primary text-white border-primary' : ''}`}
+              className={`bg-card border border-border rounded-full px-4 py-2 font-medium text-foreground hover:bg-muted transition-colors ${
+                activeCategory === 'photography' ? 'bg-primary text-primary-foreground border-primary' : ''
+              }`}
               onClick={() => setActiveCategory('photography')}
             >
               Photography
             </button>
           </div>
           <select 
-            className="md:hidden bg-white border border-gray-300 rounded-full px-4 py-2 font-medium text-secondary focus:outline-none focus:ring-2 focus:ring-primary"
+            className="md:hidden bg-card border border-border rounded-full px-4 py-2 font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             value={activeCategory}
             onChange={(e) => setActiveCategory(e.target.value)}
           >
@@ -115,9 +127,9 @@ export default function TrendingNFTs({ nfts, isLoading }: TrendingNFTsProps) {
             ))
           ) : (
             <div className="col-span-full text-center py-10">
-              <p className="text-gray-500">No NFTs available in this category yet.</p>
+              <p className="text-muted-foreground">No NFTs available in this category yet.</p>
               <Link href="/create">
-                <Button className="mt-4 bg-primary hover:bg-primary-dark text-white">
+                <Button className="mt-4">
                   Create an NFT
                 </Button>
               </Link>
@@ -127,7 +139,7 @@ export default function TrendingNFTs({ nfts, isLoading }: TrendingNFTsProps) {
 
         <div className="mt-12 text-center">
           <Link href="/explore">
-            <Button className="bg-secondary hover:bg-secondary-dark text-white font-poppins font-semibold py-3 px-8 rounded-full transition-colors">
+            <Button variant="secondary" className="font-semibold py-3 px-8 rounded-full">
               Explore more NFTs
             </Button>
           </Link>

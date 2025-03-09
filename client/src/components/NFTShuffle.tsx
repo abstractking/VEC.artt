@@ -41,17 +41,18 @@ export default function NFTShuffle({
       description: "A unique digital collectible exploring the boundaries of space and time.",
       imageUrl: "https://placehold.co/600x400/darkgray/white?text=Cosmic+Wanderer",
       price: "5.2",
+      currency: "VET",
       creatorId: 1,
       ownerId: 1,
       createdAt: new Date(),
-      updatedAt: new Date(),
-      status: "available",
+      isForSale: true,
+      isBiddable: false,
       metadata: { category: "art" },
       collectionId: 1,
       tokenId: "371",
-      contractAddress: "0x123",
-      royaltyPercentage: 5,
-      mintTransaction: "0xabc",
+      metadataHash: "0x123hash",
+      lastSoldPrice: null,
+      lastSoldAt: null
     },
     {
       id: 2,
@@ -59,17 +60,18 @@ export default function NFTShuffle({
       description: "An abstract representation of the digital frontier.",
       imageUrl: "https://placehold.co/600x400/3949ab/white?text=Digital+Horizon",
       price: "3.7",
+      currency: "VET",
       creatorId: 1,
       ownerId: 1,
       createdAt: new Date(),
-      updatedAt: new Date(),
-      status: "available",
+      isForSale: true,
+      isBiddable: false,
       metadata: { category: "art" },
       collectionId: 1,
       tokenId: "42",
-      contractAddress: "0x123",
-      royaltyPercentage: 5,
-      mintTransaction: "0xdef",
+      metadataHash: "0x456hash",
+      lastSoldPrice: null,
+      lastSoldAt: null
     },
     {
       id: 3,
@@ -77,17 +79,18 @@ export default function NFTShuffle({
       description: "A vibrant exploration of color and light in the digital realm.",
       imageUrl: "https://placehold.co/600x400/e91e63/white?text=Neon+Dreams",
       price: "2.8",
+      currency: "VET", 
       creatorId: 1,
       ownerId: 1,
       createdAt: new Date(),
-      updatedAt: new Date(),
-      status: "available",
+      isForSale: true, 
+      isBiddable: false,
       metadata: { category: "art" },
       collectionId: 1,
       tokenId: "108",
-      contractAddress: "0x123",
-      royaltyPercentage: 5,
-      mintTransaction: "0xghi",
+      metadataHash: "0x789hash",
+      lastSoldPrice: null,
+      lastSoldAt: null
     }
   ];
 
@@ -160,17 +163,8 @@ export default function NFTShuffle({
 
   // We no longer need the error state since we're not doing our own query
 
-  // Empty state
-  if (!nfts || nfts.length === 0) {
-    return (
-      <div className="rounded-lg overflow-hidden border border-border bg-card p-6 text-center">
-        <p className="text-muted-foreground mb-4">No NFTs available for showcase</p>
-        <Link href="/create">
-          <Button>Create Your First NFT</Button>
-        </Link>
-      </div>
-    );
-  }
+  // We're using demo NFTs so no need for this empty state check anymore
+  // The displayNfts variable will always have content
 
   const currentNFTs = getCurrentNFTs();
 
@@ -235,9 +229,9 @@ export default function NFTShuffle({
       </div>
 
       {/* Pagination dots */}
-      {nfts.length > 1 && (
+      {displayNfts.length > 1 && (
         <div className="absolute bottom-2 left-0 right-0 flex justify-center space-x-2 z-10">
-          {Array.from({ length: nfts.length }).map((_, i) => (
+          {Array.from({ length: displayNfts.length }).map((_, i) => (
             <button
               key={i}
               className={`w-2 h-2 rounded-full transition-colors ${
