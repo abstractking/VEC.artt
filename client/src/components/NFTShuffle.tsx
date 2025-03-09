@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
@@ -10,6 +9,8 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { NFT } from "@shared/schema";
 
 type NFTShuffleProps = {
+  nfts?: NFT[]; // NFTs to display in the shuffle
+  isLoading?: boolean; // Loading state
   interval?: number; // Rotation interval in milliseconds (default: 20000ms/20s)
   displayCount?: number; // Number of NFTs to display at once
 };
@@ -23,13 +24,12 @@ type NFTShuffleProps = {
  * - Fades in/out NFTs for a smooth transition effect
  * - Adapts to various screen sizes
  */
-export default function NFTShuffle({ interval = 20000, displayCount = 1 }: NFTShuffleProps) {
-  // Fetch NFTs from the API
-  const { data: nfts, isLoading, isError } = useQuery<NFT[]>({
-    queryKey: ['/api/nfts'],
-    staleTime: 60000, // 1 minute
-  });
-
+export default function NFTShuffle({ 
+  nfts = [], 
+  isLoading = false, 
+  interval = 20000, 
+  displayCount = 1 
+}: NFTShuffleProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
@@ -91,15 +91,7 @@ export default function NFTShuffle({ interval = 20000, displayCount = 1 }: NFTSh
     );
   }
 
-  // Error state
-  if (isError) {
-    return (
-      <div className="rounded-lg overflow-hidden border border-border bg-card p-6 text-center">
-        <p className="text-destructive mb-4">Unable to load NFTs</p>
-        <Button onClick={() => window.location.reload()}>Retry</Button>
-      </div>
-    );
-  }
+  // We no longer need the error state since we're not doing our own query
 
   // Empty state
   if (!nfts || nfts.length === 0) {

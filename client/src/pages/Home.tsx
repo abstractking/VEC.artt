@@ -38,7 +38,7 @@ export default function Home() {
           <p className="text-muted-foreground">Discover unique digital assets rotating every 20 seconds</p>
         </div>
         <div className="grid grid-cols-1 gap-8">
-          <NFTShuffle interval={20000} />
+          <NFTShuffle nfts={nfts || []} interval={20000} isLoading={nftsLoading} />
         </div>
       </section>
       
