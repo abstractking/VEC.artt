@@ -99,10 +99,7 @@ export default function EditNFT() {
   // Update NFT mutation
   const mutation = useMutation({
     mutationFn: async (data: any) => {
-      return apiRequest(`/api/nfts/${nftId}`, {
-        method: "PATCH",
-        body: JSON.stringify(data),
-      });
+      return apiRequest(`/api/nfts/${nftId}`, "PATCH", data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
@@ -551,7 +548,7 @@ export default function EditNFT() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Continue Editing</AlertDialogCancel>
-            <AlertDialogAction onClick={() => navigate(`/nft/${nftId}`)}>
+            <AlertDialogAction onClick={() => setLocation(`/nft/${nftId}`)}>
               Discard Changes
             </AlertDialogAction>
           </AlertDialogFooter>
