@@ -20,8 +20,12 @@ interface WalletProviderProps {
 }
 
 export function WalletProvider({ children }: WalletProviderProps) {
-  const [walletAddress, setWalletAddress] = useState<string | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
+  // Add debug mode for testing in environments without the wallet extension
+  const isDebugMode = import.meta.env.DEV || window.location.hostname.includes('replit');
+  const testWalletAddress = '0xd41a7Be0D607e4cB8940DDf7E9Dc0657B91B4511'; // Test wallet address
+  
+  const [walletAddress, setWalletAddress] = useState<string | null>(isDebugMode ? testWalletAddress : null);
+  const [isConnected, setIsConnected] = useState(isDebugMode); // Auto-connect in debug mode
   const [isConnecting, setIsConnecting] = useState(false);
   const [isModalOpen, setIsModalOpenState] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -60,6 +64,20 @@ export function WalletProvider({ children }: WalletProviderProps) {
     setError(null);
     
     try {
+      // If in debug mode and no Thor wallet, use test wallet
+      if (isDebugMode && (!(window as any).thor || walletType === 'debug')) {
+        console.log("Using debug wallet connection with address:", testWalletAddress);
+        setWalletAddress(testWalletAddress);
+        setIsConnected(true);
+        setModalOpen(false);
+        
+        toast({
+          title: "Debug Wallet Connected",
+          description: `Connected to test wallet: ${testWalletAddress.slice(0, 6)}...${testWalletAddress.slice(-4)}`,
+        });
+        return;
+      }
+      
       // Check if Thor wallet extension is available
       if (typeof window !== 'undefined' && (window as any).thor) {
         // Connect to VeChain wallet
@@ -97,7 +115,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
     } finally {
       setIsConnecting(false);
     }
-  }, [toast, setModalOpen]);
+  }, [toast, setModalOpen, isDebugMode, testWalletAddress]);
 
   const disconnectWallet = useCallback(() => {
     console.log("Disconnecting wallet");

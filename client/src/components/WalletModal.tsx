@@ -13,6 +13,7 @@ import { useWallet } from "@/hooks/useVechain";
 
 export default function WalletModal() {
   const { isConnecting, isModalOpen, setModalOpen, connectWallet, error } = useWallet();
+  const isDebugMode = import.meta.env.DEV || window.location.hostname.includes('replit');
 
   const handleClose = () => {
     setModalOpen(false);
@@ -35,6 +36,15 @@ export default function WalletModal() {
       handler: () => connectWallet("trust")
     }
   ];
+  
+  // Add debug option in development or replit environments
+  if (isDebugMode) {
+    walletOptions.push({
+      name: "Debug Test Wallet (Dev Only)",
+      icon: "https://icongr.am/material/bug.svg?size=128&color=2563eb",
+      handler: () => connectWallet("debug")
+    });
+  }
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
