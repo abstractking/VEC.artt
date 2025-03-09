@@ -115,9 +115,13 @@ export default function Create() {
         shouldValidate: true,
       });
 
-      // Create preview URL
-      const url = URL.createObjectURL(files[0]);
-      setPreviewUrl(url);
+      // Convert to base64 for preview and storage
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setPreviewUrl(base64String);
+      };
+      reader.readAsDataURL(files[0]);
     }
   };
 
@@ -247,13 +251,15 @@ export default function Create() {
         throw new Error("Image file is required");
       }
       
-      // Use URL.createObjectURL for development, in production we would upload to IPFS
-      const imageUrl = URL.createObjectURL(files[0]);
+      // Step 4: Prepare NFT data - use the base64 image from preview
+      // This ensures the image URL is persistent and can be stored in the database
+      if (!previewUrl) {
+        throw new Error("Image preview not available. Please try uploading again.");
+      }
       
-      // Step 4: Prepare NFT data
       const nftData = {
         ...values,
-        imageUrl: imageUrl,
+        imageUrl: previewUrl, // Use the base64 string instead of a blob URL
         creatorId: currentUser.id,
         ownerId: currentUser.id,
         metadata: {
