@@ -1,0 +1,83 @@
+# VeCollab Marketplace Development Prompt
+
+## Objective:
+To create a decentralized marketplace for NFTs using the VeChain blockchain, leveraging the existing codebase and files in the VeCollab project.
+
+## Project Overview:
+The VeCollab Marketplace will allow users to create, buy, sell, and trade NFTs. The application will feature a user-friendly interface, secure transactions, and integration with the VeChain blockchain for asset management.
+
+## Key Features:
+1. **User Authentication**: Allow users to create accounts, log in, and manage their profiles.
+2. **NFT Creation**: Enable users to mint their own NFTs with customizable attributes.
+3. **Marketplace Functionality**: Provide a platform for users to browse, buy, and sell NFTs.
+4. **Wallet Integration**: Integrate with VeChain wallets for secure transactions.
+5. **Search and Filter Options**: Allow users to search for specific NFTs and filter results based on various criteria.
+6. **Responsive Design**: Ensure the application is mobile-friendly and accessible on various devices.
+
+## User Stories:
+- As a user, I want to create an account so that I can manage my NFTs.
+- As a user, I want to mint my own NFTs so that I can sell them on the marketplace.
+- As a user, I want to browse NFTs easily so that I can find items of interest.
+
+## Performance Metrics:
+- Load times should be under 2 seconds.
+- User engagement should be tracked through session duration and interactions.
+- Transaction success rates should be monitored to ensure reliability.
+
+## Security Considerations:
+- Implement secure authentication methods.
+- Ensure data encryption for user information and transactions.
+
+## Accessibility Features:
+- Ensure compliance with WCAG guidelines to make the application accessible to all users.
+
+## Marketing and User Acquisition Strategies:
+- Develop promotional campaigns to attract users.
+- Consider partnerships with artists and influencers in the NFT space.
+
+## Feedback and Iteration Plan:
+- Gather user feedback post-launch through surveys and analytics.
+- Use feedback to iterate on features and improve user experience.
+
+## Integration with Other Platforms:
+- Explore integration with social media for sharing NFTs.
+
+## Documentation and Support:
+- Provide comprehensive documentation for users and developers.
+- Establish support channels for user inquiries.
+
+## File Structure and Components:
+- **Frontend**:
+  - `src/app.js`: Main application entry point.
+  - `src/components/`: Contains reusable components such as:
+    - `Layout.js`: Layout structure for the application.
+    - `SearchBar.js`: Component for searching NFTs.
+    - `OurArtists.js`: Display top artists in the marketplace.
+  - `srcpages/`: Contains different pages such as:
+    - `Profile.js`: User profile management.
+    - `Explore.js`: Page for browsing NFTs.
+  - `src/hooks/`: Custom hooks for managing state and side effects.
+  - `src/providers/`: Context providers for managing global state (e.g., VeChain integration).
+  - `src/styles.css`: Styles for the application.
+
+- **Backend**:
+  - `server.js`: Server setup and API endpoints.
+  - `netlify/functions/`: Serverless functions for handling backend logic.
+  - `workers/`: Background tasks for processing data.
+
+- **Configuration**:
+  - `package.json`: Project dependencies and scripts.
+  - `netlify.toml`: Configuration for Netlify deployment.
+
+## Development Plan:
+1. **Setup Project Structure**: Organize files and directories as outlined above.
+2. **Implement User Authentication**: Create login and registration functionality.
+3. **Develop NFT Creation Feature**: Build the UI and backend logic for minting NFTs.
+4. **Build Marketplace Functionality**: Implement browsing, buying, and selling features.
+5. **Integrate Wallet Functionality**: Connect to VeChain wallets for transactions.
+6. **Add Search and Filter Options**: Enhance user experience with search capabilities.
+7. **Test and Deploy**: Ensure the application is bug-free and deploy to Netlify.
+
+## Additional Notes:
+- Please fill in any gaps or specific requirements as we get closer to the final draft.
+- Focus on creating a seamless user experience and ensuring security in transactions.
