@@ -63,7 +63,8 @@ const createNftSchema = insertNftSchema.extend({
   description: z.string()
     .min(10, "Description must be at least 10 characters")
     .max(1000, "Description must not exceed 1000 characters"),
-  royaltyPercentage: z.number().min(0).max(10).default(0),
+  royaltyPercentage: z.number().min(0).max(70).default(0),
+  royaltyCollabPercentage: z.number().min(0).max(100).default(0),
   collabPercentage: z.number().min(0).max(100).default(0),
   collabWalletAddress: z.string().optional(),
 });
@@ -99,6 +100,7 @@ export default function Create() {
       isBiddable: false,
       category: "",
       royaltyPercentage: 0,
+      royaltyCollabPercentage: 0,
       collabPercentage: 0,
       collabWalletAddress: "",
     },
