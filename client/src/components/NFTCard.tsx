@@ -27,13 +27,12 @@ export default function NFTCard({ nft }: NFTCardProps) {
         <div className="w-full h-64 bg-muted object-cover rounded-t-xl overflow-hidden">
           {nft.imageUrl ? (
             <img
-              src={nft.imageUrl.startsWith('blob:') ? 
-                   'https://placehold.co/600x400/808080/ffffff?text=Image+Unavailable' : 
-                   nft.imageUrl}
+              src={nft.imageUrl}
               alt={nft.name}
               className="w-full h-full object-cover"
               onError={(e) => {
                 // Fallback on error
+                console.log(`Image load error for NFT: ${nft.id}, URL: ${nft.imageUrl?.substring(0, 30)}...`);
                 (e.target as HTMLImageElement).src = 'https://placehold.co/600x400/808080/ffffff?text=Image+Unavailable';
               }}
             />

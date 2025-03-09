@@ -339,13 +339,12 @@ export default function NFTDetail() {
           {/* NFT Image */}
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">
             <img
-              src={nft.imageUrl?.startsWith('blob:') ? 
-                   'https://placehold.co/600x400/808080/ffffff?text=Image+Unavailable' : 
-                   nft.imageUrl}
+              src={nft.imageUrl}
               alt={nft.name}
               className="w-full rounded-lg object-contain"
               onError={(e) => {
-                // Fallback on error
+                // Fallback on error with logging
+                console.log(`NFTDetail: Image load error for NFT ID: ${nft.id}`);
                 (e.target as HTMLImageElement).src = 'https://placehold.co/600x400/808080/ffffff?text=Image+Unavailable';
               }}
             />

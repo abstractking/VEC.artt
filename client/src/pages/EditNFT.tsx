@@ -277,6 +277,10 @@ export default function EditNFT() {
                         src={form.watch("imageUrl")}
                         alt="NFT Preview"
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          console.log("NFT preview image load error");
+                          (e.target as HTMLImageElement).src = 'https://placehold.co/600x400/808080/ffffff?text=Image+Preview';
+                        }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
@@ -367,9 +371,7 @@ export default function EditNFT() {
                         <div className="aspect-square w-full max-w-[200px] rounded-lg overflow-hidden border bg-muted">
                           {field.value ? (
                             <img
-                              src={field.value.startsWith('blob:') ? 
-                                'https://placehold.co/600x400/808080/ffffff?text=Image+Unavailable' : 
-                                field.value}
+                              src={field.value}
                               alt="NFT Preview"
                               className="w-full h-full object-cover"
                               onError={(e) => {
