@@ -470,9 +470,14 @@ export default function Create() {
                             name="name"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>NFT Name</FormLabel>
+                                <FormLabel htmlFor="nft-name">NFT Name</FormLabel>
                                 <FormControl>
-                                  <Input placeholder="Enter the name of your NFT" {...field} />
+                                  <Input 
+                                    id="nft-name"
+                                    placeholder="Enter the name of your NFT" 
+                                    autoComplete="off"
+                                    {...field} 
+                                  />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -484,11 +489,12 @@ export default function Create() {
                             name="description"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Description</FormLabel>
+                                <FormLabel htmlFor="nft-description">Description</FormLabel>
                                 <FormControl>
                                   <Textarea 
+                                    id="nft-description"
                                     placeholder="Describe your NFT..." 
-                                    className="resize-none" 
+                                    className="resize-none"
                                     {...field} 
                                   />
                                 </FormControl>
@@ -502,10 +508,10 @@ export default function Create() {
                             name="category"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Category</FormLabel>
+                                <FormLabel htmlFor="nft-category">Category</FormLabel>
                                 <Select value={field.value} onValueChange={field.onChange}>
                                   <FormControl>
-                                    <SelectTrigger>
+                                    <SelectTrigger id="nft-category">
                                       <SelectValue placeholder="Select category" />
                                     </SelectTrigger>
                                   </FormControl>
