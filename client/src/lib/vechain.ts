@@ -191,29 +191,47 @@ export const executeContractMethod = async (
 ) => {
   try {
     if (typeof window !== 'undefined' && (window as any).thor) {
+      // Check if Thor wallet is available
+      console.log(`Executing contract method ${methodName} on ${contractAddress}`);
+      
+      // Enable the Thor wallet
       const vendor = await (window as any).thor.enable();
+      if (!vendor) {
+        throw new Error("Failed to enable Thor wallet");
+      }
+      
+      // Initialize Connex
       const connex = await getConnex();
+      if (!connex) {
+        throw new Error("Failed to initialize Connex");
+      }
+      
+      // Get contract instance
       const contract = connex.thor.account(contractAddress);
       
-      const method = contract.method(abi.find((item: any) => item.name === methodName));
+      // Find the method in the ABI
+      const abiMethod = abi.find((item: any) => item.name === methodName);
+      if (!abiMethod) {
+        throw new Error(`Method ${methodName} not found in ABI`);
+      }
+      
+      // Create method and clause
+      const method = contract.method(abiMethod);
       const clause = method.asClause(...params);
       
+      console.log(`Signing transaction for ${methodName} with params:`, params);
+      
+      // Sign and execute transaction
       const result = await vendor.sign('tx', [clause]);
+      console.log(`Transaction result for ${methodName}:`, result);
+      
       return result;
     } else {
-      // Mock transaction for development
-      return {
-        txid: '0x' + Math.random().toString(16).substring(2, 34),
-        signer: '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed'
-      };
+      throw new Error("VeChain Thor wallet extension not detected. Please install the extension to continue.");
     }
   } catch (error) {
     console.error(`Failed to execute contract method ${methodName}:`, error);
-    // Mock transaction for development
-    return {
-      txid: '0x' + Math.random().toString(16).substring(2, 34),
-      signer: '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed'
-    };
+    throw error; // Re-throw the error to handle it in the caller
   }
 };
 
@@ -221,59 +239,94 @@ export const executeContractMethod = async (
 export const deployContract = async (abi: any, bytecode: string, params: any[] = []) => {
   try {
     if (typeof window !== 'undefined' && (window as any).thor) {
+      // Check if Thor wallet is available
+      console.log(`Attempting to deploy contract with bytecode length: ${bytecode.length}`);
+      
+      // Enable the Thor wallet
       const vendor = await (window as any).thor.enable();
+      if (!vendor) {
+        throw new Error("Failed to enable Thor wallet");
+      }
+      
+      // Initialize Connex
       const connex = await getConnex();
+      if (!connex) {
+        throw new Error("Failed to initialize Connex");
+      }
+      
+      // Validate bytecode
+      if (!bytecode || bytecode.length < 2) {
+        throw new Error("Invalid bytecode: Bytecode cannot be empty");
+      }
+      
+      // Ensure bytecode has 0x prefix
+      const formattedBytecode = bytecode.startsWith('0x') ? bytecode : `0x${bytecode}`;
       
       // Create deployment clause
       const clause = {
-        to: null,
+        to: null, // null 'to' field indicates contract deployment
         value: '0x0',
-        data: bytecode
+        data: formattedBytecode
       };
       
+      console.log("Signing contract deployment transaction...");
+      
+      // Sign and execute deployment transaction
       const result = await vendor.sign('tx', [clause]);
+      
+      if (!result || !result.txid) {
+        throw new Error("Contract deployment failed: Transaction didn't complete");
+      }
+      
+      console.log(`Contract deployed successfully. Transaction ID: ${result.txid}`);
+      
       return result;
     } else {
-      // Mock deployment for development
-      return {
-        txid: '0x' + Math.random().toString(16).substring(2, 34),
-        signer: '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed'
-      };
+      throw new Error("VeChain Thor wallet extension not detected. Please install the extension to continue.");
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to deploy contract:', error);
-    // Mock deployment for development
-    return {
-      txid: '0x' + Math.random().toString(16).substring(2, 34),
-      signer: '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed'
-    };
+    throw new Error(`Contract deployment failed: ${error.message || "Unknown error"}`);
   }
 };
 
 // Get a transaction receipt
 export const getTransactionReceipt = async (txId: string) => {
   try {
+    if (!txId) {
+      throw new Error("Transaction ID is required to get receipt");
+    }
+    
+    // Validate transaction ID format
+    if (!txId.startsWith('0x') || txId.length !== 66) {
+      console.warn(`Unusual transaction ID format: ${txId}`);
+    }
+    
+    console.log(`Fetching receipt for transaction: ${txId}`);
+    
     const connex = await getConnex();
+    if (!connex) {
+      throw new Error("Failed to initialize Connex");
+    }
+    
+    // Get transaction receipt
     const receipt = await connex.thor.transaction(txId).getReceipt();
+    
+    if (!receipt) {
+      throw new Error("Receipt not found for transaction");
+    }
+    
+    // Check if transaction was reverted
+    if (receipt.reverted) {
+      console.warn(`Transaction ${txId} was reverted`);
+    }
+    
+    console.log(`Receipt retrieved for transaction ${txId}:`, receipt);
+    
     return receipt;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to get transaction receipt:', error);
-    // Mock receipt for development
-    return {
-      meta: {
-        blockID: '0x' + Math.random().toString(16).substring(2, 66),
-        blockNumber: Math.floor(Math.random() * 1000000),
-        blockTimestamp: Math.floor(Date.now() / 1000),
-        txID: txId,
-        txOrigin: '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed'
-      },
-      reverted: false,
-      outputs: [{
-        contractAddress: null,
-        events: [],
-        transfers: []
-      }]
-    };
+    throw new Error(`Failed to get transaction receipt: ${error.message || "Unknown error"}`);
   }
 };
 

@@ -4,6 +4,15 @@ import { VeCollabNFTABI, VeCollabNFTAddress } from "./contracts/VeCollabNFT";
 // Function to mint an NFT
 export async function mintNFT(tokenURI: string, recipient: string) {
   try {
+    // Validate inputs
+    if (!tokenURI) {
+      throw new Error("Token URI is required for minting");
+    }
+    
+    if (!recipient) {
+      throw new Error("Recipient wallet address is required for minting");
+    }
+    
     // Find the mintNFT function in the ABI
     const mintFunction = VeCollabNFTABI.find(
       (item: any) => item.name === "mintNFT"
@@ -13,6 +22,8 @@ export async function mintNFT(tokenURI: string, recipient: string) {
       throw new Error("mintNFT function not found in ABI");
     }
     
+    console.log(`Attempting to mint NFT for ${recipient} with URI: ${tokenURI}`);
+    
     // Execute the contract method to mint the NFT
     const result = await executeContractMethod(
       VeCollabNFTAddress,
@@ -21,10 +32,23 @@ export async function mintNFT(tokenURI: string, recipient: string) {
       [recipient, tokenURI]
     );
     
+    if (!result || !result.txid) {
+      throw new Error("Failed to mint NFT: Transaction didn't complete");
+    }
+    
+    console.log(`NFT minted successfully. Transaction ID: ${result.txid}`);
+    
     return result;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error minting NFT:", error);
-    throw error;
+    // Provide more helpful error messages
+    if (error.message?.includes("User rejected")) {
+      throw new Error("Transaction was rejected in the wallet. Please try again.");
+    } else if (error.message?.includes("wallet")) {
+      throw new Error("Wallet connection issue: " + error.message);
+    } else {
+      throw new Error("Failed to mint NFT: " + (error.message || "Unknown error"));
+    }
   }
 }
 

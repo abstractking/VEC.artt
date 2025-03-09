@@ -148,6 +148,8 @@ export default function Create() {
         description: "Please connect your wallet to create an NFT",
         variant: "destructive",
       });
+      // Open wallet connection prompt
+      handleConnectWallet();
       return;
     }
 
@@ -157,32 +159,54 @@ export default function Create() {
         description: "Please reconnect your wallet to create an NFT",
         variant: "destructive",
       });
+      // Open wallet connection prompt
+      handleConnectWallet();
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // Ensure user exists, create if not exists
+      // Step 1: Ensure user exists, create if not exists
       let currentUser = user;
       if (!currentUser) {
         try {
           console.log("Attempting to create or fetch user account with wallet:", walletAddress);
-          // Generate random username if needed
-          const username = `user_${Math.random().toString(36).substring(2, 10)}`;
+          
+          // Show toast for user account creation
+          toast({
+            title: "Creating Account",
+            description: "Setting up user account for your wallet...",
+            duration: 3000,
+          });
+          
+          // Generate username based on wallet address for better identification
+          const username = `user_${walletAddress.slice(-6)}`;
+          
           if (authContext && authContext.login) {
             await authContext.login(username, walletAddress);
+            console.log("User login successful");
           } else {
             throw new Error("Authentication service is not available");
           }
-          // Refetch the user data after login
-          const userResponse = await apiRequest("GET", `/api/users/wallet/${walletAddress}`);
-          currentUser = await userResponse.json();
-        } catch (error) {
+          
+          // Refetch the user data after login with proper error handling
+          try {
+            const userResponse = await apiRequest("GET", `/api/users/wallet/${walletAddress}`);
+            if (!userResponse.ok) {
+              throw new Error(`Failed to fetch user: ${userResponse.statusText}`);
+            }
+            currentUser = await userResponse.json();
+            console.log("User account created/fetched successfully:", currentUser);
+          } catch (fetchError) {
+            console.error("Error fetching user after creation:", fetchError);
+            throw new Error("Failed to retrieve user data after account creation");
+          }
+        } catch (error: any) {
           console.error("Error creating/fetching user account:", error);
           toast({
             title: "Account Creation Failed",
-            description: "Could not create or fetch user account. Please try again.",
+            description: error.message || "Could not create or fetch user account. Please try again.",
             variant: "destructive",
           });
           setIsSubmitting(false);
@@ -200,21 +224,24 @@ export default function Create() {
         return;
       }
 
-      // Show minting status toast
-      const mintingToast = toast({
-        title: "Minting NFT",
-        description: "Please confirm the transaction in your wallet...",
-        duration: 10000,
+      // Step 2: Show minting status toast
+      toast({
+        title: "Preparing NFT",
+        description: "Creating metadata for your NFT...",
+        duration: 3000,
       });
 
-      // Use a real image URL or a base64 encoded placeholder image for development
-      // In production, we would upload to IPFS or similar service
+      // Step 3: Handle image file
       const files = form.getValues("file") as unknown as FileList;
-      const imageUrl = files && files.length > 0 ? 
-        URL.createObjectURL(files[0]) : 
-        "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNmMGYwZjAiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIxOCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiIGZpbGw9IiM5OTk5OTkiPk5GVCBJPC90ZXh0Pjwvc3ZnPg==";
       
-      // Prepare NFT data
+      if (!files || files.length === 0) {
+        throw new Error("Image file is required");
+      }
+      
+      // Use URL.createObjectURL for development, in production we would upload to IPFS
+      const imageUrl = URL.createObjectURL(files[0]);
+      
+      // Step 4: Prepare NFT data
       const nftData = {
         ...values,
         imageUrl: imageUrl,
@@ -226,45 +253,79 @@ export default function Create() {
         },
       };
       
-      // Generate metadata URI for the NFT
+      // Step 5: Generate metadata URI for the NFT
+      console.log("Generating metadata for NFT:", values.name);
       const tokenURI = generateMetadataURI(nftData);
       
-      // Mint NFT on the blockchain
-      const mintResult = await mintNFT(tokenURI, walletAddress);
+      // Step 6: Show minting toast
+      toast({
+        title: "Minting NFT",
+        description: "Please confirm the transaction in your wallet...",
+        duration: 10000,
+      });
       
-      // Update NFT data with blockchain information
-      const blockchainNftData = {
-        ...nftData,
-        tokenId: mintResult?.txid || Date.now().toString(), // Use transaction ID as token ID
-        blockchainTxId: mintResult?.txid || "",
-      };
-
-      // Create NFT on server
-      const response = await apiRequest("POST", "/api/nfts", blockchainNftData);
-      const createdNft = await response.json();
+      // Step 7: Mint NFT on the blockchain
+      console.log("Attempting to mint NFT for wallet:", walletAddress);
+      let mintResult;
+      try {
+        mintResult = await mintNFT(tokenURI, walletAddress);
+        
+        if (!mintResult || !mintResult.txid) {
+          throw new Error("Minting transaction failed or returned invalid result");
+        }
+        console.log("NFT minted with transaction ID:", mintResult.txid);
+      } catch (mintError: any) {
+        console.error("Minting error:", mintError);
+        throw new Error(`Minting failed: ${mintError.message || "Unknown error during minting"}`);
+      }
       
-      // Invalidate NFT queries
-      queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
-      
-      // Show success toasts
+      // Step 8: Show transaction success toast
       toast({
         title: "NFT Minted Successfully",
         description: "Your NFT has been minted on the VeChain blockchain",
         duration: 5000,
       });
       
+      // Step 9: Update NFT data with blockchain information
+      const blockchainNftData = {
+        ...nftData,
+        tokenId: mintResult.txid, // Use transaction ID as token ID
+        blockchainTxId: mintResult.txid,
+      };
+
+      // Step 10: Create NFT on server
+      console.log("Saving NFT to database:", blockchainNftData);
+      let response;
+      try {
+        response = await apiRequest("POST", "/api/nfts", blockchainNftData);
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(`Server error: ${errorData.error || response.statusText || "Unknown error"}`);
+        }
+      } catch (serverError: any) {
+        console.error("Server error creating NFT:", serverError);
+        throw new Error(`Failed to save NFT: ${serverError.message}`);
+      }
+      
+      const createdNft = await response.json();
+      console.log("NFT created successfully on server:", createdNft);
+      
+      // Step 11: Invalidate NFT queries
+      queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
+      
+      // Step 12: Show final success toast
       toast({
         title: "NFT Created Successfully",
         description: `Your NFT "${values.name}" has been created and minted`,
       });
       
-      // Navigate to the NFT detail page
+      // Step 13: Navigate to the NFT detail page
       setLocation(`/nft/${createdNft.id}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating NFT:", error);
       toast({
         title: "Error Creating NFT",
-        description: "Failed to create your NFT. Please try again.",
+        description: error.message || "Failed to create your NFT. Please try again.",
         variant: "destructive",
       });
     } finally {

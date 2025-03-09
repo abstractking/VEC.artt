@@ -53,25 +53,30 @@ export function WalletProvider({ children }: WalletProviderProps) {
     setError(null);
     
     try {
-      // For this demo, we're using a simplified connection
-      // In a real app, we would handle different wallet types
-      const result = await connectVeChainWallet();
-      
-      console.log("Wallet Connect Result:", result); // Debug log to check result structure
-      
-      if (result && result.vendor && result.vendor.address) {
-        console.log("Setting wallet address to:", result.vendor.address);
-        setWalletAddress(result.vendor.address);
-        setIsConnected(true);
-        setIsModalOpen(false);
+      // Check if Thor wallet extension is available
+      if (typeof window !== 'undefined' && (window as any).thor) {
+        // Connect to VeChain wallet
+        const result = await connectVeChainWallet();
         
-        toast({
-          title: "Wallet Connected",
-          description: `Connected to ${walletType || 'VeChain'} wallet`,
-        });
+        console.log("Wallet Connect Result:", result); // Debug log to check result structure
+        
+        if (result && result.vendor && result.vendor.address) {
+          console.log("Setting wallet address to:", result.vendor.address);
+          setWalletAddress(result.vendor.address);
+          setIsConnected(true);
+          setIsModalOpen(false);
+          
+          toast({
+            title: "Wallet Connected",
+            description: `Connected to ${walletType || 'VeChain'} wallet`,
+          });
+        } else {
+          console.error("Wallet connect response does not match expected structure:", result);
+          throw new Error("Failed to connect wallet");
+        }
       } else {
-        console.error("Wallet connect response does not match expected structure:", result);
-        throw new Error("Failed to connect wallet");
+        // Thor wallet not available, show more helpful message
+        throw new Error("VeChain Thor wallet extension not detected. Please install the VeChain Thor wallet extension and refresh the page.");
       }
     } catch (err: any) {
       console.error("Wallet connection error:", err);
