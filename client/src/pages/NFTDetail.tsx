@@ -1,0 +1,676 @@
+import { useState, useEffect } from "react";
+import { useParams, useLocation, useRoute } from "wouter";
+import { useQuery } from "@tanstack/react-query";
+import { useWallet } from "@/hooks/useVechain";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { NFT, User, Bid } from "@shared/schema";
+import { 
+  Clock, 
+  Tag, 
+  Share, 
+  Heart, 
+  ExternalLink, 
+  ArrowLeft,
+  Loader2
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+export default function NFTDetail() {
+  const params = useParams();
+  const [, setLocation] = useLocation();
+  const { user } = useAuth();
+  const { walletAddress, isConnected, connectWallet } = useWallet();
+  const { toast } = useToast();
+  const [isBidModalOpen, setBidModalOpen] = useState(false);
+  const [isPurchasing, setPurchasing] = useState(false);
+  const [isBidding, setBidding] = useState(false);
+  const [bidAmount, setBidAmount] = useState("");
+
+  // Fetch NFT details
+  const { data: nft, isLoading: nftLoading } = useQuery({
+    queryKey: [`/api/nfts/${params.id}`],
+    enabled: !!params.id,
+  });
+
+  // Fetch creator details
+  const { data: creator, isLoading: creatorLoading } = useQuery({
+    queryKey: [`/api/users/${nft?.creatorId}`],
+    enabled: !!nft?.creatorId,
+  });
+
+  // Fetch owner details
+  const { data: owner, isLoading: ownerLoading } = useQuery({
+    queryKey: [`/api/users/${nft?.ownerId}`],
+    enabled: !!nft?.ownerId,
+  });
+
+  // Fetch bids
+  const { data: bids, isLoading: bidsLoading } = useQuery({
+    queryKey: [`/api/bids/nft/${params.id}`],
+    enabled: !!params.id,
+  });
+
+  // Fetch transactions
+  const { data: transactions, isLoading: transactionsLoading } = useQuery({
+    queryKey: [`/api/transactions/nft/${params.id}`],
+    enabled: !!params.id,
+  });
+
+  // Scroll to top on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // If NFT not found, show error
+  useEffect(() => {
+    if (!nftLoading && !nft && params.id) {
+      toast({
+        title: "NFT not found",
+        description: "The NFT you're looking for doesn't exist.",
+        variant: "destructive",
+      });
+      setLocation("/explore");
+    }
+  }, [nft, nftLoading, params.id, setLocation, toast]);
+
+  // Handle connect wallet
+  const handleConnectWallet = async () => {
+    try {
+      await connectWallet();
+    } catch (error) {
+      toast({
+        title: "Wallet Connection Failed",
+        description: "Failed to connect to your wallet. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Handle buy now
+  const handleBuyNow = async () => {
+    if (!isConnected) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet to make a purchase",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Not logged in",
+        description: "Please log in to make a purchase",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setPurchasing(true);
+
+    try {
+      // In a real app, we would interact with the blockchain here
+      // For now, we'll just update the NFT owner in our database
+      
+      // Create a transaction record
+      await apiRequest("POST", "/api/transactions", {
+        nftId: nft.id,
+        sellerId: nft.ownerId,
+        buyerId: user.id,
+        price: nft.price,
+        currency: nft.currency,
+        txHash: `mock_tx_${Date.now()}`, // Mock transaction hash
+        status: "completed"
+      });
+      
+      // Update NFT ownership
+      await apiRequest("PATCH", `/api/nfts/${nft.id}`, {
+        ownerId: user.id,
+        isForSale: false
+      });
+      
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: [`/api/nfts/${params.id}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
+      queryClient.invalidateQueries({ queryKey: [`/api/nfts/owner/${user.id}`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/transactions/nft/${params.id}`] });
+      
+      toast({
+        title: "Purchase Successful",
+        description: `You are now the owner of ${nft.name}`,
+      });
+    } catch (error) {
+      console.error("Purchase error:", error);
+      toast({
+        title: "Purchase Failed",
+        description: "There was an error completing your purchase",
+        variant: "destructive",
+      });
+    } finally {
+      setPurchasing(false);
+    }
+  };
+
+  // Handle place bid
+  const handlePlaceBid = async () => {
+    if (!bidAmount || parseFloat(bidAmount) <= 0) {
+      toast({
+        title: "Invalid Bid",
+        description: "Please enter a valid bid amount",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!isConnected) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet to place a bid",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Not logged in",
+        description: "Please log in to place a bid",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if bid is higher than current price/highest bid
+    const currentPrice = parseFloat(nft.price);
+    const highestBid = bids && bids.length > 0
+      ? Math.max(...bids.map((bid: Bid) => parseFloat(bid.amount)))
+      : 0;
+    
+    if (parseFloat(bidAmount) <= highestBid) {
+      toast({
+        title: "Bid too low",
+        description: "Your bid must be higher than the current highest bid",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (parseFloat(bidAmount) < currentPrice) {
+      toast({
+        title: "Bid too low",
+        description: "Your bid must be at least the asking price",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setBidding(true);
+
+    try {
+      // Create a new bid
+      await apiRequest("POST", "/api/bids", {
+        nftId: nft.id,
+        bidderId: user.id,
+        amount: bidAmount,
+        currency: nft.currency,
+        status: "active",
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() // 7 days from now
+      });
+      
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: [`/api/bids/nft/${params.id}`] });
+      
+      toast({
+        title: "Bid Placed",
+        description: `Your bid of ${bidAmount} ${nft.currency} has been placed`,
+      });
+      
+      // Close the bid modal
+      setBidModalOpen(false);
+      setBidAmount("");
+    } catch (error) {
+      console.error("Bid error:", error);
+      toast({
+        title: "Bid Failed",
+        description: "There was an error placing your bid",
+        variant: "destructive",
+      });
+    } finally {
+      setBidding(false);
+    }
+  };
+
+  if (nftLoading || creatorLoading || ownerLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-16 pb-16">
+        <div className="container mx-auto px-4">
+          <Button
+            variant="ghost"
+            className="mb-8"
+            onClick={() => window.history.back()}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div>
+              <Skeleton className="w-full aspect-square rounded-xl" />
+            </div>
+            
+            <div>
+              <Skeleton className="h-10 w-3/4 mb-4" />
+              <Skeleton className="h-6 w-1/2 mb-6" />
+              
+              <div className="flex items-center mb-6">
+                <Skeleton className="h-12 w-12 rounded-full mr-4" />
+                <div>
+                  <Skeleton className="h-4 w-24 mb-2" />
+                  <Skeleton className="h-6 w-32" />
+                </div>
+              </div>
+              
+              <Skeleton className="h-24 w-full mb-6" />
+              <Skeleton className="h-12 w-full mb-4" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!nft) {
+    return (
+      <div className="min-h-screen bg-gray-50 pt-16 pb-16 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-secondary mb-4">NFT Not Found</h1>
+          <p className="text-gray-600 mb-6">The NFT you're looking for doesn't exist.</p>
+          <Button
+            onClick={() => setLocation("/explore")}
+            className="bg-primary hover:bg-primary-dark text-white"
+          >
+            Explore NFTs
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const isOwner = user && nft.ownerId === user.id;
+  const highestBid = bids && bids.length > 0
+    ? Math.max(...bids.map((bid: Bid) => parseFloat(bid.amount)))
+    : 0;
+
+  return (
+    <div className="min-h-screen bg-gray-50 pt-16 pb-16">
+      <div className="container mx-auto px-4">
+        <Button
+          variant="ghost"
+          className="mb-8"
+          onClick={() => window.history.back()}
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
+        
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* NFT Image */}
+          <div className="bg-white rounded-xl shadow-sm p-4">
+            <img
+              src={nft.imageUrl}
+              alt={nft.name}
+              className="w-full rounded-lg object-contain"
+            />
+          </div>
+          
+          {/* NFT Details */}
+          <div>
+            <h1 className="text-3xl font-bold text-secondary mb-2">
+              {nft.name}
+            </h1>
+            
+            <div className="flex items-center mb-6">
+              <div className="flex items-center">
+                <span className="text-gray-500 mr-2">Owned by</span>
+                <Avatar className="h-6 w-6 mr-2">
+                  <AvatarImage src={owner?.profileImage} />
+                  <AvatarFallback>{owner?.username?.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <span 
+                  className="text-primary hover:text-primary-dark cursor-pointer"
+                  onClick={() => setLocation(`/profile/${owner?.id}`)}
+                >
+                  {owner?.username}
+                </span>
+              </div>
+              
+              <div className="ml-4 flex items-center">
+                <span className="text-gray-500 mr-2">Created by</span>
+                <Avatar className="h-6 w-6 mr-2">
+                  <AvatarImage src={creator?.profileImage} />
+                  <AvatarFallback>{creator?.username?.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <span 
+                  className="text-primary hover:text-primary-dark cursor-pointer"
+                  onClick={() => setLocation(`/profile/${creator?.id}`)}
+                >
+                  {creator?.username}
+                </span>
+              </div>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+              {nft.isForSale ? (
+                <>
+                  <div className="flex items-center mb-4">
+                    <Tag className="text-primary mr-2" />
+                    <span className="text-gray-600">
+                      {nft.isBiddable ? "Current price" : "Price"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-3xl font-bold text-secondary">
+                        {nft.price} {nft.currency}
+                      </h2>
+                      {highestBid > 0 && (
+                        <p className="text-gray-500 mt-1">
+                          Highest bid: {highestBid} {nft.currency}
+                        </p>
+                      )}
+                    </div>
+                    {nft.isBiddable && (
+                      <div className="flex items-center">
+                        <Clock className="text-gray-500 mr-2" />
+                        <span className="text-gray-500">
+                          Auction ends in 5h 12m
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {!isOwner ? (
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Button
+                        className="bg-primary hover:bg-primary-dark text-white flex-grow"
+                        onClick={handleBuyNow}
+                        disabled={isPurchasing}
+                      >
+                        {isPurchasing ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          "Buy Now"
+                        )}
+                      </Button>
+                      
+                      {nft.isBiddable && (
+                        <Button
+                          variant="outline"
+                          className="text-primary border-primary hover:bg-primary/10 flex-grow"
+                          onClick={() => setBidModalOpen(true)}
+                        >
+                          Place Bid
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      className="text-primary border-primary hover:bg-primary/10 w-full"
+                      onClick={() => toast({
+                        title: "Not Implemented",
+                        description: "Listing editing is not implemented in this version",
+                      })}
+                    >
+                      Edit Listing
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-6">
+                  <h2 className="text-2xl font-bold text-secondary mb-2">
+                    Not for sale
+                  </h2>
+                  <p className="text-gray-500">
+                    This NFT is currently not listed for sale
+                  </p>
+                  {isOwner && (
+                    <Button
+                      className="bg-primary hover:bg-primary-dark text-white mt-4"
+                      onClick={() => toast({
+                        title: "Not Implemented",
+                        description: "Listing creation is not implemented in this version",
+                      })}
+                    >
+                      List for Sale
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            <div className="flex gap-4 mb-6">
+              <Button variant="outline" className="flex items-center">
+                <Heart className="h-4 w-4 mr-2" />
+                Favorite
+              </Button>
+              <Button variant="outline" className="flex items-center">
+                <Share className="h-4 w-4 mr-2" />
+                Share
+              </Button>
+              <Button
+                variant="outline"
+                className="flex items-center"
+                onClick={() => window.open(`https://explore-testnet.vechain.org/tokens/${nft.tokenId}`, "_blank")}
+              >
+                <ExternalLink className="h-4 w-4 mr-2" />
+                View on Explorer
+              </Button>
+            </div>
+            
+            <Tabs defaultValue="details">
+              <TabsList className="mb-4">
+                <TabsTrigger value="details">Details</TabsTrigger>
+                <TabsTrigger value="bids">Bids</TabsTrigger>
+                <TabsTrigger value="history">History</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="details" className="bg-white rounded-xl shadow-sm p-6">
+                <h3 className="font-bold text-secondary mb-4">Description</h3>
+                <p className="text-gray-600 whitespace-pre-line mb-6">
+                  {nft.description || "No description provided."}
+                </p>
+                
+                <h3 className="font-bold text-secondary mb-4">Properties</h3>
+                {nft.metadata && Object.keys(nft.metadata).length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    {Object.entries(nft.metadata).map(([key, value]) => (
+                      <div key={key} className="bg-gray-50 rounded-lg p-3 text-center">
+                        <p className="text-xs text-gray-500 uppercase">{key}</p>
+                        <p className="font-semibold text-secondary">{String(value)}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-500">No properties</p>
+                )}
+              </TabsContent>
+              
+              <TabsContent value="bids" className="bg-white rounded-xl shadow-sm p-6">
+                {bidsLoading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex justify-between items-center py-4 border-b">
+                      <div className="flex items-center">
+                        <Skeleton className="h-10 w-10 rounded-full mr-3" />
+                        <Skeleton className="h-4 w-24" />
+                      </div>
+                      <Skeleton className="h-6 w-20" />
+                    </div>
+                  ))
+                ) : bids && bids.length > 0 ? (
+                  <div>
+                    {bids.map((bid: Bid) => (
+                      <div key={bid.id} className="flex justify-between items-center py-4 border-b">
+                        <div className="flex items-center">
+                          <Avatar className="h-10 w-10 mr-3">
+                            <AvatarFallback>U</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium">User #{bid.bidderId}</p>
+                            <p className="text-xs text-gray-500">
+                              {new Date(bid.createdAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="font-bold text-primary">
+                          {bid.amount} {bid.currency}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No bids yet</p>
+                  </div>
+                )}
+              </TabsContent>
+              
+              <TabsContent value="history" className="bg-white rounded-xl shadow-sm p-6">
+                {transactionsLoading ? (
+                  Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex justify-between items-center py-4 border-b">
+                      <div>
+                        <Skeleton className="h-5 w-24 mb-1" />
+                        <Skeleton className="h-4 w-32" />
+                      </div>
+                      <Skeleton className="h-6 w-20" />
+                    </div>
+                  ))
+                ) : transactions && transactions.length > 0 ? (
+                  <div>
+                    {transactions.map((tx: any) => (
+                      <div key={tx.id} className="flex justify-between items-center py-4 border-b">
+                        <div>
+                          <p className="font-medium">
+                            Transfer from User #{tx.sellerId} to User #{tx.buyerId}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {new Date(tx.createdAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <p className="font-bold text-primary">
+                          {tx.price} {tx.currency}
+                        </p>
+                      </div>
+                    ))}
+                    <div className="flex justify-between items-center py-4 border-b">
+                      <div>
+                        <p className="font-medium">Minted</p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(nft.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <p className="font-medium text-secondary">
+                        by {creator?.username || `User #${nft.creatorId}`}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-8">
+                    <p className="text-gray-500">No transaction history yet</p>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
+        </div>
+      </div>
+      
+      {/* Bid Modal */}
+      <Dialog open={isBidModalOpen} onOpenChange={setBidModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Place a Bid</DialogTitle>
+            <DialogDescription>
+              Enter your bid amount for {nft.name}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="mb-4">
+              <p className="text-sm text-gray-500 mb-1">Current Price</p>
+              <p className="font-bold text-lg">
+                {nft.price} {nft.currency}
+              </p>
+            </div>
+            {highestBid > 0 && (
+              <div className="mb-4">
+                <p className="text-sm text-gray-500 mb-1">Highest Bid</p>
+                <p className="font-semibold">
+                  {highestBid} {nft.currency}
+                </p>
+              </div>
+            )}
+            <div className="mb-4">
+              <p className="text-sm text-gray-500 mb-1">Your Bid</p>
+              <div className="flex items-center">
+                <Input
+                  type="number"
+                  value={bidAmount}
+                  onChange={(e) => setBidAmount(e.target.value)}
+                  placeholder="Enter bid amount"
+                  min={nft.price}
+                  step="0.1"
+                />
+                <span className="ml-2 font-medium">{nft.currency}</span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                Enter an amount higher than {Math.max(parseFloat(nft.price), highestBid)} {nft.currency}
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setBidModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="bg-primary hover:bg-primary-dark text-white"
+              onClick={handlePlaceBid}
+              disabled={isBidding}
+            >
+              {isBidding ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                "Place Bid"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
