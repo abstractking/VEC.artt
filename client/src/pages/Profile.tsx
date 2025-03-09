@@ -213,6 +213,7 @@ export default function Profile() {
                   <Button
                     variant="outline"
                     className="text-foreground"
+                    onClick={() => setLocation("/edit-profile")}
                   >
                     <Pencil className="h-4 w-4 mr-2" />
                     Edit Profile
