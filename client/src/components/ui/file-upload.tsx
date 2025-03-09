@@ -55,9 +55,17 @@ export function FileUpload({
     const reader = new FileReader();
     reader.onloadend = () => {
       const base64String = reader.result as string;
-      onChange(base64String);
+      // Make sure we have a base64 string
+      if (typeof base64String === 'string' && base64String.startsWith('data:image/')) {
+        console.log("Image successfully converted to base64");
+        onChange(base64String);
+      } else {
+        console.error("Failed to convert image to base64 format");
+        setError("Failed to process the image. Please try a different file.");
+      }
     };
     reader.onerror = () => {
+      console.error("FileReader error:", reader.error);
       setError("Failed to read the file. Please try again.");
     };
     reader.readAsDataURL(file);

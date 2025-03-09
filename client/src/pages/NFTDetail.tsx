@@ -341,11 +341,18 @@ export default function NFTDetail() {
             <img
               src={nft.imageUrl}
               alt={nft.name}
-              className="w-full rounded-lg object-contain"
+              className="w-full rounded-lg object-contain max-h-[70vh]"
               onError={(e) => {
-                // Fallback on error with logging
-                console.log(`NFTDetail: Image load error for NFT ID: ${nft.id}`);
-                (e.target as HTMLImageElement).src = 'https://placehold.co/600x400/808080/ffffff?text=Image+Unavailable';
+                // Detailed error logging
+                const imgElement = e.target as HTMLImageElement;
+                console.error(`NFTDetail: Image load error for NFT ID: ${nft.id}`, { 
+                  url: nft.imageUrl, 
+                  error: e 
+                });
+                // Set a more visually appealing placeholder with the NFT name
+                imgElement.src = `https://placehold.co/800x600/3a4852/ffffff?text=${encodeURIComponent(nft.name || 'NFT')}`;
+                // Add a class to style the placeholder
+                imgElement.classList.add('placeholder-img');
               }}
             />
           </div>
