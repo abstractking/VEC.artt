@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useWallet } from "@/hooks/useVechain";
 import { useAuth } from "@/hooks/useAuth";
 import ThemeToggle from "@/components/ThemeToggle";
+import NotificationCenter from "@/components/NotificationCenter";
 
 export default function Header() {
   const [, navigate] = useLocation();
@@ -89,6 +90,13 @@ export default function Header() {
             <div className="hidden md:block">
               <ThemeToggle />
             </div>
+            
+            {/* Notification Center */}
+            {isConnected && (
+              <div className="hidden md:block">
+                <NotificationCenter />
+              </div>
+            )}
             
             {isConnected ? (
               <Link 
@@ -191,6 +199,13 @@ export default function Header() {
               >
                 Connect Wallet
               </Button>
+            )}
+            
+            {/* Mobile Notification Center */}
+            {isConnected && (
+              <div className="py-2">
+                <NotificationCenter />
+              </div>
             )}
             
             <div className="flex justify-center py-2">

@@ -53,6 +53,9 @@ export const nfts = pgTable("nfts", {
   isBiddable: boolean("is_biddable").default(false),
   metadataHash: text("metadata_hash"),
   metadata: jsonb("metadata"),
+  // Adding transaction-related fields
+  lastSoldPrice: text("last_sold_price"),
+  lastSoldAt: timestamp("last_sold_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

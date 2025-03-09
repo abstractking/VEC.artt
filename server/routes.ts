@@ -48,7 +48,10 @@ function sendNotification(userId: number | null, notification: any) {
     // Broadcast to all connected clients
     const allClients: WebSocketClient[] = [];
     connectedClients.forEach(clients => {
-      allClients.push(...clients);
+      // Add each client individually without using spread operator
+      for (let i = 0; i < clients.length; i++) {
+        allClients.push(clients[i]);
+      }
     });
     
     const message = JSON.stringify({
@@ -456,10 +459,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const bidAmount = parseFloat(data.amount);
       
       if (bidAmount > highestBid) {
-        // Get unique bidders except current one
-        const uniqueBidders = [...new Set(otherBids
+        // Get unique bidders except current one without using Set spread
+        const seenBidderIds = new Map<number, boolean>();
+        const uniqueBidders: number[] = [];
+        
+        otherBids
           .filter(b => b.bidderId !== data.bidderId)
-          .map(b => b.bidderId))];
+          .forEach(b => {
+            if (!seenBidderIds.has(b.bidderId)) {
+              seenBidderIds.set(b.bidderId, true);
+              uniqueBidders.push(b.bidderId);
+            }
+          });
         
         // Notify them about being outbid
         uniqueBidders.forEach(bidderId => {
