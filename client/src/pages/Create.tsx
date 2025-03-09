@@ -168,11 +168,12 @@ export default function Create() {
 
     try {
       // Show minting status toast
-      const mintingToastId = toast({
+      const mintingToast = {
         title: "Minting NFT",
         description: "Please confirm the transaction in your wallet...",
         duration: 10000,
-      }).id;
+      };
+      const { id: mintingToastId } = toast(mintingToast);
 
       // Upload file to IPFS/storage (mock for now)
       // In a real implementation, we would upload to IPFS or similar service
@@ -210,13 +211,13 @@ export default function Create() {
       // Invalidate NFT queries
       queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
       
-      // Close minting toast
-      toast({
-        id: mintingToastId,
+      // Update the minting toast with success message
+      const successToast = {
         title: "NFT Minted Successfully",
         description: "Your NFT has been minted on the VeChain blockchain",
         duration: 5000,
-      });
+      };
+      toast(successToast);
       
       toast({
         title: "NFT Created Successfully",
@@ -693,11 +694,11 @@ export default function Create() {
                       {isSubmitting ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Creating...
+                          Minting on VeChain...
                         </>
                       ) : (
                         <>
-                          Create NFT
+                          Mint NFT on VeChain
                           <CheckCircle2 className="ml-2 h-4 w-4" />
                         </>
                       )}
