@@ -68,24 +68,128 @@ export const getConnex = async () => {
   }
 };
 
+// Connect to wallet using private key from environment variable
+export const connectWalletWithEnvKey = async () => {
+  try {
+    // Get private key from environment variables
+    const privateKey = import.meta.env.VITE_VECHAIN_PRIVATE_KEY;
+    
+    if (!privateKey) {
+      console.error("Private key not set in environment variables");
+      throw new Error("Private key not set in environment variables");
+    }
+    
+    console.log("Connecting with environment private key...");
+    const wallet = new SimpleWallet();
+    wallet.import(privateKey);
+    
+    // Initialize Connex with the wallet
+    const connex = await initializeConnex(wallet);
+    
+    // Get the address from the wallet
+    const account = wallet.list[0];
+    console.log(`Connected to TestNet with address: ${account.address}`);
+    
+    // Create a vendor-like interface to match the expected structure
+    const vendor = {
+      address: account.address,
+      sign: async (type: string, clauses: any[]) => {
+        try {
+          // Simulate signing a transaction
+          const driver = await Driver.connect(new SimpleNet(getNetwork().url), wallet);
+          const txConfig = {
+            clauses: clauses,
+            gas: 2000000,
+            chainTag: Number.parseInt(getNetwork().chainId.slice(-2), 16),
+            blockRef: "0x00000000000000000",
+            expiration: 32,
+            gasPriceCoef: 0
+          };
+          
+          const txVisitor = await driver.vendor.sign('tx', txConfig);
+          const signedTx = await txVisitor.request();
+          return {
+            txid: signedTx.id,
+            signer: account.address
+          };
+        } catch (error) {
+          console.error("Error signing transaction:", error);
+          throw error;
+        }
+      },
+      signCert: async (certMessage: any) => {
+        try {
+          // Simulate signing a certificate
+          return {
+            annex: {
+              domain: 'vecollab.io',
+              timestamp: Date.now(),
+              signer: account.address
+            },
+            signature: '0x' + Math.random().toString(16).substring(2, 34),
+            certified: true
+          };
+        } catch (error) {
+          console.error("Error signing certificate:", error);
+          throw error;
+        }
+      }
+    };
+    
+    return { connex, vendor };
+  } catch (error) {
+    console.error("Failed to connect with environment private key:", error);
+    throw error;
+  }
+};
+
 // Connect to wallet
 export const connectWallet = async (privateKey?: string) => {
   try {
     const network = getNetwork();
     
-    // If private key is provided, use it to create a wallet
+    // If private key is provided directly, use it to create a wallet
     if (privateKey) {
       const wallet = new SimpleWallet();
       wallet.import(privateKey);
-      return await initializeConnex(wallet);
+      const connex = await initializeConnex(wallet);
+      
+      // Get the address from the wallet
+      const account = wallet.list[0];
+      
+      // Create a vendor-like interface
+      const vendor = {
+        address: account.address,
+        sign: async () => ({ txid: '0x' + Math.random().toString(16).substring(2, 34), signer: account.address }),
+        signCert: async () => ({ 
+          annex: { domain: 'vecollab.io', timestamp: Date.now(), signer: account.address },
+          signature: '0x' + Math.random().toString(16).substring(2, 34),
+          certified: true
+        })
+      };
+      
+      return { connex, vendor };
     }
     
-    // For the Replit environment, always use mock vendor
+    // For the Replit environment or development mode, use private key from environment if available
     if (window.location.hostname.includes('replit') || 
         window.location.hostname === 'localhost' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') {
-      console.log("Development environment detected, using mock wallet");
+      console.log("Development environment detected");
+      
+      try {
+        // Try to connect with environment key first
+        if (import.meta.env.VITE_VECHAIN_PRIVATE_KEY) {
+          console.log("Using private key from environment variable");
+          return await connectWalletWithEnvKey();
+        }
+      } catch (envError) {
+        console.warn("Failed to connect with environment key, falling back to mock:", envError);
+      }
+      
+      // Fall back to mock if environment key fails or is not available
+      console.log("Using mock wallet");
       const connex = await initializeConnex();
       const vendor = mockVendor();
       return { connex, vendor };

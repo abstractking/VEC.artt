@@ -1,0 +1,50 @@
+ Implement Private Key Storage for TestNet Connection
+Objective: Store a private key securely as an environment variable and use it to connect to the VeChain TestNet.
+
+Files to Modify:
+
+.env: Store the private key securely.
+client/src/lib/vechain.ts: Modify to utilize the environment variable for connecting to the TestNet.
+Steps:
+
+Environment Setup: Add an entry in your .env file to store your private key.
+Example:
+PRIVATE_KEY=your_private_key_here
+Code Implementation:
+In client/src/lib/vechain.ts, modify the function to extract the private key from the environment variable and use it to connect to the TestNet.
+import { SimpleWallet } from '@vechain/connex-driver';
+export const connectWalletWithEnvKey = async () => {
+  const privateKey = process.env.PRIVATE_KEY;
+  if (!privateKey) {
+    throw new Error("Private key not set in environment variables");
+  }
+  try {
+    const wallet = new SimpleWallet();
+    wallet.import(privateKey);
+    // Initialize Connex or other logic to connect using the wallet
+  } catch (error) {
+    console.error('Failed to connect using private key from env:', error);
+    throw error;
+  }
+};
+// Example usage:
+(async () => {
+  try {
+    await connectWalletWithEnvKey();
+    console.log('Connected to TestNet using environment key');
+  } catch (err) {
+    console.error('Connection failed:', err);
+  }
+})();
+Configuration:
+
+Environment Variables in Replit:
+Go to your Replit project.
+Open the Secrets tool (or Environment Variables if available).
+Add a new entry for PRIVATE_KEY with your actual private key value.
+Ensure your .env file is included in Replit's environment configuration.
+Testing and Validation:
+
+Ensure the application can connect to the TestNet without errors.
+Verify that the private key is not logged or exposed anywhere in your code or output.
+By storing the private key in the environment variables, you gain security and flexibility, allowing for different configurations between development and production environments.
