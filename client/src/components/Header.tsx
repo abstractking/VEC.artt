@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useWallet } from "@/hooks/useVechain";
 import { useAuth } from "@/hooks/useAuth";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Header() {
   const [, navigate] = useLocation();
@@ -43,7 +44,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={`sticky top-0 z-50 bg-white ${isScrolled ? 'shadow-md' : ''} transition-shadow duration-300`}>
+    <header className={`sticky top-0 z-50 bg-background ${isScrolled ? 'shadow-md' : ''} transition-shadow duration-300`}>
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
@@ -87,6 +88,10 @@ export default function Header() {
 
           {/* User Actions */}
           <div className="flex items-center space-x-4">
+            <div className="hidden md:block">
+              <ThemeToggle />
+            </div>
+            
             {isConnected ? (
               <Link href={user ? `/profile/${user.id}` : "/profile"}>
                 <a className="hidden md:flex items-center">
@@ -123,7 +128,7 @@ export default function Header() {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`md:hidden bg-white ${isMenuOpen ? 'block' : 'hidden'}`}>
+      <div className={`md:hidden bg-background ${isMenuOpen ? 'block' : 'hidden'}`}>
         <div className="container mx-auto px-4 py-3">
           <div className="flex flex-col space-y-4">
             <form onSubmit={handleSearch} className="relative">
@@ -193,6 +198,10 @@ export default function Header() {
                 Connect Wallet
               </Button>
             )}
+            
+            <div className="flex justify-center py-2">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </div>
