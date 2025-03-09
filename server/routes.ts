@@ -1,8 +1,18 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
+import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { insertUserSchema, insertCollectionSchema, insertNftSchema, insertBidSchema, insertTransactionSchema } from "@shared/schema";
 import { z } from "zod";
+
+// Define WebSocket connection types
+interface WebSocketClient extends WebSocket {
+  userId?: number;
+  isAlive: boolean;
+}
+
+// Store connected clients
+const connectedClients = new Map<number, WebSocketClient[]>();
 
 // Helper function to validate request body
 function validateRequestBody<T>(schema: z.ZodType<T>, body: any): { data?: T; error?: string } {
@@ -17,13 +27,139 @@ function validateRequestBody<T>(schema: z.ZodType<T>, body: any): { data?: T; er
   }
 }
 
+// Helper functions for notifications
+function sendNotification(userId: number | null, notification: any) {
+  if (userId) {
+    // Send to specific user
+    const userClients = connectedClients.get(userId);
+    if (userClients && userClients.length > 0) {
+      const message = JSON.stringify({
+        type: 'notification',
+        ...notification
+      });
+      
+      userClients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(message);
+        }
+      });
+    }
+  } else {
+    // Broadcast to all connected clients
+    const allClients: WebSocketClient[] = [];
+    connectedClients.forEach(clients => {
+      allClients.push(...clients);
+    });
+    
+    const message = JSON.stringify({
+      type: 'notification',
+      ...notification
+    });
+    
+    allClients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
+  }
+}
+
+// Function to generate unique ID for notifications
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substring(2);
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
+  
+  // Initialize WebSocket server
+  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  
+  // Handle WebSocket connections
+  wss.on('connection', (ws: WebSocketClient) => {
+    ws.isAlive = true;
+    console.log('WebSocket client connected');
+    
+    // Handle messages from client
+    ws.on('message', (message: string) => {
+      try {
+        const data = JSON.parse(message);
+        
+        // Handle authentication
+        if (data.type === 'auth' && data.userId) {
+          const userId = parseInt(data.userId);
+          ws.userId = userId;
+          
+          // Add client to connected clients map
+          if (!connectedClients.has(userId)) {
+            connectedClients.set(userId, []);
+          }
+          connectedClients.get(userId)!.push(ws);
+          
+          console.log(`WebSocket client authenticated: User #${userId}`);
+          
+          // Send welcome notification
+          ws.send(JSON.stringify({
+            type: 'notification',
+            id: generateId(),
+            notificationType: 'system',
+            message: 'Welcome to VeCollab! You will receive real-time notifications here.',
+            timestamp: new Date().toISOString()
+          }));
+        }
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
+      }
+    });
+    
+    // Handle disconnections
+    ws.on('close', () => {
+      if (ws.userId) {
+        const userClients = connectedClients.get(ws.userId);
+        if (userClients) {
+          // Remove this client from the user's client list
+          const index = userClients.indexOf(ws);
+          if (index !== -1) {
+            userClients.splice(index, 1);
+          }
+          
+          // If no clients left for this user, remove the user entry
+          if (userClients.length === 0) {
+            connectedClients.delete(ws.userId);
+          }
+        }
+      }
+      
+      console.log('WebSocket client disconnected');
+    });
+    
+    // Handle pings to keep connection alive
+    ws.on('pong', () => {
+      ws.isAlive = true;
+    });
+  });
+  
+  // Ping clients periodically to check if they're still alive
+  const interval = setInterval(() => {
+    wss.clients.forEach((ws: any) => {
+      const client = ws as WebSocketClient;
+      if (client.isAlive === false) {
+        return client.terminate();
+      }
+      
+      client.isAlive = false;
+      client.ping();
+    });
+  }, 30000); // Check every 30 seconds
+  
+  wss.on('close', () => {
+    clearInterval(interval);
+  });
 
   // User routes
   app.post('/api/users', async (req: Request, res: Response) => {
     const { data, error } = validateRequestBody(insertUserSchema, req.body);
-    if (error) return res.status(400).json({ error });
+    if (error || !data) return res.status(400).json({ error: error || 'Invalid user data' });
 
     try {
       // Check if user with wallet address already exists
@@ -33,6 +169,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.createUser(data);
+      
+      // Send notification about new user registration
+      sendNotification(null, {
+        id: generateId(),
+        notificationType: 'system',
+        message: `New creator ${data.username} joined the platform!`,
+        timestamp: new Date().toISOString(),
+        link: `/profile/${user.id}`
+      });
+      
       res.status(201).json(user);
     } catch (err) {
       res.status(500).json({ error: 'Failed to create user' });
@@ -80,10 +226,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Collection routes
   app.post('/api/collections', async (req: Request, res: Response) => {
     const { data, error } = validateRequestBody(insertCollectionSchema, req.body);
-    if (error) return res.status(400).json({ error });
+    if (error || !data) return res.status(400).json({ error: error || 'Invalid collection data' });
 
     try {
       const collection = await storage.createCollection(data);
+      
+      // Send notification about new collection
+      sendNotification(null, {
+        id: generateId(),
+        notificationType: 'mint',
+        message: `New collection "${data.name}" has been created!`,
+        timestamp: new Date().toISOString(),
+        link: `/collections/${collection.id}`
+      });
+      
+      // Send personalized notification to the creator
+      sendNotification(data.creatorId, {
+        id: generateId(),
+        notificationType: 'mint',
+        message: `Your collection "${data.name}" has been created successfully!`,
+        timestamp: new Date().toISOString(),
+        link: `/collections/${collection.id}`
+      });
+      
       res.status(201).json(collection);
     } catch (err) {
       res.status(500).json({ error: 'Failed to create collection' });
@@ -138,10 +303,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // NFT routes
   app.post('/api/nfts', async (req: Request, res: Response) => {
     const { data, error } = validateRequestBody(insertNftSchema, req.body);
-    if (error) return res.status(400).json({ error });
+    if (error || !data) return res.status(400).json({ error: error || 'Invalid NFT data' });
 
     try {
       const nft = await storage.createNFT(data);
+      
+      // Fetch creator info for notification message
+      const creator = await storage.getUser(data.creatorId);
+      const creatorName = creator ? creator.username : `Artist #${data.creatorId}`;
+      
+      // Send global notification for new NFT mint
+      sendNotification(null, {
+        id: generateId(),
+        notificationType: 'mint',
+        message: `${creatorName} just minted "${data.name}" NFT!`,
+        timestamp: new Date().toISOString(),
+        link: `/nft/${nft.id}`,
+        thumbnail: data.imageUrl
+      });
+      
+      // If the NFT is part of a collection, send notification to collection followers
+      if (data.collectionId) {
+        // In a real implementation we would fetch collection followers here
+        // For now, we'll just send to the collection creator
+        const collection = await storage.getCollection(data.collectionId);
+        if (collection) {
+          sendNotification(collection.creatorId, {
+            id: generateId(),
+            notificationType: 'mint',
+            message: `New NFT "${data.name}" added to your collection "${collection.name}"`,
+            timestamp: new Date().toISOString(),
+            link: `/nft/${nft.id}`,
+            thumbnail: data.imageUrl
+          });
+        }
+      }
+      
       res.status(201).json(nft);
     } catch (err) {
       res.status(500).json({ error: 'Failed to create NFT' });
@@ -216,10 +413,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Bid routes
   app.post('/api/bids', async (req: Request, res: Response) => {
     const { data, error } = validateRequestBody(insertBidSchema, req.body);
-    if (error) return res.status(400).json({ error });
+    if (error || !data) return res.status(400).json({ error: error || 'Invalid bid data' });
 
     try {
       const bid = await storage.createBid(data);
+      
+      // Get NFT details for notification
+      const nft = await storage.getNFT(data.nftId);
+      if (!nft) {
+        throw new Error('NFT not found');
+      }
+      
+      // Get bidder details
+      const bidder = await storage.getUser(data.bidderId);
+      const bidderName = bidder ? bidder.username : `User #${data.bidderId}`;
+      
+      // Notify NFT owner about new bid
+      sendNotification(nft.ownerId, {
+        id: generateId(),
+        notificationType: 'bid',
+        message: `New bid of ${data.amount} ${data.currency || 'VET'} on your NFT "${nft.name}" from ${bidderName}!`,
+        timestamp: new Date().toISOString(),
+        link: `/nft/${nft.id}`,
+        thumbnail: nft.imageUrl
+      });
+      
+      // Notify NFT creator if different from owner
+      if (nft.creatorId !== nft.ownerId) {
+        sendNotification(nft.creatorId, {
+          id: generateId(),
+          notificationType: 'bid',
+          message: `New bid of ${data.amount} ${data.currency || 'VET'} on your created NFT "${nft.name}"!`,
+          timestamp: new Date().toISOString(),
+          link: `/nft/${nft.id}`,
+          thumbnail: nft.imageUrl
+        });
+      }
+      
+      // Notify other bidders about higher bid
+      const otherBids = await storage.getBidsByNFT(nft.id);
+      const highestBid = Math.max(...otherBids.map(b => parseFloat(b.amount)));
+      const bidAmount = parseFloat(data.amount);
+      
+      if (bidAmount > highestBid) {
+        // Get unique bidders except current one
+        const uniqueBidders = [...new Set(otherBids
+          .filter(b => b.bidderId !== data.bidderId)
+          .map(b => b.bidderId))];
+        
+        // Notify them about being outbid
+        uniqueBidders.forEach(bidderId => {
+          sendNotification(bidderId, {
+            id: generateId(),
+            notificationType: 'bid',
+            message: `Your bid on "${nft.name}" has been outbid! New highest bid: ${data.amount} ${data.currency || 'VET'}`,
+            timestamp: new Date().toISOString(),
+            link: `/nft/${nft.id}`,
+            thumbnail: nft.imageUrl
+          });
+        });
+      }
+      
       res.status(201).json(bid);
     } catch (err) {
       res.status(500).json({ error: 'Failed to create bid' });
@@ -262,10 +516,81 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Transaction routes
   app.post('/api/transactions', async (req: Request, res: Response) => {
     const { data, error } = validateRequestBody(insertTransactionSchema, req.body);
-    if (error) return res.status(400).json({ error });
+    if (error || !data) return res.status(400).json({ error: error || 'Invalid transaction data' });
 
     try {
       const transaction = await storage.createTransaction(data);
+      
+      // Get NFT details for notification
+      const nft = await storage.getNFT(data.nftId);
+      if (!nft) {
+        throw new Error('NFT not found');
+      }
+      
+      // Get buyer and seller details
+      const buyer = await storage.getUser(data.buyerId);
+      const seller = await storage.getUser(data.sellerId);
+      
+      const buyerName = buyer ? buyer.username : `User #${data.buyerId}`;
+      const sellerName = seller ? seller.username : `User #${data.sellerId}`;
+      
+      // Notify seller about sale
+      sendNotification(data.sellerId, {
+        id: generateId(),
+        notificationType: 'sale',
+        message: `Your NFT "${nft.name}" has been sold for ${data.price} ${data.currency || 'VET'} to ${buyerName}!`,
+        timestamp: new Date().toISOString(),
+        link: `/nft/${nft.id}`,
+        thumbnail: nft.imageUrl
+      });
+      
+      // Notify buyer about purchase
+      sendNotification(data.buyerId, {
+        id: generateId(),
+        notificationType: 'sale',
+        message: `You successfully purchased "${nft.name}" for ${data.price} ${data.currency || 'VET'} from ${sellerName}!`,
+        timestamp: new Date().toISOString(),
+        link: `/nft/${nft.id}`,
+        thumbnail: nft.imageUrl
+      });
+      
+      // Notify creator if different from seller
+      if (nft.creatorId !== data.sellerId) {
+        // Calculate royalty (typically 5-10%)
+        const royaltyPercentage = 0.1; // 10%
+        const priceValue = parseFloat(data.price);
+        const royaltyAmount = (priceValue * royaltyPercentage).toFixed(2);
+        
+        sendNotification(nft.creatorId, {
+          id: generateId(),
+          notificationType: 'sale',
+          message: `Your created NFT "${nft.name}" was sold for ${data.price} ${data.currency || 'VET'}! You earned ${royaltyAmount} ${data.currency || 'VET'} in royalties.`,
+          timestamp: new Date().toISOString(),
+          link: `/nft/${nft.id}`,
+          thumbnail: nft.imageUrl
+        });
+      }
+      
+      // Send global notification about high-value sales (optional, for marketplace activity)
+      const isHighValue = parseFloat(data.price) >= 1000; // Example threshold
+      if (isHighValue) {
+        sendNotification(null, {
+          id: generateId(),
+          notificationType: 'sale',
+          message: `NFT "${nft.name}" just sold for ${data.price} ${data.currency || 'VET'}! 🔥`,
+          timestamp: new Date().toISOString(),
+          link: `/nft/${nft.id}`,
+          thumbnail: nft.imageUrl
+        });
+      }
+      
+      // Update NFT ownership
+      await storage.updateNFT(nft.id, { 
+        ownerId: data.buyerId,
+        lastSoldPrice: data.price,
+        lastSoldAt: new Date()
+      });
+      
       res.status(201).json(transaction);
     } catch (err) {
       res.status(500).json({ error: 'Failed to create transaction' });
