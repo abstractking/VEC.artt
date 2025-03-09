@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "wouter";
+import { useLocation } from "wouter";
 import {
   CheckCircle2,
   Image,
@@ -59,7 +59,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 export default function EditProfile() {
   const { user, updateProfile } = useAuth();
   const { toast } = useToast();
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   const [isVerificationOpen, setIsVerificationOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isVerificationSubmitting, setIsVerificationSubmitting] = useState(false);
@@ -130,7 +130,7 @@ export default function EditProfile() {
       });
       
       // Navigate back to profile
-      navigate("/profile");
+      setLocation("/profile");
     } catch (error) {
       console.error("Error updating profile:", error);
       toast({
@@ -150,11 +150,8 @@ export default function EditProfile() {
     setIsVerificationSubmitting(true);
     
     try {
-      await apiRequest(`/api/users/${user.id}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          verificationRequestDate: new Date().toISOString(),
-        }),
+      await apiRequest(`/api/users/${user.id}`, "PATCH", {
+        verificationRequestDate: new Date().toISOString(),
       });
       
       toast({
@@ -189,7 +186,7 @@ export default function EditProfile() {
         <h1 className="text-3xl font-bold">Edit Profile</h1>
         <Button 
           variant="outline" 
-          onClick={() => navigate("/profile")}
+          onClick={() => setLocation("/profile")}
         >
           Cancel
         </Button>

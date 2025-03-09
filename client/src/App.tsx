@@ -10,7 +10,9 @@ import Home from "./pages/Home";
 import Explore from "./pages/Explore";
 import Create from "./pages/Create";
 import Profile from "./pages/Profile";
+import EditProfile from "./pages/EditProfile";
 import NFTDetail from "./pages/NFTDetail";
+import EditNFT from "./pages/EditNFT";
 import Artists from "./pages/Artists";
 import NotFound from "./pages/not-found";
 
@@ -27,7 +29,9 @@ function Router() {
         <Route path="/explore" component={Explore} />
         <Route path="/create" component={Create} />
         <Route path="/profile/:id?" component={Profile} />
+        <Route path="/edit-profile" component={EditProfile} />
         <Route path="/nft/:id" component={NFTDetail} />
+        <Route path="/edit-nft/:id" component={EditNFT} />
         <Route path="/artists" component={Artists} />
         
         {/* Footer pages */}

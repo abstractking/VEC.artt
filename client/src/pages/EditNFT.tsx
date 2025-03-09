@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -77,7 +77,7 @@ type EditNftFormValues = z.infer<typeof editNftSchema>;
 export default function EditNFT() {
   const { id } = useParams();
   const nftId = parseInt(id);
-  const [, navigate] = useNavigate();
+  const [, setLocation] = useLocation();
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -113,7 +113,7 @@ export default function EditNFT() {
         description: "Your NFT has been successfully updated.",
       });
       
-      navigate(`/nft/${nftId}`);
+      setLocation(`/nft/${nftId}`);
     },
     onError: (error) => {
       console.error("Error updating NFT:", error);
@@ -213,7 +213,7 @@ export default function EditNFT() {
         </Alert>
         <Button 
           variant="secondary" 
-          onClick={() => navigate("/explore")}
+          onClick={() => setLocation("/explore")}
           className="mt-6"
         >
           Return to Explore
@@ -234,7 +234,7 @@ export default function EditNFT() {
         </Alert>
         <Button 
           variant="secondary" 
-          onClick={() => navigate(`/nft/${nftId}`)}
+          onClick={() => setLocation(`/nft/${nftId}`)}
           className="mt-6"
         >
           Return to NFT Details
@@ -249,7 +249,7 @@ export default function EditNFT() {
         <h1 className="text-3xl font-bold">Edit NFT</h1>
         <Button 
           variant="outline" 
-          onClick={() => navigate(`/nft/${nftId}`)}
+          onClick={() => setLocation(`/nft/${nftId}`)}
         >
           Cancel
         </Button>
