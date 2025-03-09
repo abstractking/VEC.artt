@@ -1,0 +1,50 @@
+WebSocket connection to 'wss://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/?token=JQCsNBp-eotj' failed: 
+setupWebSocket @ client:536
+client:536  Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=JQCsNBp-eotj' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+polyfills.ts:19 Polyfills loaded: Buffer is now available in the browser environment
+react-dom.development.js:29895 Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+NotificationCenter.tsx:61 WebSocket connected
+2Profile.tsx:236  Uncaught ReferenceError: Globe is not defined
+    at Profile (Profile.tsx:236:22)
+    at renderWithHooks (react-dom.development.js:15486:18)
+    at updateFunctionComponent (react-dom.development.js:19617:20)
+    at beginWork (react-dom.development.js:21640:16)
+    at HTMLUnknownElement.callCallback2 (react-dom.development.js:4164:14)
+    at Object.invokeGuardedCallbackDev (react-dom.development.js:4213:16)
+    at invokeGuardedCallback (react-dom.development.js:4277:31)
+    at beginWork$1 (react-dom.development.js:27490:7)
+    at performUnitOfWork (react-dom.development.js:26596:12)
+    at workLoopSync (react-dom.development.js:26505:5)
+react-dom.development.js:18704  The above error occurred in the <Profile> component:
+
+    at Profile (https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/src/pages/Profile.tsx:32:18)
+    at Route (https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=420d0e3b:323:16)
+    at Switch (https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=420d0e3b:379:17)
+    at main
+    at Layout (https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/src/components/Layout.tsx:20:34)
+    at Router
+    at AuthProvider (https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/src/contexts/AuthContext.tsx:24:32)
+    at WalletProvider (https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/src/contexts/WalletContext.tsx:22:34)
+    at QueryClientProvider (https://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=420d0e3b:2805:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ react-dom.development.js:18704
+react-dom.development.js:12056  Uncaught ReferenceError: Globe is not defined
+    at Profile (Profile.tsx:236:22)
+    at renderWithHooks (react-dom.development.js:15486:18)
+    at updateFunctionComponent (react-dom.development.js:19617:20)
+    at beginWork (react-dom.development.js:21640:16)
+    at beginWork$1 (react-dom.development.js:27465:14)
+    at performUnitOfWork (react-dom.development.js:26596:12)
+    at workLoopSync (react-dom.development.js:26505:5)
+    at renderRootSync (react-dom.development.js:26473:7)
+    at recoverFromConcurrentError (react-dom.development.js:25889:20)
+    at performSyncWorkOnRoot (react-dom.development.js:26135:20)
+NotificationCenter.tsx:130  WebSocket connection to 'wss://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/ws' failed: WebSocket is closed before the connection is established.
+(anonymous) @ NotificationCenter.tsx:130
+NotificationCenter.tsx:109  WebSocket error: Event

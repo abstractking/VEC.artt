@@ -10,7 +10,7 @@ import { NFT, User } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Pencil, Copy, ExternalLink, Users } from "lucide-react";
+import { Pencil, Copy, ExternalLink, Users, Globe, Twitter, Instagram } from "lucide-react";
 import NFTCard from "@/components/NFTCard";
 import CollectionCard from "@/components/CollectionCard";
 
