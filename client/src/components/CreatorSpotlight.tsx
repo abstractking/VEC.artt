@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export default function CreatorSpotlight() {
   // Fetch creators (users)
-  const { data: users, isLoading } = useQuery({
+  const { data: users, isLoading } = useQuery<User[]>({
     queryKey: ['/api/users'],
   });
   

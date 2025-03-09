@@ -1,0 +1,142 @@
+**Prompt: Enhance VeCollab DApp with Edit Listing, Edit Profile, Advanced Tracking, and Artist Verification**
+
+The VeCollab DApp (VeChain NFT marketplace) has a working wallet debug mode, consistent dark mode, and NFT shuffle animation. Now, implement the following tasks to add editing capabilities, advanced tracking, and artist verification:
+
+---
+
+#### Task 1: Create a Working "Edit Listing" Button
+**Objective:** Enable verified artists to edit their NFT listings (e.g., price, collab split, royalty percentage).
+
+- **Locate NFT Display:**
+  - Identify where NFT cards are shown (e.g., `Home.tsx`, `Profile.tsx`, or a marketplace component).
+- **Add Edit Button:**
+  - Display an "Edit Listing" button only for NFTs owned by the connected wallet AND if the user is a verified artist (check via a new `isVerified` flag).
+  - Example:
+    ```tsx
+    {nft.owner === walletAddress && isVerified && (
+      <Button onClick={() => handleEditListing(nft.id)}>Edit Listing</Button>
+    )}
+    ```
+- **Edit Form:**
+  - Create a modal or page (`EditListing.tsx`) pre-filled with NFT data (price, collabPercentage, royaltyPercentage, collabWallet).
+  - Reuse `Create.tsx` structure, adapting it for editing.
+- **Backend Update:**
+  - Add a `PATCH /api/nfts/:id` endpoint in `server/routes.ts` to update NFT details in the database.
+  - Example payload: `{ price, collabPercentage, royaltyPercentage, collabWallet }`.
+- **Test:**
+  - Verify the button appears only for verified artists’ NFTs, the form loads current data, and updates save correctly.
+
+---
+
+#### Task 2: Implement an "Edit Profile" Page
+**Objective:** Add a clickable "Edit Profile" button on the profile page for all users to update their details.
+
+- **Profile Page Setup:**
+  - Ensure `Profile.tsx` exists or create it in `client/src/pages/`.
+- **Add Edit Button:** if edit button does not exist already.
+  - Show an "Edit Profile" button when viewing your own profile.
+  - Example:
+    ```tsx
+    {profile.wallet === walletAddress && (
+      <Button asChild>
+        <Link to="/profile/edit">Edit Profile</Link>
+      </Button>
+    )}
+    ```
+- **Create Edit Profile Page:**
+  - Add `EditProfile.tsx` in `client/src/pages/` with a form for fields like username, bio, avatar URL, and social links.
+  - Fetch current profile data using `walletAddress` from `WalletContext`.
+- **Backend API:**
+  - Update or create `PUT /api/users/:walletAddress` to save profile changes.
+  - Schema example: `{ walletAddress, username, bio, avatarUrl, socialLinks }`.
+- **Test:**
+  - Confirm the button appears, the form pre-fills with data, and updates reflect on the profile page.
+
+---
+
+#### Task 3: Enhance Database Tracking for NFTs
+**Objective:** Track additional metrics like time held, likes, and initial price in the database.
+
+- **Update NFT Schema:**
+  - Add fields to the `nfts` table:
+    - `initialPrice` (numeric): Price at first sale.
+    - `purchaseDate` (timestamp): Date of current ownership.
+    - `timeHeld` (integer): Duration in seconds/days since `purchaseDate`.
+    - `likes` (integer): Number of likes on the NFT, default 0.
+  - Migration example (using knex):
+    ```javascript
+    exports.up = function(knex) {
+      return knex.schema.table('nfts', (table) => {
+        table.decimal('initialPrice');
+        table.timestamp('purchaseDate');
+        table.integer('timeHeld');
+        table.integer('likes').defaultTo(0);
+      });
+    };
+    ```
+- **Track Metrics:**
+  - On mint/sale: Set `initialPrice` and `purchaseDate`.
+  - On transfer: Update `purchaseDate` for the new owner and calculate `timeHeld` for the previous owner.
+  - Add a `POST /api/nfts/:id/like` endpoint to increment `likes`.
+- **Frontend Display:**
+  - Show these metrics on NFT cards (e.g., “Held: X days”, “Likes: Y”, “Initial Price: Z VET”).
+- **Test:**
+  - Mint an NFT, like it, transfer it, and verify all fields update correctly.
+
+---
+
+#### Task 4: Implement Artist Verification System
+**Objective:** Restrict NFT minting and listing to verified artist accounts only, while allowing other actions for all users.
+
+- **Database Changes:**
+  - Add `isVerified` (boolean, default `false`) to the `users` table.
+  - Migration example:
+    ```javascript
+    exports.up = function(knex) {
+      return knex.schema.table('users', (table) => {
+        table.boolean('isVerified').defaultTo(false);
+      });
+    };
+    ```
+- **Backend Logic:**
+  - Update `POST /api/nfts` (minting) and `POST /api/nfts/list` (listing) endpoints to check `isVerified`:
+    ```javascript
+    app.post('/api/nfts', async (req, res) => {
+      const { walletAddress } = req.body;
+      const user = await db('users').where({ walletAddress }).first();
+      if (!user.isVerified) return res.status(403).json({ error: 'Only verified artists can mint NFTs' });
+      // Proceed with minting
+    });
+    ```
+- **Frontend Restrictions:**
+  - In `Create.tsx`, disable the minting form or redirect non-verified users with a message:
+    ```tsx
+    const { walletAddress, isVerified } = useWallet();
+    if (!isVerified) return <div>Only verified artists can mint NFTs. Apply for verification <Link to="/verify">here</Link>.</div>;
+    ```
+  - Hide "Edit Listing" for non-verified users (already added in Task 1).
+- **Other Actions:**
+  - Allow all users to like NFTs (`POST /api/nfts/:id/like`), purchase NFTs (`POST /api/nfts/:id/buy`), and edit profiles (`PUT /api/users/:walletAddress`).
+- **Verification Process (Simple Version):**
+  - Add a `POST /api/users/verify` endpoint (for now, manually set `isVerified` to `true` in the database for testing).
+  - Later, expand this to an admin approval flow if desired.
+- **Test:**
+  - Test with a verified account (mint, list, edit) and a non-verified account (like, buy, edit profile only).
+
+---
+
+#### Task 5: General Guidelines
+- **UI Consistency:** Ensure all new components match the dark mode theme with proper contrast.
+- **Error Handling:** Display clear messages for restricted actions (e.g., “You must be a verified artist to mint”).
+- **Comments:** Add notes explaining verification checks and new database fields.
+- **Testing:** Restart the app after each task, take screenshots, and verify functionality.
+
+---
+
+#### Task 6: Deliverables
+- Updated files: `Home.tsx` (or equivalent), `EditListing.tsx`, `Profile.tsx`, `EditProfile.tsx`, `Create.tsx`, `server/routes.ts`, and database migrations.
+- Summary of changes confirming:
+  - "Edit Listing" works for verified artists.
+  - "Edit Profile" works for all users.
+  - New NFT metrics (time held, likes) are tracked and displayed.
+  - Only verified artists can mint/list NFTs, while all users can like, buy, and edit profiles.

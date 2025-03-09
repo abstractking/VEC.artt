@@ -21,7 +21,7 @@ export default function Artists() {
   const [sortBy, setSortBy] = useState("popular");
 
   // Fetch all users (creators)
-  const { data: users, isLoading } = useQuery({
+  const { data: users, isLoading } = useQuery<User[]>({
     queryKey: ['/api/users'],
   });
 

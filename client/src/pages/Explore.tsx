@@ -21,7 +21,7 @@ export default function Explore() {
   const [priceRange, setPriceRange] = useState("all");
 
   // Fetch NFTs
-  const { data: nfts, isLoading } = useQuery({
+  const { data: nfts, isLoading } = useQuery<NFT[]>({
     queryKey: ['/api/nfts'],
   });
 
@@ -36,7 +36,13 @@ export default function Explore() {
       nft.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
       nft.description?.toLowerCase().includes(searchTerm.toLowerCase());
     
-    const matchesCategory = category === "all" || nft.metadata?.category === category;
+    // Handle type-safe category matching
+    const matchesCategory = category === "all" || 
+      (nft.metadata && 
+       typeof nft.metadata === 'object' && 
+       nft.metadata !== null && 
+       'category' in (nft.metadata as Record<string, unknown>) && 
+       (nft.metadata as Record<string, unknown>).category === category);
     
     const matchesPriceRange = priceRange === "all" || (() => {
       const price = parseFloat(nft.price || "0");
