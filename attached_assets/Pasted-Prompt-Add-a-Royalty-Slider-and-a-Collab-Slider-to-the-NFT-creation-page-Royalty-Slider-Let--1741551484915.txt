@@ -1,0 +1,30 @@
+Prompt:
+
+Add a “Royalty Slider” and a “Collab Slider” to the NFT creation page.
+
+Royalty Slider
+Let the user set a percentage (e.g., 0–10%) that will be applied as royalties on secondary sales.
+Store or display the chosen royalty percentage so it can eventually be passed to the smart contract.
+Collab Slider with Wallet Input
+Provide a slider or input that allows the user to set how much of the sale proceeds go to a collaborator’s wallet.
+Include a text field where the user can enter the collaborator’s wallet address.
+For now, just store this data in the component’s state; assume it will eventually be passed to the smart contract to handle splits.
+Adjust the color scheme to ensure sufficient contrast:
+
+No light text on light backgrounds or dark text on dark backgrounds.
+Maintain the overall dark theme but increase contrast where needed (e.g., lighten text or darken backgrounds).
+Keep the brand’s existing color palette, but ensure headings, buttons, and text fields are clearly legible against their backgrounds.
+Create detailed mock drafts for all pages linked in the footer. Write realistic placeholder text and copywriting that explains:
+
+Where each page is located in the navigation or site flow.
+What the page covers (e.g., “Help Center,” “Platform Status,” “Partners,” “Blog,” “Newsletter,” etc.).
+Relevant links or sections on each page (e.g., FAQ links in Help Center, partner application forms, etc.).
+Any special features or calls to action.
+Finally, update the UI so that these footer pages (and the main site) follow the improved color scheme. Keep it consistent with the rest of the marketplace design.
+
+Notes:
+
+Make sure the royalty and collab sliders are integrated into the Create NFT flow (e.g., Step 2: “Pricing” or Step 3: “Review”).
+Provide clear variable names and comments in the code for future integration with the smart contract logic.
+For the footer page mockups, supply thorough placeholder text that can later be replaced with production copy. Include headings, subheadings, and example paragraphs or bullet points.
+Ensure that the color scheme changes are applied site-wide, respecting the brand’s current colors but improving legibility.

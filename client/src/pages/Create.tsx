@@ -40,6 +40,7 @@ import {
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { UploadCloud, Info, Loader2, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
 
 // Extend the schema for NFT creation form
 const createNftSchema = insertNftSchema.extend({
@@ -62,6 +63,9 @@ const createNftSchema = insertNftSchema.extend({
   description: z.string()
     .min(10, "Description must be at least 10 characters")
     .max(1000, "Description must not exceed 1000 characters"),
+  royaltyPercentage: z.number().min(0).max(10).default(0),
+  collabPercentage: z.number().min(0).max(100).default(0),
+  collabWalletAddress: z.string().optional(),
 });
 
 type CreateNftFormValues = z.infer<typeof createNftSchema>;
@@ -94,6 +98,9 @@ export default function Create() {
       isForSale: false,
       isBiddable: false,
       category: "",
+      royaltyPercentage: 0,
+      collabPercentage: 0,
+      collabWalletAddress: "",
     },
   });
 
