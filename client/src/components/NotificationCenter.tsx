@@ -120,36 +120,9 @@ export default function NotificationCenter() {
       Notification.requestPermission();
     }
     
-    // Mock some initial notifications (remove in production)
-    const mockNotifications: Notification[] = [
-      {
-        id: '1',
-        type: 'bid',
-        message: 'New bid of 500 VET on your NFT "Cosmic Voyager"',
-        read: false,
-        timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-        link: '/nft/1'
-      },
-      {
-        id: '2',
-        type: 'sale',
-        message: 'Your NFT "Digital Dreamscape" has been sold for 1200 VET',
-        read: false,
-        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-        link: '/nft/2'
-      },
-      {
-        id: '3',
-        type: 'mint',
-        message: 'Artist @cryptovisionary just minted a new NFT "Future Vision"',
-        read: true,
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-        link: '/nft/3'
-      }
-    ];
-    
-    setNotifications(mockNotifications);
-    setUnreadCount(mockNotifications.filter(n => !n.read).length);
+    // Initialize with empty notifications array
+    setNotifications([]);
+    setUnreadCount(0);
     
     // Cleanup WebSocket on unmount
     return () => {
