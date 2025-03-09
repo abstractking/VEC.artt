@@ -222,6 +222,45 @@ export default function Profile() {
               )}
             </div>
             <p className="text-muted-foreground mt-4">{user?.bio || "No bio provided."}</p>
+            
+            {/* Social Links */}
+            {user && (user.socialLinks as any) && (
+              <div className="flex flex-wrap gap-3 mt-4">
+                {(user.socialLinks as any)?.website && (
+                  <a
+                    href={(user.socialLinks as any).website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center px-3 py-1.5 bg-secondary rounded-full text-sm hover:bg-secondary/80 transition-colors"
+                  >
+                    <Globe className="h-4 w-4 mr-2" />
+                    Website
+                  </a>
+                )}
+                {(user.socialLinks as any)?.twitter && (
+                  <a
+                    href={`https://twitter.com/${(user.socialLinks as any).twitter}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center px-3 py-1.5 bg-[#1DA1F2]/10 text-[#1DA1F2] rounded-full text-sm hover:bg-[#1DA1F2]/20 transition-colors"
+                  >
+                    <Twitter className="h-4 w-4 mr-2" />
+                    Twitter
+                  </a>
+                )}
+                {(user.socialLinks as any)?.instagram && (
+                  <a
+                    href={`https://instagram.com/${(user.socialLinks as any).instagram}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center px-3 py-1.5 bg-[#E1306C]/10 text-[#E1306C] rounded-full text-sm hover:bg-[#E1306C]/20 transition-colors"
+                  >
+                    <Instagram className="h-4 w-4 mr-2" />
+                    Instagram
+                  </a>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
