@@ -53,11 +53,11 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-lg mb-4">Resources</h3>
             <ul className="space-y-2">
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Platform Status</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Partners</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Blog</a></li>
-              <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Newsletter</a></li>
+              <li><Link href="/help" className="text-gray-400 hover:text-white transition-colors">Help Center</Link></li>
+              <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Platform Status</Link></li>
+              <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Partners</Link></li>
+              <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Blog</Link></li>
+              <li><Link href="#" className="text-gray-400 hover:text-white transition-colors">Newsletter</Link></li>
             </ul>
           </div>
         </div>
@@ -65,8 +65,8 @@ export default function Footer() {
         <div className="border-t border-gray-700 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-400 mb-4 md:mb-0">© 2025 VeCollab. All rights reserved.</p>
           <div className="flex space-x-6">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
+            <Link href="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="text-gray-400 hover:text-white transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

@@ -14,6 +14,11 @@ import NFTDetail from "./pages/NFTDetail";
 import Artists from "./pages/Artists";
 import NotFound from "./pages/not-found";
 
+// Footer pages
+import HelpCenter from "./pages/footer/HelpCenter";
+import PrivacyPolicy from "./pages/footer/PrivacyPolicy";
+import TermsOfService from "./pages/footer/TermsOfService";
+
 function Router() {
   return (
     <Layout>
@@ -24,6 +29,12 @@ function Router() {
         <Route path="/profile/:id?" component={Profile} />
         <Route path="/nft/:id" component={NFTDetail} />
         <Route path="/artists" component={Artists} />
+        
+        {/* Footer pages */}
+        <Route path="/help" component={HelpCenter} />
+        <Route path="/privacy-policy" component={PrivacyPolicy} />
+        <Route path="/terms-of-service" component={TermsOfService} />
+        
         <Route path="/:rest*" component={NotFound} />
       </Switch>
     </Layout>
