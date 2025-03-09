@@ -49,26 +49,24 @@ export default function Header() {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <div className="flex items-center">
-            <Link href="/">
-              <a className="text-primary font-bold text-2xl cursor-pointer">
-                <span className="text-secondary">Ve</span>Collab
-              </a>
+            <Link href="/" className="text-primary font-bold text-2xl cursor-pointer">
+              <span className="text-secondary">Ve</span>Collab
             </Link>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/">
-              <a className="font-medium text-secondary hover:text-primary transition-colors">Home</a>
+            <Link href="/" className="font-medium text-secondary hover:text-primary transition-colors">
+              Home
             </Link>
-            <Link href="/explore">
-              <a className="font-medium text-secondary hover:text-primary transition-colors">Explore</a>
+            <Link href="/explore" className="font-medium text-secondary hover:text-primary transition-colors">
+              Explore
             </Link>
-            <Link href="/create">
-              <a className="font-medium text-secondary hover:text-primary transition-colors">Create</a>
+            <Link href="/create" className="font-medium text-secondary hover:text-primary transition-colors">
+              Create
             </Link>
-            <Link href="/artists">
-              <a className="font-medium text-secondary hover:text-primary transition-colors">Artists</a>
+            <Link href="/artists" className="font-medium text-secondary hover:text-primary transition-colors">
+              Artists
             </Link>
           </nav>
 
@@ -93,15 +91,16 @@ export default function Header() {
             </div>
             
             {isConnected ? (
-              <Link href={user ? `/profile/${user.id}` : "/profile"}>
-                <a className="hidden md:flex items-center">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold mr-2">
-                    {user?.username?.charAt(0).toUpperCase() || "U"}
-                  </div>
-                  <span className="font-medium text-secondary">
-                    {user?.username || "Profile"}
-                  </span>
-                </a>
+              <Link 
+                href={user ? `/profile/${user.id}` : "/profile"} 
+                className="hidden md:flex items-center"
+              >
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold mr-2">
+                  {user?.username?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <span className="font-medium text-secondary">
+                  {user?.username || "Profile"}
+                </span>
               </Link>
             ) : (
               <Button
@@ -142,53 +141,48 @@ export default function Header() {
               <Search className="absolute left-3 top-2.5 text-gray-400 h-5 w-5" />
             </form>
             
-            <Link href="/">
-              <a
-                className="font-medium text-secondary hover:text-primary transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </a>
+            <Link 
+              href="/" 
+              className="font-medium text-secondary hover:text-primary transition-colors py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Home
             </Link>
             
-            <Link href="/explore">
-              <a
-                className="font-medium text-secondary hover:text-primary transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Explore
-              </a>
+            <Link 
+              href="/explore" 
+              className="font-medium text-secondary hover:text-primary transition-colors py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Explore
             </Link>
             
-            <Link href="/create">
-              <a
-                className="font-medium text-secondary hover:text-primary transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Create
-              </a>
+            <Link 
+              href="/create" 
+              className="font-medium text-secondary hover:text-primary transition-colors py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Create
             </Link>
             
-            <Link href="/artists">
-              <a
-                className="font-medium text-secondary hover:text-primary transition-colors py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Artists
-              </a>
+            <Link 
+              href="/artists" 
+              className="font-medium text-secondary hover:text-primary transition-colors py-2"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Artists
             </Link>
             
             {isConnected ? (
-              <Link href={user ? `/profile/${user.id}` : "/profile"}>
-                <a
-                  className="font-medium text-secondary hover:text-primary transition-colors py-2 flex items-center"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold mr-2">
-                    {user?.username?.charAt(0).toUpperCase() || "U"}
-                  </div>
-                  <span>{user?.username || "Profile"}</span>
-                </a>
+              <Link 
+                href={user ? `/profile/${user.id}` : "/profile"}
+                className="font-medium text-secondary hover:text-primary transition-colors py-2 flex items-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold mr-2">
+                  {user?.username?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <span>{user?.username || "Profile"}</span>
               </Link>
             ) : (
               <Button
