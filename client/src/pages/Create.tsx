@@ -168,12 +168,11 @@ export default function Create() {
 
     try {
       // Show minting status toast
-      const mintingToast = {
+      const mintingToast = toast({
         title: "Minting NFT",
         description: "Please confirm the transaction in your wallet...",
         duration: 10000,
-      };
-      const { id: mintingToastId } = toast(mintingToast);
+      });
 
       // Upload file to IPFS/storage (mock for now)
       // In a real implementation, we would upload to IPFS or similar service
@@ -211,13 +210,12 @@ export default function Create() {
       // Invalidate NFT queries
       queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
       
-      // Update the minting toast with success message
-      const successToast = {
+      // Show success toasts
+      toast({
         title: "NFT Minted Successfully",
         description: "Your NFT has been minted on the VeChain blockchain",
         duration: 5000,
-      };
-      toast(successToast);
+      });
       
       toast({
         title: "NFT Created Successfully",
