@@ -3,8 +3,10 @@ import {
   collections, type Collection, type InsertCollection,
   nfts, type NFT, type InsertNFT,
   bids, type Bid, type InsertBid,
-  transactions, type Transaction, type InsertTransaction 
+  transactions, type Transaction, type InsertTransaction
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc, and } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -46,208 +48,228 @@ export interface IStorage {
   createTransaction(transaction: InsertTransaction): Promise<Transaction>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private collections: Map<number, Collection>;
-  private nfts: Map<number, NFT>;
-  private bids: Map<number, Bid>;
-  private transactions: Map<number, Transaction>;
-  
-  private userIdCounter: number;
-  private collectionIdCounter: number;
-  private nftIdCounter: number;
-  private bidIdCounter: number;
-  private transactionIdCounter: number;
-  
-  constructor() {
-    this.users = new Map();
-    this.collections = new Map();
-    this.nfts = new Map();
-    this.bids = new Map();
-    this.transactions = new Map();
-    
-    this.userIdCounter = 1;
-    this.collectionIdCounter = 1;
-    this.nftIdCounter = 1;
-    this.bidIdCounter = 1;
-    this.transactionIdCounter = 1;
-  }
-  
+// Database Storage Implementation
+export class DatabaseStorage implements IStorage {
   // User methods
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
   
   async getUserByWalletAddress(walletAddress: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      user => user.walletAddress.toLowerCase() === walletAddress.toLowerCase()
-    );
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.walletAddress, walletAddress));
+    return user || undefined;
   }
   
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      user => user.username === username
-    );
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
+    return user || undefined;
   }
   
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userIdCounter++;
-    const now = new Date();
-    const user: User = { ...insertUser, id, createdAt: now };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
   
   async updateUser(id: number, userUpdate: Partial<InsertUser>): Promise<User | undefined> {
-    const user = this.users.get(id);
-    if (!user) return undefined;
-    
-    const updatedUser = { ...user, ...userUpdate };
-    this.users.set(id, updatedUser);
-    return updatedUser;
+    const [user] = await db
+      .update(users)
+      .set(userUpdate)
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
   }
   
   // Collection methods
   async getCollection(id: number): Promise<Collection | undefined> {
-    return this.collections.get(id);
+    const [collection] = await db
+      .select()
+      .from(collections)
+      .where(eq(collections.id, id));
+    return collection || undefined;
   }
   
   async getCollectionsByCreator(creatorId: number): Promise<Collection[]> {
-    return Array.from(this.collections.values()).filter(
-      collection => collection.creatorId === creatorId
-    );
+    return await db
+      .select()
+      .from(collections)
+      .where(eq(collections.creatorId, creatorId))
+      .orderBy(desc(collections.createdAt));
   }
   
   async getAllCollections(): Promise<Collection[]> {
-    return Array.from(this.collections.values());
+    return await db
+      .select()
+      .from(collections)
+      .orderBy(desc(collections.createdAt));
   }
   
   async createCollection(insertCollection: InsertCollection): Promise<Collection> {
-    const id = this.collectionIdCounter++;
-    const now = new Date();
-    const collection: Collection = { ...insertCollection, id, createdAt: now };
-    this.collections.set(id, collection);
+    const [collection] = await db
+      .insert(collections)
+      .values(insertCollection)
+      .returning();
     return collection;
   }
   
   async updateCollection(id: number, collectionUpdate: Partial<InsertCollection>): Promise<Collection | undefined> {
-    const collection = this.collections.get(id);
-    if (!collection) return undefined;
-    
-    const updatedCollection = { ...collection, ...collectionUpdate };
-    this.collections.set(id, updatedCollection);
-    return updatedCollection;
+    const [collection] = await db
+      .update(collections)
+      .set(collectionUpdate)
+      .where(eq(collections.id, id))
+      .returning();
+    return collection || undefined;
   }
   
   // NFT methods
   async getNFT(id: number): Promise<NFT | undefined> {
-    return this.nfts.get(id);
+    const [nft] = await db
+      .select()
+      .from(nfts)
+      .where(eq(nfts.id, id));
+    return nft || undefined;
   }
   
   async getNFTsByOwner(ownerId: number): Promise<NFT[]> {
-    return Array.from(this.nfts.values()).filter(
-      nft => nft.ownerId === ownerId
-    );
+    return await db
+      .select()
+      .from(nfts)
+      .where(eq(nfts.ownerId, ownerId))
+      .orderBy(desc(nfts.createdAt));
   }
   
   async getNFTsByCreator(creatorId: number): Promise<NFT[]> {
-    return Array.from(this.nfts.values()).filter(
-      nft => nft.creatorId === creatorId
-    );
+    return await db
+      .select()
+      .from(nfts)
+      .where(eq(nfts.creatorId, creatorId))
+      .orderBy(desc(nfts.createdAt));
   }
   
   async getNFTsByCollection(collectionId: number): Promise<NFT[]> {
-    return Array.from(this.nfts.values()).filter(
-      nft => nft.collectionId === collectionId
-    );
+    return await db
+      .select()
+      .from(nfts)
+      .where(eq(nfts.collectionId, collectionId))
+      .orderBy(desc(nfts.createdAt));
   }
   
   async getAllNFTs(): Promise<NFT[]> {
-    return Array.from(this.nfts.values());
+    return await db
+      .select()
+      .from(nfts)
+      .orderBy(desc(nfts.createdAt));
   }
   
   async createNFT(insertNFT: InsertNFT): Promise<NFT> {
-    const id = this.nftIdCounter++;
-    const now = new Date();
-    const nft: NFT = { ...insertNFT, id, createdAt: now };
-    this.nfts.set(id, nft);
+    const [nft] = await db
+      .insert(nfts)
+      .values(insertNFT)
+      .returning();
     return nft;
   }
   
   async updateNFT(id: number, nftUpdate: Partial<InsertNFT>): Promise<NFT | undefined> {
-    const nft = this.nfts.get(id);
-    if (!nft) return undefined;
-    
-    const updatedNFT = { ...nft, ...nftUpdate };
-    this.nfts.set(id, updatedNFT);
-    return updatedNFT;
+    const [nft] = await db
+      .update(nfts)
+      .set(nftUpdate)
+      .where(eq(nfts.id, id))
+      .returning();
+    return nft || undefined;
   }
   
   // Bid methods
   async getBid(id: number): Promise<Bid | undefined> {
-    return this.bids.get(id);
+    const [bid] = await db
+      .select()
+      .from(bids)
+      .where(eq(bids.id, id));
+    return bid || undefined;
   }
   
   async getBidsByNFT(nftId: number): Promise<Bid[]> {
-    return Array.from(this.bids.values()).filter(
-      bid => bid.nftId === nftId
-    );
+    return await db
+      .select()
+      .from(bids)
+      .where(eq(bids.nftId, nftId))
+      .orderBy(desc(bids.createdAt));
   }
   
   async getBidsByBidder(bidderId: number): Promise<Bid[]> {
-    return Array.from(this.bids.values()).filter(
-      bid => bid.bidderId === bidderId
-    );
+    return await db
+      .select()
+      .from(bids)
+      .where(eq(bids.bidderId, bidderId))
+      .orderBy(desc(bids.createdAt));
   }
   
   async createBid(insertBid: InsertBid): Promise<Bid> {
-    const id = this.bidIdCounter++;
-    const now = new Date();
-    const bid: Bid = { ...insertBid, id, createdAt: now };
-    this.bids.set(id, bid);
+    const [bid] = await db
+      .insert(bids)
+      .values(insertBid)
+      .returning();
     return bid;
   }
   
   async updateBid(id: number, bidUpdate: Partial<InsertBid>): Promise<Bid | undefined> {
-    const bid = this.bids.get(id);
-    if (!bid) return undefined;
-    
-    const updatedBid = { ...bid, ...bidUpdate };
-    this.bids.set(id, updatedBid);
-    return updatedBid;
+    const [bid] = await db
+      .update(bids)
+      .set(bidUpdate)
+      .where(eq(bids.id, id))
+      .returning();
+    return bid || undefined;
   }
   
   // Transaction methods
   async getTransaction(id: number): Promise<Transaction | undefined> {
-    return this.transactions.get(id);
+    const [transaction] = await db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.id, id));
+    return transaction || undefined;
   }
   
   async getTransactionsByNFT(nftId: number): Promise<Transaction[]> {
-    return Array.from(this.transactions.values()).filter(
-      transaction => transaction.nftId === nftId
-    );
+    return await db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.nftId, nftId))
+      .orderBy(desc(transactions.createdAt));
   }
   
   async getTransactionsBySeller(sellerId: number): Promise<Transaction[]> {
-    return Array.from(this.transactions.values()).filter(
-      transaction => transaction.sellerId === sellerId
-    );
+    return await db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.sellerId, sellerId))
+      .orderBy(desc(transactions.createdAt));
   }
   
   async getTransactionsByBuyer(buyerId: number): Promise<Transaction[]> {
-    return Array.from(this.transactions.values()).filter(
-      transaction => transaction.buyerId === buyerId
-    );
+    return await db
+      .select()
+      .from(transactions)
+      .where(eq(transactions.buyerId, buyerId))
+      .orderBy(desc(transactions.createdAt));
   }
   
   async createTransaction(insertTransaction: InsertTransaction): Promise<Transaction> {
-    const id = this.transactionIdCounter++;
-    const now = new Date();
-    const transaction: Transaction = { ...insertTransaction, id, createdAt: now };
-    this.transactions.set(id, transaction);
+    const [transaction] = await db
+      .insert(transactions)
+      .values(insertTransaction)
+      .returning();
     return transaction;
   }
 }
 
 // Export storage instance
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
