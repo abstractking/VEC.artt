@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { connectWallet as connectVeChainWallet, getWalletAddress } from "@/lib/vechain";
 import { useToast } from "@/hooks/use-toast";
 
@@ -23,9 +23,15 @@ export function WalletProvider({ children }: WalletProviderProps) {
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpenState] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  
+  // Use useCallback for setModalOpen to ensure stable reference
+  const setModalOpen = useCallback((isOpen: boolean) => {
+    console.log("Setting modal open state to:", isOpen);
+    setIsModalOpenState(isOpen);
+  }, []);
 
   // Check if wallet is already connected on mount
   useEffect(() => {
@@ -48,7 +54,8 @@ export function WalletProvider({ children }: WalletProviderProps) {
     checkWalletConnection();
   }, []);
 
-  const connectWallet = async (walletType?: string) => {
+  const connectWallet = useCallback(async (walletType?: string) => {
+    console.log("Attempting to connect wallet:", walletType || "VeChain");
     setIsConnecting(true);
     setError(null);
     
@@ -64,7 +71,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
           console.log("Setting wallet address to:", result.vendor.address);
           setWalletAddress(result.vendor.address);
           setIsConnected(true);
-          setIsModalOpen(false);
+          setModalOpen(false);
           
           toast({
             title: "Wallet Connected",
@@ -90,9 +97,10 @@ export function WalletProvider({ children }: WalletProviderProps) {
     } finally {
       setIsConnecting(false);
     }
-  };
+  }, [toast, setModalOpen]);
 
-  const disconnectWallet = () => {
+  const disconnectWallet = useCallback(() => {
+    console.log("Disconnecting wallet");
     setWalletAddress(null);
     setIsConnected(false);
     
@@ -100,7 +108,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
       title: "Wallet Disconnected",
       description: "Your wallet has been disconnected",
     });
-  };
+  }, [toast]);
 
   const value = {
     walletAddress,
@@ -110,7 +118,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
     error,
     connectWallet,
     disconnectWallet,
-    setModalOpen: setIsModalOpen,
+    setModalOpen,
   };
 
   return (
