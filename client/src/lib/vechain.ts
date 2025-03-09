@@ -80,7 +80,18 @@ export const connectWallet = async (privateKey?: string) => {
       return await initializeConnex(wallet);
     }
     
-    // Check if Thor wallet is available in the browser
+    // For the Replit environment, always use mock vendor
+    if (window.location.hostname.includes('replit') || 
+        window.location.hostname === 'localhost' || 
+        import.meta.env.DEV || 
+        import.meta.env.MODE === 'development') {
+      console.log("Development environment detected, using mock wallet");
+      const connex = await initializeConnex();
+      const vendor = mockVendor();
+      return { connex, vendor };
+    }
+    
+    // For production: Check if Thor wallet is available in the browser
     if (typeof window !== 'undefined' && (window as any).thor) {
       try {
         console.log("VeChain Thor wallet found, attempting to enable...");
@@ -109,6 +120,15 @@ export const connectWallet = async (privateKey?: string) => {
 // Get wallet address from the connected wallet
 export const getWalletAddress = async () => {
   try {
+    // For the Replit environment, always use mock address
+    if (window.location.hostname.includes('replit') || 
+        window.location.hostname === 'localhost' || 
+        import.meta.env.DEV || 
+        import.meta.env.MODE === 'development') {
+      console.log("Development environment detected, using mock wallet address");
+      return '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed';
+    }
+    
     // Check if Thor wallet is available
     if (typeof window !== 'undefined' && (window as any).thor) {
       try {
@@ -195,6 +215,20 @@ export const executeContractMethod = async (
   params: any[] = []
 ) => {
   try {
+    // For the Replit environment, always use mock vendor
+    if (window.location.hostname.includes('replit') || 
+        window.location.hostname === 'localhost' || 
+        import.meta.env.DEV || 
+        import.meta.env.MODE === 'development') {
+      console.log(`Development environment detected, mocking contract execution for ${methodName}`);
+      const mockVendorInstance = mockVendor();
+      return await mockVendorInstance.sign('tx', [{
+        to: contractAddress,
+        value: '0x0',
+        data: '0x' + Math.random().toString(16).substring(2, 10)
+      }]);
+    }
+    
     if (typeof window !== 'undefined' && (window as any).thor) {
       // Check if Thor wallet is available
       console.log(`Executing contract method ${methodName} on ${contractAddress}`);
