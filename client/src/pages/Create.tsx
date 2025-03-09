@@ -37,7 +37,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, UploadCloud, Info } from "lucide-react";
+import { UploadCloud, Info, Loader2, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 
 // Extend the schema for NFT creation form
 const createNftSchema = insertNftSchema.extend({
@@ -103,6 +103,34 @@ export default function Create() {
       // Create preview URL
       const url = URL.createObjectURL(files[0]);
       setPreviewUrl(url);
+    }
+  };
+
+  // Navigate to next step
+  const goToNextStep = async () => {
+    let fieldsToValidate: (keyof CreateNftFormValues)[] = [];
+    
+    if (currentStep === 'details') {
+      fieldsToValidate = ['name', 'description', 'category', 'file'];
+      const isValid = await form.trigger(fieldsToValidate);
+      if (isValid) setCurrentStep('pricing');
+    } else if (currentStep === 'pricing') {
+      if (form.getValues('isForSale')) {
+        fieldsToValidate = ['price'];
+        const isValid = await form.trigger(fieldsToValidate);
+        if (isValid) setCurrentStep('review');
+      } else {
+        setCurrentStep('review');
+      }
+    }
+  };
+
+  // Navigate to previous step
+  const goToPrevStep = () => {
+    if (currentStep === 'pricing') {
+      setCurrentStep('details');
+    } else if (currentStep === 'review') {
+      setCurrentStep('pricing');
     }
   };
 
@@ -185,13 +213,13 @@ export default function Create() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16 pb-16">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 pb-16">
       <div className="container mx-auto px-4">
         <div className="flex flex-col mb-10">
-          <h1 className="text-3xl font-bold font-poppins text-secondary mb-2">
+          <h1 className="text-3xl font-bold font-poppins text-secondary dark:text-white mb-2">
             Create a New NFT
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-gray-400">
             Create your unique NFT on VeChain blockchain and sell it on the marketplace
           </p>
         </div>
@@ -205,8 +233,8 @@ export default function Create() {
                 <CardDescription>This is how your NFT will appear in the marketplace</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="bg-white rounded-xl overflow-hidden border border-gray-200">
-                  <div className="relative group h-64 bg-gray-100 flex items-center justify-center">
+                <div className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                  <div className="relative group h-64 bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
                     {previewUrl ? (
                       <img 
                         src={previewUrl} 
@@ -216,7 +244,7 @@ export default function Create() {
                     ) : (
                       <div className="text-center p-6">
                         <UploadCloud className="h-12 w-12 text-gray-300 mx-auto mb-2" />
-                        <p className="text-gray-500 text-sm">
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">
                           NFT preview will appear here
                         </p>
                       </div>
@@ -231,21 +259,21 @@ export default function Create() {
                           className="w-8 h-8 rounded-full" 
                         />
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-gray-200"></div>
+                        <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600"></div>
                       )}
                       <div className="ml-2">
-                        <p className="text-xs text-gray-500">Creator</p>
-                        <p className="text-sm font-semibold">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Creator</p>
+                        <p className="text-sm font-semibold dark:text-gray-200">
                           {user?.username || "Your username"}
                         </p>
                       </div>
                     </div>
-                    <h3 className="font-bold text-secondary text-lg mb-2">
+                    <h3 className="font-bold text-secondary dark:text-white text-lg mb-2">
                       {form.watch("name") || "NFT Name"}
                     </h3>
                     <div className="flex justify-between items-center">
                       <div>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
                           {form.watch("isForSale") 
                             ? (form.watch("isBiddable") ? "Current Bid" : "Price") 
                             : "Not for sale"}
@@ -275,10 +303,10 @@ export default function Create() {
                 {!isConnected ? (
                   <div className="text-center py-6">
                     <Info className="h-12 w-12 text-primary mx-auto mb-4" />
-                    <h3 className="text-lg font-bold text-secondary mb-2">
+                    <h3 className="text-lg font-bold text-secondary dark:text-white mb-2">
                       Connect your wallet
                     </h3>
-                    <p className="text-gray-500 mb-4">
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">
                       You need to connect your VeChain wallet to create an NFT
                     </p>
                     <Button
@@ -290,154 +318,141 @@ export default function Create() {
                   </div>
                 ) : (
                   <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                      <FormField
-                        control={form.control}
-                        name="file"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>NFT Image</FormLabel>
-                            <FormControl>
-                              <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:bg-gray-50 transition-colors"
-                                onClick={() => fileInputRef.current?.click()}
-                              >
-                                <input
-                                  type="file"
-                                  ref={fileInputRef}
-                                  className="hidden"
-                                  accept="image/*"
-                                  onChange={handleFileChange}
-                                />
-                                {previewUrl ? (
-                                  <div className="relative">
-                                    <img 
-                                      src={previewUrl} 
-                                      alt="Preview" 
-                                      className="max-h-48 rounded-lg" 
-                                    />
-                                    <Button
-                                      type="button"
-                                      variant="secondary"
-                                      size="sm"
-                                      className="mt-2"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setPreviewUrl("");
-                                        form.setValue("file", undefined as any);
-                                      }}
-                                    >
-                                      Change Image
-                                    </Button>
-                                  </div>
-                                ) : (
-                                  <>
-                                    <UploadCloud className="h-12 w-12 text-gray-400 mb-3" />
-                                    <p className="text-gray-600 font-medium">Click to upload</p>
-                                    <p className="text-gray-500 text-sm mt-1">
-                                      Supports JPG, PNG, GIF (Max 10MB)
-                                    </p>
-                                  </>
-                                )}
-                              </div>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>NFT Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter the name of your NFT" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                              <Textarea 
-                                placeholder="Describe your NFT..." 
-                                className="resize-none" 
-                                {...field} 
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="category"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Category</FormLabel>
-                            <Select value={field.value} onValueChange={field.onChange}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select category" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="art">Art</SelectItem>
-                                <SelectItem value="collectibles">Collectibles</SelectItem>
-                                <SelectItem value="photography">Photography</SelectItem>
-                                <SelectItem value="music">Music</SelectItem>
-                                <SelectItem value="games">Games</SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="isForSale"
-                        render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                            <div className="space-y-0.5">
-                              <FormLabel className="text-base">Put on sale</FormLabel>
-                              <FormDescription>
-                                List your NFT for sale on the marketplace
-                              </FormDescription>
+                    <div className="mb-8">
+                      <div className="relative">
+                        <div className="flex items-center justify-between mb-4">
+                          <div 
+                            className={`flex items-center cursor-pointer ${currentStep === 'details' ? 'text-primary font-semibold' : 'text-gray-500 dark:text-gray-400'}`}
+                            onClick={() => setCurrentStep('details')}
+                          >
+                            <div className={`flex items-center justify-center w-8 h-8 rounded-full mr-2 ${currentStep === 'details' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
+                              1
                             </div>
-                            <FormControl>
-                              <Switch
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </FormControl>
-                          </FormItem>
-                        )}
-                      />
-
-                      {form.watch("isForSale") && (
+                            <span>Details</span>
+                          </div>
+                          <div className="flex-1 h-0.5 mx-4 bg-gray-200 dark:bg-gray-700">
+                            <div className={`h-full bg-primary transition-all ${currentStep === 'details' ? 'w-0' : currentStep === 'pricing' ? 'w-1/2' : 'w-full'}`}></div>
+                          </div>
+                          <div 
+                            className={`flex items-center cursor-pointer ${currentStep === 'pricing' ? 'text-primary font-semibold' : 'text-gray-500 dark:text-gray-400'}`}
+                            onClick={() => {
+                              if (Object.keys(form.formState.errors).length === 0 || currentStep === 'pricing' || currentStep === 'review') {
+                                setCurrentStep('pricing');
+                              } else {
+                                form.trigger(['name', 'description', 'category', 'file']);
+                              }
+                            }}
+                          >
+                            <div className={`flex items-center justify-center w-8 h-8 rounded-full mr-2 ${currentStep === 'pricing' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
+                              2
+                            </div>
+                            <span>Pricing</span>
+                          </div>
+                          <div className="flex-1 h-0.5 mx-4 bg-gray-200 dark:bg-gray-700">
+                            <div className={`h-full bg-primary transition-all ${currentStep === 'review' ? 'w-full' : 'w-0'}`}></div>
+                          </div>
+                          <div 
+                            className={`flex items-center cursor-pointer ${currentStep === 'review' ? 'text-primary font-semibold' : 'text-gray-500 dark:text-gray-400'}`}
+                            onClick={() => {
+                              if (Object.keys(form.formState.errors).length === 0 || currentStep === 'review') {
+                                setCurrentStep('review');
+                              } else {
+                                form.trigger();
+                              }
+                            }}
+                          >
+                            <div className={`flex items-center justify-center w-8 h-8 rounded-full mr-2 ${currentStep === 'review' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
+                              3
+                            </div>
+                            <span>Review</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      {/* Step 1: Details */}
+                      {currentStep === 'details' && (
                         <>
                           <FormField
                             control={form.control}
-                            name="price"
+                            name="file"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Price (VET)</FormLabel>
+                                <FormLabel>NFT Image</FormLabel>
                                 <FormControl>
-                                  <Input
-                                    type="number"
-                                    placeholder="Enter price in VET"
-                                    min="0"
-                                    step="0.01"
-                                    {...field}
+                                  <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                    onClick={() => fileInputRef.current?.click()}
+                                  >
+                                    <input
+                                      type="file"
+                                      ref={fileInputRef}
+                                      className="hidden"
+                                      accept="image/*"
+                                      onChange={handleFileChange}
+                                    />
+                                    {previewUrl ? (
+                                      <div className="relative">
+                                        <img 
+                                          src={previewUrl} 
+                                          alt="Preview" 
+                                          className="max-h-48 rounded-lg" 
+                                        />
+                                        <Button
+                                          type="button"
+                                          variant="secondary"
+                                          size="sm"
+                                          className="mt-2"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            setPreviewUrl("");
+                                            form.setValue("file", undefined as any);
+                                          }}
+                                        >
+                                          Change Image
+                                        </Button>
+                                      </div>
+                                    ) : (
+                                      <>
+                                        <UploadCloud className="h-12 w-12 text-gray-400 mb-3" />
+                                        <p className="text-gray-600 dark:text-gray-300 font-medium">Click to upload</p>
+                                        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                                          Supports JPG, PNG, GIF (Max 10MB)
+                                        </p>
+                                      </>
+                                    )}
+                                  </div>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>NFT Name</FormLabel>
+                                <FormControl>
+                                  <Input placeholder="Enter the name of your NFT" {...field} />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Description</FormLabel>
+                                <FormControl>
+                                  <Textarea 
+                                    placeholder="Describe your NFT..." 
+                                    className="resize-none" 
+                                    {...field} 
                                   />
                                 </FormControl>
                                 <FormMessage />
@@ -447,13 +462,43 @@ export default function Create() {
 
                           <FormField
                             control={form.control}
-                            name="isBiddable"
+                            name="category"
                             render={({ field }) => (
-                              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                              <FormItem>
+                                <FormLabel>Category</FormLabel>
+                                <Select value={field.value} onValueChange={field.onChange}>
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select category" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    <SelectItem value="art">Art</SelectItem>
+                                    <SelectItem value="collectibles">Collectibles</SelectItem>
+                                    <SelectItem value="photography">Photography</SelectItem>
+                                    <SelectItem value="music">Music</SelectItem>
+                                    <SelectItem value="games">Games</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </>
+                      )}
+
+                      {/* Step 2: Pricing */}
+                      {currentStep === 'pricing' && (
+                        <>
+                          <FormField
+                            control={form.control}
+                            name="isForSale"
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 dark:border-gray-700">
                                 <div className="space-y-0.5">
-                                  <FormLabel className="text-base">Allow bids</FormLabel>
+                                  <FormLabel className="text-base">Put on sale</FormLabel>
                                   <FormDescription>
-                                    Allow users to place bids on your NFT
+                                    List your NFT for sale on the marketplace
                                   </FormDescription>
                                 </div>
                                 <FormControl>
@@ -465,28 +510,163 @@ export default function Create() {
                               </FormItem>
                             )}
                           />
+
+                          {form.watch("isForSale") && (
+                            <>
+                              <FormField
+                                control={form.control}
+                                name="price"
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormLabel>Price (VET)</FormLabel>
+                                    <FormControl>
+                                      <Input
+                                        type="number"
+                                        placeholder="Enter price in VET"
+                                        min="0"
+                                        step="0.01"
+                                        {...field}
+                                      />
+                                    </FormControl>
+                                    <FormMessage />
+                                  </FormItem>
+                                )}
+                              />
+
+                              <FormField
+                                control={form.control}
+                                name="isBiddable"
+                                render={({ field }) => (
+                                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 dark:border-gray-700">
+                                    <div className="space-y-0.5">
+                                      <FormLabel className="text-base">Allow bids</FormLabel>
+                                      <FormDescription>
+                                        Allow users to place bids on your NFT
+                                      </FormDescription>
+                                    </div>
+                                    <FormControl>
+                                      <Switch
+                                        checked={field.value}
+                                        onCheckedChange={field.onChange}
+                                      />
+                                    </FormControl>
+                                  </FormItem>
+                                )}
+                              />
+                            </>
+                          )}
                         </>
+                      )}
+
+                      {/* Step 3: Review */}
+                      {currentStep === 'review' && (
+                        <div className="space-y-8">
+                          <div className="border rounded-lg p-6 dark:border-gray-700">
+                            <h3 className="text-lg font-semibold mb-4 dark:text-white">NFT Details</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Name</p>
+                                <p className="font-medium dark:text-white">{form.getValues("name")}</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Category</p>
+                                <p className="font-medium dark:text-white">{form.getValues("category")}</p>
+                              </div>
+                              <div className="md:col-span-2">
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Description</p>
+                                <p className="font-medium dark:text-white">{form.getValues("description")}</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="border rounded-lg p-6 dark:border-gray-700">
+                            <h3 className="text-lg font-semibold mb-4 dark:text-white">Pricing</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">For Sale</p>
+                                <p className="font-medium dark:text-white">{form.getValues("isForSale") ? "Yes" : "No"}</p>
+                              </div>
+                              {form.getValues("isForSale") && (
+                                <>
+                                  <div>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">Price</p>
+                                    <p className="font-medium dark:text-white">{form.getValues("price")} VET</p>
+                                  </div>
+                                  <div>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">Allow Bids</p>
+                                    <p className="font-medium dark:text-white">{form.getValues("isBiddable") ? "Yes" : "No"}</p>
+                                  </div>
+                                </>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="border rounded-lg p-6 dark:border-gray-700">
+                            <h3 className="text-lg font-semibold mb-4 dark:text-white">Technical Details</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Creator</p>
+                                <p className="font-medium dark:text-white">{user?.username || "Unknown"}</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Wallet Address</p>
+                                <p className="font-medium truncate dark:text-white">{walletAddress || "Not connected"}</p>
+                              </div>
+                              <div>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Network</p>
+                                <p className="font-medium dark:text-white">VeChain</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       )}
                     </form>
                   </Form>
                 )}
               </CardContent>
-              <CardFooter>
-                <Button
-                  className="w-full bg-primary hover:bg-primary-dark text-white"
-                  onClick={form.handleSubmit(onSubmit)}
-                  disabled={isSubmitting || !isConnected}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating...
-                    </>
-                  ) : (
-                    "Create NFT"
+              
+              {isConnected && (
+                <CardFooter className="flex justify-between">
+                  {currentStep !== 'details' && (
+                    <Button 
+                      variant="outline" 
+                      onClick={goToPrevStep}
+                      className="flex items-center"
+                    >
+                      <ChevronLeft className="w-4 h-4 mr-2" />
+                      Previous
+                    </Button>
                   )}
-                </Button>
-              </CardFooter>
+                  
+                  {currentStep !== 'review' ? (
+                    <Button
+                      className="ml-auto bg-primary hover:bg-primary-dark text-white"
+                      onClick={goToNextStep}
+                    >
+                      Next Step
+                      <ChevronRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  ) : (
+                    <Button
+                      className="ml-auto bg-primary hover:bg-primary-dark text-white"
+                      onClick={form.handleSubmit(onSubmit)}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Creating...
+                        </>
+                      ) : (
+                        <>
+                          Create NFT
+                          <CheckCircle2 className="ml-2 h-4 w-4" />
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </CardFooter>
+              )}
             </Card>
           </div>
         </div>
