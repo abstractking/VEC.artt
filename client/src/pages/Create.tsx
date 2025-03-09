@@ -45,10 +45,21 @@ const createNftSchema = insertNftSchema.extend({
     (files) => files.length > 0,
     { message: "Image is required" }
   ),
-  price: z.string().min(1, "Price is required"),
+  price: z.string()
+    .min(1, "Price is required")
+    .refine(
+      (val) => !isNaN(parseFloat(val)) && parseFloat(val) > 0,
+      { message: "Price must be a positive number" }
+    ),
   isForSale: z.boolean().default(false),
   isBiddable: z.boolean().default(false),
   category: z.string().min(1, "Category is required"),
+  name: z.string()
+    .min(3, "Name must be at least 3 characters")
+    .max(50, "Name must not exceed 50 characters"),
+  description: z.string()
+    .min(10, "Description must be at least 10 characters")
+    .max(1000, "Description must not exceed 1000 characters"),
 });
 
 type CreateNftFormValues = z.infer<typeof createNftSchema>;
@@ -60,6 +71,7 @@ export default function Create() {
   const { walletAddress, isConnected, connectWallet } = useWallet();
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentStep, setCurrentStep] = useState<'details' | 'pricing' | 'review'>('details');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize form with default values
