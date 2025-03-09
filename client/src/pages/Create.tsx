@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { insertNftSchema } from "@shared/schema";
+import { mintNFT, generateMetadataURI } from "@/lib/nftUtils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -154,9 +155,25 @@ export default function Create() {
       return;
     }
 
+    if (!walletAddress) {
+      toast({
+        title: "Wallet address not found",
+        description: "Please reconnect your wallet to create an NFT",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      // Show minting status toast
+      const mintingToastId = toast({
+        title: "Minting NFT",
+        description: "Please confirm the transaction in your wallet...",
+        duration: 10000,
+      }).id;
+
       // Upload file to IPFS/storage (mock for now)
       // In a real implementation, we would upload to IPFS or similar service
       const mockIpfsUrl = `https://ipfs.example.com/${Date.now()}`;
@@ -173,16 +190,37 @@ export default function Create() {
         },
       };
       
+      // Generate metadata URI for the NFT
+      const tokenURI = generateMetadataURI(nftData);
+      
+      // Mint NFT on the blockchain
+      const mintResult = await mintNFT(tokenURI, walletAddress);
+      
+      // Update NFT data with blockchain information
+      const blockchainNftData = {
+        ...nftData,
+        tokenId: mintResult?.txid || Date.now().toString(), // Use transaction ID as token ID
+        blockchainTxId: mintResult?.txid || "",
+      };
+
       // Create NFT on server
-      const response = await apiRequest("POST", "/api/nfts", nftData);
+      const response = await apiRequest("POST", "/api/nfts", blockchainNftData);
       const createdNft = await response.json();
       
       // Invalidate NFT queries
       queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
       
+      // Close minting toast
+      toast({
+        id: mintingToastId,
+        title: "NFT Minted Successfully",
+        description: "Your NFT has been minted on the VeChain blockchain",
+        duration: 5000,
+      });
+      
       toast({
         title: "NFT Created Successfully",
-        description: `Your NFT "${values.name}" has been created`,
+        description: `Your NFT "${values.name}" has been created and minted`,
       });
       
       // Navigate to the NFT detail page
