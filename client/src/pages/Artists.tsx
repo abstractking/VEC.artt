@@ -54,19 +54,19 @@ export default function Artists() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-16 pb-16">
+    <div className="min-h-screen bg-background pt-16 pb-16">
       <div className="container mx-auto px-4">
         <div className="flex flex-col mb-10">
-          <h1 className="text-3xl font-bold font-poppins text-secondary mb-2">
+          <h1 className="text-3xl font-bold font-poppins text-foreground mb-2">
             Top Creators
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Discover talented artists and creators on the VeCollab marketplace
           </p>
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <div className="bg-card rounded-xl shadow-sm p-6 mb-8 border border-border">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-grow">
               <Input
@@ -75,7 +75,7 @@ export default function Artists() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 py-6 rounded-full"
               />
-              <Search className="absolute left-3 top-3 text-gray-400" />
+              <Search className="absolute left-3 top-3 text-muted-foreground" />
             </div>
             
             <Select value={sortBy} onValueChange={setSortBy}>
@@ -106,14 +106,13 @@ export default function Artists() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-16">
-            <Users className="h-16 w-16 text-gray-300 mb-4" />
-            <h3 className="text-xl font-bold text-secondary mb-2">No Creators Found</h3>
-            <p className="text-gray-500 mb-6 text-center max-w-md">
+            <Users className="h-16 w-16 text-muted-foreground/40 mb-4" />
+            <h3 className="text-xl font-bold text-foreground mb-2">No Creators Found</h3>
+            <p className="text-muted-foreground mb-6 text-center max-w-md">
               We couldn't find any creators matching your search. Try adjusting your search term.
             </p>
             <Button 
               onClick={() => setSearchTerm("")}
-              className="bg-primary hover:bg-primary-dark text-white font-medium"
             >
               Clear Search
             </Button>
