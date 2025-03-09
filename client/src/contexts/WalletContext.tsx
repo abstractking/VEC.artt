@@ -57,7 +57,10 @@ export function WalletProvider({ children }: WalletProviderProps) {
       // In a real app, we would handle different wallet types
       const result = await connectVeChainWallet();
       
+      console.log("Wallet Connect Result:", result); // Debug log to check result structure
+      
       if (result && result.vendor && result.vendor.address) {
+        console.log("Setting wallet address to:", result.vendor.address);
         setWalletAddress(result.vendor.address);
         setIsConnected(true);
         setIsModalOpen(false);
@@ -67,6 +70,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
           description: `Connected to ${walletType || 'VeChain'} wallet`,
         });
       } else {
+        console.error("Wallet connect response does not match expected structure:", result);
         throw new Error("Failed to connect wallet");
       }
     } catch (err: any) {

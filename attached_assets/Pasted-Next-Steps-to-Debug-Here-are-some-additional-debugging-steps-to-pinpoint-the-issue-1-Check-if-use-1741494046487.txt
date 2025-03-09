@@ -1,0 +1,98 @@
+Next Steps to Debug
+Here are some additional debugging steps to pinpoint the issue:
+
+1. Check if useLocation is Returning Undefined
+Try adding this log in NFTDetail.tsx (or wherever useLocation is used):
+
+tsx
+Copy
+Edit
+import { useLocation } from "wouter";
+
+const location = useLocation();
+console.log("Location:", location);
+If location is undefined, then the problem is in how wouter is set up.
+
+2. Ensure That Navigation Uses the Correct State Structure
+If you're navigating to NFTDetail.tsx with state (e.g., navigate("/nft", { state: { from: "/home" } })), verify that the state object is actually being passed.
+
+Check if location.state is undefined:
+
+tsx
+Copy
+Edit
+const location = useLocation();
+console.log("Location state:", location?.state);
+If state is undefined, make sure you're passing it correctly when navigating.
+
+3. Check for Incorrect Imports
+Ensure useLocation is correctly imported from wouter:
+
+tsx
+Copy
+Edit
+import { useLocation } from "wouter";
+If it's imported from react-router-dom, that could cause issues.
+
+4. Debug VeChain Wallet Integration
+Make sure connectWallet returns a structure that matches what WalletContext.tsx expects:
+
+tsx
+Copy
+Edit
+const connectWallet = async () => {
+  const result = await vechain.connectWallet();
+  console.log("Wallet Connect Result:", result);
+  
+  if (!result || !result.vendor) {
+    console.error("Unexpected wallet structure:", result);
+  }
+
+  return result;
+};
+Then, check in WalletContext.tsx that setWalletAddress(result.vendor.address); is not called when result.vendor is undefined.
+
+5. Fix Buffer Polyfill Issue
+Since you installed buffer, make sure it's being polyfilled properly in vite.config.ts:
+
+ts
+Copy
+Edit
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
+
+export default defineConfig({
+  plugins: [react()],
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: 'globalThis'
+      },
+      plugins: [
+        NodeGlobalsPolyfillPlugin({
+          buffer: true
+        })
+      ]
+    }
+  }
+});
+Then import it in polyfills.ts:
+
+ts
+Copy
+Edit
+import { Buffer } from "buffer";
+window.Buffer = Buffer;
+And in main.tsx:
+
+tsx
+Copy
+Edit
+import "./lib/polyfills";
+Summary
+Add debug logs to useLocation to confirm state is being passed.
+Ensure navigation includes { state: { from: "/home" } } if from is expected.
+Verify connectWallet returns the expected structure.
+Properly polyfill Buffer for Vite.
+Try these and let me know what logs you get!

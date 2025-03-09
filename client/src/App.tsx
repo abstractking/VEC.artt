@@ -33,12 +33,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <WalletProvider>
+      <WalletProvider>
+        <AuthProvider>
           <Router />
           <Toaster />
-        </WalletProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </WalletProvider>
     </QueryClientProvider>
   );
 }

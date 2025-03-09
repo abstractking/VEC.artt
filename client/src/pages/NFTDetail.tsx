@@ -32,9 +32,15 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function NFTDetail() {
   const params = useParams();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+  console.log("NFTDetail - Location object:", location); // Debug log to check location structure
+  
   const { user } = useAuth();
+  console.log("NFTDetail - User object:", user); // Debug log to check user structure
+  
   const { walletAddress, isConnected, connectWallet } = useWallet();
+  console.log("NFTDetail - Wallet info:", { walletAddress, isConnected }); // Debug wallet info
+  
   const { toast } = useToast();
   const [isBidModalOpen, setBidModalOpen] = useState(false);
   const [isPurchasing, setPurchasing] = useState(false);
