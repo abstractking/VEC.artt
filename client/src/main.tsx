@@ -12,6 +12,15 @@ import "./processPolyfill.js";
 import "./bufferPolyfill.js";
 import "./streamPolyfill.js";
 
+// Load build-specific polyfills for Node.js modules
+import "./lib/build-polyfills";
+
+// Load Thor-specific crypto polyfills
+import "./lib/thor-polyfills";
+
+// For secp256k1 browser compatibility
+import "./lib/secp256k1-browser";
+
 // Then include the other Node.js polyfills
 import "./lib/polyfills";
 

@@ -235,25 +235,25 @@ export const connectWalletWithEnvKey = async () => {
           
           // Create a transaction signing service from our framework
           // VeChain API expects either 'tx' or 'cert' as literal string types
-          if (type === 'cert') {
-            const signService = framework.vendor.sign('cert', clauses as any);
-            return signService.request();
-          } else {
-            const signService = framework.vendor.sign('tx', clauses);
-            return signService.request();
-          }
-          
-          // Request for signing - this will automatically happen since we're using a private key
+          const signService = type === 'cert'
+            ? framework.vendor.sign('cert', clauses as any)
+            : framework.vendor.sign('tx', clauses);
           const signedTx = await signService.request();
           
-          // Log the real transaction ID for troubleshooting
-          console.log(`REAL TX SUCCESS: ID: ${signedTx.txid}`);
-          console.log(`https://explore.vechain.org/transactions/${signedTx.txid}`);
+          // For transaction signing, we expect a txid
+          if ('txid' in signedTx) {
+            // Log the real transaction ID for troubleshooting
+            console.log(`REAL TX SUCCESS: ID: ${signedTx.txid}`);
+            console.log(`https://explore.vechain.org/transactions/${signedTx.txid}`);
+            
+            return {
+              txid: signedTx.txid,
+              signer: account.address
+            };
+          }
           
-          return {
-            txid: signedTx.txid,
-            signer: account.address
-          };
+          // This should never happen for transaction signing
+          throw new Error('Invalid response type from signing service');
         } catch (error) {
           console.error("Error signing transaction:", error);
           throw error;
