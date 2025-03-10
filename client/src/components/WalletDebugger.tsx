@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { NETWORK_DESCRIPTORS, Network } from '@/lib/Network';
+import { NETWORKS as NETWORK_DESCRIPTORS, Network } from '@/lib/Network';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -138,14 +138,14 @@ export default function WalletDebugger() {
             <TabsTrigger value="veworld" disabled={!veWorldAvailable}>
               VeWorld Wallet
               {veWorldAvailable ? 
-                <Badge variant="success" className="ml-2 bg-green-600"><Check className="h-3 w-3 mr-1" /> Available</Badge> : 
+                <Badge variant="outline" className="ml-2 bg-green-600 text-white"><Check className="h-3 w-3 mr-1" /> Available</Badge> : 
                 <Badge variant="destructive" className="ml-2"><AlertTriangle className="h-3 w-3 mr-1" /> Not Detected</Badge>
               }
             </TabsTrigger>
             <TabsTrigger value="thor" disabled={!thorAvailable}>
               VeChainThor Wallet
               {thorAvailable ? 
-                <Badge variant="success" className="ml-2 bg-green-600"><Check className="h-3 w-3 mr-1" /> Available</Badge> : 
+                <Badge variant="outline" className="ml-2 bg-green-600 text-white"><Check className="h-3 w-3 mr-1" /> Available</Badge> : 
                 <Badge variant="destructive" className="ml-2"><AlertTriangle className="h-3 w-3 mr-1" /> Not Detected</Badge>
               }
             </TabsTrigger>

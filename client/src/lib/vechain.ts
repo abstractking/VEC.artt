@@ -90,7 +90,7 @@ const setupCryptoEnvironment = () => {
 setupCryptoEnvironment();
 
 // Define network options with reliable endpoints for Replit
-import { Network, NETWORKS as NETWORK_DESCRIPTORS } from './Network';
+import { Network, NETWORKS as NETWORK_DESCRIPTORS, NetworkDescriptor } from './Network';
 
 // Setup our nodes with the right endpoints
 export const NODES = {
