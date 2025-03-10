@@ -10,7 +10,7 @@ import NotificationCenter from "@/components/NotificationCenter";
 
 export default function Header() {
   const [, navigate] = useLocation();
-  const { isConnected, connectWallet, disconnectWallet, walletBalance } = useWallet();
+  const { isConnected, connectWallet } = useWallet();
   const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -39,7 +39,7 @@ export default function Header() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-
+    
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -90,39 +90,26 @@ export default function Header() {
             <div className="hidden md:block">
               <ThemeToggle />
             </div>
-
+            
             {/* Notification Center */}
             {isConnected && (
               <div className="hidden md:block">
                 <NotificationCenter />
               </div>
             )}
-
+            
             {isConnected ? (
-              <div className="hidden md:flex items-center space-x-4">
-                <div className="text-sm text-foreground">
-                  <span>Balance: </span>
-                  <span className="font-medium">{walletBalance || '0'} VET</span>
+              <Link 
+                href={user ? `/profile/${user.id}` : "/profile"} 
+                className="hidden md:flex items-center"
+              >
+                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold mr-2">
+                  {user?.username?.charAt(0).toUpperCase() || "U"}
                 </div>
-                <Link 
-                  href={user ? `/profile/${user.id}` : "/profile"}
-                  className="flex items-center"
-                >
-                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold mr-2">
-                    {user?.username?.charAt(0).toUpperCase() || "U"}
-                  </div>
-                  <span className="font-medium text-foreground">
-                    {user?.username || "Profile"}
-                  </span>
-                </Link>
-                <Button
-                  onClick={disconnectWallet}
-                  variant="outline"
-                  className="text-destructive hover:bg-destructive/10"
-                >
-                  Disconnect
-                </Button>
-              </div>
+                <span className="font-medium text-foreground">
+                  {user?.username || "Profile"}
+                </span>
+              </Link>
             ) : (
               <Button
                 onClick={handleConnectWallet}
@@ -131,7 +118,7 @@ export default function Header() {
                 Connect Wallet
               </Button>
             )}
-
+            
             <button
               onClick={toggleMenu}
               className="md:hidden text-foreground"
@@ -161,7 +148,7 @@ export default function Header() {
               />
               <Search className="absolute left-3 top-2.5 text-muted-foreground h-5 w-5" />
             </form>
-
+            
             <Link 
               href="/" 
               className="font-medium text-foreground hover:text-primary transition-colors py-2"
@@ -169,7 +156,7 @@ export default function Header() {
             >
               Home
             </Link>
-
+            
             <Link 
               href="/explore" 
               className="font-medium text-foreground hover:text-primary transition-colors py-2"
@@ -177,7 +164,7 @@ export default function Header() {
             >
               Explore
             </Link>
-
+            
             <Link 
               href="/create" 
               className="font-medium text-foreground hover:text-primary transition-colors py-2"
@@ -185,7 +172,7 @@ export default function Header() {
             >
               Create
             </Link>
-
+            
             <Link 
               href="/artists" 
               className="font-medium text-foreground hover:text-primary transition-colors py-2"
@@ -193,7 +180,7 @@ export default function Header() {
             >
               Artists
             </Link>
-
+            
             {isConnected ? (
               <Link 
                 href={user ? `/profile/${user.id}` : "/profile"}
@@ -213,14 +200,14 @@ export default function Header() {
                 Connect Wallet
               </Button>
             )}
-
+            
             {/* Mobile Notification Center */}
             {isConnected && (
               <div className="py-2">
                 <NotificationCenter />
               </div>
             )}
-
+            
             <div className="flex justify-center py-2">
               <ThemeToggle />
             </div>

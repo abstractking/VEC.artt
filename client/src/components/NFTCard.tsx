@@ -19,7 +19,7 @@ export default function NFTCard({ nft }: NFTCardProps) {
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState<boolean>(false);
-
+  
   // Fetch creator info
   const { data: creator } = useQuery({
     queryKey: [`/api/users/${nft.creatorId}`],
@@ -38,23 +38,23 @@ export default function NFTCard({ nft }: NFTCardProps) {
   // Calculate auction time remaining
   useEffect(() => {
     if (!nft?.isBiddable || !nft?.metadata?.auctionEndDate) return;
-
+    
     // Function to update the time remaining display
     const updateTimeRemaining = () => {
       const endDate = new Date(nft.metadata.auctionEndDate);
       const now = new Date();
       const diff = endDate.getTime() - now.getTime();
-
+      
       if (diff <= 0) {
         setTimeLeft("Ended");
         return;
       }
-
+      
       // Calculate time components
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
+      
       // Format time remaining
       if (days > 0) {
         setTimeLeft(`${days}d ${hours}h`);
@@ -64,13 +64,13 @@ export default function NFTCard({ nft }: NFTCardProps) {
         setTimeLeft(`${minutes}m`);
       }
     };
-
+    
     // Initial update
     updateTimeRemaining();
-
+    
     // Update every minute (less frequent than in detail view)
     const interval = setInterval(updateTimeRemaining, 60000);
-
+    
     // Clean up
     return () => clearInterval(interval);
   }, [nft]);
@@ -90,26 +90,26 @@ export default function NFTCard({ nft }: NFTCardProps) {
     }
 
     if (isTogglingFavorite) return;
-
+    
     setIsTogglingFavorite(true);
-
+    
     try {
       const currentFavorites = user.favorites || [];
       const newFavorites = isFavorite 
         ? currentFavorites.filter(id => id !== nft.id)
         : [...currentFavorites, nft.id];
-
+      
       // Update user favorites
       await apiRequest("PATCH", `/api/users/${user.id}`, {
         favorites: newFavorites
       });
-
+      
       // Update local state
       setIsFavorite(!isFavorite);
-
+      
       // Invalidate user queries to refresh data
       queryClient.invalidateQueries({ queryKey: [`/api/users/${user.id}`] });
-
+      
       toast({
         title: isFavorite ? "Removed from favorites" : "Added to favorites",
         description: isFavorite 
@@ -129,7 +129,7 @@ export default function NFTCard({ nft }: NFTCardProps) {
   };
 
   return (
-    <div className="bg-card rounded-xl shadow-sm hover:shadow-md transition-shadow border border-border w-full sm:w-auto max-w-sm mx-auto">
+    <div className="bg-card rounded-xl shadow-sm hover:shadow-md transition-shadow border border-border">
       <div className="relative group">
         <div className="w-full h-64 bg-muted object-cover rounded-t-xl overflow-hidden">
           {nft.imageUrl ? (
@@ -187,7 +187,7 @@ export default function NFTCard({ nft }: NFTCardProps) {
             {timeLeft === "Ended" ? "Auction ended" : `Ending in ${timeLeft}`}
           </div>
         )}
-
+        
         {/* Buy now tag */}
         {nft.isForSale && !nft.isBiddable && (
           <div className="absolute top-3 left-3 bg-primary/90 backdrop-blur-sm rounded-full py-1 px-3 text-xs font-semibold text-primary-foreground">
