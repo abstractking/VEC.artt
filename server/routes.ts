@@ -900,8 +900,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const blockNum = '0';
       const response = await fetch(`${VECHAIN_NODES[network]}/blocks/${blockNum}`);
       const data = await response.json();
+      
+      // Safely access the data with type checking
+      const blockData = data as any;
+      
       res.json({
-        genesisId: data.id,
+        genesisId: blockData?.id || null,
         network: network
       });
     } catch (error: any) {
