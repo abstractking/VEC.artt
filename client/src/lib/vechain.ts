@@ -1,6 +1,7 @@
 import { Framework } from '@vechain/connex-framework';
 import { Driver, SimpleNet, SimpleWallet } from '@vechain/connex-driver';
 import Connex from '@vechain/connex';
+import { Buffer } from 'buffer';
 
 // Define network options with reliable endpoints for Replit
 export const NETWORKS = {
@@ -51,15 +52,14 @@ export const initializeConnex = async (wallet?: SimpleWallet) => {
         console.log("Replit environment detected - using HTTP polling for VeChain connection");
       }
       
-      // For Replit environment, use Connex directly with HTTP polling configuration
+      // For Replit environment, use a specialized configuration
       if (isReplit) {
         try {
-          // Initialize Connex with reliable HTTP configuration for Replit
+          // Initialize with direct HTTP connection
           const connex = new Connex({
             node: network.url, // Use reliable HTTP endpoint
-            network: network.name.toLowerCase() as any, // Either 'main' or 'test'
-            // Disable WebSocket in Replit environment, rely on HTTP polling
-            noWebSocket: true
+            network: network.name.toLowerCase() as any // Either 'main' or 'test'
+            // No WebSocket in Replit - the default Connex configuration will handle this
           });
           
           connexInstance = connex;
