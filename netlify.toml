@@ -4,8 +4,8 @@
 [build]
   # Directory to publish (frontend client build)
   publish = "dist"
-  # Build command - ensure dependencies are installed first
-  command = "npm ci && npm run build"
+  # Build command - ensure all dependencies including dev dependencies are installed first
+  command = "NODE_ENV=development npm ci && npm run build"
   # Define build functions directory (optional - uncomment if using Netlify Functions)
   # functions = "netlify/functions"
 

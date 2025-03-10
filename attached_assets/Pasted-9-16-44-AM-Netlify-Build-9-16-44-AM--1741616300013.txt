@@ -1,0 +1,101 @@
+9:16:44 AM: Netlify Build                                                 
+9:16:44 AM: ────────────────────────────────────────────────────────────────
+9:16:44 AM: ​
+9:16:44 AM: ❯ Version
+9:16:44 AM:   @netlify/build 29.59.2
+9:16:44 AM: ​
+9:16:44 AM: ❯ Flags
+9:16:44 AM:   accountId: 67b93ed93699b498398f4a5d
+9:16:44 AM:   baseRelDir: true
+9:16:44 AM:   buildId: 67cef4101a62110061c96dd6
+9:16:44 AM:   deployId: 67cef4101a62110061c96dd8
+9:16:44 AM: ​
+9:16:44 AM: ❯ Current directory
+9:16:44 AM:   /opt/build/repo
+9:16:44 AM: ​
+9:16:44 AM: ❯ Config file
+9:16:44 AM:   /opt/build/repo/netlify.toml
+9:16:44 AM: ​
+9:16:44 AM: ❯ Context
+9:16:44 AM:   production
+9:16:44 AM: ​
+9:16:44 AM: build.command from netlify.toml                               
+9:16:44 AM: ────────────────────────────────────────────────────────────────
+9:16:44 AM: ​
+9:16:44 AM: $ npm ci && npm run build
+9:16:51 AM: npm warn deprecated uuid@2.0.1: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+9:16:57 AM: added 490 packages, and audited 491 packages in 12s
+9:16:57 AM: 74 packages are looking for funding
+9:16:57 AM:   run `npm fund` for details
+9:16:57 AM: 8 vulnerabilities (1 moderate, 7 critical)
+9:16:57 AM: To address issues that do not require attention, run:
+9:16:57 AM:   npm audit fix
+9:16:57 AM: To address all issues possible (including breaking changes), run:
+9:16:57 AM:   npm audit fix --force
+9:16:57 AM: Some issues need review, and may require choosing
+9:16:57 AM: a different dependency.
+9:16:57 AM: Run `npm audit` for details.
+9:16:57 AM: > rest-express@1.0.0 build
+9:16:57 AM: > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+9:16:57 AM: sh: 1: vite: not found
+9:16:57 AM: ​
+9:16:57 AM: "build.command" failed                                        
+9:16:57 AM: ────────────────────────────────────────────────────────────────
+9:16:57 AM: ​
+9:16:57 AM:   Error message
+9:16:57 AM:   Command failed with exit code 127: npm ci && npm run build
+9:16:57 AM: ​
+9:16:57 AM:   Error location
+9:16:57 AM:   In build.command from netlify.toml:
+9:16:57 AM:   npm ci && npm run build
+9:16:57 AM: ​
+9:16:57 AM:   Resolved config
+9:16:57 AM:   build:
+9:16:57 AM:     command: npm ci && npm run build
+9:16:57 AM:     commandOrigin: config
+9:16:57 AM:     environment:
+9:16:57 AM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+9:16:57 AM:       - VITE_REACT_APP_VECHAIN_NETWORK
+9:16:57 AM:       - VITE_VECHAIN_PRIVATE_KEY
+9:16:57 AM:       - NODE_VERSION
+9:16:57 AM:       - NODE_ENV
+9:16:57 AM:     publish: /opt/build/repo/dist
+9:16:57 AM:     publishOrigin: config
+9:16:57 AM:   headers:
+9:16:57 AM:     - for: /*
+      values:
+        Cache-Control: public, max-age=31536000, must-revalidate
+        Content-Security-Policy: |-
+          default-src 'self'; 
+                connect-src 'self' https://testnet.veblocks.net https://mainnet.veblocks.net wss://testnet.veblocks.net/socket wss://mainnet.veblocks.net/socket wss://*.replit.dev wss://*.netlify.app https://*.netlify.app; 
+                script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
+                style-src 'self' 'unsafe-inline'; 
+                img-src 'self' data: blob: https:; 
+                font-src 'self' data:; 
+                object-src 'none';
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: '*.js'
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+    - for: '*.css'
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+    - for: /images/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /api/*
+      status: 200
+      to: /.netlify/functions/api/:splat
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+9:16:57 AM: Build failed due to a user error: Build script returned non-zero exit code: 2
+9:16:58 AM: Failing build: Failed to build site
+9:16:58 AM: Finished processing build request in 58.559s
+9:16:58 AM: Failed during stage 'building site': Build script returned non-zero exit code: 2
