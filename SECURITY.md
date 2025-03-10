@@ -1,85 +1,97 @@
-# VeCollab Security Guidelines
+# Security Policy
 
-This document outlines the security practices and considerations for the VeCollab marketplace.
+## VeCollab Marketplace Security Guidelines
+
+As a blockchain application dealing with digital assets, security is paramount. This document outlines security practices and guidelines for developers, maintainers, and users of the VeCollab Marketplace.
 
 ## Private Key Management
 
-### Development Environment
+### TestNet Private Keys
 
-- **Private keys in `.env` files**: Development keys should only be used for local testing and never contain actual funds.
-- **Key generation**: Use the provided script (`node temp-key-gen/generateKey.js`) to generate random keys for testing.
-- **Mock wallets**: In development mode, the application can use mock wallets to avoid exposing real keys.
+- **Environment Variables**: Always store the TestNet private key as an environment variable (`VITE_VECHAIN_PRIVATE_KEY`) in your deployment platform (e.g., Netlify)
+- **Separate TestNet Wallets**: Always use a separate wallet for TestNet that's never used for MainNet transactions
+- **Fund Limitations**: Maintain minimal funds in TestNet wallets - only enough for testing purposes
+- **Key Rotation**: Periodically rotate TestNet private keys, especially after extensive public testing
 
-### Production Environment
+### MainNet Private Keys
 
-- **Netlify Environment Variables**: Store all production private keys as encrypted environment variables in the Netlify dashboard.
-- **No client-side exposure**: Never expose private keys in client-side code or browser storage.
-- **Key rotation**: Regularly rotate production keys, especially after personnel changes or suspected breaches.
+- **NEVER** store MainNet private keys in:
+  - Environment variables
+  - Frontend code
+  - Version control
+  - Deployment platforms
+- **DO NOT** use the same private key/wallet between TestNet and MainNet
+- For MainNet, use only:
+  - User wallets through web extensions (VeChainThor, Sync2)
+  - Hardware wallets
+  - Custodial solutions with proper security auditing
 
-## Blockchain Security
+## Secure Configuration
 
-### Smart Contract Interaction
+### Network Selection
 
-- **Testnet first**: Always deploy and test on VeChain TestNet before moving to MainNet.
-- **Transaction verification**: All transactions should be verified before signing.
-- **Gas estimation**: Proper gas estimation should be implemented to prevent transaction failures.
+- Use the environment variable `VITE_REACT_APP_VECHAIN_NETWORK` to control network selection:
+  - `test` for TestNet
+  - `main` for MainNet
+- Verify network selection before every deployment
+- Include clear network indicators in the UI to distinguish TestNet from MainNet
 
-### Wallet Connection
+### Contract Interactions
 
-- **Connection options**:
-  - Browser wallet extensions (VeChain Sync2) - preferred for production
-  - Private key from environment variables - only as fallback
-  - Test wallets - only in development environments
+- Always validate contract interactions before sending transactions
+- Include transaction confirmation steps with clear detail displays
+- Implement gas estimation and fee calculations before transaction submission
+- Never automatically sign transactions without user confirmation
 
-- **Security hierarchies**:
-  1. Browser wallet extensions (most secure)
-  2. Server-side signing with environment variables (fallback)
-  3. Mock wallets (development only)
+## Frontend Security
 
-## Application Security
+### Data Handling
 
-### Data Protection
+- Never expose sensitive data in frontend code
+- Use proper data validation for all user inputs
+- Sanitize all data displayed to prevent XSS attacks
+- Implement proper error handling that doesn't expose implementation details
 
-- **User data**: Personal information should be minimized and secured.
-- **Database security**: Proper authentication and authorization for database access.
-- **Input validation**: All user inputs must be validated and sanitized.
+### External Libraries
 
-### Network Security
+- Keep dependencies updated to mitigate known vulnerabilities
+- Perform security audits on third-party libraries before integration
+- Monitor for security advisories related to used dependencies
 
-- **HTTPS**: All production connections must use HTTPS.
-- **WebSocket security**: WebSocket connections must validate origin and user sessions.
-- **CSP Headers**: Content Security Policy headers are configured in `netlify.toml`.
+## Mock vs. Real Wallet Mode
 
-## Incident Response
+VeCollab Marketplace includes a mock wallet mode for development and demonstration purposes:
 
-### Security Breaches
+### Mock Wallet Mode
 
-1. **Immediate actions**:
-   - Suspend affected services
-   - Rotate compromised keys
-   - Document the incident
+- Simulates blockchain interactions without real transactions
+- Safe for demonstrations and UI testing
+- Does not require private keys or real VET/VTHO
+- Clearly indicated in the UI when active
 
-2. **Analysis**:
-   - Determine breach scope and impact
-   - Review affected systems
-   - Identify vulnerability source
+### Real Wallet Mode
 
-3. **Recovery**:
-   - Restore from clean backups
-   - Deploy security patches
-   - Implement additional safeguards
+- Performs actual blockchain transactions
+- Requires proper wallet configuration (extension or private key)
+- Consumes real VET/VTHO as gas
+- Must be explicitly enabled by toggling the "Real Wallet" option
 
-## Security Checklist for Deployment
+## Vulnerability Reporting
 
-- [ ] No private keys in Git repository
-- [ ] Environment variables properly set in Netlify
-- [ ] CSP headers configured correctly
-- [ ] WebSocket connections secured
-- [ ] User authentication implemented securely
-- [ ] Smart contract interactions verified
-- [ ] Transaction signing mechanisms tested
-- [ ] TestNet functionality confirmed before MainNet deployment
+If you discover a security vulnerability, please DO NOT create a public GitHub issue. Instead:
 
-## Reporting Security Issues
+1. Email details to [security@vecollab.example.com](mailto:security@vecollab.example.com)
+2. Include as much information as possible:
+   - Type of issue
+   - Location of the affected source code
+   - Step-by-step reproduction instructions
+   - Potential impact
+3. Allow time for the issue to be addressed before any public disclosure
 
-If you discover a security vulnerability, please report it responsibly by contacting the development team directly. Do not disclose security vulnerabilities publicly until they have been addressed.
+## Regular Security Practices
+
+- Run regular security audits
+- Keep all dependencies up-to-date
+- Use static code analysis tools
+- Perform penetration testing before major releases
+- Follow blockchain security best practices

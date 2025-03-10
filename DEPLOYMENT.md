@@ -12,10 +12,31 @@ Before deploying, ensure you have:
 
 ## Environment Variables
 
-The following environment variables need to be set in your Netlify deployment settings:
+The following environment variables must be set in your Netlify deployment settings to enable TestNet functionality:
 
-- `VITE_VECHAIN_PRIVATE_KEY`: Private key for VeChain testnet wallet (for development and testing only)
+### Required Environment Variables
+
+- `VITE_VECHAIN_PRIVATE_KEY`: Private key for VeChain TestNet wallet
+  - This is required for signing transactions on the TestNet
+  - Keep this private and secure as it has control over your TestNet funds
+  - Use a dedicated wallet for TestNet only, never use a production wallet's key
+
 - `VITE_REACT_APP_VECHAIN_NETWORK`: Set to `test` for TestNet or `main` for MainNet
+  - For production testing, use `test` to connect to the TestNet
+  - Only use `main` when you're ready to deploy to production with real transactions
+
+### Optional Environment Variables
+
+- `VITE_VECHAIN_NODE_URL`: Custom VeChain node URL (defaults to official TestNet node)
+- `VITE_VECHAIN_EXPLORER_URL`: VeChain explorer URL for transaction links
+- `VITE_REACT_APP_NFT_CONTRACT_ADDRESS`: The deployed NFT contract address on TestNet
+
+### Setting Up TestNet Wallet
+
+1. Generate a new private key for TestNet using the thor-devkit utility
+2. Request TestNet VET and VTHO from the [VeChain TestNet Faucet](https://faucet.vecha.in/)
+3. Add the private key to Netlify environment variables
+4. Never share or commit this private key to version control
 
 ## Deployment Steps
 
@@ -57,13 +78,45 @@ The build process includes several critical steps:
 - **Browser Compatibility**: Extensive polyfills are used to ensure compatibility with VeChain libraries in the browser.
 - **Redirects**: The deployment includes configuration for client-side routing via the `_redirects` file.
 
+## Using Real TestNet Transactions
+
+For the deployed application to perform real TestNet transactions:
+
+1. **Enable "Real Wallet" Mode**: In the Connect Wallet dialog, toggle "Real Wallet Interaction" to ON
+   - This will switch from simulated transactions to real TestNet transactions
+   - You'll need to have a compatible VeChain wallet extension installed, or
+   - The application will use the private key specified in environment variables to sign transactions
+
+2. **Verify Transaction Flows**:
+   - Create an NFT to test minting functionality
+   - List an NFT for sale to test marketplace functionality
+   - Place a bid on an NFT to test bidding functionality
+   - All of these operations should result in real TestNet transactions when in "Real Wallet" mode
+
+3. **View Transactions on Explorer**:
+   - After a successful transaction, you can view it on the TestNet explorer
+   - Transaction links should automatically appear after transactions complete
+   - The explorer URL is: `https://explore-testnet.vechain.org/transactions/{txid}`
+
 ## Troubleshooting
 
 Common issues and their solutions:
 
 1. **White screen / app not loading**: Check browser console for missing polyfills or crypto-related errors.
-2. **API connectivity issues**: Ensure proper network selection (TestNet vs MainNet).
-3. **Build failures**: Look for issues with CommonJS/ESM compatibility in the build logs.
+
+2. **API connectivity issues**: 
+   - Ensure proper network selection (TestNet vs MainNet)
+   - Verify the TestNet node is responding (`https://testnet.veblocks.net`)
+   - Check console logs for any connection errors to the node
+
+3. **Build failures**: 
+   - Look for issues with CommonJS/ESM compatibility in the build logs
+   - Check that the patch scripts completed successfully
+   
+4. **Transaction failures**:
+   - Ensure the wallet has sufficient VET and VTHO for gas fees
+   - Check that the private key is correctly set in environment variables
+   - Verify transaction parameters in the console logs
 
 ## Monitoring and Maintenance
 

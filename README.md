@@ -5,11 +5,13 @@ A dynamic decentralized NFT marketplace built on VeChain blockchain, offering cr
 ## Key Features
 
 - **VeChain Blockchain Integration**: Securely mint, trade, and collect NFTs on VeChain's energy-efficient blockchain
+- **Dual Wallet Modes**: Switch between mock wallet (for demos) and real wallet (for TestNet transactions)
 - **Collaborative Tools**: Unique features for artists to collaborate on creative projects
 - **Real-time WebSocket Notifications**: Stay updated on bids, sales, and new listings
 - **Dynamic NFT Gallery**: Interactive discovery components to browse and find NFTs
 - **Royalty Distribution**: Automatic royalty payments for creators
 - **Enhanced User Profiles**: Showcase your collection and creations with badges and statistics
+- **TestNet Support**: Full support for VeChain TestNet for development and staging environments
 
 ## Tech Stack
 
