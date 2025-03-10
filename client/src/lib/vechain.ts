@@ -595,6 +595,32 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             try {
               console.log("Connecting to VeWorld with official network format...");
               
+              // Log the expected parameters for debugging
+              console.log("Connecting with parameters:", {
+                node: nodeUrl,
+                network: {
+                  id: genesisId,
+                  name: networkName
+                }
+              });
+              
+              // First check if VeWorld has a preferred connection method
+              if (typeof vechain.getVendor === 'function') {
+                console.log("Trying VeWorld's getVendor method...");
+                try {
+                  const vendor = await vechain.getVendor();
+                  
+                  // If vendor provides its own connex instance, use that
+                  if (vendor.connex) {
+                    console.log("Using VeWorld's provided Connex instance");
+                    return { connex: vendor.connex, vendor };
+                  }
+                } catch (vendorError) {
+                  console.log("getVendor method failed, falling back to standard approach:", vendorError);
+                }
+              }
+              
+              // Create Connex with proper parameters
               const connex = await vechain.newConnex({
                 node: nodeUrl,
                 network: {
@@ -628,6 +654,13 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
               try {
                 console.log("Trying alternative connection method with genesis parameter...");
                 
+                // Log the expected parameters for debugging
+                console.log("Connecting with alternative parameters:", {
+                  node: nodeUrl,
+                  genesis: genesisId
+                });
+                
+                // Create Connex with genesis parameter
                 const connex = await vechain.newConnex({
                   node: nodeUrl,
                   genesis: genesisId
