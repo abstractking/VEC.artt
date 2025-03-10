@@ -105,10 +105,23 @@ export const getConnex = async () => {
       console.log("Development environment detected - using HTTP polling for VeChain connection");
       
       try {
-        // Use HTTP polling for Replit/development which is more reliable in this environment
-        const driver = await Driver.connect(new SimpleNet(network.url));
-        connexInstance = new Framework(driver);
-        return connexInstance;
+        // Check if we have a private key to use for signing transactions
+        if (import.meta.env.VITE_VECHAIN_PRIVATE_KEY) {
+          // Create a wallet with the private key
+          const wallet = new SimpleWallet();
+          wallet.import(import.meta.env.VITE_VECHAIN_PRIVATE_KEY);
+          
+          // Use the wallet to connect to TestNet
+          const driver = await Driver.connect(new SimpleNet(network.url), wallet);
+          connexInstance = new Framework(driver);
+          console.log("Connected to TestNet with private key wallet");
+          return connexInstance;
+        } else {
+          // No private key, use regular connection
+          const driver = await Driver.connect(new SimpleNet(network.url));
+          connexInstance = new Framework(driver);
+          return connexInstance;
+        }
       } catch (devError) {
         console.error("Development Connex initialization failed:", devError);
         return mockConnex();
@@ -160,32 +173,39 @@ export const connectWalletWithEnvKey = async () => {
     const wallet = new SimpleWallet();
     wallet.import(privateKey);
     
-    // Initialize Connex with the wallet
-    const connex = await initializeConnex(wallet);
+    // Create a dedicated network instance for this wallet
+    const network = getNetwork();
+    const net = new SimpleNet(network.url);
+    
+    // Create a custom driver for this wallet
+    const driver = await Driver.connect(net, wallet);
+    const framework = new Framework(driver);
     
     // Get the address from the wallet
     const account = wallet.list[0];
     console.log(`Connected to TestNet with address: ${account.address}`);
     
-    // Create a vendor-like interface to match the expected structure
+    // Store this framework instance so we can reuse it
+    connexInstance = framework;
+    
+    // Create a proper vendor for signing real transactions
     const vendor = {
       address: account.address,
       sign: async (type: string, clauses: any[]) => {
         try {
-          // Get connex instance for sending real transactions to TestNet
-          const connex = await getConnex();
-          if (!connex) {
-            throw new Error("Failed to initialize Connex");
-          }
+          // Log the actual transaction we're about to make
+          console.log(`REAL TX: Signing transaction with ${clauses.length} clauses`);
+          console.log(`Transaction clauses:`, JSON.stringify(clauses, null, 2));
           
-          // Sign and send the transaction through Connex
-          console.log(`Signing transaction with ${clauses.length} clauses`);
+          // Create a transaction signing service from our framework
+          const signService = framework.vendor.sign(type, clauses);
           
-          // Use the real vendor to sign and send the transaction
-          const signedTx = await connex.vendor.sign(type, clauses);
+          // Request for signing - this will automatically happen since we're using a private key
+          const signedTx = await signService.request();
           
-          // Log the transaction details
-          console.log(`Transaction signed with ID: ${signedTx.txid}`);
+          // Log the real transaction ID for troubleshooting
+          console.log(`REAL TX SUCCESS: ID: ${signedTx.txid}`);
+          console.log(`https://explore.vechain.org/transactions/${signedTx.txid}`);
           
           return {
             txid: signedTx.txid,
@@ -198,16 +218,18 @@ export const connectWalletWithEnvKey = async () => {
       },
       signCert: async (certMessage: any) => {
         try {
-          // Simulate signing a certificate
-          return {
-            annex: {
-              domain: 'vecollab.io',
-              timestamp: Date.now(),
-              signer: account.address
-            },
-            signature: '0x' + Math.random().toString(16).substring(2, 34),
-            certified: true
-          };
+          // Log that we're processing a certificate request
+          console.log(`REAL CERT: Signing certificate`, certMessage);
+          
+          // Create a certificate signing service - note that we need to use the specific 'cert' type
+          const signService = framework.vendor.sign('cert', certMessage);
+          
+          // Request for signing
+          const signedCert = await signService.request();
+          
+          console.log(`REAL CERT SUCCESS:`, signedCert);
+          
+          return signedCert;
         } catch (error) {
           console.error("Error signing certificate:", error);
           throw error;
@@ -215,7 +237,7 @@ export const connectWalletWithEnvKey = async () => {
       }
     };
     
-    return { connex, vendor };
+    return { connex: framework, vendor };
   } catch (error) {
     console.error("Failed to connect with environment private key:", error);
     throw error;
@@ -229,59 +251,76 @@ export const connectWallet = async (privateKey?: string) => {
     
     // If private key is provided directly, use it to create a wallet
     if (privateKey) {
+      console.log("Connecting with provided private key...");
       const wallet = new SimpleWallet();
       wallet.import(privateKey);
-      const connex = await initializeConnex(wallet);
+    
+      // Create a dedicated network instance for this wallet
+      const network = getNetwork();
+      const net = new SimpleNet(network.url);
+      
+      // Create a custom driver for this wallet
+      const driver = await Driver.connect(net, wallet);
+      const framework = new Framework(driver);
       
       // Get the address from the wallet
       const account = wallet.list[0];
+      console.log(`Connected to TestNet with address: ${account.address}`);
       
-      // Create a vendor-like interface
+      // Store this framework instance so we can reuse it
+      connexInstance = framework;
+      
+      // Create a proper vendor for signing real transactions
       const vendor = {
         address: account.address,
         sign: async (type: string, clauses: any[]) => {
-          // Get connex instance for sending real transactions to TestNet
-          const connex = await getConnex();
-          if (!connex) {
-            throw new Error("Failed to initialize Connex");
+          try {
+            // Log the actual transaction we're about to make
+            console.log(`REAL TX: Signing transaction with ${clauses.length} clauses`);
+            console.log(`Transaction clauses:`, JSON.stringify(clauses, null, 2));
+            
+            // Create a transaction signing service from our framework
+            // Ensure type is 'tx' for transactions
+            const signService = framework.vendor.sign('tx', clauses);
+            
+            // Request for signing - this will automatically happen since we're using a private key
+            const signedTx = await signService.request();
+            
+            // Log the real transaction ID for troubleshooting
+            console.log(`REAL TX SUCCESS: ID: ${signedTx.txid}`);
+            console.log(`https://explore.vechain.org/transactions/${signedTx.txid}`);
+            
+            return {
+              txid: signedTx.txid,
+              signer: account.address
+            };
+          } catch (error) {
+            console.error("Error signing transaction:", error);
+            throw error;
           }
-          
-          // Sign and send the transaction through Connex
-          console.log(`Signing transaction with ${clauses.length} clauses`);
-          
-          // Use the real vendor to sign and send the transaction
-          const signedTx = await connex.vendor.sign(type, clauses);
-          
-          // Log the transaction details
-          console.log(`Transaction signed with ID: ${signedTx.txid}`);
-          
-          return {
-            txid: signedTx.txid,
-            signer: account.address
-          };
         },
-        signCert: async (certMessage: any) => { 
-          // Get connex instance
-          const connex = await getConnex();
-          if (!connex) {
-            throw new Error("Failed to initialize Connex");
-          }
-          
-          // For certificates, we'll create a realistic signature based on real account
-          // but using a deterministic approach
-          return {
-            annex: { 
-              domain: 'vecollab.io', 
-              timestamp: Date.now(), 
-              signer: account.address 
-            },
-            signature: '0x' + Math.random().toString(16).substring(2, 66),
-            certified: true
+        signCert: async (certMessage: any) => {
+          try {
+            // Log that we're processing a certificate request
+            console.log(`REAL CERT: Signing certificate`, certMessage);
+            
+            // Create a certificate signing service - note that we need to use the specific 'cert' type
+            const signService = framework.vendor.sign('cert', certMessage);
+            
+            // Request for signing
+            const signedCert = await signService.request();
+            
+            console.log(`REAL CERT SUCCESS:`, signedCert);
+            
+            return signedCert;
+          } catch (error) {
+            console.error("Error signing certificate:", error);
+            throw error;
           }
         }
       };
       
-      return { connex, vendor };
+      return { connex: framework, vendor };
     }
     
     // For the Replit environment or development mode, use private key from environment if available
