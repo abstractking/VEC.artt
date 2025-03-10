@@ -6,6 +6,7 @@ import CreatorSpotlight from "@/components/CreatorSpotlight";
 import CreateAndSell from "@/components/CreateAndSell";
 import Newsletter from "@/components/Newsletter";
 import NFTShuffle from "@/components/NFTShuffle";
+import RandomArtGallery from "@/components/RandomArtGallery";
 import TransactionTest from "@/components/TransactionTest";
 import { useQuery } from "@tanstack/react-query";
 import type { Collection, NFT } from "@shared/schema";
@@ -50,6 +51,14 @@ export default function Home() {
         collections={collections || []} 
         isLoading={collectionsLoading} 
       />
+      
+      {/* Random Art Gallery */}
+      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <RandomArtGallery
+          nfts={nfts || []} 
+          isLoading={nftsLoading}
+        />
+      </section>
       
       <TrendingNFTs 
         nfts={nfts || []} 

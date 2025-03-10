@@ -158,22 +158,24 @@ export default function NFTShuffle({
               transition={{ duration: 0.3 }}
               className="relative"
             >
-              <div className="aspect-[4/3] relative">
-                <img 
-                  src={nft.imageUrl} 
-                  alt={nft.name} 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              </div>
-              
-              <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                <h3 className="text-xl md:text-2xl font-bold mb-2 line-clamp-1">{nft.name}</h3>
-                <p className="mb-4 text-sm md:text-base opacity-90 line-clamp-2">{nft.description}</p>
-                <Link href={`/nft/${nft.id}`}>
-                  <Button className="w-full">View Details</Button>
-                </Link>
-              </div>
+              <Link href={`/nft/${nft.id}`} className="cursor-pointer block">
+                <div className="aspect-[4/3] relative">
+                  <img 
+                    src={nft.imageUrl} 
+                    alt={nft.name} 
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                </div>
+                
+                <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                  <h3 className="text-xl md:text-2xl font-bold mb-2 line-clamp-1">{nft.name}</h3>
+                  <p className="mb-4 text-sm md:text-base opacity-90 line-clamp-2">{nft.description}</p>
+                  <div className="w-full py-2 px-4 bg-primary text-primary-foreground font-medium rounded-md text-center">
+                    View Details
+                  </div>
+                </div>
+              </Link>
             </motion.div>
           ))}
         </AnimatePresence>
