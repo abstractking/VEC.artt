@@ -1,0 +1,232 @@
+10:11:24 AM: Netlify Build                                                 
+10:11:24 AM: ────────────────────────────────────────────────────────────────
+10:11:24 AM: ​
+10:11:24 AM: ❯ Version
+10:11:24 AM:   @netlify/build 29.59.2
+10:11:24 AM: ​
+10:11:24 AM: ❯ Flags
+10:11:24 AM:   accountId: 67b93ed93699b498398f4a5d
+10:11:24 AM:   baseRelDir: true
+10:11:24 AM:   buildId: 67cf00f8167db600087e749a
+10:11:24 AM:   deployId: 67cf00f8167db600087e749c
+10:11:24 AM: ​
+10:11:24 AM: ❯ Current directory
+10:11:24 AM:   /opt/build/repo
+10:11:24 AM: ​
+10:11:24 AM: ❯ Config file
+10:11:24 AM:   /opt/build/repo/netlify.toml
+10:11:24 AM: ​
+10:11:24 AM: ❯ Context
+10:11:24 AM:   production
+10:11:24 AM: ​
+10:11:24 AM: build.command from netlify.toml                               
+10:11:24 AM: ────────────────────────────────────────────────────────────────
+10:11:24 AM: ​
+10:11:24 AM: $ NODE_ENV=development npm ci && node scripts/patch-thor-devkit.cjs && npm run build
+10:11:27 AM: npm warn deprecated uuid@2.0.1: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+10:11:28 AM: npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+10:11:28 AM: npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+10:11:32 AM: added 632 packages, and audited 633 packages in 8s
+10:11:32 AM: 88 packages are looking for funding
+10:11:32 AM:   run `npm fund` for details
+10:11:32 AM: 15 vulnerabilities (8 moderate, 7 critical)
+10:11:32 AM: To address issues that do not require attention, run:
+10:11:32 AM:   npm audit fix
+10:11:32 AM: To address all issues possible (including breaking changes), run:
+10:11:32 AM:   npm audit fix --force
+10:11:32 AM: Some issues need review, and may require choosing
+10:11:32 AM: a different dependency.
+10:11:32 AM: Run `npm audit` for details.
+10:11:32 AM: 🔧 Starting thor-devkit patching process for browser compatibility...
+10:11:32 AM: 🔍 Searching for JavaScript files in thor-devkit package...
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/abi.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/dist/abi.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/address.js
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/address.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/blake2b.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/dist/blake2b.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/bloom.js
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/bloom.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/certificate.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/dist/certificate.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/hdnode.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/dist/hdnode.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/index.js
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/index.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/keccak.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/dist/keccak.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/keystore.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/dist/keystore.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/mnemonic.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/dist/mnemonic.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/rlp.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/dist/rlp.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/secp256k1.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/dist/secp256k1.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/transaction.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/dist/transaction.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/abi.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/esm/abi.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/address.js
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/address.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/blake2b.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/esm/blake2b.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/bloom.js
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/bloom.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/certificate.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/esm/certificate.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/hdnode.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/esm/hdnode.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/index.js
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/index.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/keccak.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/esm/keccak.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/keystore.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/esm/keystore.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/mnemonic.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/esm/mnemonic.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/rlp.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/esm/rlp.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/secp256k1.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/esm/secp256k1.js
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/transaction.js
+10:11:32 AM: ✅ Patched: /opt/build/repo/node_modules/thor-devkit/esm/transaction.js
+10:11:32 AM: 🔍 Searching for TypeScript declaration files in thor-devkit package...
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/abi.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/abi.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/address.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/address.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/blake2b.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/blake2b.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/bloom.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/bloom.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/certificate.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/certificate.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/hdnode.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/hdnode.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/index.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/index.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/keccak.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/keccak.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/keystore.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/keystore.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/mnemonic.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/mnemonic.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/rlp.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/rlp.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/secp256k1.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/secp256k1.d.ts
+10:11:32 AM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/transaction.d.ts
+10:11:32 AM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/transaction.d.ts
+10:11:32 AM: 🎉 thor-devkit patching completed successfully!
+10:11:32 AM: ⚠️ Note: This patching is only needed for browser environments. The original functionality is preserved for Node.js environments.
+10:11:32 AM: > rest-express@1.0.0 build
+10:11:32 AM: > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+10:11:33 AM: vite v5.4.14 building for production...
+10:11:33 AM: transforming...
+10:11:33 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "url" has been externalized for browser compatibility, imported by "/opt/build/repo/client/src/lib/build-polyfills.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:33 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "events" has been externalized for browser compatibility, imported by "/opt/build/repo/client/src/lib/build-polyfills.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:33 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "events" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/stream-browserify/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:33 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "url" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/stream-http/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:33 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "http" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/https-browserify/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:33 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "url" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/https-browserify/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:34 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "events" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/stream-browserify/node_modules/readable-stream/lib/_stream_readable.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:34 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "events" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/stream-browserify/node_modules/readable-stream/lib/internal/streams/stream-browser.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:34 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/cipher-base/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:35 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/hash-base/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:35 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "events" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/readable-stream/lib/_stream_readable.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:35 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "events" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/stream-http/node_modules/readable-stream/lib/_stream_readable.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:36 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/connex-driver/esm/driver.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:36 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "url" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-net.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:36 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "http" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-net.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:36 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "https" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-net.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:36 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "events" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/readable-stream/lib/internal/streams/stream-browser.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:36 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "events" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/stream-http/node_modules/readable-stream/lib/internal/streams/stream-browser.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:36 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "vm" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/asn1.js/lib/asn1/api.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:37 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/pbkdf2.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:37 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/random-bytes.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:37 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/hmac.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+10:11:37 AM: ✓ 3825 modules transformed.
+10:11:37 AM: x Build failed in 4.89s
+10:11:37 AM: error during build:
+10:11:37 AM: node_modules/@vechain/connex-driver/esm/driver.js (12:9): "randomBytes" is not exported by "__vite-browser-external", imported by "node_modules/@vechain/connex-driver/esm/driver.js".
+10:11:37 AM: file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/driver.js:12:9
+10:11:37 AM: 
+10:11:37 AM: 10: import { DriverNoVendor } from './driver-no-vendor';
+10:11:37 AM: 11: import { Transaction, Certificate, blake2b256 } from 'thor-devkit';
+10:11:37 AM: 12: import { randomBytes } from 'crypto';
+10:11:37 AM:              ^
+10:11:37 AM: 13: /** class fully implements DriverInterface */
+10:11:37 AM: 14: export class Driver extends DriverNoVendor {
+10:11:37 AM: 
+10:11:37 AM:     at getRollupError (file:///opt/build/repo/node_modules/rollup/dist/es/shared/parseAst.js:396:41)
+10:11:37 AM:     at error (file:///opt/build/repo/node_modules/rollup/dist/es/shared/parseAst.js:392:42)
+10:11:37 AM:     at Module.error (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:15588:16)
+10:11:37 AM:     at Module.traceVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:16037:29)
+10:11:37 AM:     at ModuleScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:13820:39)
+10:11:37 AM:     at ChildScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+10:11:37 AM:     at ClassBodyScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+10:11:37 AM:     at ChildScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+10:11:37 AM:     at ChildScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+10:11:37 AM:     at FunctionScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+10:11:38 AM: ​
+10:11:38 AM: "build.command" failed                                        
+10:11:38 AM: ────────────────────────────────────────────────────────────────
+10:11:38 AM: ​
+10:11:38 AM:   Error message
+10:11:38 AM:   Command failed with exit code 1: NODE_ENV=development npm ci && node scripts/patch-thor-devkit.cjs && npm run build
+10:11:38 AM: ​
+10:11:38 AM:   Error location
+10:11:38 AM:   In build.command from netlify.toml:
+10:11:38 AM:   NODE_ENV=development npm ci && node scripts/patch-thor-devkit.cjs && npm run build
+10:11:38 AM: ​
+10:11:38 AM:   Resolved config
+10:11:38 AM:   build:
+10:11:38 AM:     command: NODE_ENV=development npm ci && node scripts/patch-thor-devkit.cjs && npm run build
+10:11:38 AM:     commandOrigin: config
+10:11:38 AM:     environment:
+10:11:38 AM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+10:11:38 AM:       - VITE_REACT_APP_VECHAIN_NETWORK
+10:11:38 AM:       - VITE_VECHAIN_PRIVATE_KEY
+10:11:38 AM:       - NODE_VERSION
+10:11:38 AM:       - NODE_ENV
+10:11:38 AM:     publish: /opt/build/repo/dist
+10:11:38 AM:     publishOrigin: config
+10:11:38 AM:   headers:
+10:11:38 AM:     - for: /*
+      values:
+        Cache-Control: public, max-age=31536000, must-revalidate
+        Content-Security-Policy: |-
+          default-src 'self'; 
+                connect-src 'self' https://testnet.veblocks.net https://mainnet.veblocks.net wss://testnet.veblocks.net/socket wss://mainnet.veblocks.net/socket wss://*.replit.dev wss://*.netlify.app https://*.netlify.app; 
+                script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
+                style-src 'self' 'unsafe-inline'; 
+                img-src 'self' data: blob: https:; 
+                font-src 'self' data:; 
+                object-src 'none';
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: '*.js'
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+    - for: '*.css'
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+    - for: /images/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /api/*
+      status: 200
+      to: /.netlify/functions/api/:splat
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+10:11:38 AM: Build failed due to a user error: Build script returned non-zero exit code: 2
+10:11:38 AM: Failing build: Failed to build site
+10:11:38 AM: Finished processing build request in 37.87s
+10:11:38 AM: Failed during stage 'building site': Build script returned non-zero exit code: 2
