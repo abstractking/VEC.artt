@@ -276,7 +276,7 @@ export default function TransactionConfirmDialog({
             </p>
             {txId && (
               <a 
-                href={`https://vethor-explorer.veblocks.net/t/${txId}?network=test`}
+                href={`https://explore.vechain.org/transactions/${txId}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="mt-4 p-3 bg-muted rounded-lg text-sm flex items-center justify-center hover:bg-muted/80 transition-colors"
