@@ -248,8 +248,9 @@ export default function WalletDebugger() {
         vendor = await vechain.newConnexVendor(vendorOptions);
         
         successMethod = "network object format";
-      } catch (methodError) {
-        console.log("Network object format failed:", methodError);
+      } catch (error) {
+        const methodError = error as Error;
+        console.log("Network object format failed:", methodError.message);
         
         // If that fails, try with the genesis parameter approach
         try {
@@ -269,9 +270,10 @@ export default function WalletDebugger() {
           vendor = await vechain.newConnexVendor(vendorOptions);
           
           successMethod = "genesis parameter";
-        } catch (altMethodError) {
-          console.error("Alternative method also failed:", altMethodError);
-          throw new Error(`Both connection methods failed: ${methodError.message} and ${altMethodError.message}`);
+        } catch (error) {
+          const altMethodError = error as Error;
+          console.error("Alternative method also failed:", altMethodError.message);
+          throw new Error(`Both connection methods failed:\n1. ${methodError.message}\n2. ${altMethodError.message}`);
         }
       }
       

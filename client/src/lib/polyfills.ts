@@ -45,9 +45,25 @@ if (isBrowser) {
   // Make crypto browserify available without trying to redefine the native crypto
   window.cryptoPolyfill = cryptoPolyfill;
   
+  // Create a safe util implementation
+  const safeUtil = {
+    ...util,
+    debuglog: () => () => {}, // Stub implementation
+    inspect: (obj: any) => JSON.stringify(obj, null, 2), // Simple inspect implementation
+  };
+  
+  // Create a safe stream implementation
+  const safeStream = {
+    ...stream,
+    Transform: stream.Transform || null,
+    Readable: stream.Readable || null,
+    Writable: stream.Writable || null,
+    Duplex: stream.Duplex || null,
+  };
+  
   // Add Node.js-compatible modules to window safely
   const moduleMapping: Record<string, unknown> = {
-    stream,
+    stream: safeStream,
     http,
     https,
     path,
@@ -56,7 +72,7 @@ if (isBrowser) {
     url,
     assert,
     zlib,
-    util
+    util: safeUtil
   };
   
   // Safely assign modules to window

@@ -171,22 +171,36 @@ export const initializeConnex = async (wallet?: SimpleWallet) => {
     if (typeof window !== 'undefined') {
       if (isReplit) {
         console.log("Replit environment detected - using HTTP polling for VeChain connection");
-      }
-      
-      // For Replit environment, use a specialized configuration
-      if (isReplit) {
+        
+        // For Replit environment, use a specialized configuration
         try {
-          // Initialize with direct HTTP connection
-          const connex = new Connex({
-            node: network.url, // Use reliable HTTP endpoint
-            network: network.name.toLowerCase() as any // Either 'main' or 'test'
-            // No WebSocket in Replit - the default Connex configuration will handle this
-          });
+          // Check if we have a private key for test environment
+          const privateKey = import.meta.env.VITE_VECHAIN_PRIVATE_KEY;
           
-          connexInstance = connex;
-          return connex;
+          if (privateKey) {
+            // Create a wallet with the private key
+            const wallet = new SimpleWallet();
+            wallet.import(privateKey);
+            
+            // Create a dedicated network instance for this wallet
+            const net = new SimpleNet(network.url);
+            const driver = await Driver.connect(net, wallet);
+            const framework = new Framework(driver);
+            
+            connexInstance = framework;
+            return framework;
+          } else {
+            // Initialize with direct HTTP connection without a wallet
+            const net = new SimpleNet(network.url);
+            const driver = await Driver.connect(net);
+            const framework = new Framework(driver);
+            
+            connexInstance = framework;
+            return framework;
+          }
         } catch (connexError) {
           console.error("Connex initialization failed:", connexError);
+          throw connexError;
         }
       }
       
@@ -1377,6 +1391,10 @@ export const getTransactionReceipt = async (txId: string) => {
 };
 
 // Mock Connex for development environments without blockchain access
+/**
+ * Mock Connex implementation for development and testing
+ * This is ONLY used when a real VeChain connection is not available or fails
+ */
 function mockConnex() {
   console.warn("Using enhanced mock Connex implementation for development");
   
