@@ -35,39 +35,63 @@ The build process for Netlify is configured in `netlify.toml` and involves the f
    - `scripts/patch-vechain-module.cjs` - Creates necessary browser polyfills
 3. Build the application with `npm run build`
 
-## Browser Compatibility
+## Implementation Details
 
-The VeChain libraries (thor-devkit and @vechain/connex-driver) are primarily designed for Node.js environments and use several Node.js core modules like `crypto`, `stream`, and others. For browser compatibility, we use several strategies:
+Our approach to solve compatibility issues involves several key strategies:
 
-### 1. Polyfills
+### 1. Module Compatibility
 
-Several polyfill files are created and imported in specific order in `client/src/main.tsx`:
+VeChain libraries were designed for Node.js but need to run in browsers:
 
-- `globalPolyfill.js` - Sets window.global = window
-- `processPolyfill.js` - Polyfills Node.js process
-- `bufferPolyfill.js` - Polyfills Node.js Buffer
-- `streamPolyfill.js` - Polyfills Node.js stream
-- `lib/build-polyfills.ts` - Imports all necessary browserify modules
-- `lib/thor-polyfills.ts` - Provides crypto implementations for thor-devkit
-- `lib/secp256k1-browser.js` - Browser-compatible secp256k1 implementation
+- **Runtime Polyfills**: We provide browser-compatible versions of Node.js core modules
+- **Package Patching**: We modify Node.js-specific code during build
+- **Environment Detection**: Code detects browser vs Node.js environments and adapts accordingly
 
-### 2. Patching Scripts
+### 2. Workflow
 
-Two patching scripts modify the Node.js modules for browser compatibility:
+The deployment pipeline:
 
-#### a. patch-thor-devkit-improved.cjs
+1. **Pre-build Patching**: Before Vite builds the application, our patching scripts:
+   - Scan `node_modules` for Node.js-specific imports
+   - Replace them with browser-compatible alternatives
+   - Create necessary polyfill implementations
+2. **Polyfill Injection**: Required polyfills are injected into the application
+3. **Building**: Vite then builds the application with all patches applied
+4. **Optimization**: Static files are optimized for production
 
-This script:
-- Scans thor-devkit and @vechain/connex-driver packages
-- Replaces Node.js module imports with browser-compatible versions
-- Handles special cases for crypto and secp256k1
+## Polyfill System
 
-#### b. patch-vechain-module.cjs
+The VeChain libraries (thor-devkit and @vechain/connex-driver) are primarily designed for Node.js environments and use several Node.js core modules like `crypto`, `stream`, and others. For browser compatibility, we use:
 
-This script:
-- Creates polyfill files in client/src/lib/
-- Sets up re-exports for Node.js core modules
-- Provides browser-compatible implementations
+### 1. Core Polyfills
+
+These files provide essential Node.js functionality in the browser:
+
+- `globalPolyfill.js` - Makes `window.global = window`
+- `processPolyfill.js` - Provides Node.js process object 
+- `bufferPolyfill.js` - Provides Buffer implementation
+- `streamPolyfill.js` - Implements stream interface
+
+### 2. Module Polyfills
+
+We provide browser-compatible versions of Node.js modules:
+
+- `crypto-browserify` - Cryptography functions
+- `stream-browserify` - Stream implementation
+- `path-browserify` - Path manipulation utilities
+- `os-browserify` - Operating system utilities
+- `buffer` - Buffer implementation
+- `events` - Event emitter functionality
+- `util` - Utility functions
+- `assert` - Testing assertions
+
+### 3. VeChain-Specific Polyfills
+
+We created custom implementations for VeChain-specific needs:
+
+- `thor-polyfills.ts` - Provides crypto implementations that thor-devkit expects
+- `secp256k1-browser.ts` - Implementation of secp256k1 cryptography using elliptic.js
+- `browser-info.ts` - Runtime environment detection
 
 ## Troubleshooting
 
@@ -75,15 +99,28 @@ This script:
 
 1. **Path Resolution Problems**
 
-   If you see errors like "Could not resolve '../client/src/lib/thor-polyfills'", the patching script may be using relative paths incorrectly. Use the improved patching script which handles module resolution properly.
+   If you see errors like "Could not resolve '../../../client/src/lib/thor-polyfills'", use `patch-thor-devkit-improved.cjs` which fixes these by using direct imports from node_modules.
 
 2. **Crypto Module Issues**
 
-   If you see errors related to crypto functions, ensure the polyfills are properly loaded in the correct order in main.tsx.
+   If you see errors related to crypto functions:
+   - Ensure crypto-browserify is installed
+   - Verify polyfills are loaded in correct order in main.tsx
+   - Check thor-polyfills.ts functions match what thor-devkit expects
 
 3. **Buffer Not Defined**
 
-   If you encounter "Buffer is not defined" errors, check that the buffer polyfill is properly loaded before any code that uses Buffer.
+   If you encounter "Buffer is not defined" errors:
+   - Make sure buffer polyfill loads before code that uses Buffer
+   - Verify globalThis.Buffer is properly set
+   - Check that 'buffer' package is installed
+
+4. **Missing Type Definitions**
+
+   For TypeScript errors, check:
+   - browser-polyfills.d.ts has proper module declarations
+   - Window interface is properly extended
+   - Type declarations for browserify modules exist
 
 ### Browser Console Errors
 
@@ -93,7 +130,10 @@ This script:
 
 2. **Connex Driver Errors**
 
-   If you see errors related to Connex driver, check that the browser polyfills are properly loaded and the patching scripts are correctly applied.
+   If you see errors related to Connex driver:
+   - Check browser polyfills are loaded
+   - Verify patching scripts were applied
+   - Look for missing Node.js module errors
 
 ## Deployment Commands
 
@@ -130,6 +170,8 @@ npm run build
 - [VeChain Developer Documentation](https://docs.vechain.org/)
 - [thor-devkit Documentation](https://github.com/vechain/thor-devkit.js)
 - [Connex Framework Documentation](https://github.com/vechain/connex-framework)
+- [Vite Build Documentation](https://vitejs.dev/guide/build.html)
+- [Browserify Handbook](https://github.com/browserify/browserify-handbook)
 
 ## Using with Custom Domains
 

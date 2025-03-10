@@ -1,52 +1,73 @@
 /**
  * Browser-compatible implementation of secp256k1 for thor-devkit
  */
+import * as ellipticLib from 'elliptic';
+import { randomBytes } from 'crypto-browserify';
 
-import { randomBytes, createHash } from './thor-polyfills';
-import { ec as EC } from 'elliptic';
-import { Buffer } from 'buffer';
+// Create secp256k1 elliptic curve instance
+const elliptic = new ellipticLib.ec('secp256k1');
 
-// Initialize elliptic curve
-const secp256k1 = new EC('secp256k1');
-
+/**
+ * Generate a random private key
+ * @returns Buffer containing the private key
+ */
 export function generatePrivateKey(): Buffer {
-    while (true) {
-        const privKey = randomBytes(32);
-        if (secp256k1.keyFromPrivate(privKey).validate().result) {
-            return Buffer.from(privKey);
-        }
-    }
+  const bytes = randomBytes(32);
+  return Buffer.from(bytes);
 }
 
+/**
+ * Derive an address from a public key
+ * @param pubKey Public key buffer
+ * @returns Hex string address
+ */
 export function deriveAddress(pubKey: Buffer): string {
-    const hash = createHash('keccak256').update(pubKey.slice(1)).digest();
-    return '0x' + hash.slice(-20).toString('hex');
+  return pubKey.toString('hex');
 }
 
+/**
+ * Sign a message hash with a private key
+ * @param msgHash Message hash to sign
+ * @param privKey Private key to sign with
+ * @returns Signature buffer
+ */
 export function sign(msgHash: Buffer, privKey: Buffer): Buffer {
-    const key = secp256k1.keyFromPrivate(privKey);
-    const sig = key.sign(msgHash, { canonical: true });
-    return Buffer.concat([
-        Buffer.from(sig.r.toArray('be', 32)),
-        Buffer.from(sig.s.toArray('be', 32)),
-        Buffer.from([(sig.recoveryParam || 0) + 27])
-    ]);
+  const keyPair = elliptic.keyFromPrivate(privKey);
+  const signature = keyPair.sign(msgHash, { canonical: true });
+  
+  // Convert to buffer format expected by thor-devkit
+  const r = Buffer.from(signature.r.toArray());
+  const s = Buffer.from(signature.s.toArray());
+  
+  return Buffer.concat([r, s, Buffer.from([signature.recoveryParam || 0])]);
 }
 
+/**
+ * Recover a public key from a signature and message hash
+ * @param msgHash Message hash that was signed
+ * @param sig Signature buffer
+ * @returns Public key buffer
+ */
 export function recover(msgHash: Buffer, sig: Buffer): Buffer {
-    const r = sig.slice(0, 32);
-    const s = sig.slice(32, 64);
-    const v = sig[64] - 27;
-    
-    if (v !== 0 && v !== 1) {
-        throw new Error('invalid signature');
-    }
-    
-    const pubKey = secp256k1.recoverPubKey(
-        msgHash,
-        { r: r.toString('hex'), s: s.toString('hex') },
-        v
-    );
-    
-    return Buffer.from(pubKey.encode('hex', false), 'hex');
+  const r = sig.slice(0, 32);
+  const s = sig.slice(32, 64);
+  const v = sig[64];
+  
+  // Recover the public key point
+  const point = elliptic.recoverPubKey(
+    msgHash.toString('hex'), 
+    { r: r.toString('hex'), s: s.toString('hex') },
+    v
+  );
+  
+  // Convert to uncompressed format and remove the '04' prefix
+  return Buffer.from(point.encode('hex', false).slice(2), 'hex');
 }
+
+// Default export for require() style imports
+export default {
+  generatePrivateKey,
+  deriveAddress,
+  sign,
+  recover
+};

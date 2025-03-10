@@ -1,122 +1,77 @@
 /**
- * Polyfills for browser environment
- * This file provides essential Node.js compatibility in the browser
- * It must be imported before any other modules that might depend on these globals
+ * Main polyfill file for browser compatibility
+ * This ensures all Node.js modules are properly polyfilled in the browser
  */
 
-// First ensure global is defined everywhere needed
-// This is intentionally repeated in multiple locations for maximum compatibility
-if (typeof window !== 'undefined') {
-  // Set window.global first
-  // @ts-ignore
-  window.global = window;
-  
-  // Also set global in global scope directly
-  // @ts-ignore
-  if (typeof global === 'undefined') {
-    // @ts-ignore
-    globalThis.global = window;
-  }
-}
-
-// Import all required polyfills
+// Make Buffer available globally
 import { Buffer } from 'buffer';
-
-// In case process is not already set by our explicit polyfill
-// This is a fallback that should rarely be needed
-import processJs from 'process';
-const processObj = window.process || processJs;
-if (!window.process) window.process = processObj;
-
-// Import remaining polyfills
-import cryptoBrowserify from 'crypto-browserify';
-import streamBrowserify from 'stream-browserify';
-import streamHttp from 'stream-http';
-import httpsBrowserify from 'https-browserify';
-import osBrowserify from 'os-browserify';
-import assert from 'assert';
-
-// Make sure TypeScript knows about our global augmentations
-declare global {
-  interface Window {
-    Buffer: typeof Buffer;
-    global: typeof globalThis;
-    process: typeof process;
-    crypto: any; // Browser's built-in crypto
-    cryptoPolyfill: any; // Our Node.js crypto polyfill
-    stream: any;
-    http: any;
-    https: any;
-    os: any;
-    assert: typeof assert;
-  }
-}
-
 if (typeof window !== 'undefined') {
-  // Make Buffer available globally and on global object too 
-  window.Buffer = Buffer;
-  
-  // Verify the global object is properly set with multiple safety checks
-  // This is critical for libraries that check for the existence of global
-  window.global = window.global || window;
-  
-  // Extra insurance - set global in global scope too
-  try {
-    // @ts-ignore - global might not be defined in TypeScript but we're polyfilling it
-    global = global || window;
-  } catch (e) {
-    try {
-      // @ts-ignore
-      globalThis.global = window;
-    } catch (e2) {
-      console.warn("Could not set global in global scope", e2);
-    }
-  }
-  
-  // Add Node.js polyfills - ensure we use our already initialized process object
-  window.process = window.process || processObj;
-  
-  // The browser's crypto object is read-only, so we can't extend it directly
-  // Instead, create a new object that includes both browser crypto and our crypto polyfill
-  const origCrypto = window.crypto;
-  
-  // Create a separate cryptoPolyfill object instead of trying to modify window.crypto directly
-  // Use type assertion to help TypeScript understand what we're doing
-  (window as any).cryptoPolyfill = cryptoBrowserify;
-  
-  // Add browser's subtle crypto to our polyfill if it exists
-  if (origCrypto && origCrypto.subtle) {
-    (window as any).cryptoPolyfill.subtle = origCrypto.subtle;
-  }
-  
-  // Ensure randomBytes is available
-  (window as any).cryptoPolyfill.randomBytes = cryptoBrowserify.randomBytes;
-  
-  // Add a reference to the polyfill on the global object too
-  try {
-    // @ts-ignore
-    global.cryptoPolyfill = (window as any).cryptoPolyfill;
-  } catch (e) {
-    console.warn("Could not set cryptoPolyfill on global object", e);
-  }
-  
-  console.log("Crypto polyfill initialized as window.cryptoPolyfill");
-  
-  // Add remaining polyfills
-  window.stream = streamBrowserify;
-  window.http = streamHttp;
-  window.https = httpsBrowserify;
-  window.os = osBrowserify;
-  window.assert = assert;
-  
-  // Make Buffer available on the global object too
-  try {
-    // @ts-ignore
-    global.Buffer = Buffer;
-  } catch (e) {
-    console.warn("Could not set Buffer on global object", e);
-  }
-  
-  // Log successful polyfill loading
-  console.log("Node.js polyfills loaded: global, crypto, Buffer, process, etc. are now available");
+  window.Buffer = window.Buffer || Buffer;
 }
+
+// Make process available globally
+import process from 'process';
+if (typeof window !== 'undefined') {
+  window.process = window.process || process;
+}
+
+// Make sure global is defined
+if (typeof window !== 'undefined') {
+  window.global = window.global || window;
+}
+
+// Import and expose browserify modules
+import * as buffer from 'buffer';
+import * as crypto from 'crypto-browserify';
+import * as stream from 'stream-browserify';
+import * as http from 'stream-http';
+import * as https from 'https-browserify';
+import * as path from 'path-browserify';
+import * as os from 'os-browserify/browser';
+import * as events from 'events';
+import * as url from 'url';
+import * as assert from 'assert';
+import * as zlib from 'browserify-zlib';
+import * as util from 'util';
+
+// Make modules available through window
+if (typeof window !== 'undefined') {
+  // Native browser crypto is preserved
+  window.cryptoPolyfill = crypto;
+  
+  // Add Node.js-compatible modules to window
+  window.stream = window.stream || stream;
+  window.http = window.http || http;
+  window.https = window.https || https;
+  window.path = window.path || path;
+  window.os = window.os || os;
+  window.events = window.events || events;
+  window.url = window.url || url;
+  window.assert = window.assert || assert;
+  window.zlib = window.zlib || zlib;
+  window.util = window.util || util;
+}
+
+// Set up thor-specific polyfills
+import * as thorPolyfills from './thor-polyfills';
+if (typeof window !== 'undefined') {
+  window.thorCrypto = thorPolyfills;
+}
+
+// Export modules for TypeScript compatibility
+export {
+  buffer,
+  process,
+  crypto,
+  stream,
+  http,
+  https,
+  path,
+  os,
+  events,
+  url,
+  assert,
+  zlib,
+  util,
+  thorPolyfills
+};

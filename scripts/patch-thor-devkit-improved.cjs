@@ -296,5 +296,31 @@ try {
   console.error(`❌ Error updating main.tsx: ${err.message}`);
 }
 
+// Create a browser info file to detect the environment
+const browserInfoContent = `// Browser environment detection
+export const isBrowser = typeof window !== 'undefined';
+export const isNode = typeof process !== 'undefined' && !!(process.versions && process.versions.node);
+export const isTest = process.env.NODE_ENV === 'test';
+export const isDev = process.env.NODE_ENV === 'development';
+export const isProd = process.env.NODE_ENV === 'production';
+
+// Add browser flag to process
+if (typeof process !== 'undefined' && typeof window !== 'undefined') {
+  process.browser = true;
+}
+
+// Export browser info for runtime checking
+export default {
+  isBrowser,
+  isNode,
+  isTest,
+  isDev,
+  isProd
+};
+`;
+
+fs.writeFileSync(path.join(clientLibDir, 'browser-info.ts'), browserInfoContent);
+console.log(`✅ Created browser environment detection module: ${path.join(clientLibDir, 'browser-info.ts')}`);
+
 console.log('🎉 All patching completed successfully!');
 console.log('⚠️ Note: This patching is only needed for browser environments. The original functionality is preserved for Node.js environments.');

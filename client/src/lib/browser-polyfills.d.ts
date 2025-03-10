@@ -9,18 +9,25 @@ declare module 'stream-browserify';
 declare module 'stream-http';
 declare module 'https-browserify';
 declare module 'os-browserify/browser';
+declare module 'os-browserify';
 declare module 'events';
 declare module 'url';
 declare module 'assert';
 declare module 'util';
+declare module 'crypto-browserify';
+declare module 'buffer';
+declare module 'process/browser';
+declare module 'elliptic';
+declare module 'secp256k1';
 
 // Extend Window interface to include our polyfill properties
 interface Window {
   Buffer: typeof Buffer;
   global: typeof globalThis;
-  process: typeof process;
+  process: any;
   crypto: any; // Browser's built-in crypto
   cryptoPolyfill: any; // Our Node.js crypto polyfill
+  thorCrypto: any; // Thor-specific crypto polyfills
   stream: any;
   http: any;
   https: any;
@@ -31,4 +38,11 @@ interface Window {
   assert: any;
   zlib: any;
   util: any;
+}
+
+// Add missing properties to Process
+declare global {
+  interface Process {
+    browser?: boolean;
+  }
 }
