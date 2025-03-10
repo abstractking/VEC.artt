@@ -75,18 +75,35 @@ function generateId() {
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   
-  // Initialize WebSocket server
-  const wss = new WebSocketServer({ server: httpServer, path: '/ws' });
+  // Initialize WebSocket server with explicit path
+  const wss = new WebSocketServer({ 
+    server: httpServer, 
+    path: '/ws',
+    clientTracking: true
+  });
   
   // Handle WebSocket connections
   wss.on('connection', (ws: WebSocketClient) => {
     ws.isAlive = true;
     console.log('WebSocket client connected');
     
+    // Send immediate confirmation to the client
+    try {
+      ws.send(JSON.stringify({
+        type: 'connection',
+        status: 'connected',
+        timestamp: new Date().toISOString()
+      }));
+    } catch (err) {
+      console.error('Error sending connection confirmation:', err);
+    }
+    
     // Handle messages from client
-    ws.on('message', (message: string) => {
+    ws.on('message', (message) => {
       try {
-        const data = JSON.parse(message);
+        // Convert buffer to string if necessary
+        const messageStr = message instanceof Buffer ? message.toString() : message.toString();
+        const data = JSON.parse(messageStr);
         
         // Handle authentication
         if (data.type === 'auth' && data.userId) {
@@ -102,13 +119,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.log(`WebSocket client authenticated: User #${userId}`);
           
           // Send welcome notification
-          ws.send(JSON.stringify({
-            type: 'notification',
-            id: generateId(),
-            notificationType: 'system',
-            message: 'Welcome to VeCollab! You will receive real-time notifications here.',
-            timestamp: new Date().toISOString()
-          }));
+          try {
+            ws.send(JSON.stringify({
+              type: 'notification',
+              id: generateId(),
+              notificationType: 'system',
+              message: 'Welcome to VeCollab! You will receive real-time notifications here.',
+              timestamp: new Date().toISOString()
+            }));
+          } catch (err) {
+            console.error('Error sending welcome notification:', err);
+          }
         }
       } catch (error) {
         console.error('Error parsing WebSocket message:', error);

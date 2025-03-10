@@ -55,16 +55,23 @@ export default function NotificationCenter() {
     const wsUrl = `${protocol}//${window.location.host}/ws`;
     
     const connectWebSocket = () => {
+      console.log("Attempting to connect to WebSocket at:", wsUrl);
       const ws = new WebSocket(wsUrl);
       
       ws.onopen = () => {
-        console.log("WebSocket connected");
+        console.log("WebSocket connected successfully");
         // If user is logged in, send authentication to receive personalized notifications
         if (user) {
-          ws.send(JSON.stringify({ 
-            type: 'auth', 
-            userId: user.id 
-          }));
+          try {
+            const authMessage = JSON.stringify({ 
+              type: 'auth', 
+              userId: user.id 
+            });
+            ws.send(authMessage);
+            console.log("Sent authentication to WebSocket server");
+          } catch (err) {
+            console.error("Failed to send authentication:", err);
+          }
         }
       };
       

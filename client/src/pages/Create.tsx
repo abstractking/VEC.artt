@@ -262,6 +262,10 @@ export default function Create() {
         imageUrl: previewUrl, // Use the base64 string instead of a blob URL
         creatorId: currentUser.id,
         ownerId: currentUser.id,
+        // Convert numeric values to strings as required by schema
+        royaltyPercentage: values.royaltyPercentage?.toString() || "0",
+        royaltyCollabPercentage: values.royaltyCollabPercentage?.toString() || "0",
+        collabPercentage: values.collabPercentage?.toString() || "0",
         metadata: {
           category: values.category,
           createdAt: new Date().toISOString(),
