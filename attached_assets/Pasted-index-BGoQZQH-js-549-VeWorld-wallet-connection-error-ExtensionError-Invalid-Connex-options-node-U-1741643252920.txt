@@ -1,0 +1,79 @@
+index-BGoQZQH-.js:549 VeWorld wallet connection error: ExtensionError: Invalid Connex options node URL: TypeError: Failed to construct 'URL': Invalid URL
+    at Object.invalidParams (VeWorldAPI.js:1:14303)
+    at validateConnexOptions (VeWorldAPI.js:2214:152315)
+    at Object.newConnex (VeWorldAPI.js:2214:151719)
+    at hR (index-BGoQZQH-.js:549:189880)
+    at index-BGoQZQH-.js:551:14463
+    at C (index-BGoQZQH-.js:608:11693)
+    at Object.ebe (index-BGoQZQH-.js:124:9873)
+    at rbe (index-BGoQZQH-.js:124:10030)
+    at nbe (index-BGoQZQH-.js:124:10090)
+    at Tk (index-BGoQZQH-.js:124:31563)
+hR @ index-BGoQZQH-.js:549
+(anonymous) @ index-BGoQZQH-.js:551
+C @ index-BGoQZQH-.js:608
+ebe @ index-BGoQZQH-.js:124
+rbe @ index-BGoQZQH-.js:124
+nbe @ index-BGoQZQH-.js:124
+Tk @ index-BGoQZQH-.js:124
+wW @ index-BGoQZQH-.js:124
+(anonymous) @ index-BGoQZQH-.js:124
+_9 @ index-BGoQZQH-.js:127
+Wq @ index-BGoQZQH-.js:124
+Q6 @ index-BGoQZQH-.js:124
+YN @ index-BGoQZQH-.js:124
+bbe @ index-BGoQZQH-.js:124Understand this errorAI
+index-BGoQZQH-.js:551 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected
+    at hR (index-BGoQZQH-.js:549:190227)
+    at index-BGoQZQH-.js:551:14463
+    at C (index-BGoQZQH-.js:608:11693)
+    at Object.ebe (index-BGoQZQH-.js:124:9873)
+    at rbe (index-BGoQZQH-.js:124:10030)
+    at nbe (index-BGoQZQH-.js:124:10090)
+    at Tk (index-BGoQZQH-.js:124:31563)
+    at wW (index-BGoQZQH-.js:124:31981)
+    at index-BGoQZQH-.js:124:36914
+    at _9 (index-BGoQZQH-.js:127:36984)
+hR @ index-BGoQZQH-.js:551
+(anonymous) @ index-BGoQZQH-.js:551
+C @ index-BGoQZQH-.js:608
+ebe @ index-BGoQZQH-.js:124
+rbe @ index-BGoQZQH-.js:124
+nbe @ index-BGoQZQH-.js:124
+Tk @ index-BGoQZQH-.js:124
+wW @ index-BGoQZQH-.js:124
+(anonymous) @ index-BGoQZQH-.js:124
+_9 @ index-BGoQZQH-.js:127
+Wq @ index-BGoQZQH-.js:124
+Q6 @ index-BGoQZQH-.js:124
+YN @ index-BGoQZQH-.js:124
+bbe @ index-BGoQZQH-.js:124Understand this errorAI
+index-BGoQZQH-.js:621 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BGoQZQH-.js:551 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected
+    at hR (index-BGoQZQH-.js:549:190227)
+    at index-BGoQZQH-.js:551:14463
+    at C (index-BGoQZQH-.js:608:11693)
+    at Object.ebe (index-BGoQZQH-.js:124:9873)
+    at rbe (index-BGoQZQH-.js:124:10030)
+    at nbe (index-BGoQZQH-.js:124:10090)
+    at Tk (index-BGoQZQH-.js:124:31563)
+    at wW (index-BGoQZQH-.js:124:31981)
+    at index-BGoQZQH-.js:124:36914
+    at _9 (index-BGoQZQH-.js:127:36984)
+(anonymous) @ index-BGoQZQH-.js:551
+await in (anonymous)
+C @ index-BGoQZQH-.js:608
+ebe @ index-BGoQZQH-.js:124
+rbe @ index-BGoQZQH-.js:124
+nbe @ index-BGoQZQH-.js:124
+Tk @ index-BGoQZQH-.js:124
+wW @ index-BGoQZQH-.js:124
+(anonymous) @ index-BGoQZQH-.js:124
+_9 @ index-BGoQZQH-.js:127
+Wq @ index-BGoQZQH-.js:124
+Q6 @ index-BGoQZQH-.js:124
+YN @ index-BGoQZQH-.js:124
+bbe @ index-BGoQZQH-.js:124Understand this errorAI
+index-BGoQZQH-.js:551 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected
+    at index-BGoQZQH-.js:551:15252
+    at async C (index-BGoQZQH-.js:608:11687)
