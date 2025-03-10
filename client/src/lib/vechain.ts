@@ -5,27 +5,52 @@ import { Buffer } from 'buffer';
 
 // Type declarations for VeChain Connex and Thor responses
 interface TxResponse {
-    txid: string;
-    signer: string;
+    txid: string;             // Transaction ID returned by the blockchain
+    signer: string;           // Address of the account that signed the transaction
 }
 
 interface CertResponse {
     annex: {
-        domain: string;
-        timestamp: number;
-        signer: string;
+        domain: string;       // Domain requesting the certificate
+        timestamp: number;    // Unix timestamp when the certificate was created
+        signer: string;       // Address of the certificate signer
     };
-    signature: string;
-    certified: boolean;
+    signature: string;        // Signature of the certificate
+    certified: boolean;       // Whether the certificate is verified
 }
 
-// Helper type guards
-function isTxResponse(response: TxResponse | CertResponse): response is TxResponse {
-    return 'txid' in response;
+// Union type for all possible response types from signing operations
+type SigningResponse = TxResponse | CertResponse;
+
+// Helper type guards to safely discriminate between response types
+function isTxResponse(response: SigningResponse): response is TxResponse {
+    return response != null && 'txid' in response && typeof response.txid === 'string';
 }
 
-function isCertResponse(response: TxResponse | CertResponse): response is CertResponse {
-    return 'certified' in response;
+function isCertResponse(response: SigningResponse): response is CertResponse {
+    return response != null && 'certified' in response && 'signature' in response && 
+           'annex' in response && typeof response.annex === 'object';
+}
+
+// Helper function to safely handle and type check signing responses
+function processSigningResponse(response: SigningResponse): SigningResponse {
+    if (isTxResponse(response)) {
+        // Handle transaction response
+        return {
+            txid: response.txid,
+            signer: response.signer
+        };
+    } else if (isCertResponse(response)) {
+        // Handle certificate response
+        return {
+            annex: response.annex,
+            signature: response.signature,
+            certified: response.certified
+        };
+    } else {
+        // Handle unknown response type
+        throw new Error('Unknown signing response type');
+    }
 }
 
 // Check if cryptoPolyfill is available and patch the crypto environment

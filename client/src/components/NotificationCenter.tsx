@@ -54,71 +54,115 @@ export default function NotificationCenter() {
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
     
+    // Track reconnection attempts
+    let reconnectAttempts = 0;
+    let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+    let isReconnecting = false;
+    
+    const clearReconnectTimeout = () => {
+      if (reconnectTimeout !== null) {
+        clearTimeout(reconnectTimeout);
+        reconnectTimeout = null;
+      }
+    };
+    
     const connectWebSocket = () => {
-      console.log("Attempting to connect to WebSocket at:", wsUrl);
-      const ws = new WebSocket(wsUrl);
+      // Clear any existing timeout
+      clearReconnectTimeout();
       
-      ws.onopen = () => {
-        console.log("WebSocket connected successfully");
-        // If user is logged in, send authentication to receive personalized notifications
-        if (user) {
-          try {
-            const authMessage = JSON.stringify({ 
-              type: 'auth', 
-              userId: user.id 
-            });
-            ws.send(authMessage);
-            console.log("Sent authentication to WebSocket server");
-          } catch (err) {
-            console.error("Failed to send authentication:", err);
-          }
-        }
-      };
+      // Don't attempt reconnecting if already in process
+      if (isReconnecting) return;
+      isReconnecting = true;
       
-      ws.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
+      console.log(`Attempting to connect to WebSocket at: ${wsUrl} (attempt ${reconnectAttempts + 1})`);
+      
+      try {
+        const ws = new WebSocket(wsUrl);
+        
+        ws.onopen = () => {
+          console.log("WebSocket connected successfully");
+          reconnectAttempts = 0; // Reset counter on successful connection
+          isReconnecting = false;
           
-          if (data.type === 'notification') {
-            const newNotification: Notification = {
-              id: data.id,
-              type: data.notificationType,
-              message: data.message,
-              read: false,
-              timestamp: new Date(data.timestamp || Date.now()),
-              link: data.link,
-              thumbnail: data.thumbnail
-            };
-            
-            setNotifications((prev) => [newNotification, ...prev].slice(0, 50)); // Keep last 50 notifications
-            setUnreadCount((prev) => prev + 1);
-            
-            // Show browser notification if supported and permission is granted
-            if (typeof window !== 'undefined' && 'Notification' in window && 
-                Notification.permission === "granted" && !document.hasFocus()) {
-              new Notification("VeCollab Marketplace", { 
-                body: newNotification.message,
-                icon: "/logo.svg" 
+          // If user is logged in, send authentication
+          if (user) {
+            try {
+              const authMessage = JSON.stringify({ 
+                type: 'auth', 
+                userId: user.id 
               });
+              ws.send(authMessage);
+              console.log("Sent authentication to WebSocket server");
+            } catch (err) {
+              console.error("Failed to send authentication:", err);
             }
           }
-        } catch (error) {
-          console.error("Error parsing WebSocket message:", error);
-        }
-      };
-      
-      ws.onclose = (event) => {
-        console.log("WebSocket disconnected, reconnecting in 5s...", event.code, event.reason);
-        // Reconnect after 5 seconds
-        setTimeout(connectWebSocket, 5000);
-      };
-      
-      ws.onerror = (error) => {
-        console.error("WebSocket error:", error);
-        ws.close();
-      };
-      
-      wsRef.current = ws;
+        };
+        
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            
+            if (data.type === 'notification') {
+              const newNotification: Notification = {
+                id: data.id,
+                type: data.notificationType || 'system',
+                message: data.message,
+                read: false,
+                timestamp: new Date(data.timestamp || Date.now()),
+                link: data.link,
+                thumbnail: data.thumbnail
+              };
+              
+              setNotifications((prev) => [newNotification, ...prev].slice(0, 50)); // Keep last 50 notifications
+              setUnreadCount((prev) => prev + 1);
+              
+              // Show browser notification if supported and permission is granted
+              if (typeof window !== 'undefined' && 'Notification' in window && 
+                  Notification.permission === "granted" && !document.hasFocus()) {
+                new Notification("VeCollab Marketplace", { 
+                  body: newNotification.message,
+                  icon: "/logo.svg" 
+                });
+              }
+            }
+          } catch (error) {
+            console.error("Error parsing WebSocket message:", error);
+          }
+        };
+        
+        ws.onclose = (event) => {
+          // Calculate reconnection delay with exponential backoff, capped at 30 seconds
+          const delay = Math.min(5000 * Math.pow(1.5, reconnectAttempts), 30000);
+          reconnectAttempts++;
+          isReconnecting = false;
+          
+          console.log(`WebSocket disconnected (code: ${event.code}), reconnecting in ${Math.round(delay/1000)}s...`);
+          
+          // Schedule reconnection
+          reconnectTimeout = setTimeout(connectWebSocket, delay);
+        };
+        
+        ws.onerror = (error) => {
+          console.error("WebSocket error:", error);
+          // Let onclose handle reconnection
+          if (ws.readyState === ws.OPEN) {
+            ws.close();
+          }
+        };
+        
+        wsRef.current = ws;
+      } catch (err) {
+        console.error("Error creating WebSocket:", err);
+        isReconnecting = false;
+        
+        // Attempt reconnect with backoff
+        const delay = Math.min(5000 * Math.pow(1.5, reconnectAttempts), 30000);
+        reconnectAttempts++;
+        
+        console.log(`WebSocket creation failed, retrying in ${Math.round(delay/1000)}s...`);
+        reconnectTimeout = setTimeout(connectWebSocket, delay);
+      }
     };
     
     connectWebSocket();
@@ -135,8 +179,11 @@ export default function NotificationCenter() {
     
     // Cleanup WebSocket on unmount
     return () => {
+      clearReconnectTimeout();
+      
       if (wsRef.current) {
-        wsRef.current.close();
+        // Use 1000 (normal closure) to cleanly close
+        wsRef.current.close(1000, "Component unmounted");
       }
     };
   }, [user]);
