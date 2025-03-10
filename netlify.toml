@@ -5,7 +5,8 @@
   # Directory to publish (frontend client build)
   publish = "dist"
   # Build command - ensure all dependencies including dev dependencies are installed first
-  command = "NODE_ENV=development npm ci && npm run build"
+  # Apply patches before building to fix browser compatibility issues
+  command = "NODE_ENV=development npm ci && node scripts/patch-thor-devkit.cjs && npm run build"
   # Define build functions directory (optional - uncomment if using Netlify Functions)
   # functions = "netlify/functions"
 
@@ -26,8 +27,8 @@
 
 # Feature branch specific settings (for PR previews)
 [context.branch-deploy]
-  # We still want to build the app for branch deploys
-  command = "NODE_ENV=development npm ci && npm run build"
+  # We still want to build the app for branch deploys (with patching)
+  command = "NODE_ENV=development npm ci && node scripts/patch-thor-devkit.cjs && npm run build"
 
 # Redirects and rewrites - order matters!
 [[redirects]]

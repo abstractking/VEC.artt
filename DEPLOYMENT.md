@@ -1,117 +1,58 @@
 # VeCollab Marketplace Deployment Guide
 
-This guide provides step-by-step instructions for deploying the VeCollab marketplace to Netlify.
+## Netlify Deployment
 
-## Pre-Deployment Checklist
+The VeCollab Marketplace is configured for deployment on Netlify. This document outlines important aspects of the deployment process and troubleshooting tips.
 
-Before deploying, ensure you have:
+### Configuration
 
-- [ ] A VeChain wallet with TestNet tokens for testing
-- [ ] Your private key safely stored (never commit to Git)
-- [ ] Smart contract deployed to TestNet (or contract address you plan to interact with)
-- [ ] Git repository with your code
+The deployment is configured via the `netlify.toml` file, which includes:
 
-## Deployment Steps
+- Build commands and settings
+- Environment variables
+- Security headers
+- Caching policies
+- Redirects for client-side routing
 
-### 1. Connect Repository to Netlify
+### Known Issues and Solutions
 
-1. Log in to your Netlify account
-2. Click "New site from Git"
-3. Connect to your Git provider (GitHub, GitLab, etc.)
-4. Select your VeCollab repository
-5. Keep the default settings from the `netlify.toml` file:
-   - Build command: `npm ci && npm run build` (ensures dependencies are installed first)
-   - Publish directory: `dist`
+#### Node.js Module Compatibility in Browser
 
-> **Important**: The build command explicitly includes `npm ci` to ensure all dependencies are installed properly before running the build. Without this, you might encounter `vite: not found` errors during deployment.
+The project uses `thor-devkit` which imports Node.js native modules like `crypto`. These don't work in a browser environment. To address this:
 
-### 2. Configure Environment Variables
+1. We've created browser-compatible polyfills in `client/src/lib/secp256k1-browser.ts` and `client/src/lib/thor-polyfills.ts`
+2. We've implemented a patching script (`scripts/patch-thor-devkit.js`) that runs during the Netlify build process and replaces the Node.js crypto imports with browser-compatible alternatives
 
-In the Netlify UI, go to **Site settings > Build & deploy > Environment variables** and add:
+This approach allows us to use the thor-devkit library without modifying its source code directly.
 
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `VITE_VECHAIN_PRIVATE_KEY` | Your private key | Securely stored in Netlify, never in Git |
-| `VITE_REACT_APP_VECHAIN_NETWORK` | `test` or `main` | Which VeChain network to use |
-| `VITE_REACT_APP_NFT_CONTRACT_ADDRESS` | Your contract address | Address of deployed smart contract |
+#### WebSocket Connection Stability
 
-### 3. Deploy the Site
+The application uses WebSockets for real-time notifications. To ensure stable connections:
 
-1. Click "Deploy site"
-2. Wait for the build and deployment to complete
-3. Once deployed, Netlify will provide a URL to access your site
+1. We've implemented an exponential backoff reconnection strategy
+2. The client tries to reconnect automatically if disconnected
+3. The server keeps track of connected clients and cleans up properly on disconnection
 
-### 4. Post-Deployment Verification
+### Environment Variables
 
-After deployment, verify the following:
+For the application to work correctly, you must set these environment variables in the Netlify UI:
 
-1. Visit your deployed site
-2. Ensure wallet connection works
-3. Test NFT creation and transaction features
-4. Verify blockchain interactions are working as expected
+- `VITE_REACT_APP_VECHAIN_NETWORK`: Set to "main" for MainNet or "test" for TestNet
+- `VITE_REACT_APP_NFT_CONTRACT_ADDRESS`: The deployed contract address for the NFT marketplace
+- `VITE_VECHAIN_PRIVATE_KEY`: For TestNet only, a private key for signing transactions
 
-## Troubleshooting
+### Manual Deployments
 
-### Build Errors
+If you need to trigger a manual deployment:
 
-#### "vite: not found" Error
+1. Commit and push your changes to the main branch
+2. Netlify will automatically build and deploy the application
+3. You can also trigger a manual deploy from the Netlify UI
 
-If you encounter a build error like this:
-```
-sh: 1: vite: not found
-Error message: Command failed with exit code 127: npm run build
-```
+### Troubleshooting
 
-Solutions:
-1. Make sure your `netlify.toml` file includes `NODE_ENV=development` and `npm ci` before the build command:
-   ```toml
-   command = "NODE_ENV=development npm ci && npm run build"
-   ```
-   This ensures that development dependencies (like Vite) are properly installed during the build process.
-2. Check that `vite` is included in your package.json's devDependencies
-3. Verify your Node.js version in Netlify is compatible (we recommend Node 18+)
+If the deployment fails with errors related to Node.js modules:
 
-### WebSocket Connection Issues
-
-If you encounter WebSocket connection issues:
-
-1. Check that your CSP allows connections to `wss://testnet.veblocks.net/socket` and `wss://mainnet.veblocks.net/socket`
-2. Ensure your browser supports WebSockets
-3. Verify network connectivity to VeChain nodes
-
-### Wallet Connection Issues
-
-If wallet connection fails:
-
-1. Ensure your private key is correctly set in Netlify environment variables
-2. Check browser console for specific errors
-3. Verify you're connecting to the correct network (TestNet/MainNet)
-
-## Updating Your Deployment
-
-To update your deployment:
-
-1. Make changes to your code
-2. Commit and push to your Git repository
-3. Netlify will automatically trigger a new build and deployment
-
-## Custom Domain (Optional)
-
-To set up a custom domain:
-
-1. Go to Netlify site settings > Domain management
-2. Click "Add custom domain"
-3. Follow the instructions to configure DNS settings
-
-## Security Considerations
-
-- Never expose your private key in client-side code
-- Use Netlify's environment variables for secure storage
-- Regularly rotate your private keys
-- Use different keys for development and production
-
-## Additional Resources
-
-- [Netlify Documentation](https://docs.netlify.com/)
-- [VeChain Developer Documentation](https://docs.vechain.org/)
-- [Web3 Security Best Practices](https://consensys.github.io/smart-contract-best-practices/)
+1. Check the build logs for specific error messages
+2. Ensure the patching script is correctly modifying the thor-devkit imports
+3. You may need to update the patching script if thor-devkit changes in future versions
