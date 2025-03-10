@@ -608,7 +608,7 @@ export default function NFTDetail() {
                 variant="outline"
                 className="flex items-center text-xs"
                 size="sm"
-                onClick={() => window.open(`https://explore-testnet.vechain.org/tokens/${nft.tokenId}`, "_blank")}
+                onClick={() => window.open(`https://vethor-explorer.veblocks.net/token/${nft.tokenId}?network=test`, "_blank")}
               >
                 <ExternalLink className="h-4 w-4 mr-1" />
                 View on Explorer
