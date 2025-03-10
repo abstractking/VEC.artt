@@ -446,12 +446,33 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             // Create a Connex instance using VeWorld's newConnex method
             if (typeof vechain.newConnex === 'function') {
               console.log("Using vechain.newConnex() method");
-              const connex = await vechain.newConnex();
+              
+              // Create connexOptions with proper network configuration
+              const connexOptions = {
+                node: network.url,
+                network: {
+                  id: network.chainId,
+                  name: network.name
+                }
+              };
+              
+              console.log("Connecting with network options:", connexOptions);
+              const connex = await vechain.newConnex(connexOptions);
               
               // Create a vendor for signing transactions using VeWorld's newConnexVendor method
               if (typeof vechain.newConnexVendor === 'function') {
                 console.log("Using vechain.newConnexVendor() method");
-                const vendor = await vechain.newConnexVendor();
+                
+                // Create vendorOptions with the same network configuration
+                const vendorOptions = {
+                  network: {
+                    id: network.chainId,
+                    name: network.name
+                  }
+                };
+                
+                console.log("Creating vendor with options:", vendorOptions);
+                const vendor = await vechain.newConnexVendor(vendorOptions);
                 
                 // Return both the connex instance and the vendor
                 return { connex, vendor };

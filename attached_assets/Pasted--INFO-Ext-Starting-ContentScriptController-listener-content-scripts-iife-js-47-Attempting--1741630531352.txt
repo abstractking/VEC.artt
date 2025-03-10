@@ -1,0 +1,58 @@
+[INFO] (#Ext) -  Starting ContentScriptController listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+(index):136 Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+index-Dyi-SVSr.js:104 Browser environment polyfills initialized
+index-Dyi-SVSr.js:554 Setting up crypto environment with cryptoPolyfill
+index-Dyi-SVSr.js:636 All polyfills loaded in main entry point
+index-Dyi-SVSr.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-Dyi-SVSr.js:617 Available wallets: Array(3)
+index-Dyi-SVSr.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-Dyi-SVSr.js:556 Attempting to connect wallet: veworld Real wallet mode: true
+index-Dyi-SVSr.js:556 Netlify environment detected, forcing real wallet mode
+index-Dyi-SVSr.js:556 Wallet validation result: Object
+index-Dyi-SVSr.js:554 Connecting to veworld wallet type on TestNet...
+index-Dyi-SVSr.js:554 Connecting to VeWorld wallet...
+index-Dyi-SVSr.js:554 VeWorld API methods available: Array(7)
+index-Dyi-SVSr.js:554 VeWorld wallet detected, creating Connex instance...
+index-Dyi-SVSr.js:554 Using vechain.newConnex() method
+index-Dyi-SVSr.js:554 VeWorld wallet connection error: TypeError: Cannot read properties of undefined (reading 'node')
+    at validateConnexOptions (VeWorldAPI.js:2214:152185)
+    at Object.newConnex (VeWorldAPI.js:2214:151719)
+    at bI (index-Dyi-SVSr.js:554:13149)
+    at index-Dyi-SVSr.js:556:14451
+    at C (index-Dyi-SVSr.js:613:11718)
+    at Object.fxe (index-Dyi-SVSr.js:124:9873)
+    at dxe (index-Dyi-SVSr.js:124:10030)
+    at hxe (index-Dyi-SVSr.js:124:10090)
+    at cR (index-Dyi-SVSr.js:124:31563)
+    at _H (index-Dyi-SVSr.js:124:31981)
+bI @ index-Dyi-SVSr.js:554Understand this errorAI
+index-Dyi-SVSr.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at bI (index-Dyi-SVSr.js:554:13523)
+    at index-Dyi-SVSr.js:556:14451
+    at C (index-Dyi-SVSr.js:613:11718)
+    at Object.fxe (index-Dyi-SVSr.js:124:9873)
+    at dxe (index-Dyi-SVSr.js:124:10030)
+    at hxe (index-Dyi-SVSr.js:124:10090)
+    at cR (index-Dyi-SVSr.js:124:31563)
+    at _H (index-Dyi-SVSr.js:124:31981)
+    at index-Dyi-SVSr.js:124:36914
+    at ZN (index-Dyi-SVSr.js:127:36984)
+bI @ index-Dyi-SVSr.js:556Understand this errorAI
+index-Dyi-SVSr.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-Dyi-SVSr.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at bI (index-Dyi-SVSr.js:554:13523)
+    at index-Dyi-SVSr.js:556:14451
+    at C (index-Dyi-SVSr.js:613:11718)
+    at Object.fxe (index-Dyi-SVSr.js:124:9873)
+    at dxe (index-Dyi-SVSr.js:124:10030)
+    at hxe (index-Dyi-SVSr.js:124:10090)
+    at cR (index-Dyi-SVSr.js:124:31563)
+    at _H (index-Dyi-SVSr.js:124:31981)
+    at index-Dyi-SVSr.js:124:36914
+    at ZN (index-Dyi-SVSr.js:127:36984)
+(anonymous) @ index-Dyi-SVSr.js:556Understand this errorAI
+index-Dyi-SVSr.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at index-Dyi-SVSr.js:556:15240
+    at async C (index-Dyi-SVSr.js:613:11712)
