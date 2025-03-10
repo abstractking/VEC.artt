@@ -63,10 +63,11 @@ Error message: Command failed with exit code 127: npm run build
 ```
 
 Solutions:
-1. Make sure your `netlify.toml` file includes `npm ci` before the build command:
+1. Make sure your `netlify.toml` file includes `NODE_ENV=development` and `npm ci` before the build command:
    ```toml
-   command = "npm ci && npm run build"
+   command = "NODE_ENV=development npm ci && npm run build"
    ```
+   This ensures that development dependencies (like Vite) are properly installed during the build process.
 2. Check that `vite` is included in your package.json's devDependencies
 3. Verify your Node.js version in Netlify is compatible (we recommend Node 18+)
 

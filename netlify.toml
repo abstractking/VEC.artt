@@ -27,7 +27,7 @@
 # Feature branch specific settings (for PR previews)
 [context.branch-deploy]
   # We still want to build the app for branch deploys
-  command = "npm ci && npm run build"
+  command = "NODE_ENV=development npm ci && npm run build"
 
 # Redirects and rewrites - order matters!
 [[redirects]]
