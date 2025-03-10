@@ -1,0 +1,64 @@
+✓ 3918 modules transformed.
+12:52:53 PM: x Build failed in 4.41s
+12:52:53 PM: error during build:
+12:52:53 PM: client/src/lib/wallet-detection.ts (8:20): "isTestNet" is not exported by "client/src/lib/browser-info.ts", imported by "client/src/lib/wallet-detection.ts".
+12:52:53 PM: file: /opt/build/repo/client/src/lib/wallet-detection.ts:8:20
+12:52:53 PM: 
+12:52:53 PM:  6:  */
+12:52:53 PM:  7:
+12:52:53 PM:  8: import { isBrowser, isTestNet } from './browser-info';
+12:52:53 PM:                         ^
+12:52:53 PM:  9:
+12:52:53 PM: 10: // Define isNetlify here as it might not be exported from browser-info
+12:52:53 PM: 
+12:52:53 PM:     at getRollupError (file:///opt/build/repo/node_modules/rollup/dist/es/shared/parseAst.js:396:41)
+12:52:53 PM:     at error (file:///opt/build/repo/node_modules/rollup/dist/es/shared/parseAst.js:392:42)
+12:52:53 PM:     at Module.error (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:15588:16)
+12:52:53 PM:     at Module.traceVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:16037:29)
+12:52:53 PM:     at ModuleScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:13820:39)
+12:52:53 PM:     at FunctionScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+12:52:53 PM:     at FunctionBodyScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+12:52:53 PM:     at Identifier.bind (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5066:40)
+12:52:53 PM:     at LogicalExpression.bind (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:2653:23)
+12:52:53 PM:     at IfStatement.bind (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:2653:23)
+12:52:53 PM: ​
+12:52:53 PM: "build.command" failed                                        
+12:52:53 PM: ────────────────────────────────────────────────────────────────
+12:52:53 PM: ​
+12:52:53 PM:   Error message
+12:52:53 PM:   Command failed with exit code 1: node scripts/patch-thor-devkit.cjs && npm run build && node scripts/prepare-netlify.cjs (https://ntl.fyi/exit-code-1)
+12:52:53 PM: ​
+12:52:53 PM:   Error location
+12:52:53 PM:   In build.command from netlify.toml:
+12:52:53 PM:   node scripts/patch-thor-devkit.cjs && npm run build && node scripts/prepare-netlify.cjs
+12:52:53 PM: ​
+12:52:53 PM:   Resolved config
+12:52:53 PM:   build:
+12:52:53 PM:     command: node scripts/patch-thor-devkit.cjs && npm run build && node scripts/prepare-netlify.cjs
+12:52:53 PM:     commandOrigin: config
+12:52:53 PM:     environment:
+12:52:53 PM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+12:52:53 PM:       - VITE_REACT_APP_VECHAIN_NETWORK
+12:52:53 PM:       - VITE_VECHAIN_EXPLORER_URL
+12:52:53 PM:       - VITE_VECHAIN_PRIVATE_KEY
+12:52:53 PM:     publish: /opt/build/repo/dist/public
+12:52:53 PM:     publishOrigin: config
+12:52:53 PM:   headers:
+12:52:53 PM:     - for: /*
+      values:
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: /assets/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+12:52:53 PM: Build failed due to a user error: Build script returned non-zero exit code: 2
+12:52:53 PM: Failing build: Failed to build site
+12:52:53 PM: Finished processing build request in 31.632s

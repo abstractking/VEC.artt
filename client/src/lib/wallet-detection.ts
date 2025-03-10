@@ -5,10 +5,11 @@
  * and provides user-friendly error messages.
  */
 
-import { isBrowser, isTestNet } from './browser-info';
+import { isBrowser } from './browser-info';
 
-// Define isNetlify here as it might not be exported from browser-info
+// Define these variables inline to avoid build problems with imports
 const isNetlify = typeof window !== 'undefined' && window.location.hostname.includes('netlify.app');
+const isTestNet = typeof process !== 'undefined' && process.env.VITE_REACT_APP_VECHAIN_NETWORK === 'test';
 
 /**
  * Available VeChain wallet types
