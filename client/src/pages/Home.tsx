@@ -6,10 +6,14 @@ import CreatorSpotlight from "@/components/CreatorSpotlight";
 import CreateAndSell from "@/components/CreateAndSell";
 import Newsletter from "@/components/Newsletter";
 import NFTShuffle from "@/components/NFTShuffle";
+import TransactionTest from "@/components/TransactionTest";
 import { useQuery } from "@tanstack/react-query";
 import type { Collection, NFT } from "@shared/schema";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Home() {
+  const { user } = useAuth();
+  
   // Fetch collections for homepage
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
     queryKey: ['/api/collections'],
@@ -55,6 +59,15 @@ export default function Home() {
       <CreatorSpotlight />
       
       <CreateAndSell />
+      
+      {/* Show transaction test component only when user is logged in */}
+      {user && (
+        <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-gradient-to-b from-background to-accent/10">
+          <div className="max-w-3xl mx-auto">
+            <TransactionTest />
+          </div>
+        </section>
+      )}
       
       <Newsletter />
     </div>
