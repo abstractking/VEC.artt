@@ -396,7 +396,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Update creator stats to increment view count
             const creator = await storage.getUser(nft.creatorId);
             if (creator) {
-              const currentStats = creator.stats || { 
+              // TypeScript needs help with the jsonb type inference
+              type UserStats = {
+                totalViews: number;
+                totalLikes: number;
+                totalSales: number;
+                totalRevenue: string;
+                totalNFTs: number;
+                createdNFTs: number;
+                ownedNFTs: number;
+                collections: number;
+              };
+              
+              const currentStats = (creator.stats as UserStats) || { 
                 totalViews: 0, 
                 totalLikes: 0, 
                 totalSales: 0, 
