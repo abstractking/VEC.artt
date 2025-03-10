@@ -151,10 +151,11 @@ export function verifyWalletAvailability(walletType: VeChainWalletType): WalletD
       };
       
     case 'environment':
-      const envKeyAvailable = !isNetlify && process.env.VITE_VECHAIN_PRIVATE_KEY;
+      const hasEnvKey = !!import.meta.env.VITE_VECHAIN_PRIVATE_KEY;
+      const envKeyAvailable = !isNetlify && hasEnvKey;
       return {
-        available: envKeyAvailable,
-        installed: envKeyAvailable,
+        available: !!envKeyAvailable,
+        installed: !!envKeyAvailable,
         walletType: 'environment',
         message: envKeyAvailable 
           ? "Environment key available for development use"

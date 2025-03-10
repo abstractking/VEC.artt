@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { AlertCircle, X, ToggleLeft, ToggleRight, Info } from "lucide-react";
+import { AlertCircle, X, ToggleLeft, ToggleRight, Info, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,6 +17,15 @@ import { useWallet } from "@/hooks/useVechain";
 import NetworkInstructions from "@/components/NetworkInstructions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
+// Import our wallet detection utilities
+import { 
+  VeChainWalletType, 
+  detectAvailableWallets,
+  isThorWalletAvailable,
+  isVeWorldWalletAvailable,
+  getWalletDisplayName
+} from "@/lib/wallet-detection";
+
 export default function WalletModal() {
   const { isConnecting, isModalOpen, setModalOpen, connectWallet, error, useRealWallet, toggleRealWallet } = useWallet();
   const isDebugMode = typeof window !== 'undefined' && 
@@ -27,58 +36,90 @@ export default function WalletModal() {
 
   // Network detection - this matches the reference screenshot
   const [selectedNetwork] = useState("VeChain"); // We currently only support VeChain network
+  
+  // Track available wallets
+  const [availableWallets, setAvailableWallets] = useState<VeChainWalletType[]>([]);
+  
+  // Detect available wallets on mount
+  useEffect(() => {
+    const wallets = detectAvailableWallets();
+    setAvailableWallets(wallets);
+    console.log("Available wallets:", wallets);
+  }, []);
 
   const handleClose = () => {
     setModalOpen(false);
   };
 
+  // Create wallet options with detection status
+  const isNetlify = typeof window !== 'undefined' && window.location.hostname.includes('netlify.app');
+  const veWorldDetected = isVeWorldWalletAvailable();
+  const thorWalletDetected = isThorWalletAvailable();
+  
   const walletOptions = [
     {
+      id: "veworld" as VeChainWalletType,
       name: "VeWorld",
       description: "Browser plugin for VeChain",
       icon: "https://veworld.net/favicon.ico",
       handler: () => connectWallet("veworld"),
-      type: "browser"
+      type: "browser",
+      available: veWorldDetected,
+      installed: veWorldDetected
     },
     {
+      id: "thor" as VeChainWalletType,
       name: "VeChainThor",
       description: "Browser extension wallet",
       icon: "https://cdn.worldvectorlogo.com/logos/vechain-1.svg",
       handler: () => connectWallet("thor"),
-      type: "browser"
+      type: "browser",
+      available: thorWalletDetected,
+      installed: thorWalletDetected
     },
     {
+      id: "sync" as VeChainWalletType,
       name: "Sync",
       description: "Desktop wallet for VeChain",
       icon: "https://sync.vecha.in/favicon.png",
       handler: () => connectWallet("sync"),
-      type: "desktop"
+      type: "desktop",
+      available: true,  // We can't detect these, so assume available
+      installed: false  // But don't know if installed
     },
     {
+      id: "sync2" as VeChainWalletType,
       name: "Sync2",
       description: "New desktop wallet for VeChain",
       icon: "https://sync2.vecha.in/favicon.png",
       handler: () => connectWallet("sync2"),
-      type: "desktop"
+      type: "desktop",
+      available: true,  // We can't detect these, so assume available
+      installed: false  // But don't know if installed
     },
     {
+      id: "walletconnect" as any,
       name: "Wallet Connect",
       description: "Connect via WalletConnect protocol",
       icon: "https://walletconnect.org/favicon.ico",
       handler: () => connectWallet("walletconnect"),
-      type: "protocol"
+      type: "protocol",
+      available: false,  // Not fully implemented yet
+      installed: false
     }
   ];
   
   // Add debug option in development or replit environments, but NOT on Netlify
-  const isNetlify = typeof window !== 'undefined' && window.location.hostname.includes('netlify.app');
   if (isDebugMode && !isNetlify) {
     walletOptions.push({
+      id: "debug" as any,
       name: "Debug Test Wallet (Dev Only)",
       description: "For development testing only",
       icon: "https://icongr.am/material/bug.svg?size=128&color=2563eb",
       handler: () => connectWallet("debug"),
-      type: "debug"
+      type: "debug",
+      available: true,
+      installed: true
     });
   }
 
@@ -118,17 +159,28 @@ export default function WalletModal() {
                 {walletOptions.filter(w => w.type === "browser").map((wallet, index) => (
                   <button
                     key={index}
-                    className="flex items-center p-3 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-transparent hover:border-primary"
+                    className={`flex items-center p-3 rounded-lg ${
+                      wallet.installed 
+                        ? "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700" 
+                        : "bg-gray-100/50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400"
+                    } transition-colors border border-transparent ${
+                      wallet.installed ? "hover:border-primary" : ""
+                    }`}
                     onClick={wallet.handler}
-                    disabled={isConnecting}
-                    title={wallet.description}
+                    disabled={isConnecting || !wallet.available}
+                    title={wallet.installed ? wallet.description : `${wallet.name} not detected. Please install the extension.`}
                   >
                     <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center mr-3">
-                      <img src={wallet.icon} alt={wallet.name} className="w-6 h-6" />
+                      <img src={wallet.icon} alt={wallet.name} className={`w-6 h-6 ${!wallet.installed ? "opacity-50" : ""}`} />
                     </div>
-                    <div className="text-left">
-                      <span className="text-sm font-medium block">{wallet.name}</span>
-                      <span className="text-xs text-gray-600 dark:text-gray-400">{wallet.description}</span>
+                    <div className="text-left flex-grow">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium block">{wallet.name}</span>
+                        {wallet.installed && <Check size={16} className="text-emerald-500" />}
+                      </div>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">
+                        {wallet.installed ? wallet.description : "Not installed"}
+                      </span>
                     </div>
                   </button>
                 ))}
@@ -150,8 +202,13 @@ export default function WalletModal() {
                     <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center mr-3">
                       <img src={wallet.icon} alt={wallet.name} className="w-6 h-6" />
                     </div>
-                    <div className="text-left">
-                      <span className="text-sm font-medium block">{wallet.name}</span>
+                    <div className="text-left flex-grow">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium block">{wallet.name}</span>
+                        <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+                          Desktop App
+                        </span>
+                      </div>
                       <span className="text-xs text-gray-600 dark:text-gray-400">{wallet.description}</span>
                     </div>
                   </button>
@@ -170,16 +227,40 @@ export default function WalletModal() {
                       className={`flex items-center p-3 rounded-lg transition-colors border border-transparent 
                         ${wallet.type === "debug" 
                           ? "bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 hover:border-amber-400" 
-                          : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-primary"}`}
+                          : wallet.available
+                            ? "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-primary"
+                            : "bg-gray-100/50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400"
+                        }`}
                       onClick={wallet.handler}
-                      disabled={isConnecting}
-                      title={wallet.description}
+                      disabled={isConnecting || !wallet.available}
+                      title={wallet.available ? wallet.description : `${wallet.name} not available in this environment`}
                     >
                       <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center mr-3">
-                        <img src={wallet.icon} alt={wallet.name} className="w-6 h-6" />
+                        <img 
+                          src={wallet.icon} 
+                          alt={wallet.name} 
+                          className={`w-6 h-6 ${!wallet.available && wallet.type !== "debug" ? "opacity-50" : ""}`} 
+                        />
                       </div>
-                      <div className="text-left">
-                        <span className="text-sm font-medium block">{wallet.name}</span>
+                      <div className="text-left flex-grow">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium block">{wallet.name}</span>
+                          {wallet.type === "debug" && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
+                              Dev Only
+                            </span>
+                          )}
+                          {wallet.type === "protocol" && wallet.available && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+                              Available
+                            </span>
+                          )}
+                          {wallet.type === "protocol" && !wallet.available && (
+                            <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400">
+                              Coming Soon
+                            </span>
+                          )}
+                        </div>
                         <span className="text-xs text-gray-600 dark:text-gray-400">{wallet.description}</span>
                       </div>
                     </button>

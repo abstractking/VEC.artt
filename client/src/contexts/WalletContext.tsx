@@ -128,8 +128,9 @@ export function WalletProvider({ children }: WalletProviderProps) {
     return () => clearInterval(intervalId);
   }, [isConnected, walletAddress, refreshWalletBalance]);
 
-  const connectWallet = useCallback(async (walletType?: string) => {
-    console.log("Attempting to connect wallet:", walletType || "VeChain", "Real wallet mode:", useRealWallet);
+  const connectWallet = useCallback(async (walletTypeInput?: string) => {
+    const walletType = (walletTypeInput || detectBestWalletOption()) as VeChainWalletType;
+    console.log("Attempting to connect wallet:", walletType, "Real wallet mode:", useRealWallet);
     setIsConnecting(true);
     setError(null);
     
@@ -139,6 +140,16 @@ export function WalletProvider({ children }: WalletProviderProps) {
         console.log("Netlify environment detected, forcing real wallet mode");
         
         try {
+          // Validate the wallet availability first
+          const walletValidation = validateWalletForNetwork(walletType);
+          console.log("Wallet validation result:", walletValidation);
+          
+          // Check wallet availability before attempting connection
+          if (!walletValidation.available && walletType !== 'sync' && walletType !== 'sync2') {
+            // For browser extensions, we can detect if they're not installed
+            throw new Error(walletValidation.message);
+          }
+          
           // Connect to the specified wallet type
           const result = await connectVeChainWallet(walletType);
           
@@ -147,7 +158,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
           if (result && result.vendor) {
             // Handle desktop wallets that might not immediately provide an address
             if (walletType === 'sync' || walletType === 'sync2') {
-              const walletName = walletType === 'sync2' ? 'Sync2' : 'Sync';
+              const walletName = getWalletDisplayName(walletType);
               setWalletType(walletType);
               
               // For desktop wallets, we don't get an immediate address
@@ -168,12 +179,12 @@ export function WalletProvider({ children }: WalletProviderProps) {
               console.log("Setting wallet address to:", result.vendor.address);
               setWalletAddress(result.vendor.address);
               setIsConnected(true);
-              setWalletType(walletType || 'thor');
+              setWalletType(walletType);
               setModalOpen(false);
               
               toast({
                 title: "Wallet Connected",
-                description: `Connected to ${walletType || 'VeChain'} wallet on TestNet`,
+                description: `Connected to ${getWalletDisplayName(walletType)} wallet on TestNet`,
               });
             } else {
               console.error("Wallet vendor doesn't have an address:", result);
@@ -187,15 +198,8 @@ export function WalletProvider({ children }: WalletProviderProps) {
           console.error("Specific wallet connection error:", err);
           
           // Provide more helpful error messages based on wallet type
-          if (walletType === 'veworld') {
-            throw new Error("VeWorld wallet extension not detected or connection rejected. Please install the VeWorld extension for your browser, configure it for TestNet, and try again.");
-          } else if (walletType === 'thor') {
-            throw new Error("VeChain Thor wallet extension not detected or connection rejected. Please install the Thor wallet extension, configure it for TestNet, and try again.");
-          } else if (walletType === 'sync' || walletType === 'sync2') {
-            throw new Error(`${walletType === 'sync2' ? 'Sync2' : 'Sync'} desktop application connection failed. Please ensure the application is installed and running.`);
-          } else {
-            throw new Error(`Wallet connection failed: ${err.message}`);
-          }
+          // We already have detailed error messages from validateWalletForNetwork
+          throw new Error(`Wallet connection failed: ${err.message}`);
         }
         return;
       }
