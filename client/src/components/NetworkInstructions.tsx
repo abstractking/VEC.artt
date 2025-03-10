@@ -29,7 +29,7 @@ export default function NetworkInstructions() {
     <Collapsible
       open={isExpanded}
       onOpenChange={setIsExpanded}
-      className="mb-6 border-2 border-blue-500 rounded-lg bg-blue-100 dark:bg-blue-900 dark:border-blue-600 overflow-hidden shadow-md"
+      className="border-2 border-blue-600 rounded-lg bg-blue-50 dark:bg-blue-950 dark:border-blue-600 overflow-hidden shadow-md"
     >
       <div className="p-4">
         <div className="flex items-start">
