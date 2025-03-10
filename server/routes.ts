@@ -385,6 +385,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!nft) {
         return res.status(404).json({ error: 'NFT not found' });
       }
+      
+      // Track view if userId is provided
+      if (req.query.userId) {
+        try {
+          const userId = parseInt(req.query.userId as string);
+          // Don't increment view count if viewing own NFT
+          if (nft.creatorId !== userId) {
+            // Update creator stats to increment view count
+            const creator = await storage.getUser(nft.creatorId);
+            if (creator) {
+              const currentStats = creator.stats || { 
+                totalViews: 0, 
+                totalLikes: 0, 
+                totalSales: 0, 
+                totalRevenue: "0",
+                totalNFTs: 0,
+                createdNFTs: 0,
+                ownedNFTs: 0,
+                collections: 0
+              };
+              
+              await storage.updateUser(nft.creatorId, {
+                stats: {
+                  ...currentStats,
+                  totalViews: (currentStats.totalViews || 0) + 1
+                }
+              });
+              
+              // Send notification to creator about the view
+              sendNotification(nft.creatorId, {
+                id: generateId(),
+                notificationType: 'view',
+                message: `Someone viewed your NFT: ${nft.name}`,
+                nftId: nft.id,
+                timestamp: new Date().toISOString()
+              });
+            }
+          }
+        } catch (statsError) {
+          console.error('Failed to update view stats', statsError);
+          // Continue with the request even if stats update fails
+        }
+      }
+      
       res.json(nft);
     } catch (err) {
       res.status(500).json({ error: 'Failed to retrieve NFT' });
