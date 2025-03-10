@@ -1,0 +1,247 @@
+2:28:13 PM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)
+2:28:10 PM: Netlify Build                                                 
+2:28:10 PM: ────────────────────────────────────────────────────────────────
+2:28:10 PM: ​
+2:28:10 PM: ❯ Version
+2:28:10 PM:   @netlify/build 29.59.2
+2:28:10 PM: ​
+2:28:10 PM: ❯ Flags
+2:28:10 PM:   accountId: 67b93ed93699b498398f4a5d
+2:28:10 PM:   baseRelDir: true
+2:28:10 PM:   buildId: 67cf3d26e0b33300085cbe4a
+2:28:10 PM:   deployId: 67cf3d26e0b33300085cbe4c
+2:28:11 PM: ​
+2:28:11 PM: ❯ Current directory
+2:28:11 PM:   /opt/build/repo
+2:28:11 PM: ​
+2:28:11 PM: ❯ Config file
+2:28:11 PM:   /opt/build/repo/netlify.toml
+2:28:11 PM: ​
+2:28:11 PM: ❯ Context
+2:28:11 PM:   production
+2:28:11 PM: ​
+2:28:11 PM: build.command from netlify.toml                               
+2:28:11 PM: ────────────────────────────────────────────────────────────────
+2:28:11 PM: ​
+2:28:11 PM: $ rm -rf node_modules/.cache && node scripts/patch-thor-devkit.cjs && node scripts/veworld-vendor-patch.cjs && npm run build && node scripts/prepare-netlify.cjs
+2:28:11 PM: Starting VeChain Thor-devkit patching process...
+2:28:11 PM: Found improved patching script, executing...
+2:28:11 PM: 🔧 Starting improved patching process for browser compatibility...
+2:28:11 PM: ✅ Created browser-compatible fs polyfill: /opt/build/repo/client/src/lib/fs-browserify.js
+2:28:11 PM: ✅ Created thor-devkit crypto polyfill: /opt/build/repo/client/src/lib/thor-polyfills.ts
+2:28:11 PM: 🔍 Patching thor-devkit package...
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/abi.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/abi.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/address.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/address.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/blake2b.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/blake2b.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/bloom.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/bloom.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/certificate.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/certificate.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/hdnode.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/hdnode.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/index.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/index.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/keccak.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/keccak.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/keystore.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/keystore.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/mnemonic.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/mnemonic.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/rlp.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/rlp.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/secp256k1.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/secp256k1.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/dist/transaction.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/dist/transaction.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/abi.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/abi.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/address.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/address.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/blake2b.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/blake2b.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/bloom.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/bloom.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/certificate.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/certificate.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/hdnode.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/hdnode.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/index.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/index.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/keccak.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/keccak.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/keystore.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/keystore.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/mnemonic.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/mnemonic.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/rlp.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/rlp.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/secp256k1.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/secp256k1.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/esm/transaction.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/esm/transaction.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curve/base.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curve/base.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curve/edwards.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curve/edwards.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curve/index.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curve/index.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curve/mont.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curve/mont.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curve/short.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curve/short.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curves.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/curves.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/ec/index.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/ec/index.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/ec/key.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/ec/key.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/ec/signature.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/ec/signature.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/eddsa/index.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/eddsa/index.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/eddsa/key.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/eddsa/key.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/eddsa/signature.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/eddsa/signature.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/precomputed/secp256k1.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/precomputed/secp256k1.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/utils.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic/utils.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/thor-devkit/node_modules/elliptic/lib/elliptic.js
+2:28:11 PM: ✅ thor-devkit patching completed successfully!
+2:28:11 PM: 🔍 Patching @vechain/connex-driver package...
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/dist/bloom.js
+2:28:11 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/dist/bloom.js
+2:28:11 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/dist/cache.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/dist/cache.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/dist/common.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/dist/common.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/dist/driver-no-vendor.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/dist/driver-no-vendor.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/dist/driver.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/dist/driver.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/dist/index.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/dist/index.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/dist/interfaces.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/dist/interfaces.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/dist/promint.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/dist/promint.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/dist/simple-net.js
+2:28:12 PM: ✅ Patched: /opt/build/repo/node_modules/@vechain/connex-driver/dist/simple-net.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/dist/simple-wallet.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/dist/simple-wallet.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/dist/simple-websocket-reader.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/dist/simple-websocket-reader.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/bloom.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/esm/bloom.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/cache.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/esm/cache.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/common.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/esm/common.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/driver-no-vendor.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/esm/driver-no-vendor.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/driver.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/esm/driver.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/index.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/esm/index.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/interfaces.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/esm/interfaces.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/promint.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/esm/promint.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-net.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-net.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-wallet.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-wallet.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-websocket-reader.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-websocket-reader.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/browser.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/browser.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/index.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/index.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/buffer-util.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/buffer-util.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/constants.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/constants.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/event-target.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/event-target.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/extension.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/extension.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/limiter.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/limiter.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/permessage-deflate.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/permessage-deflate.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/receiver.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/receiver.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/sender.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/sender.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/stream.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/stream.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/validation.js
+2:28:12 PM: ⏩ No changes needed: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/validation.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/websocket-server.js
+2:28:12 PM: ✅ Patched: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/websocket-server.js
+2:28:12 PM: 📄 Patching file: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/websocket.js
+2:28:12 PM: ✅ Patched: /opt/build/repo/node_modules/@vechain/connex-driver/node_modules/ws/lib/websocket.js
+2:28:12 PM: ✅ @vechain/connex-driver patching completed successfully!
+2:28:12 PM: ✅ Created browser environment polyfills: /opt/build/repo/client/src/lib/polyfills.ts
+2:28:12 PM: ⏩ Polyfill import already exists in /opt/build/repo/client/src/main.tsx
+2:28:12 PM: ✅ Created browser environment detection module: /opt/build/repo/client/src/lib/browser-info.ts
+2:28:12 PM: 🎉 All patching completed successfully!
+2:28:12 PM: ⚠️ Note: This patching is only needed for browser environments. The original functionality is preserved for Node.js environments.
+2:28:12 PM: Successfully ran improved patching script!
+2:28:12 PM: All patching operations complete!
+2:28:12 PM: Running VeWorld vendor patch to fix genesisId compatibility issues...
+2:28:12 PM: 📋 Found vechain.ts file at /opt/build/repo/client/src/lib/vechain.ts
+2:28:12 PM: ✅ Successfully patched VeWorld vendor options
+2:28:12 PM: VeWorld vendor patch ✅ completed successfully
+2:28:12 PM: Remember to rebuild the project after this patch!
+2:28:12 PM: > rest-express@1.0.0 build
+2:28:12 PM: > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+2:28:12 PM: sh: 1: vite: not found
+2:28:12 PM: ​
+2:28:12 PM: "build.command" failed                                        
+2:28:12 PM: ────────────────────────────────────────────────────────────────
+2:28:12 PM: ​
+2:28:12 PM:   Error message
+2:28:12 PM:   Command failed with exit code 127: rm -rf node_modules/.cache && node scripts/patch-thor-devkit.cjs && node scripts/veworld-vendor-patch.cjs && npm run build && node scripts/prepare-netlify.cjs (https://ntl.fyi/exit-code-127)
+2:28:12 PM: ​
+2:28:12 PM:   Error location
+2:28:12 PM:   In build.command from netlify.toml:
+2:28:12 PM:   rm -rf node_modules/.cache && node scripts/patch-thor-devkit.cjs && node scripts/veworld-vendor-patch.cjs && npm run build && node scripts/prepare-netlify.cjs
+2:28:12 PM: ​
+2:28:12 PM:   Resolved config
+2:28:12 PM:   build:
+2:28:12 PM:     command: rm -rf node_modules/.cache && node scripts/patch-thor-devkit.cjs && node scripts/veworld-vendor-patch.cjs && npm run build && node scripts/prepare-netlify.cjs
+2:28:12 PM:     commandOrigin: config
+2:28:12 PM:     environment:
+2:28:12 PM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+2:28:12 PM:       - VITE_REACT_APP_VECHAIN_NETWORK
+2:28:12 PM:       - VITE_VECHAIN_EXPLORER_URL
+2:28:12 PM:       - VITE_VECHAIN_PRIVATE_KEY
+2:28:12 PM:       - NETLIFY_CACHE_BUST
+2:28:12 PM:       - NODE_ENV
+2:28:12 PM:     publish: /opt/build/repo/dist/public
+2:28:12 PM:     publishOrigin: config
+2:28:12 PM:   headers:
+2:28:13 PM:     - for: /*
+      values:
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: /assets/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+2:28:13 PM: Build failed due to a user error: Build script returned non-zero exit code: 2
+2:28:13 PM: Failing build: Failed to build site
+2:28:13 PM: Finished processing build request in 27.152s
