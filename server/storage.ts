@@ -52,16 +52,29 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // User methods
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      return user || undefined;
+    } catch (error) {
+      console.error('Error in getUser:', error);
+      throw error;
+    }
   }
   
   async getUserByWalletAddress(walletAddress: string): Promise<User | undefined> {
-    const [user] = await db
-      .select()
-      .from(users)
-      .where(eq(users.walletAddress, walletAddress));
-    return user || undefined;
+    try {
+      console.log('Fetching user by wallet address:', walletAddress);
+      const result = await db
+        .select()
+        .from(users)
+        .where(eq(users.walletAddress, walletAddress));
+      console.log('Query result:', result);
+      const [user] = result;
+      return user || undefined;
+    } catch (error) {
+      console.error('Error in getUserByWalletAddress:', error);
+      throw error;
+    }
   }
   
   async getUserByUsername(username: string): Promise<User | undefined> {
