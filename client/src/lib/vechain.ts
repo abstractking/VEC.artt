@@ -3,6 +3,31 @@ import { Driver, SimpleNet, SimpleWallet } from '@vechain/connex-driver';
 import Connex from '@vechain/connex';
 import { Buffer } from 'buffer';
 
+// Type declarations for VeChain Connex and Thor responses
+interface TxResponse {
+    txid: string;
+    signer: string;
+}
+
+interface CertResponse {
+    annex: {
+        domain: string;
+        timestamp: number;
+        signer: string;
+    };
+    signature: string;
+    certified: boolean;
+}
+
+// Helper type guards
+function isTxResponse(response: TxResponse | CertResponse): response is TxResponse {
+    return 'txid' in response;
+}
+
+function isCertResponse(response: TxResponse | CertResponse): response is CertResponse {
+    return 'certified' in response;
+}
+
 // Check if cryptoPolyfill is available and patch the crypto environment
 const setupCryptoEnvironment = () => {
   try {
