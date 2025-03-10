@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useWallet } from "@/hooks/useVechain";
+import NetworkInstructions from "@/components/NetworkInstructions";
 
 export default function WalletModal() {
   const { isConnecting, isModalOpen, setModalOpen, connectWallet, error, useRealWallet, toggleRealWallet } = useWallet();
@@ -45,11 +46,11 @@ export default function WalletModal() {
     }
   ];
   
-  // Add debug option in development or replit environments
-  if (isDebugMode) {
-    const isNetlify = window.location.hostname.includes('netlify.app');
+  // Add debug option in development or replit environments, but NOT on Netlify
+  const isNetlify = typeof window !== 'undefined' && window.location.hostname.includes('netlify.app');
+  if (isDebugMode && !isNetlify) {
     walletOptions.push({
-      name: isNetlify ? "Demo Wallet (For Testing)" : "Debug Test Wallet (Dev Only)",
+      name: "Debug Test Wallet (Dev Only)",
       icon: "https://icongr.am/material/bug.svg?size=128&color=2563eb",
       handler: () => connectWallet("debug")
     });
@@ -66,10 +67,13 @@ export default function WalletModal() {
         </DialogHeader>
         
         <div className="space-y-4 py-4">
+          {/* Show Network Instructions only on Netlify */}
+          {isNetlify && <NetworkInstructions />}
+          
           {walletOptions.map((wallet, index) => (
             <button
               key={index}
-              className="w-full bg-white border border-gray-300 rounded-lg p-4 flex items-center hover:shadow-md transition-shadow"
+              className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-4 flex items-center hover:shadow-md transition-shadow"
               onClick={wallet.handler}
               disabled={isConnecting}
             >
@@ -86,8 +90,8 @@ export default function WalletModal() {
           )}
         </div>
         
-        {/* Add real wallet mode toggle for development */}
-        {isDebugMode && (
+        {/* Add real wallet mode toggle for development - Hide on Netlify */}
+        {isDebugMode && !isNetlify && (
           <>
             <Separator className="my-4" />
             
@@ -97,7 +101,7 @@ export default function WalletModal() {
                   <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 mr-2" />
                   <div>
                     <h4 className="font-medium text-amber-800 dark:text-amber-300 text-sm">
-                      {window.location.hostname.includes('netlify.app') ? 'Demo Mode' : 'Developer Mode'}
+                      Developer Mode
                     </h4>
                     <p className="text-amber-700 dark:text-amber-400 text-xs mt-1">
                       Toggle between real blockchain interaction and demo mode. 
