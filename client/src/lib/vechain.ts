@@ -96,12 +96,13 @@ import { Network, NETWORKS as NETWORK_DESCRIPTORS, NetworkDescriptor } from './N
 // Setup our nodes with the right endpoints
 export const NODES = {
   main: {
-    url: 'https://mainnet.veblocks.net',
-    socketUrl: 'wss://mainnet.veblocks.net/socket',
+    url: 'https://sync-mainnet.vechain.org',
+    socketUrl: 'wss://sync-mainnet.vechain.org',
   },
   test: {
-    url: 'https://testnet.veblocks.net',
-    socketUrl: 'wss://testnet.veblocks.net/socket',
+    // Primary node with more consistent CORS support
+    url: 'https://sync-testnet.vechain.org',
+    socketUrl: 'wss://sync-testnet.vechain.org',
   },
   solo: {
     url: 'http://localhost:8669',
@@ -294,21 +295,22 @@ export const getConnex = async () => {
     // For production: Try WebSocket first, then fallback to HTTP
     try {
       // WebSocket URL (if available)
-      let wsUrl = '';
+      let websocketUrl = '';
       try {
-        wsUrl = (network as any).socketUrl || (network.name.toLowerCase() === 'main' 
-          ? 'wss://mainnet.veblocks.net/socket'
-          : 'wss://testnet.veblocks.net/socket');
+        // Use sync node endpoints for better CORS support
+        websocketUrl = (network as any).socketUrl || (network.name.toLowerCase() === 'main' 
+          ? 'wss://sync-mainnet.vechain.org'
+          : 'wss://sync-testnet.vechain.org');
       } catch (error) {
         console.warn("Could not determine WebSocket URL:", error);
-        wsUrl = network.name.toLowerCase() === 'main' 
-          ? 'wss://mainnet.veblocks.net/socket'
-          : 'wss://testnet.veblocks.net/socket';
+        websocketUrl = network.name.toLowerCase() === 'main' 
+          ? 'wss://sync-mainnet.vechain.org'
+          : 'wss://sync-testnet.vechain.org';
       }
         
       // Try WebSocket connection first for better performance
-      console.log("Attempting WebSocket connection to:", wsUrl);
-      const wsDriver = await Driver.connect(new BrowserNet(wsUrl));
+      console.log("Attempting WebSocket connection to:", websocketUrl);
+      const wsDriver = await Driver.connect(new BrowserNet(websocketUrl));
       console.log("WebSocket driver connected successfully");
       
       connexInstance = new Framework(wsDriver);
@@ -320,7 +322,7 @@ export const getConnex = async () => {
         error: wsError,
         message: wsError instanceof Error ? wsError.message : String(wsError),
         stack: wsError instanceof Error ? wsError.stack : undefined,
-        wsUrl,
+        websocketUrl,
         network
       });
       
@@ -559,9 +561,9 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             const NETWORK_NAME_MAIN = "main";
             const NETWORK_NAME_TEST = "test";
             
-            // Define node URLs
-            const NODE_URL_MAINNET = "https://mainnet.veblocks.net";
-            const NODE_URL_TESTNET = "https://testnet.veblocks.net";
+            // Define node URLs with better CORS support
+            const NODE_URL_MAINNET = "https://sync-mainnet.vechain.org";
+            const NODE_URL_TESTNET = "https://sync-testnet.vechain.org";
             
             // Select appropriate values
             const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
