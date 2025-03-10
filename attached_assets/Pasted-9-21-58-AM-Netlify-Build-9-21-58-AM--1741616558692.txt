@@ -1,0 +1,135 @@
+9:21:58 AM: Netlify Build                                                 
+9:21:58 AM: ────────────────────────────────────────────────────────────────
+9:21:58 AM: ​
+9:21:58 AM: ❯ Version
+9:21:58 AM:   @netlify/build 29.59.2
+9:21:58 AM: ​
+9:21:58 AM: ❯ Flags
+9:21:58 AM:   accountId: 67b93ed93699b498398f4a5d
+9:21:58 AM:   baseRelDir: true
+9:21:58 AM:   buildId: 67cef566af03af00082b2bc4
+9:21:58 AM:   deployId: 67cef566af03af00082b2bc6
+9:21:58 AM: ​
+9:21:58 AM: ❯ Current directory
+9:21:58 AM:   /opt/build/repo
+9:21:58 AM: ​
+9:21:58 AM: ❯ Config file
+9:21:58 AM:   /opt/build/repo/netlify.toml
+9:21:58 AM: ​
+9:21:58 AM: ❯ Context
+9:21:58 AM:   production
+9:21:58 AM: ​
+9:21:58 AM: build.command from netlify.toml                               
+9:21:58 AM: ────────────────────────────────────────────────────────────────
+9:21:58 AM: ​
+9:21:58 AM: $ NODE_ENV=development npm ci && npm run build
+9:22:01 AM: npm warn deprecated uuid@2.0.1: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+9:22:01 AM: npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+9:22:01 AM: npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+9:22:04 AM: added 581 packages, and audited 582 packages in 6s
+9:22:04 AM: 83 packages are looking for funding
+9:22:04 AM:   run `npm fund` for details
+9:22:04 AM: 15 vulnerabilities (8 moderate, 7 critical)
+9:22:04 AM: To address issues that do not require attention, run:
+9:22:04 AM:   npm audit fix
+9:22:04 AM: To address all issues possible (including breaking changes), run:
+9:22:04 AM:   npm audit fix --force
+9:22:04 AM: Some issues need review, and may require choosing
+9:22:04 AM: a different dependency.
+9:22:04 AM: Run `npm audit` for details.
+9:22:04 AM: > rest-express@1.0.0 build
+9:22:04 AM: > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+9:22:05 AM: vite v5.4.14 building for production...
+9:22:05 AM: transforming...
+9:22:07 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/connex-driver/esm/driver.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+9:22:07 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "url" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-net.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+9:22:07 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "http" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-net.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+9:22:07 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "https" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-net.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+9:22:08 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/thor-devkit/esm/secp256k1.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+9:22:08 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/thor-devkit/esm/mnemonic.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+9:22:08 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/thor-devkit/esm/hdnode.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+9:22:08 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/pbkdf2.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+9:22:08 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/hmac.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+9:22:08 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/random-bytes.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+9:22:08 AM: ✓ 3335 modules transformed.
+9:22:08 AM: x Build failed in 3.60s
+9:22:08 AM: error during build:
+9:22:08 AM: node_modules/thor-devkit/esm/secp256k1.js (1:9): "randomBytes" is not exported by "__vite-browser-external", imported by "node_modules/thor-devkit/esm/secp256k1.js".
+9:22:08 AM: file: /opt/build/repo/node_modules/thor-devkit/esm/secp256k1.js:1:9
+9:22:08 AM: 
+9:22:08 AM: 1: import { randomBytes } from 'crypto';
+9:22:08 AM:             ^
+9:22:08 AM: 2: import { ec as EC } from 'elliptic';
+9:22:08 AM: 3: import { Buffer } from 'buffer';
+9:22:08 AM: 
+9:22:08 AM:     at getRollupError (file:///opt/build/repo/node_modules/rollup/dist/es/shared/parseAst.js:396:41)
+9:22:08 AM:     at error (file:///opt/build/repo/node_modules/rollup/dist/es/shared/parseAst.js:392:42)
+9:22:08 AM:     at Module.error (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:15588:16)
+9:22:08 AM:     at Module.traceVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:16037:29)
+9:22:08 AM:     at ModuleScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:13820:39)
+9:22:08 AM:     at ChildScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+9:22:08 AM:     at FunctionScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+9:22:08 AM:     at FunctionBodyScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+9:22:08 AM:     at FunctionScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+9:22:08 AM:     at FunctionBodyScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+9:22:08 AM: ​
+9:22:08 AM: "build.command" failed                                        
+9:22:08 AM: ────────────────────────────────────────────────────────────────
+9:22:08 AM: ​
+9:22:08 AM:   Error message
+9:22:08 AM:   Command failed with exit code 1: NODE_ENV=development npm ci && npm run build
+9:22:08 AM: ​
+9:22:08 AM:   Error location
+9:22:08 AM:   In build.command from netlify.toml:
+9:22:08 AM:   NODE_ENV=development npm ci && npm run build
+9:22:08 AM: ​
+9:22:08 AM:   Resolved config
+9:22:08 AM:   build:
+9:22:08 AM:     command: NODE_ENV=development npm ci && npm run build
+9:22:08 AM:     commandOrigin: config
+9:22:08 AM:     environment:
+9:22:08 AM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+9:22:08 AM:       - VITE_REACT_APP_VECHAIN_NETWORK
+9:22:08 AM:       - VITE_VECHAIN_PRIVATE_KEY
+9:22:08 AM:       - NODE_VERSION
+9:22:08 AM:       - NODE_ENV
+9:22:08 AM:     publish: /opt/build/repo/dist
+9:22:08 AM:     publishOrigin: config
+9:22:08 AM:   headers:
+9:22:09 AM:     - for: /*
+      values:
+        Cache-Control: public, max-age=31536000, must-revalidate
+        Content-Security-Policy: |-
+          default-src 'self'; 
+                connect-src 'self' https://testnet.veblocks.net https://mainnet.veblocks.net wss://testnet.veblocks.net/socket wss://mainnet.veblocks.net/socket wss://*.replit.dev wss://*.netlify.app https://*.netlify.app; 
+                script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
+                style-src 'self' 'unsafe-inline'; 
+                img-src 'self' data: blob: https:; 
+                font-src 'self' data:; 
+                object-src 'none';
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: '*.js'
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+    - for: '*.css'
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+    - for: /images/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /api/*
+      status: 200
+      to: /.netlify/functions/api/:splat
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+9:22:09 AM: Build failed due to a user error: Build script returned non-zero exit code: 2
+9:22:09 AM: Failing build: Failed to build site
+9:22:09 AM: Finished processing build request in 32.512s
+9:22:09 AM: Failed during stage 'building site': Build script returned non-zero exit code: 2
