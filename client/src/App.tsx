@@ -14,6 +14,7 @@ import EditProfile from "./pages/EditProfile";
 import NFTDetail from "./pages/NFTDetail";
 import EditNFT from "./pages/EditNFT";
 import Artists from "./pages/Artists";
+import Badges from "./pages/Badges";
 import NotFound from "./pages/not-found";
 
 // Footer pages
@@ -33,6 +34,7 @@ function Router() {
         <Route path="/nft/:id" component={NFTDetail} />
         <Route path="/edit-nft/:id" component={EditNFT} />
         <Route path="/artists" component={Artists} />
+        <Route path="/badges" component={Badges} />
         
         {/* Footer pages */}
         <Route path="/help" component={HelpCenter} />

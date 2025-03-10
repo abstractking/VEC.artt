@@ -16,6 +16,7 @@ export const users = pgTable("users", {
   verificationApprovedDate: timestamp("verification_approved_date"),
   socialLinks: jsonb("social_links").default({}),
   favorites: jsonb("favorites").default([]),
+  badges: jsonb("badges").default([]),
   stats: jsonb("stats").default({
     totalViews: 0,
     totalLikes: 0,
