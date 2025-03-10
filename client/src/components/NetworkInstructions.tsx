@@ -20,23 +20,23 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 export default function NetworkInstructions() {
   const networkConfig = getNetwork();
   const isNetlify = typeof window !== 'undefined' && window.location.hostname.includes('netlify.app');
-  // Always start expanded for better visibility
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   
-  // Always show instructions to help users understand wallet setup regardless of environment
+  // Always show instructions for now
+  // This will help users understand wallet setup regardless of environment
   
   return (
     <Collapsible
       open={isExpanded}
       onOpenChange={setIsExpanded}
-      className="border-2 border-blue-600 rounded-lg bg-blue-50 dark:bg-blue-950 dark:border-blue-600 overflow-hidden shadow-md"
+      className="mb-6 border border-blue-400 rounded-lg bg-blue-50 dark:bg-blue-950 dark:border-blue-800 overflow-hidden"
     >
       <div className="p-4">
         <div className="flex items-start">
           <InfoIcon className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
           <div className="ml-2 flex-grow">
             <div className="flex items-center justify-between">
-              <h3 className="text-blue-800 dark:text-blue-200 font-bold text-lg">
+              <h3 className="text-blue-700 dark:text-blue-300 font-medium">
                 VeChain TestNet Required
               </h3>
               <CollapsibleTrigger asChild>
@@ -49,8 +49,8 @@ export default function NetworkInstructions() {
                 </Button>
               </CollapsibleTrigger>
             </div>
-            <p className="text-blue-700 dark:text-blue-300 font-medium mt-1">
-              This deployment requires a VeChain wallet configured for TestNet. Follow these instructions to set up your wallet.
+            <p className="text-blue-600 dark:text-blue-400 text-sm mt-1">
+              This deployment requires a VeChain wallet configured for TestNet. Click for detailed setup instructions.
             </p>
           </div>
         </div>

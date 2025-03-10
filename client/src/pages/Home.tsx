@@ -9,7 +9,6 @@ import NFTShuffle from "@/components/NFTShuffle";
 import RandomArtGallery from "@/components/RandomArtGallery";
 import TransactionTest from "@/components/TransactionTest";
 import TestNetGuide from "@/components/TestNetGuide";
-import NetworkInstructions from "@/components/NetworkInstructions";
 import { useQuery } from "@tanstack/react-query";
 import type { Collection, NFT } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
@@ -36,16 +35,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Network Instructions Panel - Always Visible */}
-      <div className="w-full bg-blue-100 dark:bg-blue-900 py-4 sticky top-16 z-30 shadow-lg border-y-4 border-blue-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-3">
-            <span className="inline-block px-4 py-1 bg-blue-600 text-white font-bold rounded-full text-sm">TESTNET SETUP REQUIRED</span>
-          </div>
-          <NetworkInstructions />
-        </div>
-      </div>
-      
       <Hero />
       
       {/* TestNet Guide for Netlify deployments */}
