@@ -9,6 +9,7 @@ import NFTShuffle from "@/components/NFTShuffle";
 import RandomArtGallery from "@/components/RandomArtGallery";
 import TransactionTest from "@/components/TransactionTest";
 import TestNetGuide from "@/components/TestNetGuide";
+import NetworkInstructions from "@/components/NetworkInstructions";
 import { useQuery } from "@tanstack/react-query";
 import type { Collection, NFT } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
@@ -37,9 +38,12 @@ export default function Home() {
     <div className="min-h-screen bg-background">
       <Hero />
       
-      {/* TestNet Guide for Netlify deployments */}
+      {/* TestNet Guide and Network Instructions for Netlify deployments */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <TestNetGuide />
+        <div className="my-4">
+          <NetworkInstructions />
+        </div>
       </section>
       
       {/* NFT Shuffle Component - auto-rotating featured NFTs */}
