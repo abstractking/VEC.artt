@@ -164,7 +164,14 @@ export default function WalletDebugger() {
                 <div className="p-4 border rounded-md bg-gray-50 dark:bg-gray-900">
                   <h4 className="font-medium mb-2">TestNet Network Configuration</h4>
                   <pre className="text-xs overflow-auto bg-gray-100 dark:bg-gray-800 p-2 rounded">
-                    {JSON.stringify(NETWORK_DESCRIPTORS[Network.TEST], null, 2)}
+                    {JSON.stringify(
+                      {
+                        id: NETWORK_DESCRIPTORS[Network.TEST].id,
+                        name: NETWORK_DESCRIPTORS[Network.TEST].name
+                      }, 
+                      null, 
+                      2
+                    )}
                   </pre>
                 </div>
                 

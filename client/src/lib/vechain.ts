@@ -474,7 +474,12 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
               
               // Get the network descriptor from our Network module
               const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
-              const networkDescriptor = NETWORKS[networkType];
+              
+              // We need to construct the EXACT format that VeWorld expects based on GitHub sample
+              const networkDescriptor = {
+                id: NETWORK_DESCRIPTORS[networkType].id,
+                name: NETWORK_DESCRIPTORS[networkType].name
+              };
               
               // Create connexOptions using official network descriptor
               const connexOptions = {
