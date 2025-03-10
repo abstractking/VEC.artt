@@ -7,6 +7,8 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { NFT, User, Bid } from "@shared/schema";
+import EditListingDialog from "@/components/EditListingDialog";
+import BuyNFTDialog from "@/components/BuyNFTDialog";
 import { 
   Clock, 
   Tag, 
@@ -46,6 +48,9 @@ export default function NFTDetail() {
   const [isPurchasing, setPurchasing] = useState(false);
   const [isBidding, setBidding] = useState(false);
   const [bidAmount, setBidAmount] = useState("");
+  const [isEditListingOpen, setEditListingOpen] = useState(false);
+  const [isBuyDialogOpen, setBuyDialogOpen] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<string>("");
 
   // Fetch NFT details
   const { data: nft, isLoading: nftLoading } = useQuery({
@@ -93,6 +98,49 @@ export default function NFTDetail() {
       setLocation("/explore");
     }
   }, [nft, nftLoading, params.id, setLocation, toast]);
+  
+  // Calculate auction time remaining
+  useEffect(() => {
+    if (!nft?.isBiddable || !nft?.metadata?.auctionEndDate) return;
+    
+    // Function to update the time remaining display
+    const updateTimeRemaining = () => {
+      const endDate = new Date(nft.metadata.auctionEndDate);
+      const now = new Date();
+      const diff = endDate.getTime() - now.getTime();
+      
+      if (diff <= 0) {
+        setTimeLeft("Auction ended");
+        return;
+      }
+      
+      // Calculate time components
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      // Format time remaining
+      if (days > 0) {
+        setTimeLeft(`${days}d ${hours}h ${minutes}m`);
+      } else if (hours > 0) {
+        setTimeLeft(`${hours}h ${minutes}m ${seconds}s`);
+      } else if (minutes > 0) {
+        setTimeLeft(`${minutes}m ${seconds}s`);
+      } else {
+        setTimeLeft(`${seconds}s`);
+      }
+    };
+    
+    // Initial update
+    updateTimeRemaining();
+    
+    // Update every second
+    const interval = setInterval(updateTimeRemaining, 1000);
+    
+    // Clean up
+    return () => clearInterval(interval);
+  }, [nft]);
 
   // Handle connect wallet
   const handleConnectWallet = async () => {
@@ -416,8 +464,8 @@ export default function NFTDetail() {
                     {nft.isBiddable && (
                       <div className="flex items-center">
                         <Clock className="text-gray-500 mr-2" />
-                        <span className="text-gray-500">
-                          Auction ends in 5h 12m
+                        <span className={`text-gray-500 ${timeLeft === "Auction ended" ? "text-red-500 font-semibold" : ""}`}>
+                          {timeLeft ? (timeLeft === "Auction ended" ? "Auction ended" : `Ends in ${timeLeft}`) : "Loading auction time..."}
                         </span>
                       </div>
                     )}
@@ -427,8 +475,8 @@ export default function NFTDetail() {
                     <div className="flex flex-col sm:flex-row gap-4">
                       <Button
                         className="bg-primary hover:bg-primary-dark text-white flex-grow"
-                        onClick={handleBuyNow}
-                        disabled={isPurchasing}
+                        onClick={() => setBuyDialogOpen(true)}
+                        disabled={isPurchasing || (timeLeft === "Auction ended" && nft.isBiddable)}
                       >
                         {isPurchasing ? (
                           <>
@@ -436,7 +484,7 @@ export default function NFTDetail() {
                             Processing...
                           </>
                         ) : (
-                          "Buy Now"
+                          `Buy for ${nft.price} ${nft.currency}`
                         )}
                       </Button>
                       
@@ -454,10 +502,7 @@ export default function NFTDetail() {
                     <Button
                       variant="outline"
                       className="text-primary border-primary hover:bg-primary/10 w-full"
-                      onClick={() => toast({
-                        title: "Not Implemented",
-                        description: "Listing editing is not implemented in this version",
-                      })}
+                      onClick={() => setEditListingOpen(true)}
                     >
                       Edit Listing
                     </Button>
@@ -474,10 +519,7 @@ export default function NFTDetail() {
                   {isOwner && (
                     <Button
                       className="bg-primary hover:bg-primary-dark text-white mt-4"
-                      onClick={() => toast({
-                        title: "Not Implemented",
-                        description: "Listing creation is not implemented in this version",
-                      })}
+                      onClick={() => setEditListingOpen(true)}
                     >
                       List for Sale
                     </Button>
@@ -689,6 +731,43 @@ export default function NFTDetail() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Edit Listing Dialog */}
+      {nft && (
+        <EditListingDialog
+          nft={nft}
+          isOpen={isEditListingOpen}
+          onClose={() => setEditListingOpen(false)}
+          onSuccess={() => {
+            // Force refresh NFT data after updating listing
+            queryClient.invalidateQueries({ queryKey: [`/api/nfts/${params.id}`] });
+            queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
+            toast({
+              title: "Listing updated",
+              description: "Your NFT listing has been updated successfully",
+            });
+          }}
+        />
+      )}
+
+      {/* Buy NFT Dialog */}
+      {nft && (
+        <BuyNFTDialog
+          nft={nft}
+          isOpen={isBuyDialogOpen}
+          onClose={() => setBuyDialogOpen(false)}
+          onSuccess={() => {
+            // Force refresh NFT data after purchase
+            queryClient.invalidateQueries({ queryKey: [`/api/nfts/${params.id}`] });
+            queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
+            queryClient.invalidateQueries({ queryKey: [`/api/nfts/owner/${user?.id}`] });
+            toast({
+              title: "Purchase successful",
+              description: `You are now the owner of ${nft.name}`,
+            });
+          }}
+        />
+      )}
     </div>
   );
 }
