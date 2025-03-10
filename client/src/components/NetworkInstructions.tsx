@@ -81,6 +81,8 @@ export default function NetworkInstructions() {
                   <li>Click on the network dropdown in the top right (it might say "Main")</li>
                   <li>Select "Test" network from the dropdown</li>
                   <li>Get free test tokens from the <a href="https://faucet.vecha.in/" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-300 font-medium underline">VeChain TestNet Faucet</a></li>
+                  <li><strong>Important:</strong> When the connection prompt appears, make sure to approve it to allow this application to connect to your wallet</li>
+                  <li>VeWorld uses different connection methods from other wallets. If you experience any issues, please ensure you have the latest version of the extension installed</li>
                 </ol>
               </div>
               

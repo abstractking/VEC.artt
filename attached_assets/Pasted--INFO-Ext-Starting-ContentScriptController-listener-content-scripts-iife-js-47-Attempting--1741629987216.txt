@@ -1,0 +1,111 @@
+[INFO] (#Ext) -  Starting ContentScriptController listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+(index):136 Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+index-BMLk5zfX.js:104 Browser environment polyfills initialized
+index-BMLk5zfX.js:554 Setting up crypto environment with cryptoPolyfill
+index-BMLk5zfX.js:636 All polyfills loaded in main entry point
+index-BMLk5zfX.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BMLk5zfX.js:617 Available wallets: (3) ['veworld', 'sync', 'sync2']
+index-BMLk5zfX.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BMLk5zfX.js:556 Attempting to connect wallet: veworld Real wallet mode: true
+index-BMLk5zfX.js:556 Netlify environment detected, forcing real wallet mode
+index-BMLk5zfX.js:556 Wallet validation result: {available: true, installed: true, walletType: 'veworld', message: 'VeWorld wallet detected'}
+index-BMLk5zfX.js:554 Connecting to veworld wallet type on TestNet...
+index-BMLk5zfX.js:554 Connecting to VeWorld wallet...
+index-BMLk5zfX.js:554 VeWorld API methods available: (7) ['isVeWorld', 'newConnex', 'newConnexVendor', 'newConnexSigner', 'request', 'on', 'removeListener']
+index-BMLk5zfX.js:554 No standard method found. Available methods: (7) ['isVeWorld', 'newConnex', 'newConnexVendor', 'newConnexSigner', 'request', 'on', 'removeListener']
+index-BMLk5zfX.js:554 VeWorld wallet connection error: Error: Cannot find a valid method to connect to VeWorld wallet. The wallet API might have changed.
+    at mI (index-BMLk5zfX.js:554:13670)
+    at index-BMLk5zfX.js:556:14451
+    at C (index-BMLk5zfX.js:613:11718)
+    at Object.oxe (index-BMLk5zfX.js:124:9873)
+    at cxe (index-BMLk5zfX.js:124:10030)
+    at fxe (index-BMLk5zfX.js:124:10090)
+    at aR (index-BMLk5zfX.js:124:31563)
+    at yW (index-BMLk5zfX.js:124:31981)
+    at index-BMLk5zfX.js:124:36914
+    at GN (index-BMLk5zfX.js:127:36984)
+mI @ index-BMLk5zfX.js:554
+(anonymous) @ index-BMLk5zfX.js:556
+C @ index-BMLk5zfX.js:613
+oxe @ index-BMLk5zfX.js:124
+cxe @ index-BMLk5zfX.js:124
+fxe @ index-BMLk5zfX.js:124
+aR @ index-BMLk5zfX.js:124
+yW @ index-BMLk5zfX.js:124
+(anonymous) @ index-BMLk5zfX.js:124
+GN @ index-BMLk5zfX.js:127
+VH @ index-BMLk5zfX.js:124
+c_ @ index-BMLk5zfX.js:124
+wN @ index-BMLk5zfX.js:124
+Mxe @ index-BMLk5zfX.js:124Understand this errorAI
+index-BMLk5zfX.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-BMLk5zfX.js:554:13934)
+    at index-BMLk5zfX.js:556:14451
+    at C (index-BMLk5zfX.js:613:11718)
+    at Object.oxe (index-BMLk5zfX.js:124:9873)
+    at cxe (index-BMLk5zfX.js:124:10030)
+    at fxe (index-BMLk5zfX.js:124:10090)
+    at aR (index-BMLk5zfX.js:124:31563)
+    at yW (index-BMLk5zfX.js:124:31981)
+    at index-BMLk5zfX.js:124:36914
+    at GN (index-BMLk5zfX.js:127:36984)
+mI @ index-BMLk5zfX.js:556
+(anonymous) @ index-BMLk5zfX.js:556
+C @ index-BMLk5zfX.js:613
+oxe @ index-BMLk5zfX.js:124
+cxe @ index-BMLk5zfX.js:124
+fxe @ index-BMLk5zfX.js:124
+aR @ index-BMLk5zfX.js:124
+yW @ index-BMLk5zfX.js:124
+(anonymous) @ index-BMLk5zfX.js:124
+GN @ index-BMLk5zfX.js:127
+VH @ index-BMLk5zfX.js:124
+c_ @ index-BMLk5zfX.js:124
+wN @ index-BMLk5zfX.js:124
+Mxe @ index-BMLk5zfX.js:124Understand this errorAI
+index-BMLk5zfX.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BMLk5zfX.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-BMLk5zfX.js:554:13934)
+    at index-BMLk5zfX.js:556:14451
+    at C (index-BMLk5zfX.js:613:11718)
+    at Object.oxe (index-BMLk5zfX.js:124:9873)
+    at cxe (index-BMLk5zfX.js:124:10030)
+    at fxe (index-BMLk5zfX.js:124:10090)
+    at aR (index-BMLk5zfX.js:124:31563)
+    at yW (index-BMLk5zfX.js:124:31981)
+    at index-BMLk5zfX.js:124:36914
+    at GN (index-BMLk5zfX.js:127:36984)
+(anonymous) @ index-BMLk5zfX.js:556
+await in (anonymous)
+C @ index-BMLk5zfX.js:613
+oxe @ index-BMLk5zfX.js:124
+cxe @ index-BMLk5zfX.js:124
+fxe @ index-BMLk5zfX.js:124
+aR @ index-BMLk5zfX.js:124
+yW @ index-BMLk5zfX.js:124
+(anonymous) @ index-BMLk5zfX.js:124
+GN @ index-BMLk5zfX.js:127
+VH @ index-BMLk5zfX.js:124
+c_ @ index-BMLk5zfX.js:124
+wN @ index-BMLk5zfX.js:124
+Mxe @ index-BMLk5zfX.js:124Understand this errorAI
+index-BMLk5zfX.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at index-BMLk5zfX.js:556:15240
+    at async C (index-BMLk5zfX.js:613:11712)
+(anonymous) @ index-BMLk5zfX.js:556
+await in (anonymous)
+C @ index-BMLk5zfX.js:613
+oxe @ index-BMLk5zfX.js:124
+cxe @ index-BMLk5zfX.js:124
+fxe @ index-BMLk5zfX.js:124
+aR @ index-BMLk5zfX.js:124
+yW @ index-BMLk5zfX.js:124
+(anonymous) @ index-BMLk5zfX.js:124
+GN @ index-BMLk5zfX.js:127
+VH @ index-BMLk5zfX.js:124
+c_ @ index-BMLk5zfX.js:124
+wN @ index-BMLk5zfX.js:124
+Mxe @ index-BMLk5zfX.js:124Understand this errorAI
+index-BMLk5zfX.js:626 NFTShuffle mounted, setting up rotation with interval: 20000

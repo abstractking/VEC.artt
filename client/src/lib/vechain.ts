@@ -434,53 +434,33 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
           try {
             console.log("Connecting to VeWorld wallet...");
             
-            // Check which method is available in VeWorld wallet
-            // Different versions might use different methods
-            let vendor;
             const vechain = (window as any).vechain;
-            
             console.log("VeWorld API methods available:", Object.keys(vechain));
             
-            // Try different methods that VeWorld might expose
-            if (typeof vechain.enable === 'function') {
-              // Traditional method
-              console.log("Using vechain.enable() method");
-              vendor = await vechain.enable();
-            } else if (typeof vechain.createProvider === 'function') {
-              // Some wallets use createProvider
-              console.log("Using vechain.createProvider() method");
-              vendor = await vechain.createProvider();
-            } else if (typeof vechain.getProvider === 'function') {
-              // Some wallets use getProvider
-              console.log("Using vechain.getProvider() method");
-              vendor = await vechain.getProvider();
-            } else if (typeof vechain.getVendor === 'function') {
-              // Some wallets expose vendor directly
-              console.log("Using vechain.getVendor() method");
-              vendor = await vechain.getVendor();
-            } else if (typeof vechain.connect === 'function') {
-              // Some wallets use connect pattern
-              console.log("Using vechain.connect() method");
-              vendor = await vechain.connect();
-            } else {
-              // If we can't find a standard method, try to determine what's available
-              console.log("No standard method found. Available methods:", Object.keys(vechain));
+            if (!vechain.isVeWorld) {
+              throw new Error("Not a valid VeWorld wallet extension");
+            }
+            
+            console.log("VeWorld wallet detected, creating Connex instance...");
+            
+            // Create a Connex instance using VeWorld's newConnex method
+            if (typeof vechain.newConnex === 'function') {
+              console.log("Using vechain.newConnex() method");
+              const connex = await vechain.newConnex();
               
-              // Last resort - check if vechain itself has the required methods to be a vendor
-              if (typeof vechain.sign === 'function' || typeof vechain.signTx === 'function') {
-                console.log("Using vechain object directly as vendor");
-                vendor = vechain;
+              // Create a vendor for signing transactions using VeWorld's newConnexVendor method
+              if (typeof vechain.newConnexVendor === 'function') {
+                console.log("Using vechain.newConnexVendor() method");
+                const vendor = await vechain.newConnexVendor();
+                
+                // Return both the connex instance and the vendor
+                return { connex, vendor };
               } else {
-                throw new Error("Cannot find a valid method to connect to VeWorld wallet. The wallet API might have changed.");
+                throw new Error("VeWorld wallet is missing newConnexVendor method");
               }
+            } else {
+              throw new Error("VeWorld wallet is missing newConnex method");
             }
-            
-            if (!vendor) {
-              throw new Error("Failed to enable VeWorld wallet");
-            }
-            
-            const connex = await getConnex();
-            return { connex, vendor };
           } catch (error) {
             console.error("VeWorld wallet connection error:", error);
             throw new Error("VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.");
