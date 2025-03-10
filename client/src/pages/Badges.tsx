@@ -120,7 +120,18 @@ export default function Badges() {
 
               <Tabs defaultValue="all">
                 <div className="overflow-x-auto pb-2">
-                  <TabsList className="mb-6 w-full flex-nowrap overflow-x-auto">
+                  <TabsList 
+                    className="mb-6 w-full flex-nowrap overflow-x-auto whitespace-nowrap" 
+                    style={{ 
+                      msOverflowStyle: 'none', 
+                      scrollbarWidth: 'none' 
+                    }}
+                  >
+                    <style jsx>{`
+                      .overflow-x-auto::-webkit-scrollbar {
+                        display: none;
+                      }
+                    `}</style>
                     <TabsTrigger value="all">All Badges</TabsTrigger>
                     <TabsTrigger value="creator">Creator</TabsTrigger>
                     <TabsTrigger value="collector">Collector</TabsTrigger>
