@@ -1,7 +1,8 @@
 import { Framework } from '@vechain/connex-framework';
-import { Driver, SimpleNet, SimpleWallet } from '@vechain/connex-driver';
+import { Driver, SimpleWallet } from '@vechain/connex-driver';
 import Connex from '@vechain/connex';
 import { Buffer } from 'buffer';
+import { BrowserNet } from './browser-net';
 
 // Type declarations for VeChain Connex and Thor responses
 interface TxResponse {
@@ -183,7 +184,7 @@ export const initializeConnex = async (wallet?: SimpleWallet) => {
             wallet.import(privateKey);
             
             // Create a dedicated network instance for this wallet
-            const net = new SimpleNet(network.url);
+            const net = new BrowserNet(network.url);
             const driver = await Driver.connect(net, wallet);
             const framework = new Framework(driver);
             
