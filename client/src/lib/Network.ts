@@ -14,11 +14,12 @@ export interface NodeOptions {
 
 // This is critical - NetworkDescriptor must match EXACTLY what VeWorld expects
 export interface NetworkDescriptor {
-  id: string;   // This must be the genesis ID hash
-  name: string; // This must be lowercase 'main' or 'test'
+  id: string;     // This must be the genesis ID hash
+  name: string;   // This must be lowercase 'main' or 'test'
 }
 
 // Network definitions exactly matching VeWorld's expectations
+// The github example uses this EXACT format: https://github.com/WillSaveTime/Connex-Vechain-/blob/a2673fd10b9633b7e71c9c36e29de711223892a7/sample.js#L1-L108
 export const NETWORKS: Record<Network, NetworkDescriptor> = {
   [Network.MAIN]: {
     id: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',

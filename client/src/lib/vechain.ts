@@ -474,7 +474,7 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
               
               // Get the network descriptor from our Network module
               const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
-              const networkDescriptor = NETWORK_DESCRIPTORS[networkType];
+              const networkDescriptor = NETWORKS[networkType];
               
               // Create connexOptions using official network descriptor
               const connexOptions = {
