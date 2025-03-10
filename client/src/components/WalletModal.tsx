@@ -101,8 +101,8 @@ export default function WalletModal() {
                 </div>
               </div>
               
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col space-y-1">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+                <div className="flex flex-col space-y-1 w-full sm:w-auto">
                   <Label htmlFor="real-wallet-toggle" className="font-medium">
                     {useRealWallet ? "Real Wallet Interaction" : "Mock Wallet Interaction"}
                   </Label>

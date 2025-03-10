@@ -49,15 +49,28 @@ export default function NotificationCenter() {
   const [isOpen, setIsOpen] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
 
+  // Close notifications when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && !(event.target as Element).closest('.notification-center')) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+
   useEffect(() => {
     // Setup WebSocket connection when component mounts
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const wsUrl = `${protocol}//${window.location.host}/ws`;
-    
+
     const connectWebSocket = () => {
       console.log("Attempting to connect to WebSocket at:", wsUrl);
       const ws = new WebSocket(wsUrl);
-      
+
       ws.onopen = () => {
         console.log("WebSocket connected successfully");
         // If user is logged in, send authentication to receive personalized notifications
@@ -74,11 +87,11 @@ export default function NotificationCenter() {
           }
         }
       };
-      
+
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          
+
           if (data.type === 'notification') {
             const newNotification: Notification = {
               id: data.id,
@@ -89,10 +102,10 @@ export default function NotificationCenter() {
               link: data.link,
               thumbnail: data.thumbnail
             };
-            
+
             setNotifications((prev) => [newNotification, ...prev].slice(0, 50)); // Keep last 50 notifications
             setUnreadCount((prev) => prev + 1);
-            
+
             // Show browser notification if supported and permission is granted
             if (typeof window !== 'undefined' && 'Notification' in window && 
                 Notification.permission === "granted" && !document.hasFocus()) {
@@ -106,33 +119,33 @@ export default function NotificationCenter() {
           console.error("Error parsing WebSocket message:", error);
         }
       };
-      
+
       ws.onclose = (event) => {
         console.log("WebSocket disconnected, reconnecting in 5s...", event.code, event.reason);
         // Reconnect after 5 seconds
         setTimeout(connectWebSocket, 5000);
       };
-      
+
       ws.onerror = (error) => {
         console.error("WebSocket error:", error);
         ws.close();
       };
-      
+
       wsRef.current = ws;
     };
-    
+
     connectWebSocket();
-    
+
     // Request notification permission if browser supports it
     if (typeof window !== 'undefined' && 'Notification' in window && 
         Notification.permission !== "granted" && Notification.permission !== "denied") {
       Notification.requestPermission();
     }
-    
+
     // Initialize with empty notifications array
     setNotifications([]);
     setUnreadCount(0);
-    
+
     // Cleanup WebSocket on unmount
     return () => {
       if (wsRef.current) {
@@ -140,12 +153,12 @@ export default function NotificationCenter() {
       }
     };
   }, [user]);
-  
+
   const markAllAsRead = () => {
     setNotifications(prev => prev.map(notification => ({ ...notification, read: true })));
     setUnreadCount(0);
   };
-  
+
   const markAsRead = (id: string) => {
     setNotifications(prev => 
       prev.map(notification => 
@@ -154,7 +167,7 @@ export default function NotificationCenter() {
     );
     setUnreadCount(prev => Math.max(0, prev - 1));
   };
-  
+
   const removeNotification = (id: string) => {
     const notification = notifications.find(n => n.id === id);
     setNotifications(prev => prev.filter(notification => notification.id !== id));
@@ -162,19 +175,19 @@ export default function NotificationCenter() {
       setUnreadCount(prev => Math.max(0, prev - 1));
     }
   };
-  
+
   const formatTimeAgo = (date: Date) => {
     const now = new Date();
     const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
+
     if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
     return `${Math.floor(diffInSeconds / 86400)}d ago`;
   };
-  
+
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen} className="notification-center"> {/* Added className */}
       <DropdownMenuTrigger asChild>
         <Button 
           variant="ghost" 
@@ -210,7 +223,7 @@ export default function NotificationCenter() {
             </Button>
           )}
         </div>
-        
+
         <div className="overflow-y-auto max-h-[400px]">
           {notifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-center text-muted-foreground">
