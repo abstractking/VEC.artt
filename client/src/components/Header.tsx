@@ -146,7 +146,7 @@ export default function Header() {
                     </DropdownMenuItem>
                     
                     <DropdownMenuItem asChild>
-                      <Link href="/badges" className="cursor-pointer flex items-center pl-6">
+                      <Link href="/badges" className="cursor-pointer flex items-center">
                         <Trophy className="h-4 w-4 mr-2 text-amber-500" />
                         Achievements
                       </Link>
@@ -159,6 +159,18 @@ export default function Header() {
                       <Link href="/create" className="cursor-pointer flex items-center">
                         <ScrollText className="h-4 w-4 mr-2 text-purple-500" />
                         Create NFT
+                      </Link>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem asChild>
+                      <Link href="/" className="cursor-pointer flex items-center">
+                        <span className="text-blue-400">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                          </svg>
+                        </span>
+                        Home
                       </Link>
                     </DropdownMenuItem>
                     
@@ -256,7 +268,12 @@ export default function Header() {
               className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
               onClick={() => setIsMenuOpen(false)}
             >
-              <Search className="h-5 w-5 mr-2 text-blue-400" />
+              <span className="text-blue-400">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+              </span>
               Home
             </Link>
 
@@ -271,7 +288,7 @@ export default function Header() {
             
             <Link 
               href="/badges"
-              className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center pl-6"
+              className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
               onClick={() => setIsMenuOpen(false)}
             >
               <Trophy className="h-5 w-5 mr-2 text-amber-500" />

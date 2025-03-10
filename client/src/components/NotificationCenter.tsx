@@ -179,7 +179,7 @@ export default function NotificationCenter() {
         <Button 
           variant="ghost" 
           size="icon" 
-          className="relative"
+          className="relative mr-2"
           aria-label="Notifications"
         >
           <Bell className="h-5 w-5" />
@@ -195,7 +195,9 @@ export default function NotificationCenter() {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="w-80 max-h-[80vh] overflow-hidden flex flex-col"
+        alignOffset={-20}
+        className="w-80 max-h-[80vh] overflow-hidden flex flex-col z-50"
+        sideOffset={10}
       >
         <div className="flex items-center justify-between px-4 py-2 border-b">
           <h3 className="font-semibold">Notifications</h3>
