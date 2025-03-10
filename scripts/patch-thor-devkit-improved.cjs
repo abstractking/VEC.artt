@@ -96,14 +96,23 @@ function patchFile(filePath) {
     modified = true;
   }
   
-  // Special case for thor-polyfills (which was causing the Netlify build error)
-  if (content.includes('../../../client/src/lib/thor-polyfills')) {
-    const absolutePath = path.resolve(rootDir, 'client/src/lib/thor-polyfills');
-    // Use client-side import path that will be properly resolved by Vite
+  // Handle various thor-polyfills import patterns (which are causing Netlify build errors)
+  if (content.includes('../../../client/src/lib/thor-polyfills') || 
+      content.includes('../../client/src/lib/thor-polyfills') ||
+      content.includes('../client/src/lib/thor-polyfills')) {
+    
+    // Replace ALL relative path patterns with a direct import that Vite can resolve
     content = content.replace(
-      /(from|require\()(['"])(?:\.\.\/){3}client\/src\/lib\/thor-polyfills(['")\s;])/g,
-      `$1$2/client/src/lib/thor-polyfills$3`
+      /(from|require\()(['"])(?:\.\.\/)+client\/src\/lib\/thor-polyfills(['")\s;])/g,
+      `$1$2/src/lib/thor-polyfills$3`
     );
+    
+    // Also handle any direct node_modules imports
+    content = content.replace(
+      /(from|require\()(['"]).*\/node_modules\/.*\/client\/src\/lib\/thor-polyfills(['")\s;])/g,
+      `$1$2/src/lib/thor-polyfills$3`
+    );
+    
     modified = true;
   }
   

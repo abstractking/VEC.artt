@@ -3,20 +3,22 @@
  * This ensures all Node.js modules are properly polyfilled in the browser
  */
 
+import { isBrowser } from './browser-info';
+
 // Make Buffer available globally
 import { Buffer } from 'buffer';
-if (typeof window !== 'undefined') {
+if (isBrowser) {
   window.Buffer = window.Buffer || Buffer;
 }
 
 // Make process available globally
 import process from 'process';
-if (typeof window !== 'undefined') {
+if (isBrowser) {
   window.process = window.process || process;
 }
 
 // Make sure global is defined
-if (typeof window !== 'undefined') {
+if (isBrowser) {
   window.global = window.global || window;
 }
 
@@ -35,27 +37,49 @@ import * as zlib from 'browserify-zlib';
 import * as util from 'util';
 
 // Make modules available through window
-if (typeof window !== 'undefined') {
-  // Native browser crypto is preserved
-  window.cryptoPolyfill = crypto;
+if (isBrowser) {
+  // Create a new object to hold our crypto implementation
+  const cryptoPolyfill = Object.create(null);
+  Object.assign(cryptoPolyfill, crypto);
   
-  // Add Node.js-compatible modules to window
-  window.stream = window.stream || stream;
-  window.http = window.http || http;
-  window.https = window.https || https;
-  window.path = window.path || path;
-  window.os = window.os || os;
-  window.events = window.events || events;
-  window.url = window.url || url;
-  window.assert = window.assert || assert;
-  window.zlib = window.zlib || zlib;
-  window.util = window.util || util;
+  // Define non-configurable property to prevent modifications
+  Object.defineProperty(window, 'cryptoPolyfill', {
+    value: cryptoPolyfill,
+    writable: false,
+    configurable: false
+  });
+  
+  // Add Node.js-compatible modules to window safely
+  const moduleMapping: Record<string, unknown> = {
+    stream,
+    http,
+    https,
+    path,
+    os,
+    events,
+    url,
+    assert,
+    zlib,
+    util
+  };
+  
+  // Safely assign modules to window
+  Object.entries(moduleMapping).forEach(([key, value]) => {
+    if (!(key in window)) {
+      Object.defineProperty(window, key as keyof Window, {
+        value,
+        writable: false,
+        configurable: false
+      });
+    }
+  });
 }
 
 // Set up thor-specific polyfills
 import * as thorPolyfills from './thor-polyfills';
-if (typeof window !== 'undefined') {
-  window.thorCrypto = thorPolyfills;
+if (isBrowser && window.thorCrypto) {
+  // Merge thor polyfills with existing object instead of overwriting
+  Object.assign(window.thorCrypto, thorPolyfills);
 }
 
 // Export modules for TypeScript compatibility

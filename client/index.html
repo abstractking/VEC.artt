@@ -30,6 +30,17 @@
       isBuffer: function() { return false; }
     };
     
+    // Define crypto polyfill storage WITHOUT touching native window.crypto
+    // Modern browsers protect window.crypto property with a getter
+    window.cryptoPolyfill = window.cryptoPolyfill || {};
+    
+    // Define thorCrypto placeholder
+    window.thorCrypto = window.thorCrypto || {
+      randomBytes: function() { return []; },
+      createHash: function() { return { update: function() { return { digest: function() { return ''; } }; } }; },
+      createHmac: function() { return { update: function() { return { digest: function() { return ''; } }; } }; }
+    };
+    
     console.log("Critical polyfills initialized via inline script");
   </script>
 </head>

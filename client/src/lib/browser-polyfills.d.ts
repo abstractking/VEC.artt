@@ -40,9 +40,33 @@ interface Window {
   util: any;
 }
 
-// Add missing properties to Process
+// Add missing properties to Process and NodeJS.Process
 declare global {
   interface Process {
     browser?: boolean;
+  }
+  
+  namespace NodeJS {
+    interface Process {
+      browser?: boolean;
+    }
+  }
+  
+  interface Window {
+    thorCrypto: any;
+    cryptoPolyfill: any;
+    Buffer: any;
+    process: Process;
+    global: typeof globalThis;
+    stream: any;
+    http: any;
+    https: any;
+    os: any;
+    path: any;
+    events: any;
+    url: any;
+    assert: any;
+    zlib: any;
+    util: any;
   }
 }
