@@ -824,8 +824,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Define VeChain node URLs
   const VECHAIN_NODES = {
-    mainnet: 'https://sync-mainnet.vechain.org',
-    testnet: 'https://sync-testnet.vechain.org'
+    mainnet: 'https://mainnet.vechain.org',
+    testnet: 'https://testnet.vechain.org'
   };
 
   // Generic proxy middleware for VeChain API requests
@@ -908,16 +908,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/vechain/genesis-id', async (req: Request, res: Response) => {
     try {
       const network = req.query.network === 'main' ? 'mainnet' : 'testnet';
-      // For TestNet, the genesis block is block 0
-      const blockNum = '0';
-      const response = await fetch(`${VECHAIN_NODES[network]}/blocks/${blockNum}`);
-      const data = await response.json();
       
-      // Safely access the data with type checking
-      const blockData = data as any;
+      // Use hardcoded genesis IDs for reliable response - these are the official IDs
+      const GENESIS_IDS = {
+        mainnet: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
+        testnet: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'
+      };
       
+      // Return the correct genesis ID for the requested network
       res.json({
-        genesisId: blockData?.id || null,
+        genesisId: GENESIS_IDS[network],
         network: network
       });
     } catch (error: any) {

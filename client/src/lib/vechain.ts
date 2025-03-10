@@ -106,16 +106,16 @@ export const NODES = {
     url: `${getBaseUrl()}/api/vechain/mainnet`,
     socketUrl: `${getBaseUrl()}/api/vechain/mainnet`,
     // Keep direct URLs for reference and for wallet connections
-    directUrl: 'https://sync-mainnet.vechain.org',
-    directSocketUrl: 'wss://sync-mainnet.vechain.org',
+    directUrl: 'https://mainnet.vechain.org',
+    directSocketUrl: 'wss://mainnet.vechain.org',
   },
   test: {
     // Use proxy endpoints to avoid CORS issues with direct VeChain node access
     url: `${getBaseUrl()}/api/vechain/testnet`,
     socketUrl: `${getBaseUrl()}/api/vechain/testnet`,
     // Keep direct URLs for reference and for wallet connections
-    directUrl: 'https://sync-testnet.vechain.org',
-    directSocketUrl: 'wss://sync-testnet.vechain.org',
+    directUrl: 'https://testnet.vechain.org',
+    directSocketUrl: 'wss://testnet.vechain.org',
   },
   solo: {
     url: 'http://localhost:8669',
@@ -310,10 +310,10 @@ export const getConnex = async () => {
       // WebSocket URL (if available)
       let wsUrl = '';
       try {
-        // Use sync node endpoints for better CORS support
+        // Use vechain.org node endpoints for better compatibility
         wsUrl = (network as any).socketUrl || (network.name.toLowerCase() === 'main' 
-          ? 'wss://sync-mainnet.vechain.org'
-          : 'wss://sync-testnet.vechain.org');
+          ? 'wss://mainnet.vechain.org'
+          : 'wss://testnet.vechain.org');
       } catch (error) {
         console.warn("Could not determine WebSocket URL:", error);
         wsUrl = network.name.toLowerCase() === 'main' 
