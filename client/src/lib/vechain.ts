@@ -1,5 +1,6 @@
 import { Framework } from '@vechain/connex-framework';
 import { Driver, SimpleNet, SimpleWallet } from '@vechain/connex-driver';
+import Connex from '@vechain/connex';
 
 // Define network options with reliable endpoints for Replit
 export const NETWORKS = {
@@ -46,26 +47,30 @@ export const initializeConnex = async (wallet?: SimpleWallet) => {
     
     // Check if we're in browser or Node.js environment
     if (typeof window !== 'undefined') {
-      // Configure driver options for Replit environment
       if (isReplit) {
-        // Disable WebSocket error logs to prevent console spam
-        driverOptions.disableErrorLog = true;
-        console.log("Replit environment detected - optimizing VeChain connection for HTTP polling");
+        console.log("Replit environment detected - using HTTP polling for VeChain connection");
       }
       
-      // Use polling instead of WebSockets in Replit environment
-      const connectionOptions = {
-        // Only use HTTP polling for block updates in Replit
-        useWS: !isReplit,
-        // Higher poll interval to avoid rate limits
-        pollInterval: isReplit ? 10000 : 4000
-      };
+      // For Replit environment, use Connex directly with HTTP polling configuration
+      if (isReplit) {
+        try {
+          // Initialize Connex with reliable HTTP configuration for Replit
+          const connex = new Connex({
+            node: network.url, // Use reliable HTTP endpoint
+            network: network.name.toLowerCase() as any, // Either 'main' or 'test'
+            // Disable WebSocket in Replit environment, rely on HTTP polling
+            noWebSocket: true
+          });
+          
+          connexInstance = connex;
+          return connex;
+        } catch (connexError) {
+          console.error("Connex initialization failed:", connexError);
+        }
+      }
       
-      const driver = await Driver.connect(
-        new SimpleNet(network.url, connectionOptions), 
-        wallet
-      );
-      
+      // Default initialization for non-Replit environments or fallback
+      const driver = await Driver.connect(new SimpleNet(network.url), wallet);
       connexInstance = new Framework(driver);
       return connexInstance;
     } else {
