@@ -329,8 +329,8 @@ export const getWalletAddress = async () => {
             console.log('Retrieved wallet address from environment key:', address);
             return address;
           }
-        } catch (envError) {
-          console.warn("Failed to get address from environment key, falling back to mock:", envError);
+        } catch (error: any) {
+          console.warn("Failed to get address from environment key, falling back to mock:", error);
         }
       }
       
@@ -507,37 +507,26 @@ export const executeContractMethod = async (
           // This will still use the private key but will actually send the transaction
           // to the TestNet instead of just returning a mock txid
           
-          // Get driver
-          const connectionOptions = {
-            useWS: !isReplit,
-            pollInterval: isReplit ? 10000 : 4000
-          };
-          const driver = await Driver.connect(new SimpleNet(getNetwork().url, connectionOptions));
+          // For Replit environment, we'll use a simpler approach with the connex instance
+          console.log("Creating transaction using Connex in Replit environment");
           
-          // Sign and send the transaction
-          const transaction = new Transaction({
-            chainTag: Number(connex.thor.genesis.id.slice(-2)), // Get chainTag from connex
-            blockRef: connex.thor.status.head.id.slice(0, 18), // Use current block as reference
-            expiration: 32, // Use 32 blocks as expiration (~640 seconds or ~10.7 minutes)
-            clauses: [clause], // Add the clause
-            gas: 2000000 // Set a reasonable gas limit
-          });
+          // Use connex directly to create and send the transaction
+          // This avoids lower-level Transaction object handling
+          const signedTx = await connex.vendor.sign('tx', [clause]);
           
-          const signedTx = account.sign(transaction);
-          const rawTx = '0x' + signedTx.encode().toString('hex');
+          // Log the transaction details
+          console.log(`Transaction signed with ID: ${signedTx.txid}`);
           
-          // Send the raw transaction
-          const txVisitor = driver.transaction(rawTx);
-          await txVisitor.send();
+          // No need to send manually - the vendor.sign method does this in one step
           
-          // Return the result
+          // Return the result from the signed transaction
           return {
-            txid: transaction.id,
+            txid: signedTx.txid,
             signer: account.address
           };
-        } catch (envError) {
-          console.error("TestNet wallet execution failed:", envError);
-          throw new Error(`Transaction failed: ${envError.message || "Unknown error during transaction"}`);
+        } catch (error: any) {
+          console.error("TestNet wallet execution failed:", error);
+          throw new Error(`Transaction failed: ${error?.message || "Unknown error during transaction"}`);
         }
       } else {
         throw new Error("No private key available. Please enable real wallet interaction or add a test private key.");
@@ -637,8 +626,8 @@ export const deployContract = async (abi: any, bytecode: string, params: any[] =
             txid: txid,
             signer: account.address
           };
-        } catch (envError) {
-          console.warn("TestNet wallet deployment failed, falling back to mock:", envError);
+        } catch (error: any) {
+          console.warn("TestNet wallet deployment failed, falling back to mock:", error);
         }
       }
       
