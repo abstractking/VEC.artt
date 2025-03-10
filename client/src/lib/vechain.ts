@@ -3,6 +3,42 @@ import { Driver, SimpleNet, SimpleWallet } from '@vechain/connex-driver';
 import Connex from '@vechain/connex';
 import { Buffer } from 'buffer';
 
+// Check if cryptoPolyfill is available and patch the crypto environment
+const setupCryptoEnvironment = () => {
+  try {
+    if (typeof window !== 'undefined' && (window as any).cryptoPolyfill) {
+      console.log("Setting up crypto environment with cryptoPolyfill");
+      
+      // Store a reference to the global crypto object first
+      const originalCrypto = global.crypto || {};
+      
+      // Create a temporary crypto object that combines browser's crypto with our polyfill
+      const tempCrypto = {
+        ...(window as any).cryptoPolyfill,
+        subtle: originalCrypto.subtle
+      };
+      
+      // Add any missing methods from cryptoPolyfill
+      if (!(global as any).crypto) {
+        (global as any).crypto = tempCrypto;
+      }
+      
+      if (!(global as any).crypto.randomBytes && (window as any).cryptoPolyfill.randomBytes) {
+        (global as any).crypto.randomBytes = (window as any).cryptoPolyfill.randomBytes;
+      }
+      
+      return true;
+    }
+    return false;
+  } catch (e) {
+    console.error("Failed to set up crypto environment:", e);
+    return false;
+  }
+};
+
+// Setup crypto environment before using VeChain libraries
+setupCryptoEnvironment();
+
 // Define network options with reliable endpoints for Replit
 export const NETWORKS = {
   main: {
@@ -198,7 +234,14 @@ export const connectWalletWithEnvKey = async () => {
           console.log(`Transaction clauses:`, JSON.stringify(clauses, null, 2));
           
           // Create a transaction signing service from our framework
-          const signService = framework.vendor.sign(type, clauses);
+          // VeChain API expects either 'tx' or 'cert' as literal string types
+          if (type === 'cert') {
+            const signService = framework.vendor.sign('cert', clauses as any);
+            return signService.request();
+          } else {
+            const signService = framework.vendor.sign('tx', clauses);
+            return signService.request();
+          }
           
           // Request for signing - this will automatically happen since we're using a private key
           const signedTx = await signService.request();
@@ -280,8 +323,9 @@ export const connectWallet = async (privateKey?: string) => {
             console.log(`Transaction clauses:`, JSON.stringify(clauses, null, 2));
             
             // Create a transaction signing service from our framework
-            // Ensure type is 'tx' for transactions
-            const signService = framework.vendor.sign('tx', clauses);
+            // Explicitly use 'tx' for transactions regardless of input type
+            const safeType = 'tx'; // Ensure we always use 'tx' for transactions
+            const signService = framework.vendor.sign(safeType, clauses);
             
             // Request for signing - this will automatically happen since we're using a private key
             const signedTx = await signService.request();
@@ -875,37 +919,127 @@ export const getTransactionReceipt = async (txId: string) => {
 
 // Mock Connex for development environments without blockchain access
 function mockConnex() {
-  return {
-    thor: {
-      account: (address: string) => ({
-        method: (abi: any) => ({
-          call: async (...params: any[]) => ({ data: '0x', reverted: false }),
-          asClause: (...params: any[]) => ({
-            to: address,
-            value: '0x0',
-            data: '0x'
+  console.warn("Using enhanced mock Connex implementation for development");
+  
+  // First, ensure crypto environment is properly set up
+  setupCryptoEnvironment();
+  
+  try {
+    // Check if we have a private key in the environment
+    const privateKey = import.meta.env.VITE_VECHAIN_PRIVATE_KEY;
+    
+    if (privateKey) {
+      console.log("Mock Connex has detected environment key");
+    } else {
+      console.log("No private key found, using fully mocked Connex");
+    }
+    
+    // Add detailed debug info
+    console.debug("Browser crypto availability:", !!window.crypto);
+    console.debug("CryptoPolyfill availability:", !!(window as any).cryptoPolyfill);
+    
+    // Generate mock blockchain data
+    const mockBlockTime = Math.floor(Date.now() / 1000);
+    const mockBlockNumber = 12345678;
+    const mockBlockId = '0x' + Array(64).fill('1').join('');
+    const testAddress = '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed';
+    
+    // Return a more complete mock object
+    return {
+      thor: {
+        account: (address: string) => ({
+          method: (abi: any) => ({
+            call: async (...params: any[]) => ({ data: '0x', reverted: false }),
+            asClause: (...params: any[]) => ({
+              to: address,
+              value: '0x0',
+              data: '0x'
+            })
+          }),
+          get: async () => ({
+            balance: '10000000000000000000', // 10 VET
+            energy: '1000000000000000000',  // 1 VTHO
+            hasCode: false
+          })
+        }),
+        transaction: (txId: string) => ({
+          getReceipt: async () => ({
+            meta: {
+              blockID: mockBlockId,
+              blockNumber: mockBlockNumber,
+              blockTimestamp: mockBlockTime,
+              txID: txId,
+              txOrigin: testAddress
+            },
+            reverted: false,
+            outputs: [{
+              contractAddress: null,
+              events: [],
+              transfers: []
+            }]
+          })
+        }),
+        genesis: {
+          id: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127' // TestNet genesis
+        },
+        status: {
+          head: {
+            id: mockBlockId,
+            number: mockBlockNumber,
+            timestamp: mockBlockTime,
+            parentID: '0x' + Array(64).fill('2').join(''),
+            txsFeatures: 1,
+            gasLimit: 10000000
+          },
+          progress: 1
+        }
+      },
+      vendor: {
+        sign: async (type: string, clauses: any[]) => {
+          console.log("MOCK: Signing transaction with clauses:", clauses);
+          return {
+            txid: '0x' + Math.random().toString(16).substring(2, 34),
+            signer: testAddress
+          };
+        }
+      }
+    };
+  } catch (error) {
+    console.error("Error creating enhanced mock Connex:", error);
+    
+    // Return the original simplified mock if anything fails
+    return {
+      thor: {
+        account: (address: string) => ({
+          method: (abi: any) => ({
+            call: async (...params: any[]) => ({ data: '0x', reverted: false }),
+            asClause: (...params: any[]) => ({
+              to: address,
+              value: '0x0',
+              data: '0x'
+            })
+          })
+        }),
+        transaction: (txId: string) => ({
+          getReceipt: async () => ({
+            meta: {
+              blockID: '0x' + Math.random().toString(16).substring(2, 66),
+              blockNumber: Math.floor(Math.random() * 1000000),
+              blockTimestamp: Math.floor(Date.now() / 1000),
+              txID: txId,
+              txOrigin: '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed'
+            },
+            reverted: false,
+            outputs: [{
+              contractAddress: null,
+              events: [],
+              transfers: []
+            }]
           })
         })
-      }),
-      transaction: (txId: string) => ({
-        getReceipt: async () => ({
-          meta: {
-            blockID: '0x' + Math.random().toString(16).substring(2, 66),
-            blockNumber: Math.floor(Math.random() * 1000000),
-            blockTimestamp: Math.floor(Date.now() / 1000),
-            txID: txId,
-            txOrigin: '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed'
-          },
-          reverted: false,
-          outputs: [{
-            contractAddress: null,
-            events: [],
-            transfers: []
-          }]
-        })
-      })
-    }
-  };
+      }
+    };
+  }
 }
 
 // Mock vendor for development environments
