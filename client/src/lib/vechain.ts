@@ -474,7 +474,7 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             
             // Hard-coded genesis ID values exactly as expected by VeWorld
             const GENESIS_ID_MAINNET = "0x1"; // For mainnet, VeWorld expects 0x1
-            const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127";
+            const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e57f46685eca98e8e0b61"; // Updated TestNet genesis ID
             
             // Hard-coded network names exactly as expected by VeWorld
             const NETWORK_NAME_MAIN = "main";

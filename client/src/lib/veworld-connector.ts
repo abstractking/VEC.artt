@@ -8,8 +8,8 @@
 import { Network } from './Network';
 
 // The exact genesis ID values VeWorld expects
-const GENESIS_ID_MAINNET = "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a";
-const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127";
+const GENESIS_ID_MAINNET = "0x1"; // For mainnet, VeWorld expects 0x1
+const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e57f46685eca98e8e0b61"; // Updated TestNet genesis ID
 
 // The exact network names VeWorld expects
 const NETWORK_NAME_MAIN = "main";

@@ -19,14 +19,13 @@ export interface NetworkDescriptor {
 }
 
 // Network definitions exactly matching VeWorld's expectations
-// The github example uses this EXACT format: https://github.com/WillSaveTime/Connex-Vechain-/blob/a2673fd10b9633b7e71c9c36e29de711223892a7/sample.js#L1-L108
 export const NETWORKS: Record<Network, NetworkDescriptor> = {
   [Network.MAIN]: {
-    id: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
+    id: '0x1', // For mainnet, VeWorld expects 0x1
     name: 'main',
   },
   [Network.TEST]: {
-    id: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
+    id: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e57f46685eca98e8e0b61', // Updated TestNet genesis ID
     name: 'test',
   },
 };
