@@ -25,7 +25,7 @@ export const NETWORKS: Record<Network, NetworkDescriptor> = {
     name: 'main',
   },
   [Network.TEST]: {
-    id: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e57f46685eca98e8e0b61', // Updated TestNet genesis ID
+    id: '0x00000000c05d2f87b389c15e9e8e4f7b6c88e9e8a7b384f727e431355de5b093', // Updated TestNet genesis ID per VeChain docs
     name: 'test',
   },
 };

@@ -322,7 +322,7 @@ export const getConnex = async () => {
         error: wsError,
         message: wsError instanceof Error ? wsError.message : String(wsError),
         stack: wsError instanceof Error ? wsError.stack : undefined,
-        websocketUrl,
+        wsUrl: websocketUrl,
         network
       });
       
@@ -555,7 +555,7 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             
             // Hard-coded genesis ID values exactly as expected by VeWorld
             const GENESIS_ID_MAINNET = "0x1"; // For mainnet, VeWorld expects 0x1
-            const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e57f46685eca98e8e0b61"; // Updated TestNet genesis ID
+            const GENESIS_ID_TESTNET = "0x00000000c05d2f87b389c15e9e8e4f7b6c88e9e8a7b384f727e431355de5b093"; // Updated TestNet genesis ID per VeChain docs
             
             // Hard-coded network names exactly as expected by VeWorld
             const NETWORK_NAME_MAIN = "main";
