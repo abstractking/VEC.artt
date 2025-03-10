@@ -1,0 +1,92 @@
+he error message suggests that your build is failing due to an issue with Vite externalizing Node.js modules that are required by thor-devkit and @vechain/connex-driver. Here are the most likely causes and potential solutions:
+
+Possible Issues:
+Node.js Built-in Modules Are Being Externalized
+
+The error message specifically mentions:
+rust
+Copy
+Edit
+Module "crypto" has been externalized for browser compatibility
+This means that Vite is treating crypto, http, https, and url as external modules, but thor-devkit and @vechain/connex-driver expect them to be available.
+randomBytes Is Not Exported by crypto
+
+The thor-devkit package attempts to import randomBytes from crypto, but Vite externalized it, causing an import failure.
+Incorrect Build Target (browser vs. node)
+
+Your dependencies (thor-devkit, @vechain/connex-driver) may rely on Node.js-specific modules, but Vite is treating your project as a browser-only build.
+Vite Configuration Missing define or optimizeDeps.exclude
+
+Some VeChain dependencies might need to be included explicitly in the Vite config.
+Possible Fixes:
+1. Force Vite to Polyfill or Inline Node Modules
+Modify your vite.config.js to include the following:
+
+javascript
+Copy
+Edit
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  define: {
+    'process.env': {},
+  },
+  optimizeDeps: {
+    exclude: ['thor-devkit', '@vechain/connex-driver'],
+  },
+  build: {
+    rollupOptions: {
+      external: ['crypto', 'http', 'https', 'url'],
+    },
+  },
+  resolve: {
+    alias: {
+      crypto: 'crypto-browserify',
+      http: 'stream-http',
+      https: 'https-browserify',
+      url: 'url/',
+    },
+  },
+});
+This ensures that crypto, http, and other Node modules are properly resolved for the browser.
+
+2. Install Polyfills for Node Modules
+Run the following command to install polyfills:
+
+sh
+Copy
+Edit
+npm install crypto-browserify stream-http https-browserify url
+Then import them manually in your vite.config.js:
+
+javascript
+Copy
+Edit
+import crypto from 'crypto-browserify';
+import http from 'stream-http';
+import https from 'https-browserify';
+import url from 'url';
+3. Ensure thor-devkit and @vechain/connex-driver Are Compatible
+If these packages are outdated or incompatible with browser builds, try updating them:
+
+sh
+Copy
+Edit
+npm update thor-devkit @vechain/connex-driver
+Alternatively, you may need to use a different package or find a workaround in your code.
+
+4. Change Build Command in Netlify
+Instead of:
+
+sh
+Copy
+Edit
+NODE_ENV=development npm ci && npm run build
+Try:
+
+sh
+Copy
+Edit
+NODE_ENV=production npm ci && npm run build
+Netlify might be using the wrong environment, causing issues with module resolution.
+
