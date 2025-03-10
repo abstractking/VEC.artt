@@ -6,6 +6,8 @@
   publish = "dist"
   # Build command
   command = "npm run build"
+  # Define build functions directory (optional - uncomment if using Netlify Functions)
+  # functions = "netlify/functions"
 
 # Production environment variables
 [build.environment]
@@ -13,26 +15,39 @@
   NODE_VERSION = "20"
   # Use TestNet for VeChain by default, can be overridden in Netlify UI
   VITE_REACT_APP_VECHAIN_NETWORK = "test"
+  # Contract address - override this in Netlify UI for production
+  VITE_REACT_APP_NFT_CONTRACT_ADDRESS = "0x89e658faa1e1861b7923f35f62c96fb8e07c80b2"
+  # Set production mode to ensure no mocks are used
+  NODE_ENV = "production"
+  
+# Development context-specific settings
+[context.development]
+  command = "npm run dev"
 
-# Redirects and rewrites
+# Feature branch specific settings (for PR previews)
+[context.branch-deploy]
+  # We still want to build the app for branch deploys
+  command = "npm run build"
+
+# Redirects and rewrites - order matters!
+[[redirects]]
+  # Handle API requests with proxying to serverless functions
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
 [[redirects]]
   # Redirect all requests to the index.html for client-side routing
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Handle API requests with proxying
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
-  status = 200
-
-# Optimize asset caching
+# Optimize asset caching and security headers
 [[headers]]
   # Define which paths this specific [[headers]] block will cover
   for = "/*"
     [headers.values]
-    # Cache for 1 year 
+    # Cache for 1 year with revalidation 
     Cache-Control = '''
     public,
     max-age=31536000,
@@ -43,21 +58,31 @@
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "DENY"
     X-XSS-Protection = "1; mode=block"
-    # CSP for VeChain-specific extensions
-    Content-Security-Policy = "default-src 'self'; connect-src 'self' https://testnet.veblocks.net https://mainnet.veblocks.net wss://*.replit.dev wss://*.netlify.app; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; object-src 'none';"
+    # CSP for VeChain-specific extensions - allow connections to blockchain nodes
+    Content-Security-Policy = '''
+      default-src 'self'; 
+      connect-src 'self' https://testnet.veblocks.net https://mainnet.veblocks.net wss://testnet.veblocks.net/socket wss://mainnet.veblocks.net/socket wss://*.replit.dev wss://*.netlify.app https://*.netlify.app; 
+      script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
+      style-src 'self' 'unsafe-inline'; 
+      img-src 'self' data: blob: https:; 
+      font-src 'self' data:; 
+      object-src 'none';
+    '''
 
 [[headers]]
-  # Exclude static assets from some headers
+  # Efficient caching for JS assets
   for = "*.js" 
     [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
   
 [[headers]]
+  # Efficient caching for CSS assets
   for = "*.css" 
     [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
     
 [[headers]]
+  # Efficient caching for image assets
   for = "/images/*" 
     [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
