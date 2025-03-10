@@ -109,27 +109,84 @@ export default function WalletModal() {
           
           {/* Wallet selection section */}
           <div>
-            <h3 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Wallet</h3>
+            <h3 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Select Your Wallet</h3>
             
-            <div className="grid grid-cols-3 gap-3">
-              {walletOptions.map((wallet, index) => (
-                <button
-                  key={index}
-                  className="flex flex-col items-center justify-center p-4 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                  onClick={wallet.handler}
-                  disabled={isConnecting}
-                  title={wallet.description}
-                >
-                  <div className="w-12 h-12 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center mb-2">
-                    <img src={wallet.icon} alt={wallet.name} className="w-8 h-8" />
-                  </div>
-                  <span className="text-xs font-medium">{wallet.name}</span>
-                  {wallet.type === "desktop" && (
-                    <span className="text-[10px] text-blue-600 dark:text-blue-400 mt-1">Desktop App</span>
-                  )}
-                </button>
-              ))}
+            {/* Browser Wallet Section */}
+            <div className="mb-4">
+              <h4 className="text-xs font-medium mb-2 text-primary">Browser Extensions</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {walletOptions.filter(w => w.type === "browser").map((wallet, index) => (
+                  <button
+                    key={index}
+                    className="flex items-center p-3 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-transparent hover:border-primary"
+                    onClick={wallet.handler}
+                    disabled={isConnecting}
+                    title={wallet.description}
+                  >
+                    <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center mr-3">
+                      <img src={wallet.icon} alt={wallet.name} className="w-6 h-6" />
+                    </div>
+                    <div className="text-left">
+                      <span className="text-sm font-medium block">{wallet.name}</span>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">{wallet.description}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
+            
+            {/* Desktop Wallet Section */}
+            <div className="mb-4">
+              <h4 className="text-xs font-medium mb-2 text-primary">Desktop Applications</h4>
+              <div className="grid grid-cols-2 gap-2">
+                {walletOptions.filter(w => w.type === "desktop").map((wallet, index) => (
+                  <button
+                    key={index}
+                    className="flex items-center p-3 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors border border-transparent hover:border-primary"
+                    onClick={wallet.handler}
+                    disabled={isConnecting}
+                    title={wallet.description}
+                  >
+                    <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center mr-3">
+                      <img src={wallet.icon} alt={wallet.name} className="w-6 h-6" />
+                    </div>
+                    <div className="text-left">
+                      <span className="text-sm font-medium block">{wallet.name}</span>
+                      <span className="text-xs text-gray-600 dark:text-gray-400">{wallet.description}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* Other Connection Methods */}
+            {walletOptions.filter(w => w.type === "protocol" || w.type === "debug").length > 0 && (
+              <div>
+                <h4 className="text-xs font-medium mb-2 text-primary">Other Connection Methods</h4>
+                <div className="grid grid-cols-2 gap-2">
+                  {walletOptions.filter(w => w.type === "protocol" || w.type === "debug").map((wallet, index) => (
+                    <button
+                      key={index}
+                      className={`flex items-center p-3 rounded-lg transition-colors border border-transparent 
+                        ${wallet.type === "debug" 
+                          ? "bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 hover:border-amber-400" 
+                          : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-primary"}`}
+                      onClick={wallet.handler}
+                      disabled={isConnecting}
+                      title={wallet.description}
+                    >
+                      <div className="w-10 h-10 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center mr-3">
+                        <img src={wallet.icon} alt={wallet.name} className="w-6 h-6" />
+                      </div>
+                      <div className="text-left">
+                        <span className="text-sm font-medium block">{wallet.name}</span>
+                        <span className="text-xs text-gray-600 dark:text-gray-400">{wallet.description}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
           
           {error && (

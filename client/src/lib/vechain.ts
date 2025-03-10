@@ -525,8 +525,146 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
         console.log("Using debug wallet for development testing");
         
         // Create a mock vendor and connex for testing
-        const vendor = mockVendor();
-        const connex = mockConnex();
+        // Declare mock functions implementations (to avoid hoisting issues)
+        const createMockConnex = () => {
+          console.warn("Using enhanced mock Connex implementation for development");
+          
+          // First, ensure crypto environment is properly set up
+          setupCryptoEnvironment();
+          
+          // Generate mock blockchain data
+          const mockBlockTime = Math.floor(Date.now() / 1000);
+          const mockBlockNumber = 12345678;
+          const mockBlockId = '0x' + Array(64).fill('1').join('');
+          const testAddress = '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed';
+          
+          // Return a more complete mock object
+          return {
+            thor: {
+              account: (address: string) => ({
+                method: (abi: any) => ({
+                  call: async (...params: any[]) => ({ data: '0x', reverted: false }),
+                  asClause: (...params: any[]) => ({
+                    to: address,
+                    value: '0x0',
+                    data: '0x'
+                  })
+                }),
+                get: async () => ({
+                  balance: '10000000000000000000', // 10 VET
+                  energy: '1000000000000000000',  // 1 VTHO
+                  hasCode: false
+                })
+              }),
+              transaction: (txId: string) => ({
+                getReceipt: async () => ({
+                  meta: {
+                    blockId: mockBlockId,
+                    blockNumber: mockBlockNumber,
+                    blockTimestamp: mockBlockTime
+                  },
+                  outputs: [{ events: [] }],
+                  reverted: false
+                }),
+                get: async () => ({
+                  id: txId,
+                  chainTag: 39, // TestNet tag
+                  blockRef: '0x00000000aabbccdd',
+                  expiration: 32,
+                  clauses: [{
+                    to: testAddress,
+                    value: '0x0',
+                    data: '0x'
+                  }],
+                  gasPriceCoef: 0,
+                  gas: 21000,
+                  dependsOn: null,
+                  nonce: '0x' + Math.floor(Math.random() * 1000000).toString(16)
+                })
+              }),
+              block: (blockId: string) => ({
+                get: async () => ({
+                  id: blockId || mockBlockId,
+                  number: mockBlockNumber,
+                  timestamp: mockBlockTime,
+                  parentID: '0x' + Array(64).fill('0').join(''),
+                  txsRoot: '0x' + Array(64).fill('2').join(''),
+                  stateRoot: '0x' + Array(64).fill('3').join(''),
+                  receiptsRoot: '0x' + Array(64).fill('4').join(''),
+                  signer: testAddress,
+                  transactions: []
+                })
+              }),
+              status: {
+                progress: 1.0,
+                head: {
+                  id: mockBlockId,
+                  number: mockBlockNumber,
+                  timestamp: mockBlockTime,
+                  parentID: '0x' + Array(64).fill('0').join(''),
+                  txsRoot: '0x' + Array(64).fill('2').join(''),
+                  stateRoot: '0x' + Array(64).fill('3').join(''),
+                  receiptsRoot: '0x' + Array(64).fill('4').join(''),
+                  signer: testAddress,
+                  transactions: []
+                }
+              },
+              ticker: () => ({
+                next: () => Promise.resolve({ id: mockBlockId, timestamp: mockBlockTime }),
+                auto: () => ({ unsubscribe: () => {} })
+              }),
+              filter: () => ({
+                range: () => ({ apply: () => Promise.resolve([]) })
+              })
+            },
+            vendor: {
+              sign: (type: string, clauses: any[]) => ({
+                request: () => Promise.resolve({
+                  txid: '0x' + Math.random().toString(16).substring(2, 66),
+                  signer: testAddress
+                })
+              }),
+              owned: () => Promise.resolve(testAddress),
+              delegate: (...args: any[]) => ({ sign: (...args: any[]) => {} })
+            }
+          };
+        };
+        
+        const createMockVendor = () => {
+          const testAddress = '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed';
+          
+          return {
+            name: 'debug',
+            address: testAddress,
+            sign: async (type: string, clauses: any[]) => {
+              console.log(`DEBUG WALLET: Signing ${type} with ${clauses.length} clauses`);
+              console.log('DEBUG WALLET: Clauses:', JSON.stringify(clauses));
+              
+              // Return a mock transaction response
+              return {
+                txid: '0x' + Math.random().toString(16).substring(2, 66),
+                signer: testAddress
+              };
+            },
+            signCert: async (certMessage: any) => {
+              console.log('DEBUG WALLET: Signing certificate', certMessage);
+              
+              // Return a mock certificate response
+              return {
+                annex: {
+                  domain: 'vecollab.io',
+                  timestamp: Date.now(),
+                  signer: testAddress
+                },
+                signature: '0x' + Array(64).fill('a').join(''),
+                certified: true
+              };
+            }
+          };
+        };
+        
+        const connex = createMockConnex();
+        const vendor = createMockVendor();
         
         return { connex, vendor };
         
@@ -571,7 +709,41 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
       if (!window.location.hostname.includes('netlify.app')) {
         console.log("Using mock wallet for development only");
         const connex = await initializeConnex();
-        const vendor = mockVendor();
+        // Create a mock vendor for development
+        const createMockVendor = () => {
+          const testAddress = '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed';
+          
+          return {
+            name: 'debug',
+            address: testAddress,
+            sign: async (type: string, clauses: any[]) => {
+              console.log(`DEBUG WALLET: Signing ${type} with ${clauses.length} clauses`);
+              console.log('DEBUG WALLET: Clauses:', JSON.stringify(clauses));
+              
+              // Return a mock transaction response
+              return {
+                txid: '0x' + Math.random().toString(16).substring(2, 66),
+                signer: testAddress
+              };
+            },
+            signCert: async (certMessage: any) => {
+              console.log('DEBUG WALLET: Signing certificate', certMessage);
+              
+              // Return a mock certificate response
+              return {
+                annex: {
+                  domain: 'vecollab.io',
+                  timestamp: Date.now(),
+                  signer: testAddress
+                },
+                signature: '0x' + Array(64).fill('a').join(''),
+                certified: true
+              };
+            }
+          };
+        };
+        
+        const vendor = createMockVendor();
         return { connex, vendor };
       } else {
         console.log("In Netlify production - no mock wallet allowed");
