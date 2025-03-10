@@ -11,6 +11,7 @@ import { queryClient } from "@/lib/queryClient";
 import { insertNftSchema } from "@shared/schema";
 import { mintNFT, generateMetadataURI } from "@/lib/nftUtils";
 import { AuthContext } from "@/contexts/AuthContext";
+import TransactionConfirmDialog, { TransactionDetails } from "@/components/TransactionConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -80,6 +81,10 @@ export default function Create() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState<'details' | 'pricing' | 'review'>('details');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Transaction confirmation dialog state
+  const [showTxConfirm, setShowTxConfirm] = useState(false);
+  const [transaction, setTransaction] = useState<TransactionDetails | null>(null);
   
   // Access the AuthContext for login functionality
   const authContext = useContext(AuthContext);
@@ -177,8 +182,6 @@ export default function Create() {
       return;
     }
 
-    setIsSubmitting(true);
-
     try {
       // Step 1: Ensure user exists, create if not exists
       let currentUser = user;
@@ -222,7 +225,6 @@ export default function Create() {
             description: error.message || "Could not create or fetch user account. Please try again.",
             variant: "destructive",
           });
-          setIsSubmitting(false);
           return;
         }
       }
@@ -233,26 +235,17 @@ export default function Create() {
           description: "Please log in to create an NFT",
           variant: "destructive",
         });
-        setIsSubmitting(false);
         return;
       }
 
-      // Step 2: Show minting status toast
-      toast({
-        title: "Preparing NFT",
-        description: "Creating metadata for your NFT...",
-        duration: 3000,
-      });
-
-      // Step 3: Handle image file
+      // Step 2: Handle image file
       const files = form.getValues("file") as unknown as FileList;
       
       if (!files || files.length === 0) {
         throw new Error("Image file is required");
       }
       
-      // Step 4: Prepare NFT data - use the base64 image from preview
-      // This ensures the image URL is persistent and can be stored in the database
+      // Step 3: Prepare NFT data - use the base64 image from preview
       if (!previewUrl) {
         throw new Error("Image preview not available. Please try uploading again.");
       }
@@ -272,74 +265,96 @@ export default function Create() {
         },
       };
       
-      // Step 5: Generate metadata URI for the NFT
+      // Step 4: Generate metadata URI for the NFT
       console.log("Generating metadata for NFT:", values.name);
       const tokenURI = generateMetadataURI(nftData);
       
-      // Step 6: Show minting toast
-      toast({
-        title: "Minting NFT",
-        description: "Please confirm the transaction in your wallet...",
-        duration: 10000,
-      });
-      
-      // Step 7: Mint NFT on the blockchain
-      console.log("Attempting to mint NFT for wallet:", walletAddress);
-      let mintResult;
-      try {
-        mintResult = await mintNFT(tokenURI, walletAddress);
-        
-        if (!mintResult || !mintResult.txid) {
-          throw new Error("Minting transaction failed or returned invalid result");
-        }
-        console.log("NFT minted with transaction ID:", mintResult.txid);
-      } catch (mintError: any) {
-        console.error("Minting error:", mintError);
-        throw new Error(`Minting failed: ${mintError.message || "Unknown error during minting"}`);
-      }
-      
-      // Step 8: Show transaction success toast
-      toast({
-        title: "NFT Minted Successfully",
-        description: "Your NFT has been minted on the VeChain blockchain",
-        duration: 5000,
-      });
-      
-      // Step 9: Update NFT data with blockchain information
-      const blockchainNftData = {
-        ...nftData,
-        tokenId: mintResult.txid, // Use transaction ID as token ID
-        blockchainTxId: mintResult.txid,
-      };
+      // Step 5: Show transaction confirmation dialog
+      const txDetails: TransactionDetails = {
+        type: 'mint',
+        title: "Create NFT",
+        description: "You are about to mint a new NFT on the VeChain TestNet blockchain.",
+        metadata: {
+          nftName: values.name,
+          nftImage: previewUrl,
+          price: values.isForSale ? values.price : undefined,
+          currency: "VET",
+          contractAddress: "0x89e658faa1e1861b7923f35f62c96fb8e07c80b2", // VeCollabNFT contract
+          methodName: "mint",
+          gasEstimate: "0.0001 VTHO",
+        },
+        onConfirm: async () => {
+          try {
+            // Perform the actual minting
+            setIsSubmitting(true);
+            const result = await mintNFT(tokenURI, walletAddress);
+            
+            if (!result || !result.txid) {
+              throw new Error("Minting transaction failed or returned invalid result");
+            }
+            
+            console.log("NFT minted with transaction ID:", result.txid);
+            return { txid: result.txid, success: true };
+          } catch (error: any) {
+            console.error("Minting error:", error);
+            return { txid: "", success: false };
+          }
+        },
+        onSuccess: async (txid) => {
+          try {
+            // Update NFT data with blockchain information
+            const blockchainNftData = {
+              ...nftData,
+              tokenId: txid,
+              blockchainTxId: txid,
+            };
 
-      // Step 10: Create NFT on server
-      console.log("Saving NFT to database:", blockchainNftData);
-      let response;
-      try {
-        response = await apiRequest("POST", "/api/nfts", blockchainNftData);
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(`Server error: ${errorData.error || response.statusText || "Unknown error"}`);
+            // Create NFT on server
+            console.log("Saving NFT to database:", blockchainNftData);
+            let response;
+            try {
+              response = await apiRequest("POST", "/api/nfts", blockchainNftData);
+              if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(`Server error: ${errorData.error || response.statusText || "Unknown error"}`);
+              }
+              
+              const createdNft = await response.json();
+              console.log("NFT created successfully on server:", createdNft);
+              
+              // Invalidate NFT queries
+              queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
+              
+              // Navigate to the NFT detail page
+              setTimeout(() => {
+                setLocation(`/nft/${createdNft.id}`);
+              }, 1000);
+              
+            } catch (serverError: any) {
+              console.error("Server error creating NFT:", serverError);
+              toast({
+                title: "Server Error",
+                description: `NFT was minted on the blockchain but couldn't be saved to our database: ${serverError.message}`,
+                variant: "destructive",
+              });
+            }
+          } finally {
+            setIsSubmitting(false);
+          }
+        },
+        onCancel: () => {
+          toast({
+            title: "Creation Cancelled",
+            description: "NFT creation was cancelled",
+          });
+          setIsSubmitting(false);
         }
-      } catch (serverError: any) {
-        console.error("Server error creating NFT:", serverError);
-        throw new Error(`Failed to save NFT: ${serverError.message}`);
-      }
+      };
       
-      const createdNft = await response.json();
-      console.log("NFT created successfully on server:", createdNft);
+      // Open the transaction confirmation dialog
+      setTransaction(txDetails);
+      setShowTxConfirm(true);
       
-      // Step 11: Invalidate NFT queries
-      queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
-      
-      // Step 12: Show final success toast
-      toast({
-        title: "NFT Created Successfully",
-        description: `Your NFT "${values.name}" has been created and minted`,
-      });
-      
-      // Step 13: Navigate to the NFT detail page
-      setLocation(`/nft/${createdNft.id}`);
     } catch (error: any) {
       console.error("Error creating NFT:", error);
       toast({
@@ -347,7 +362,6 @@ export default function Create() {
         description: error.message || "Failed to create your NFT. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setIsSubmitting(false);
     }
   };
