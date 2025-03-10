@@ -1,7 +1,10 @@
 /**
  * Post-build script for Netlify deployments
- * This script copies the _redirects file to the build output directory
- * to ensure proper client-side routing on Netlify
+ * This script processes and copies files needed for Netlify deployment:
+ * - Copies _redirects file for SPA routing
+ * - Creates _headers file for security headers
+ * - Verifies the structure of the build directory
+ * - Ensures all necessary assets are available
  */
 
 const fs = require('fs');
@@ -58,6 +61,34 @@ try {
   console.log('Successfully created _headers file for Netlify');
 } catch (error) {
   console.error(`Error creating _headers file: ${error.message}`);
+}
+
+// Verify the structure of the build directory
+try {
+  const publicDir = path.join(__dirname, '../dist/public');
+  const indexFile = path.join(publicDir, 'index.html');
+  const assetsDir = path.join(publicDir, 'assets');
+  
+  if (!fs.existsSync(publicDir)) {
+    console.error('Error: dist/public directory does not exist!');
+    process.exit(1);
+  }
+  
+  if (!fs.existsSync(indexFile)) {
+    console.error('Error: index.html does not exist in the build output!');
+    process.exit(1);
+  }
+  
+  if (!fs.existsSync(assetsDir)) {
+    console.warn('Warning: assets directory does not exist in the build output!');
+  } else {
+    const assetFiles = fs.readdirSync(assetsDir);
+    console.log(`Found ${assetFiles.length} files in the assets directory.`);
+  }
+  
+  console.log('Build directory verification complete.');
+} catch (error) {
+  console.error(`Error verifying build directory: ${error.message}`);
 }
 
 console.log('Netlify deployment preparation completed successfully.');

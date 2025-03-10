@@ -1,0 +1,95 @@
+[INFO] (#Ext) -  Starting ContentScriptController listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+(index):136 Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+index-DCLI6--f.js:104 Browser environment polyfills initialized
+index-DCLI6--f.js:554 Setting up crypto environment with cryptoPolyfill
+index-DCLI6--f.js:640 All polyfills loaded in main entry point
+index-DCLI6--f.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-DCLI6--f.js:617 Available wallets: (3) ['veworld', 'sync', 'sync2']
+index-DCLI6--f.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-DCLI6--f.js:556 Attempting to connect wallet: veworld Real wallet mode: true
+index-DCLI6--f.js:556 Netlify environment detected, forcing real wallet mode
+index-DCLI6--f.js:556 Wallet validation result: {available: true, installed: true, walletType: 'veworld', message: 'VeWorld wallet detected'}
+index-DCLI6--f.js:554 Connecting to veworld wallet type on TestNet...
+index-DCLI6--f.js:554 Connecting to VeWorld wallet (patched)...
+index-DCLI6--f.js:554 VeWorld API methods available: (7) ['isVeWorld', 'newConnex', 'newConnexVendor', 'newConnexSigner', 'request', 'on', 'removeListener']
+index-DCLI6--f.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-DCLI6--f.js:554 VeWorld wallet connection error: ExtensionError: Invalid genesisId
+    at Object.invalidParams (VeWorldAPI.js:1:14303)
+    at validateGenesisId (VeWorldAPI.js:101:80391)
+    at Object.newConnexVendor (VeWorldAPI.js:101:80004)
+    at UI (index-DCLI6--f.js:554:13652)
+    at async index-DCLI6--f.js:556:14445
+    at async T (index-DCLI6--f.js:613:11712)
+UI @ index-DCLI6--f.js:554
+await in UI
+(anonymous) @ index-DCLI6--f.js:556
+T @ index-DCLI6--f.js:613
+Hxe @ index-DCLI6--f.js:124
+Kxe @ index-DCLI6--f.js:124
+Zxe @ index-DCLI6--f.js:124
+PR @ index-DCLI6--f.js:124
+ZH @ index-DCLI6--f.js:124
+(anonymous) @ index-DCLI6--f.js:124
+x9 @ index-DCLI6--f.js:127
+bH @ index-DCLI6--f.js:124
+j_ @ index-DCLI6--f.js:124
+K7 @ index-DCLI6--f.js:124
+uwe @ index-DCLI6--f.js:124Understand this errorAI
+index-DCLI6--f.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected
+    at UI (index-DCLI6--f.js:554:13908)
+    at async index-DCLI6--f.js:556:14445
+    at async T (index-DCLI6--f.js:613:11712)
+UI @ index-DCLI6--f.js:556
+await in UI
+(anonymous) @ index-DCLI6--f.js:556
+T @ index-DCLI6--f.js:613
+Hxe @ index-DCLI6--f.js:124
+Kxe @ index-DCLI6--f.js:124
+Zxe @ index-DCLI6--f.js:124
+PR @ index-DCLI6--f.js:124
+ZH @ index-DCLI6--f.js:124
+(anonymous) @ index-DCLI6--f.js:124
+x9 @ index-DCLI6--f.js:127
+bH @ index-DCLI6--f.js:124
+j_ @ index-DCLI6--f.js:124
+K7 @ index-DCLI6--f.js:124
+uwe @ index-DCLI6--f.js:124Understand this errorAI
+index-DCLI6--f.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected
+    at UI (index-DCLI6--f.js:554:13908)
+    at async index-DCLI6--f.js:556:14445
+    at async T (index-DCLI6--f.js:613:11712)
+(anonymous) @ index-DCLI6--f.js:556
+await in (anonymous)
+T @ index-DCLI6--f.js:613
+Hxe @ index-DCLI6--f.js:124
+Kxe @ index-DCLI6--f.js:124
+Zxe @ index-DCLI6--f.js:124
+PR @ index-DCLI6--f.js:124
+ZH @ index-DCLI6--f.js:124
+(anonymous) @ index-DCLI6--f.js:124
+x9 @ index-DCLI6--f.js:127
+bH @ index-DCLI6--f.js:124
+j_ @ index-DCLI6--f.js:124
+K7 @ index-DCLI6--f.js:124
+uwe @ index-DCLI6--f.js:124Understand this errorAI
+index-DCLI6--f.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected
+    at index-DCLI6--f.js:556:15240
+    at async T (index-DCLI6--f.js:613:11712)
+(anonymous) @ index-DCLI6--f.js:556
+await in (anonymous)
+T @ index-DCLI6--f.js:613
+Hxe @ index-DCLI6--f.js:124
+Kxe @ index-DCLI6--f.js:124
+Zxe @ index-DCLI6--f.js:124
+PR @ index-DCLI6--f.js:124
+ZH @ index-DCLI6--f.js:124
+(anonymous) @ index-DCLI6--f.js:124
+x9 @ index-DCLI6--f.js:127
+bH @ index-DCLI6--f.js:124
+j_ @ index-DCLI6--f.js:124
+K7 @ index-DCLI6--f.js:124
+uwe @ index-DCLI6--f.js:124Understand this errorAI
+index-DCLI6--f.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-DCLI6--f.js:626 NFTShuffle mounted, setting up rotation with interval: 20000

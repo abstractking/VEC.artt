@@ -1,0 +1,62 @@
+ased on the error logs and our research so far, the “Invalid genesisId” error from VeWorld’s API usually means that the network configuration passed into the Connex vendor isn’t matching the wallet’s internal network settings. In practice, that can happen if:
+
+• The dApp is initializing a Connex (or ConnexVendor) instance using a network descriptor (node URL, network name, or genesis identifier) that doesn’t match what the wallet extension is actually set up for (for example, using TestNet parameters when the wallet is on MainNet, or vice versa).
+
+• The wallet’s API method (like newConnexVendor) performs internal validation on the genesis id, and if the value doesn’t match the expected value it rejects the connection.
+
+Best Practice Recommendations
+Double-Check Network Parameters:
+Verify that the node URL, network name, and genesis identifier you pass into your Connex instantiation exactly match the configuration in the VeWorld wallet extension. For example, if your dApp is meant to run on the TestNet, ensure you’re using the official TestNet URL and genesis id provided by VeChain. Many guides (e.g., the VeChain Docs on Connex) include sample network descriptors that you can use as a reference.
+
+Query the Wallet for Its Expected Network Configuration:
+If possible, modify your connection logic so that it first queries the available API methods (as you already log the available methods) and then verifies if the wallet exposes a method to return its current network or genesis id. If it does, use that value for building your network configuration. This helps ensure that the dApp’s parameters are synchronized with the wallet’s internal state.
+
+Implement Fallback Logic and User Feedback:
+When the connection fails with an “Invalid genesisId” error, catch it and display a clear message to the user. Inform them that the network configuration in the dApp does not match the one in their VeWorld wallet, and suggest checking that the wallet is set to the correct network (TestNet vs MainNet).
+
+Keep Your Dependencies Updated:
+Verify that you’re using the latest version of the VeWorld wallet API documentation and SDK (if provided). Sometimes a breaking change in the wallet’s API can change the expected genesis id format or naming conventions.
+
+Review the Official Documentation and Community Discussions:
+Although direct documentation on “Invalid genesisId” may be sparse, refer to the official VeChain Wallet Documentation and check community channels (such as the Vechain subreddit or Discord channels) for the latest configuration values for TestNet and MainNet. In several community posts, users have noted that ensuring the dApp’s network configuration (especially the genesis id) matches exactly what the wallet reports is key.
+
+Example Adjustment in Code
+If your current code is similar to this:
+
+js
+Copy
+Edit
+const connex = window.vechain.newConnexVendor({
+  network: {
+    id: "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127",
+    name: "test"
+  },
+  node: "https://testnet.veblocks.net"
+});
+Make sure that:
+
+The genesis id (id field) is exactly what the wallet expects. You might need to confirm that from your wallet’s settings or documentation.
+The network name ("test") matches the wallet’s expected value. Sometimes it might be case-sensitive or a different string (like "TestNet").
+Optionally, if the wallet exposes a method like vechain.getNetworkInfo() or similar, use that value:
+
+js
+Copy
+Edit
+async function initConnex() {
+  const wallet = window.vechain;
+  // (Pseudo-code – adjust according to the actual API available)
+  const networkInfo = await wallet.getNetworkInfo();
+  const connex = wallet.newConnexVendor({
+    network: {
+      id: networkInfo.genesisId, 
+      name: networkInfo.networkName
+    },
+    node: networkInfo.nodeUrl
+  });
+  return connex;
+}
+Next Steps
+Review and confirm the official TestNet and MainNet configuration values from the VeChain Docs or directly within the VeWorld wallet.
+Adjust your dApp’s configuration to match those values exactly.
+Add logging to display the network configuration used for Connex initialization. That will help you verify that the parameters are what you expect before calling newConnexVendor.
+By ensuring that the network configuration (especially the genesis id) is correctly aligned between your dApp and the wallet, you should resolve the “Invalid genesisId” error and allow a successful wallet connection.
