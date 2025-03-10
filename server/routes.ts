@@ -1,9 +1,10 @@
-import type { Express, Request, Response } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
 import { insertUserSchema, insertCollectionSchema, insertNftSchema, insertBidSchema, insertTransactionSchema } from "@shared/schema";
 import { z } from "zod";
+import fetch from "node-fetch";
 
 // Define WebSocket connection types
 interface WebSocketClient extends WebSocket {
