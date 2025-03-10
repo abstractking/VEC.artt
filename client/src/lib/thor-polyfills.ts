@@ -34,8 +34,9 @@ export const pbkdf2Sync = thorCrypto.pbkdf2Sync;
 // Default export
 export default thorCrypto;
 
-// If we're in a browser environment, add our functions to the existing thorCrypto object
-// This avoids trying to set window.thorCrypto directly which could cause problems
-if (typeof window !== 'undefined' && window.thorCrypto) {
-  Object.assign(window.thorCrypto, thorCrypto);
+// If we're in a browser environment, make thorCrypto available globally
+// This ensures it's available to patched modules
+if (typeof window !== 'undefined') {
+  // Don't use defineProperty to avoid the setter error
+  window.thorCrypto = window.thorCrypto || thorCrypto;
 }

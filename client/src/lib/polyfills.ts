@@ -42,12 +42,8 @@ if (isBrowser) {
   const cryptoPolyfill = Object.create(null);
   Object.assign(cryptoPolyfill, crypto);
   
-  // Define non-configurable property to prevent modifications
-  Object.defineProperty(window, 'cryptoPolyfill', {
-    value: cryptoPolyfill,
-    writable: false,
-    configurable: false
-  });
+  // Make crypto browserify available without trying to redefine the native crypto
+  window.cryptoPolyfill = cryptoPolyfill;
   
   // Add Node.js-compatible modules to window safely
   const moduleMapping: Record<string, unknown> = {
@@ -65,12 +61,13 @@ if (isBrowser) {
   
   // Safely assign modules to window
   Object.entries(moduleMapping).forEach(([key, value]) => {
-    if (!(key in window)) {
-      Object.defineProperty(window, key as keyof Window, {
-        value,
-        writable: false,
-        configurable: false
-      });
+    try {
+      // Using type assertion for TypeScript compatibility
+      if (!(key in window)) {
+        (window as any)[key] = value;
+      }
+    } catch (e) {
+      console.warn(`Could not assign ${key} to window:`, e);
     }
   });
 }
