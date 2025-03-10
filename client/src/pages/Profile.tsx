@@ -13,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Pencil, Copy, ExternalLink, Users, Globe, Twitter, Instagram } from "lucide-react";
 import NFTCard from "@/components/NFTCard";
 import CollectionCard from "@/components/CollectionCard";
+import ProfileDashboard from "@/components/ProfileDashboard";
 
 export default function Profile() {
   const params = useParams();
@@ -21,11 +22,19 @@ export default function Profile() {
   const { user: loggedInUser } = useAuth();
   const { walletAddress, isConnected, connectWallet } = useWallet();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("created");
-
   // If no ID is provided and user is logged in, show logged in user's profile
   const userId = params.id || (loggedInUser ? loggedInUser.id : null);
   const isOwnProfile = loggedInUser && userId && parseInt(userId as string) === loggedInUser.id;
+  
+  // Set default tab
+  const [activeTab, setActiveTab] = useState("created");
+  
+  // Update active tab when isOwnProfile changes
+  useEffect(() => {
+    if (isOwnProfile) {
+      setActiveTab("dashboard");
+    }
+  }, [isOwnProfile]);
 
   // Fetch user data
   const { data: user, isLoading: userLoading } = useQuery({
@@ -268,10 +277,35 @@ export default function Profile() {
         <div className="mt-8">
           <Tabs defaultValue={activeTab} onValueChange={setActiveTab}>
             <TabsList className="mb-8">
+              {isOwnProfile && <TabsTrigger value="dashboard">Dashboard</TabsTrigger>}
               <TabsTrigger value="created">Created</TabsTrigger>
               <TabsTrigger value="collected">Collected</TabsTrigger>
               <TabsTrigger value="collections">Collections</TabsTrigger>
             </TabsList>
+            
+            {isOwnProfile && (
+              <TabsContent value="dashboard">
+                {userLoading || createdLoading || ownedLoading || collectionsLoading ? (
+                  <div className="space-y-4">
+                    <Skeleton className="h-8 w-64" />
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                      <Skeleton className="h-32 w-full rounded-xl" />
+                      <Skeleton className="h-32 w-full rounded-xl" />
+                      <Skeleton className="h-32 w-full rounded-xl" />
+                      <Skeleton className="h-32 w-full rounded-xl" />
+                    </div>
+                    <Skeleton className="h-80 w-full rounded-xl" />
+                  </div>
+                ) : (
+                  <ProfileDashboard 
+                    user={user} 
+                    createdNFTs={createdNFTs || []} 
+                    ownedNFTs={ownedNFTs || []} 
+                    userCollections={collections || []}
+                  />
+                )}
+              </TabsContent>
+            )}
             
             <TabsContent value="created">
               {createdLoading ? (
