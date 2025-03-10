@@ -6,6 +6,12 @@
 import { Net } from '@vechain/connex-driver';
 import { EventEmitter } from 'events';
 
+// Interface required by Connex driver
+interface WebSocketReader {
+  read(): Promise<any>;
+  close(): void;
+}
+
 export class BrowserNet implements Net {
   public readonly baseURL: string;
   
@@ -46,10 +52,29 @@ export class BrowserNet implements Net {
     }
   }
 
-  public openWebSocketReader(path: string): EventEmitter {
-    const emitter = new EventEmitter();
+  public openWebSocketReader(path: string): WebSocketReader {
     let ws: WebSocket | null = null;
     let isClosing = false;
+    let messageQueue: any[] = [];
+    let resolveRead: ((value: any) => void) | null = null;
+
+    const reader: WebSocketReader = {
+      read: () => {
+        return new Promise((resolve) => {
+          if (messageQueue.length > 0) {
+            resolve(messageQueue.shift());
+          } else {
+            resolveRead = resolve;
+          }
+        });
+      },
+      close: () => {
+        isClosing = true;
+        if (ws) {
+          ws.close();
+        }
+      }
+    };
 
     const connect = () => {
       if (isClosing) return;
@@ -61,14 +86,19 @@ export class BrowserNet implements Net {
       ws.onmessage = (event) => {
         try {
           const msg = JSON.parse(event.data);
-          emitter.emit('data', msg);
+          if (resolveRead) {
+            resolveRead(msg);
+            resolveRead = null;
+          } else {
+            messageQueue.push(msg);
+          }
         } catch (err) {
-          emitter.emit('error', new Error('Invalid WebSocket message'));
+          console.error('Invalid WebSocket message:', err);
         }
       };
 
       ws.onerror = () => {
-        emitter.emit('error', new Error('WebSocket error'));
+        console.error('WebSocket error');
       };
 
       ws.onclose = () => {
@@ -76,25 +106,12 @@ export class BrowserNet implements Net {
           // Attempt to reconnect after 5 seconds
           setTimeout(connect, 5000);
         }
-        emitter.emit('close');
       };
     };
 
     // Start connection
     connect();
 
-    // Override close method to prevent reconnection attempts
-    const originalClose = emitter.close;
-    emitter.close = () => {
-      isClosing = true;
-      if (ws) {
-        ws.close();
-      }
-      if (originalClose) {
-        originalClose.call(emitter);
-      }
-    };
-
-    return emitter;
+    return reader;
   }
 }

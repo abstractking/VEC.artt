@@ -192,7 +192,7 @@ export const initializeConnex = async (wallet?: SimpleWallet) => {
             return framework;
           } else {
             // Initialize with direct HTTP connection without a wallet
-            const net = new SimpleNet(network.url);
+            const net = new BrowserNet(network.url);
             const driver = await Driver.connect(net);
             const framework = new Framework(driver);
             
@@ -206,7 +206,7 @@ export const initializeConnex = async (wallet?: SimpleWallet) => {
       }
       
       // Default initialization for non-Replit environments or fallback
-      const driver = await Driver.connect(new SimpleNet(network.url), wallet);
+      const driver = await Driver.connect(new BrowserNet(network.url), wallet);
       connexInstance = new Framework(driver);
       return connexInstance;
     } else {
@@ -300,7 +300,7 @@ export const getConnex = async () => {
         
       // Try WebSocket connection first for better performance
       console.log("Attempting WebSocket connection to:", wsUrl);
-      const wsDriver = await Driver.connect(new SimpleNet(wsUrl));
+      const wsDriver = await Driver.connect(new BrowserNet(wsUrl));
       console.log("WebSocket driver connected successfully");
       
       connexInstance = new Framework(wsDriver);
@@ -319,7 +319,7 @@ export const getConnex = async () => {
       // Fall back to HTTP
       try {
         console.log("Attempting HTTP fallback connection to:", network.url);
-        const driver = await Driver.connect(new SimpleNet(network.url));
+        const driver = await Driver.connect(new BrowserNet(network.url));
         console.log("HTTP driver connected successfully");
         
         connexInstance = new Framework(driver);
@@ -365,7 +365,7 @@ export const connectWalletWithEnvKey = async () => {
     
     // Create a dedicated network instance for this wallet
     const network = getNetwork();
-    const net = new SimpleNet(network.url);
+    const net = new BrowserNet(network.url);
     
     // Create a custom driver for this wallet
     const driver = await Driver.connect(net, wallet);
@@ -455,7 +455,7 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
     
       // Create a dedicated network instance for this wallet
       const network = getNetwork();
-      const net = new SimpleNet(network.url);
+      const net = new BrowserNet(network.url);
       
       // Create a custom driver for this wallet
       const driver = await Driver.connect(net, wallet);
