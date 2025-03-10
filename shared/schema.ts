@@ -15,6 +15,17 @@ export const users = pgTable("users", {
   verificationRequestDate: timestamp("verification_request_date"),
   verificationApprovedDate: timestamp("verification_approved_date"),
   socialLinks: jsonb("social_links").default({}),
+  favorites: jsonb("favorites").default([]),
+  stats: jsonb("stats").default({
+    totalViews: 0,
+    totalLikes: 0,
+    totalSales: 0,
+    totalRevenue: "0",
+    totalNFTs: 0,
+    createdNFTs: 0,
+    ownedNFTs: 0,
+    collections: 0
+  }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

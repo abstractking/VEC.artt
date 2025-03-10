@@ -1,24 +1,131 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { Clock, Tag, Eye } from "lucide-react";
+import { Clock, Tag, Eye, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NFT } from "@shared/schema";
 import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 interface NFTCardProps {
   nft: NFT;
 }
 
 export default function NFTCard({ nft }: NFTCardProps) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [timeLeft, setTimeLeft] = useState<string>("");
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState<boolean>(false);
+  
   // Fetch creator info
   const { data: creator } = useQuery({
     queryKey: [`/api/users/${nft.creatorId}`],
     enabled: !!nft.creatorId,
   });
 
-  // Format remaining time for auctions (placeholder logic)
-  const formatTimeRemaining = () => {
-    return "5h 12m"; // This would be dynamic in a real application
+  // Check if NFT is in user's favorites when user changes
+  useEffect(() => {
+    if (user && nft) {
+      // Check if this NFT is in user's favorites
+      const favorites = user.favorites || [];
+      setIsFavorite(favorites.includes(nft.id));
+    }
+  }, [user, nft]);
+
+  // Calculate auction time remaining
+  useEffect(() => {
+    if (!nft?.isBiddable || !nft?.metadata?.auctionEndDate) return;
+    
+    // Function to update the time remaining display
+    const updateTimeRemaining = () => {
+      const endDate = new Date(nft.metadata.auctionEndDate);
+      const now = new Date();
+      const diff = endDate.getTime() - now.getTime();
+      
+      if (diff <= 0) {
+        setTimeLeft("Ended");
+        return;
+      }
+      
+      // Calculate time components
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      
+      // Format time remaining
+      if (days > 0) {
+        setTimeLeft(`${days}d ${hours}h`);
+      } else if (hours > 0) {
+        setTimeLeft(`${hours}h ${minutes}m`);
+      } else {
+        setTimeLeft(`${minutes}m`);
+      }
+    };
+    
+    // Initial update
+    updateTimeRemaining();
+    
+    // Update every minute (less frequent than in detail view)
+    const interval = setInterval(updateTimeRemaining, 60000);
+    
+    // Clean up
+    return () => clearInterval(interval);
+  }, [nft]);
+
+  // Handle favorite toggle
+  const toggleFavorite = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigating to detail page
+    e.stopPropagation();
+
+    if (!user) {
+      toast({
+        title: "Not logged in",
+        description: "Please log in to add items to your favorites",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (isTogglingFavorite) return;
+    
+    setIsTogglingFavorite(true);
+    
+    try {
+      const currentFavorites = user.favorites || [];
+      const newFavorites = isFavorite 
+        ? currentFavorites.filter(id => id !== nft.id)
+        : [...currentFavorites, nft.id];
+      
+      // Update user favorites
+      await apiRequest("PATCH", `/api/users/${user.id}`, {
+        favorites: newFavorites
+      });
+      
+      // Update local state
+      setIsFavorite(!isFavorite);
+      
+      // Invalidate user queries to refresh data
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${user.id}`] });
+      
+      toast({
+        title: isFavorite ? "Removed from favorites" : "Added to favorites",
+        description: isFavorite 
+          ? `${nft.name} has been removed from your favorites`
+          : `${nft.name} has been added to your favorites`,
+      });
+    } catch (error) {
+      console.error("Favorite toggle error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update favorites",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTogglingFavorite(false);
+    }
   };
 
   return (
@@ -59,12 +166,29 @@ export default function NFTCard({ nft }: NFTCardProps) {
             </Button>
           </Link>
         </div>
-        {nft.isForSale && nft.isBiddable && (
+        {/* Favorite button */}
+        <button 
+          className={`absolute top-3 right-3 p-2 rounded-full transition-colors ${
+            isFavorite 
+              ? 'bg-primary/90 text-primary-foreground' 
+              : 'bg-background/90 text-foreground'
+          }`}
+          onClick={toggleFavorite}
+        >
+          <Heart 
+            className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} 
+          />
+        </button>
+
+        {/* Auction timer */}
+        {nft.isForSale && nft.isBiddable && nft.metadata?.auctionEndDate && (
           <div className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm rounded-full py-1 px-3 text-xs font-semibold text-foreground">
             <Clock className="inline mr-1 h-3 w-3" />
-            Ending in {formatTimeRemaining()}
+            {timeLeft === "Ended" ? "Auction ended" : `Ending in ${timeLeft}`}
           </div>
         )}
+        
+        {/* Buy now tag */}
         {nft.isForSale && !nft.isBiddable && (
           <div className="absolute top-3 left-3 bg-primary/90 backdrop-blur-sm rounded-full py-1 px-3 text-xs font-semibold text-primary-foreground">
             <Tag className="inline mr-1 h-3 w-3" />
