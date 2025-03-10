@@ -1,0 +1,292 @@
+[INFO] (#Ext) -  Starting ContentScriptController listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+ Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+index-wnX742Oh.js:104 Browser environment polyfills initialized
+index-wnX742Oh.js:554 Setting up crypto environment with cryptoPolyfill
+index-wnX742Oh.js:636 All polyfills loaded in main entry point
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:617 Available wallets: Array(3)
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Attempting to connect wallet: veworld Real wallet mode: true
+index-wnX742Oh.js:556 Netlify environment detected, forcing real wallet mode
+index-wnX742Oh.js:556 Wallet validation result: Object
+index-wnX742Oh.js:554 Connecting to veworld wallet type on TestNet...
+index-wnX742Oh.js:554 Connecting to VeWorld wallet...
+index-wnX742Oh.js:554 VeWorld wallet connection error: TypeError: window.vechain.enable is not a function
+    at mI (index-wnX742Oh.js:554:12855)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:554Understand this errorAI
+index-wnX742Oh.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at index-wnX742Oh.js:556:15240
+    at async C (index-wnX742Oh.js:613:11712)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Attempting to connect wallet: veworld Real wallet mode: true
+index-wnX742Oh.js:556 Netlify environment detected, forcing real wallet mode
+index-wnX742Oh.js:556 Wallet validation result: Object
+index-wnX742Oh.js:554 Connecting to veworld wallet type on TestNet...
+index-wnX742Oh.js:554 Connecting to VeWorld wallet...
+index-wnX742Oh.js:554 VeWorld wallet connection error: TypeError: window.vechain.enable is not a function
+    at mI (index-wnX742Oh.js:554:12855)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:554Understand this errorAI
+index-wnX742Oh.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at index-wnX742Oh.js:556:15240
+    at async C (index-wnX742Oh.js:613:11712)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Attempting to connect wallet: veworld Real wallet mode: true
+index-wnX742Oh.js:556 Netlify environment detected, forcing real wallet mode
+index-wnX742Oh.js:556 Wallet validation result: Object
+index-wnX742Oh.js:554 Connecting to veworld wallet type on TestNet...
+index-wnX742Oh.js:554 Connecting to VeWorld wallet...
+index-wnX742Oh.js:554 VeWorld wallet connection error: TypeError: window.vechain.enable is not a function
+    at mI (index-wnX742Oh.js:554:12855)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:554Understand this errorAI
+index-wnX742Oh.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at index-wnX742Oh.js:556:15240
+    at async C (index-wnX742Oh.js:613:11712)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Attempting to connect wallet: veworld Real wallet mode: true
+index-wnX742Oh.js:556 Netlify environment detected, forcing real wallet mode
+index-wnX742Oh.js:556 Wallet validation result: Object
+index-wnX742Oh.js:554 Connecting to veworld wallet type on TestNet...
+index-wnX742Oh.js:554 Connecting to VeWorld wallet...
+index-wnX742Oh.js:554 VeWorld wallet connection error: TypeError: window.vechain.enable is not a function
+    at mI (index-wnX742Oh.js:554:12855)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:554Understand this errorAI
+index-wnX742Oh.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at index-wnX742Oh.js:556:15240
+    at async C (index-wnX742Oh.js:613:11712)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Attempting to connect wallet: veworld Real wallet mode: true
+index-wnX742Oh.js:556 Netlify environment detected, forcing real wallet mode
+index-wnX742Oh.js:556 Wallet validation result: Object
+index-wnX742Oh.js:554 Connecting to veworld wallet type on TestNet...
+index-wnX742Oh.js:554 Connecting to VeWorld wallet...
+index-wnX742Oh.js:554 VeWorld wallet connection error: TypeError: window.vechain.enable is not a function
+    at mI (index-wnX742Oh.js:554:12855)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:554Understand this errorAI
+index-wnX742Oh.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at index-wnX742Oh.js:556:15240
+    at async C (index-wnX742Oh.js:613:11712)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Attempting to connect wallet: veworld Real wallet mode: true
+index-wnX742Oh.js:556 Netlify environment detected, forcing real wallet mode
+index-wnX742Oh.js:556 Wallet validation result: Object
+index-wnX742Oh.js:554 Connecting to veworld wallet type on TestNet...
+index-wnX742Oh.js:554 Connecting to VeWorld wallet...
+index-wnX742Oh.js:554 VeWorld wallet connection error: TypeError: window.vechain.enable is not a function
+    at mI (index-wnX742Oh.js:554:12855)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:554Understand this errorAI
+index-wnX742Oh.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+mI @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-wnX742Oh.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-wnX742Oh.js:554:13023)
+    at index-wnX742Oh.js:556:14451
+    at C (index-wnX742Oh.js:613:11718)
+    at Object.oxe (index-wnX742Oh.js:124:9873)
+    at cxe (index-wnX742Oh.js:124:10030)
+    at fxe (index-wnX742Oh.js:124:10090)
+    at aR (index-wnX742Oh.js:124:31563)
+    at yW (index-wnX742Oh.js:124:31981)
+    at index-wnX742Oh.js:124:36914
+    at GN (index-wnX742Oh.js:127:36984)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+index-wnX742Oh.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at index-wnX742Oh.js:556:15240
+    at async C (index-wnX742Oh.js:613:11712)
+(anonymous) @ index-wnX742Oh.js:556Understand this errorAI
+7index-wnX742Oh.js:626 NFTShuffle mounted, setting up rotation with interval: 20000

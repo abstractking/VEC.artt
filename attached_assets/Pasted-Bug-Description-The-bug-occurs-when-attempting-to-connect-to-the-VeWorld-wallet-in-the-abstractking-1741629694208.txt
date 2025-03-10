@@ -1,0 +1,48 @@
+Bug Description
+The bug occurs when attempting to connect to the VeWorld wallet in the abstractking/VEC.artt repository. The error message TypeError: window.vechain.enable is not a function indicates that the window.vechain.enable method is not recognized.
+
+Identified Code and Context
+Wallet Detection:
+
+The client/src/lib/wallet-detection.ts file contains functions to detect the availability of various VeChain wallets, including VeWorld.
+The isVeWorldWalletAvailable function checks for the existence of window.vechain.
+Wallet Connection:
+
+In client/src/lib/vechain.ts, the connection logic for VeWorld wallet attempts to call window.vechain.enable().
+The connectVeChainWallet function in client/src/contexts/WalletContext.tsx handles the connection process and throws an error when the connection fails.
+Recommendations to Handle the Errors
+Verify Wallet Availability:
+
+Ensure that the wallet detection logic correctly identifies the VeWorld wallet.
+Update the isVeWorldWalletAvailable function to provide more detailed logging.
+Validate Function Existence:
+
+Before calling window.vechain.enable, check if the function exists and provide a fallback or error message if it does not.
+Example:
+TypeScript
+if (typeof window.vechain.enable === 'function') {
+  const vendor = await window.vechain.enable();
+} else {
+  throw new Error("VeWorld wallet's enable function is not available. Please ensure you have the correct version of the VeWorld extension installed.");
+}
+Error Handling:
+
+Improve error handling in the connectVeChainWallet function to provide more specific error messages and guide the user on how to resolve the issue.
+Example:
+TypeScript
+try {
+  // Existing connection logic...
+} catch (error) {
+  console.error("VeWorld wallet connection error:", error);
+  throw new Error("VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.");
+}
+Update Documentation:
+
+Ensure that the client/src/components/NetworkInstructions.tsx component provides clear and detailed instructions for setting up the VeWorld wallet, including version requirements and configuration steps.
+Code References
+Wallet Detection
+Wallet Modal
+Network Instructions
+VeChain Utility Functions
+Wallet Context
+By following these recommendations, you can improve the handling of VeWorld wallet connection errors and provide a better user experience.

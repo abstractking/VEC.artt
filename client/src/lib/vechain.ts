@@ -433,10 +433,52 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
         if (typeof window !== 'undefined' && (window as any).vechain) {
           try {
             console.log("Connecting to VeWorld wallet...");
-            const vendor = await (window as any).vechain.enable();
+            
+            // Check which method is available in VeWorld wallet
+            // Different versions might use different methods
+            let vendor;
+            const vechain = (window as any).vechain;
+            
+            console.log("VeWorld API methods available:", Object.keys(vechain));
+            
+            // Try different methods that VeWorld might expose
+            if (typeof vechain.enable === 'function') {
+              // Traditional method
+              console.log("Using vechain.enable() method");
+              vendor = await vechain.enable();
+            } else if (typeof vechain.createProvider === 'function') {
+              // Some wallets use createProvider
+              console.log("Using vechain.createProvider() method");
+              vendor = await vechain.createProvider();
+            } else if (typeof vechain.getProvider === 'function') {
+              // Some wallets use getProvider
+              console.log("Using vechain.getProvider() method");
+              vendor = await vechain.getProvider();
+            } else if (typeof vechain.getVendor === 'function') {
+              // Some wallets expose vendor directly
+              console.log("Using vechain.getVendor() method");
+              vendor = await vechain.getVendor();
+            } else if (typeof vechain.connect === 'function') {
+              // Some wallets use connect pattern
+              console.log("Using vechain.connect() method");
+              vendor = await vechain.connect();
+            } else {
+              // If we can't find a standard method, try to determine what's available
+              console.log("No standard method found. Available methods:", Object.keys(vechain));
+              
+              // Last resort - check if vechain itself has the required methods to be a vendor
+              if (typeof vechain.sign === 'function' || typeof vechain.signTx === 'function') {
+                console.log("Using vechain object directly as vendor");
+                vendor = vechain;
+              } else {
+                throw new Error("Cannot find a valid method to connect to VeWorld wallet. The wallet API might have changed.");
+              }
+            }
+            
             if (!vendor) {
               throw new Error("Failed to enable VeWorld wallet");
             }
+            
             const connex = await getConnex();
             return { connex, vendor };
           } catch (error) {
