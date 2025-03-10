@@ -1,17 +1,17 @@
 import { Framework } from '@vechain/connex-framework';
 import { Driver, SimpleNet, SimpleWallet } from '@vechain/connex-driver';
 
-// Define network options (from https://docs.vechain.org/developer-resources/how-to-build-on-vechain/connect-to-the-network)
+// Define network options with reliable endpoints for Replit
 export const NETWORKS = {
   main: {
     // Official Public Node for MainNet
-    url: 'https://mainnet.vechain.org',
+    url: 'https://mainnet.veblocks.net', // More reliable HTTP endpoint
     chainId: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
     name: 'MainNet'
   },
   test: {
     // Official Public Node for TestNet
-    url: 'https://testnet.vechain.org',
+    url: 'https://testnet.veblocks.net', // More reliable HTTP endpoint
     chainId: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
     name: 'TestNet'
   },
@@ -22,6 +22,12 @@ export const NETWORKS = {
     name: 'Solo'
   }
 };
+
+// Determine if running in Replit
+const isReplit = 
+  typeof window !== "undefined" && 
+  (window.location.hostname.endsWith(".repl.co") || 
+   window.location.hostname.includes("replit"));
 
 // Get the selected network from environment variables
 export const getNetwork = () => {
@@ -40,7 +46,26 @@ export const initializeConnex = async (wallet?: SimpleWallet) => {
     
     // Check if we're in browser or Node.js environment
     if (typeof window !== 'undefined') {
-      const driver = await Driver.connect(new SimpleNet(network.url), wallet);
+      // Configure driver options for Replit environment
+      if (isReplit) {
+        // Disable WebSocket error logs to prevent console spam
+        driverOptions.disableErrorLog = true;
+        console.log("Replit environment detected - optimizing VeChain connection for HTTP polling");
+      }
+      
+      // Use polling instead of WebSockets in Replit environment
+      const connectionOptions = {
+        // Only use HTTP polling for block updates in Replit
+        useWS: !isReplit,
+        // Higher poll interval to avoid rate limits
+        pollInterval: isReplit ? 10000 : 4000
+      };
+      
+      const driver = await Driver.connect(
+        new SimpleNet(network.url, connectionOptions), 
+        wallet
+      );
+      
       connexInstance = new Framework(driver);
       return connexInstance;
     } else {
@@ -478,7 +503,11 @@ export const executeContractMethod = async (
           // to the TestNet instead of just returning a mock txid
           
           // Get driver
-          const driver = await Driver.connect(new SimpleNet(getNetwork().url));
+          const connectionOptions = {
+            useWS: !isReplit,
+            pollInterval: isReplit ? 10000 : 4000
+          };
+          const driver = await Driver.connect(new SimpleNet(getNetwork().url, connectionOptions));
           
           // Sign and send the transaction
           const transaction = new Transaction({
