@@ -1,23 +1,34 @@
-node_modules
-dist
-.DS_Store
-server/public
-vite.config.ts.*
-*.tar.gz
+# Dependency directories
+node_modules/
+dist/
+build/
+.cache/
 
-# Environment variables
+# Environment files
 .env
 .env.local
-.env.development
-.env.test
-.env.production
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Secrets
-*.pem
-*.key
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Project specific
-attached_assets/
+# Zip files
+*.zip
+
+# Test directories
+coverage/
+.nyc_output/
+
+# Misc
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+.replit.backup
