@@ -207,7 +207,7 @@ export const BADGES: Badge[] = [
     id: 'whale',
     name: 'Whale',
     description: 'Completed a single purchase of over 5,000 VET',
-    icon: 'Whale',
+    icon: 'Fish',
     category: BadgeCategory.ACHIEVEMENT,
     level: BadgeLevel.DIAMOND,
     criteria: (user: User) => true, // Special badge given manually or through transaction analysis

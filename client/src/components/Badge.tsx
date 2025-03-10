@@ -26,7 +26,7 @@ const iconMap: Record<string, React.ElementType> = {
   BadgeCheck,
   Rocket,
   Heart,
-  Whale,
+  Fish,
 };
 
 interface BadgeProps {

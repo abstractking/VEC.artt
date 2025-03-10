@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
-import { Menu, X, Search, LogOut, Wallet } from "lucide-react";
+import { Menu, X, Search, LogOut, Wallet, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useWallet } from "@/hooks/useVechain";
@@ -143,6 +143,12 @@ export default function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
+                    <Link href="/badges" className="cursor-pointer flex items-center">
+                      <Trophy className="h-4 w-4 mr-2 text-amber-500" />
+                      Achievement Badges
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <div 
                       className="flex items-center text-destructive cursor-pointer"
                       onClick={handleDisconnectWallet}
@@ -245,6 +251,15 @@ export default function Header() {
                     {user?.username?.charAt(0).toUpperCase() || "U"}
                   </div>
                   <span>{user?.username || "Profile"}</span>
+                </Link>
+                
+                <Link 
+                  href="/badges"
+                  className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <Trophy className="h-5 w-5 mr-2 text-amber-500" />
+                  Achievement Badges
                 </Link>
                 
                 <div 
