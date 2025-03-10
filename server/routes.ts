@@ -706,8 +706,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Custom notification endpoint for handling transaction events from client
   app.post('/api/notifications', async (req: Request, res: Response) => {
     try {
-      const { userId, type, status, txId, metadata, timestamp } = req.body;
+      const { userId, type, status, txId, metadata, timestamp, message: customMessage, notificationType: customType } = req.body;
       
+      // Check if this is a direct notification (not a transaction)
+      if (userId && customMessage && (type === 'like' || type === 'follow' || type === 'view')) {
+        // For direct notifications, use the provided message and type
+        const notification = {
+          id: generateId(),
+          notificationType: type,
+          message: customMessage,
+          timestamp: timestamp || new Date().toISOString(),
+          metadata
+        };
+        
+        // Log notification for debugging
+        console.log(`Sending direct notification to user #${userId}:`, notification.message);
+        
+        // Send notification through WebSocket
+        sendNotification(userId, notification);
+        
+        // Respond to client
+        return res.status(200).json({ 
+          success: true,
+          notification
+        });
+      }
+      
+      // For transaction notifications, require these fields
       if (!userId || !type || !status) {
         return res.status(400).json({ error: 'Missing required notification fields' });
       }

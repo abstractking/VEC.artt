@@ -63,6 +63,10 @@ export default function Home() {
       {/* Show transaction test component only when user is logged in */}
       {user && (
         <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-gradient-to-b from-background to-accent/10">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-foreground mb-2">Notification System</h2>
+            <p className="text-muted-foreground">Test the real-time WebSocket notification system with simulated transactions and direct notifications</p>
+          </div>
           <div className="max-w-3xl mx-auto">
             <TransactionTest />
           </div>
