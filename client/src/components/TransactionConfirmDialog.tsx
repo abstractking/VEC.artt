@@ -49,7 +49,42 @@ export default function TransactionConfirmDialog({
   const [status, setStatus] = useState<TxStatus>('idle');
   const [txId, setTxId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { walletAddress } = useWallet();
+  const { walletAddress, useRealWallet } = useWallet();
+  const { user } = useAuth();
+
+  // Function to send notification to backend for WebSocket distribution
+  const sendTransactionNotification = async (
+    txStatus: 'initiated' | 'completed' | 'failed',
+    txId: string | null = null
+  ) => {
+    if (!user) return; // Only send notifications for authenticated users
+    
+    try {
+      const notificationData = {
+        userId: user.id,
+        type: transaction.type,
+        status: txStatus,
+        txId: txId,
+        metadata: {
+          ...transaction.metadata,
+          walletMode: useRealWallet ? 'real' : 'mock'
+        },
+        timestamp: new Date().toISOString()
+      };
+      
+      // Send notification data to server
+      await apiRequest(
+        'POST',
+        '/api/notifications',
+        notificationData
+      );
+      
+      console.log(`Transaction notification sent: ${txStatus}`);
+    } catch (err) {
+      console.error('Failed to send transaction notification:', err);
+      // Non-critical error, don't show to user
+    }
+  };
 
   const formatAddress = (address: string | null | undefined) => {
     if (!address) return '';
@@ -60,6 +95,9 @@ export default function TransactionConfirmDialog({
     setStatus('confirming');
     setError(null);
     
+    // Send transaction initiated notification
+    await sendTransactionNotification('initiated');
+    
     try {
       // Call the onConfirm function provided in the transaction details
       const result = await transaction.onConfirm();
@@ -69,8 +107,12 @@ export default function TransactionConfirmDialog({
         setStatus('processing');
         
         // Simulate blockchain confirmation
-        setTimeout(() => {
+        setTimeout(async () => {
           setStatus('completed');
+          
+          // Send transaction completed notification
+          await sendTransactionNotification('completed', result.txid);
+          
           if (transaction.onSuccess) {
             transaction.onSuccess(result.txid);
           }
@@ -78,10 +120,16 @@ export default function TransactionConfirmDialog({
       } else {
         setError('Transaction rejected or failed');
         setStatus('failed');
+        
+        // Send transaction failed notification
+        await sendTransactionNotification('failed');
       }
     } catch (err: any) {
       setError(err.message || 'Transaction failed');
       setStatus('failed');
+      
+      // Send transaction failed notification
+      await sendTransactionNotification('failed');
     }
   };
 
