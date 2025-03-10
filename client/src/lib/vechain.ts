@@ -246,7 +246,7 @@ export const getConnex = async () => {
           wallet.import(import.meta.env.VITE_VECHAIN_PRIVATE_KEY);
           
           // Use the wallet to connect to TestNet
-          const driver = await Driver.connect(new SimpleNet(network.url), wallet);
+          const driver = await Driver.connect(new BrowserNet(network.url), wallet);
           connexInstance = new Framework(driver);
           console.log("Connected to TestNet with private key wallet");
           return connexInstance;
@@ -254,8 +254,8 @@ export const getConnex = async () => {
           // No private key, use regular connection
           console.log("Initializing VeChain connection to:", network.url);
           
-          const net = new SimpleNet(network.url);
-          console.log("Created SimpleNet instance");
+          const net = new BrowserNet(network.url);
+          console.log("Created BrowserNet instance");
           
           const driver = await Driver.connect(net).catch(error => {
             console.error("Driver connection failed:", {
@@ -294,9 +294,17 @@ export const getConnex = async () => {
     // For production: Try WebSocket first, then fallback to HTTP
     try {
       // WebSocket URL (if available)
-      const wsUrl = (network as any).socketUrl || (network.name.toLowerCase() === 'main' 
-        ? 'wss://mainnet.veblocks.net/socket'
-        : 'wss://testnet.veblocks.net/socket');
+      let wsUrl = '';
+      try {
+        wsUrl = (network as any).socketUrl || (network.name.toLowerCase() === 'main' 
+          ? 'wss://mainnet.veblocks.net/socket'
+          : 'wss://testnet.veblocks.net/socket');
+      } catch (error) {
+        console.warn("Could not determine WebSocket URL:", error);
+        wsUrl = network.name.toLowerCase() === 'main' 
+          ? 'wss://mainnet.veblocks.net/socket'
+          : 'wss://testnet.veblocks.net/socket';
+      }
         
       // Try WebSocket connection first for better performance
       console.log("Attempting WebSocket connection to:", wsUrl);
