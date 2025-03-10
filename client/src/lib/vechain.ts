@@ -251,12 +251,41 @@ export const getConnex = async () => {
           return connexInstance;
         } else {
           // No private key, use regular connection
-          const driver = await Driver.connect(new SimpleNet(network.url));
-          connexInstance = new Framework(driver);
+          console.log("Initializing VeChain connection to:", network.url);
+          
+          const net = new SimpleNet(network.url);
+          console.log("Created SimpleNet instance");
+          
+          const driver = await Driver.connect(net).catch(error => {
+            console.error("Driver connection failed:", {
+              error,
+              message: error instanceof Error ? error.message : String(error),
+              stack: error instanceof Error ? error.stack : undefined,
+              network
+            });
+            throw error;
+          });
+          console.log("Driver connected successfully");
+          
+          const framework = new Framework(driver);
+          console.log("Framework initialized");
+          
+          connexInstance = framework;
           return connexInstance;
         }
       } catch (devError) {
-        console.error("Development Connex initialization failed:", devError);
+        console.error("Development Connex initialization failed:", {
+          error: devError,
+          message: devError instanceof Error ? devError.message : String(devError),
+          stack: devError instanceof Error ? devError.stack : undefined,
+          network: getNetwork(),
+          environment: {
+            isDev: import.meta.env.DEV,
+            mode: import.meta.env.MODE,
+            isReplit,
+            hasPrivateKey: !!import.meta.env.VITE_VECHAIN_PRIVATE_KEY
+          }
+        });
         return mockConnex();
       }
     }
@@ -269,19 +298,46 @@ export const getConnex = async () => {
         : 'wss://testnet.veblocks.net/socket');
         
       // Try WebSocket connection first for better performance
-      const driver = await Driver.connect(new SimpleNet(wsUrl));
-      connexInstance = new Framework(driver);
+      console.log("Attempting WebSocket connection to:", wsUrl);
+      const wsDriver = await Driver.connect(new SimpleNet(wsUrl));
+      console.log("WebSocket driver connected successfully");
+      
+      connexInstance = new Framework(wsDriver);
+      console.log("WebSocket Connex framework initialized");
+      
       return connexInstance;
     } catch (wsError) {
-      console.warn("WebSocket connection failed, falling back to HTTP:", wsError);
+      console.warn("WebSocket connection failed, falling back to HTTP:", {
+        error: wsError,
+        message: wsError instanceof Error ? wsError.message : String(wsError),
+        stack: wsError instanceof Error ? wsError.stack : undefined,
+        wsUrl,
+        network
+      });
       
       // Fall back to HTTP
       try {
+        console.log("Attempting HTTP fallback connection to:", network.url);
         const driver = await Driver.connect(new SimpleNet(network.url));
+        console.log("HTTP driver connected successfully");
+        
         connexInstance = new Framework(driver);
+        console.log("HTTP Connex framework initialized");
+        
         return connexInstance;
       } catch (httpError) {
-        console.error("HTTP fallback failed:", httpError);
+        console.error("HTTP fallback connection failed:", {
+          error: httpError,
+          message: httpError instanceof Error ? httpError.message : String(httpError),
+          stack: httpError instanceof Error ? httpError.stack : undefined,
+          network,
+          environment: {
+            isDev: import.meta.env.DEV,
+            mode: import.meta.env.MODE,
+            isReplit,
+            hasPrivateKey: !!import.meta.env.VITE_VECHAIN_PRIVATE_KEY
+          }
+        });
         return mockConnex();
       }
     }
@@ -532,7 +588,16 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
               console.log("VeWorld connection successful!");
               return { connex, vendor };
             } catch (error) {
-              console.error("VeWorld connection failed with standard approach:", error);
+              console.error("VeWorld connection failed with standard approach:", {
+                error,
+                message: error instanceof Error ? error.message : String(error),
+                stack: error instanceof Error ? error.stack : undefined,
+                networkParams: {
+                  nodeUrl,
+                  genesisId,
+                  networkName
+                }
+              });
               
               // Try alternative connection method with genesis parameter
               try {
@@ -550,7 +615,15 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
                 console.log("VeWorld connection successful with alternative method!");
                 return { connex, vendor };
               } catch (alternativeError) {
-                console.error("All VeWorld connection methods failed:", alternativeError);
+                console.error("VeWorld alternative connection method failed:", {
+                  error: alternativeError,
+                  message: alternativeError instanceof Error ? alternativeError.message : String(alternativeError),
+                  stack: alternativeError instanceof Error ? alternativeError.stack : undefined,
+                  networkParams: {
+                    nodeUrl,
+                    genesisId
+                  }
+                });
                 throw new Error("Could not connect to VeWorld wallet. Please check your wallet configuration and try again.");
               }
             }
