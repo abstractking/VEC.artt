@@ -1,0 +1,63 @@
+# Netlify configuration for VeCollab marketplace
+
+# Build settings
+[build]
+  # Directory to publish (frontend client build)
+  publish = "dist"
+  # Build command
+  command = "npm run build"
+
+# Production environment variables
+[build.environment]
+  # Set Node version
+  NODE_VERSION = "20"
+  # Use TestNet for VeChain by default, can be overridden in Netlify UI
+  VITE_REACT_APP_VECHAIN_NETWORK = "test"
+
+# Redirects and rewrites
+[[redirects]]
+  # Redirect all requests to the index.html for client-side routing
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Handle API requests with proxying
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# Optimize asset caching
+[[headers]]
+  # Define which paths this specific [[headers]] block will cover
+  for = "/*"
+    [headers.values]
+    # Cache for 1 year 
+    Cache-Control = '''
+    public,
+    max-age=31536000,
+    must-revalidate'''
+    # No tracking
+    Referrer-Policy = "no-referrer-when-downgrade"
+    # Secure headers
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    # CSP for VeChain-specific extensions
+    Content-Security-Policy = "default-src 'self'; connect-src 'self' https://testnet.veblocks.net https://mainnet.veblocks.net wss://*.replit.dev wss://*.netlify.app; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; object-src 'none';"
+
+[[headers]]
+  # Exclude static assets from some headers
+  for = "*.js" 
+    [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+  
+[[headers]]
+  for = "*.css" 
+    [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    
+[[headers]]
+  for = "/images/*" 
+    [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

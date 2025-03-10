@@ -340,11 +340,16 @@ export const connectWallet = async (privateKey?: string) => {
         console.warn("Failed to connect with environment key, falling back to mock:", envError);
       }
       
-      // Fall back to mock if environment key fails or is not available
-      console.log("Using mock wallet");
-      const connex = await initializeConnex();
-      const vendor = mockVendor();
-      return { connex, vendor };
+      // Only use mock in development environments not in production (Netlify)
+      if (!window.location.hostname.includes('netlify.app')) {
+        console.log("Using mock wallet for development only");
+        const connex = await initializeConnex();
+        const vendor = mockVendor();
+        return { connex, vendor };
+      } else {
+        console.log("In Netlify production - no mock wallet allowed");
+        throw new Error("Wallet connection required. Please install VeChain Sync2 or another compatible wallet.");
+      }
     }
     
     // For production: Check if Thor wallet is available in the browser
@@ -392,14 +397,16 @@ const formatWei = (weiValue: string, decimals = 2): string => {
 // Get wallet balance in VET for an address
 export const getWalletBalance = async (address: string): Promise<{ vet: string; vtho: string }> => {
   try {
-    // Default mock balance for development environments
+    // Default mock balance for development environments only
     if ((window.location.hostname.includes('replit') || 
         window.location.hostname === 'localhost' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') && 
-        !import.meta.env.VITE_VECHAIN_PRIVATE_KEY) {
+        !import.meta.env.VITE_VECHAIN_PRIVATE_KEY &&
+        !window.location.hostname.includes('netlify.app')) {
       
       // Return mock balance for development/testing
+      console.log("Using mock wallet balance for development only");
       return {
         vet: "100.00",
         vtho: "25.50"
@@ -440,10 +447,11 @@ export const getWalletBalance = async (address: string): Promise<{ vet: string; 
 export const getWalletAddress = async () => {
   try {
     // For the Replit environment or development mode
-    if (window.location.hostname.includes('replit') || 
+    if ((window.location.hostname.includes('replit') || 
         window.location.hostname === 'localhost' || 
         import.meta.env.DEV || 
-        import.meta.env.MODE === 'development') {
+        import.meta.env.MODE === 'development') && 
+        !window.location.hostname.includes('netlify.app')) {
       
       // Try to get address from environment private key first
       if (import.meta.env.VITE_VECHAIN_PRIVATE_KEY) {
@@ -462,9 +470,11 @@ export const getWalletAddress = async () => {
         }
       }
       
-      // Fall back to mock address if environment key fails or is not available
-      console.log("Development environment detected, using mock wallet address");
-      return '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed';
+      // Only use mock address in development environments, not in production
+      if (!window.location.hostname.includes('netlify.app')) {
+        console.log("Development environment detected, using mock wallet address");
+        return '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed';
+      }
     }
     
     // Check if Thor wallet is available
