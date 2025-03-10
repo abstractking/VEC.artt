@@ -1,0 +1,99 @@
+[INFO] (#Ext) -  Starting ContentScriptController listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+(index):136 Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+index-Cukjy-ZV.js:104 Browser environment polyfills initialized
+index-Cukjy-ZV.js:554 Setting up crypto environment with cryptoPolyfill
+index-Cukjy-ZV.js:636 All polyfills loaded in main entry point
+index-Cukjy-ZV.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-Cukjy-ZV.js:617 Available wallets: (3) ['veworld', 'sync', 'sync2']
+index-Cukjy-ZV.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-Cukjy-ZV.js:556 Attempting to connect wallet: veworld Real wallet mode: true
+index-Cukjy-ZV.js:556 Netlify environment detected, forcing real wallet mode
+index-Cukjy-ZV.js:556 Wallet validation result: {available: true, installed: true, walletType: 'veworld', message: 'VeWorld wallet detected'}
+index-Cukjy-ZV.js:554 Connecting to veworld wallet type on TestNet...
+index-Cukjy-ZV.js:554 Connecting to VeWorld wallet...
+index-Cukjy-ZV.js:554 VeWorld API methods available: (7) ['isVeWorld', 'newConnex', 'newConnexVendor', 'newConnexSigner', 'request', 'on', 'removeListener']
+index-Cukjy-ZV.js:554 VeWorld wallet detected, creating Connex instance...
+index-Cukjy-ZV.js:554 Using vechain.newConnex() method
+index-Cukjy-ZV.js:554 Connecting with network options: {node: 'https://testnet.veblocks.net', network: {…}}
+index-Cukjy-ZV.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-Cukjy-ZV.js:554 Using vechain.newConnexVendor() method
+index-Cukjy-ZV.js:554 Creating vendor with options: {network: {…}}
+index-Cukjy-ZV.js:554 VeWorld wallet connection error: ExtensionError: Invalid genesisId
+    at Object.invalidParams (VeWorldAPI.js:1:14303)
+    at validateGenesisId (VeWorldAPI.js:101:80391)
+    at Object.newConnexVendor (VeWorldAPI.js:101:80004)
+    at yI (index-Cukjy-ZV.js:554:13791)
+    at async index-Cukjy-ZV.js:556:14445
+    at async C (index-Cukjy-ZV.js:613:11712)
+yI @ index-Cukjy-ZV.js:554
+await in yI
+(anonymous) @ index-Cukjy-ZV.js:556
+C @ index-Cukjy-ZV.js:613
+fxe @ index-Cukjy-ZV.js:124
+dxe @ index-Cukjy-ZV.js:124
+hxe @ index-Cukjy-ZV.js:124
+lR @ index-Cukjy-ZV.js:124
+wH @ index-Cukjy-ZV.js:124
+(anonymous) @ index-Cukjy-ZV.js:124
+YN @ index-Cukjy-ZV.js:127
+WW @ index-Cukjy-ZV.js:124
+u_ @ index-Cukjy-ZV.js:124
+EN @ index-Cukjy-ZV.js:124
+Txe @ index-Cukjy-ZV.js:124Understand this errorAI
+index-Cukjy-ZV.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at yI (index-Cukjy-ZV.js:554:14043)
+    at async index-Cukjy-ZV.js:556:14445
+    at async C (index-Cukjy-ZV.js:613:11712)
+yI @ index-Cukjy-ZV.js:556
+await in yI
+(anonymous) @ index-Cukjy-ZV.js:556
+C @ index-Cukjy-ZV.js:613
+fxe @ index-Cukjy-ZV.js:124
+dxe @ index-Cukjy-ZV.js:124
+hxe @ index-Cukjy-ZV.js:124
+lR @ index-Cukjy-ZV.js:124
+wH @ index-Cukjy-ZV.js:124
+(anonymous) @ index-Cukjy-ZV.js:124
+YN @ index-Cukjy-ZV.js:127
+WW @ index-Cukjy-ZV.js:124
+u_ @ index-Cukjy-ZV.js:124
+EN @ index-Cukjy-ZV.js:124
+Txe @ index-Cukjy-ZV.js:124Understand this errorAI
+index-Cukjy-ZV.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at yI (index-Cukjy-ZV.js:554:14043)
+    at async index-Cukjy-ZV.js:556:14445
+    at async C (index-Cukjy-ZV.js:613:11712)
+(anonymous) @ index-Cukjy-ZV.js:556
+await in (anonymous)
+C @ index-Cukjy-ZV.js:613
+fxe @ index-Cukjy-ZV.js:124
+dxe @ index-Cukjy-ZV.js:124
+hxe @ index-Cukjy-ZV.js:124
+lR @ index-Cukjy-ZV.js:124
+wH @ index-Cukjy-ZV.js:124
+(anonymous) @ index-Cukjy-ZV.js:124
+YN @ index-Cukjy-ZV.js:127
+WW @ index-Cukjy-ZV.js:124
+u_ @ index-Cukjy-ZV.js:124
+EN @ index-Cukjy-ZV.js:124
+Txe @ index-Cukjy-ZV.js:124Understand this errorAI
+index-Cukjy-ZV.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at index-Cukjy-ZV.js:556:15240
+    at async C (index-Cukjy-ZV.js:613:11712)
+(anonymous) @ index-Cukjy-ZV.js:556
+await in (anonymous)
+C @ index-Cukjy-ZV.js:613
+fxe @ index-Cukjy-ZV.js:124
+dxe @ index-Cukjy-ZV.js:124
+hxe @ index-Cukjy-ZV.js:124
+lR @ index-Cukjy-ZV.js:124
+wH @ index-Cukjy-ZV.js:124
+(anonymous) @ index-Cukjy-ZV.js:124
+YN @ index-Cukjy-ZV.js:127
+WW @ index-Cukjy-ZV.js:124
+u_ @ index-Cukjy-ZV.js:124
+EN @ index-Cukjy-ZV.js:124
+Txe @ index-Cukjy-ZV.js:124Understand this errorAI
+index-Cukjy-ZV.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
