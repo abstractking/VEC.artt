@@ -49,6 +49,9 @@ export function WalletProvider({ children }: WalletProviderProps) {
     return localStorage.getItem('useRealWallet') === 'true';
   });
   
+  // Track which wallet type the user is connecting with
+  const [walletType, setWalletType] = useState<string | null>(null);
+  
   const [walletAddress, setWalletAddress] = useState<string | null>(
     (!useRealWallet && isDebugMode) ? testWalletAddress : null
   );

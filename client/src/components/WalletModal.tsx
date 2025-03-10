@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { AlertCircle, X, ToggleLeft, ToggleRight } from "lucide-react";
+import { AlertCircle, X, ToggleLeft, ToggleRight, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useWallet } from "@/hooks/useVechain";
 import NetworkInstructions from "@/components/NetworkInstructions";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function WalletModal() {
   const { isConnecting, isModalOpen, setModalOpen, connectWallet, error, useRealWallet, toggleRealWallet } = useWallet();
@@ -24,25 +25,48 @@ export default function WalletModal() {
      window.location.hostname.includes('netlify.app') ||
      import.meta.env.MODE !== 'production');
 
+  // Network detection - this matches the reference screenshot
+  const [selectedNetwork] = useState("VeChain"); // We currently only support VeChain network
+
   const handleClose = () => {
     setModalOpen(false);
   };
 
   const walletOptions = [
     {
-      name: "VeChain Thor Wallet",
+      name: "VeWorld",
+      description: "Browser plugin for VeChain",
+      icon: "https://veworld.net/favicon.ico",
+      handler: () => connectWallet("veworld"),
+      type: "browser"
+    },
+    {
+      name: "VeChainThor",
+      description: "Browser extension wallet",
       icon: "https://cdn.worldvectorlogo.com/logos/vechain-1.svg",
-      handler: () => connectWallet("thor")
+      handler: () => connectWallet("thor"),
+      type: "browser"
+    },
+    {
+      name: "Sync",
+      description: "Desktop wallet for VeChain",
+      icon: "https://sync.vecha.in/favicon.png",
+      handler: () => connectWallet("sync"),
+      type: "desktop"
     },
     {
       name: "Sync2",
+      description: "New desktop wallet for VeChain",
       icon: "https://sync2.vecha.in/favicon.png",
-      handler: () => connectWallet("sync2")
+      handler: () => connectWallet("sync2"),
+      type: "desktop"
     },
     {
-      name: "Trust Wallet",
-      icon: "https://trustwallet.com/assets/images/favicon.png",
-      handler: () => connectWallet("trust")
+      name: "Wallet Connect",
+      description: "Connect via WalletConnect protocol",
+      icon: "https://walletconnect.org/favicon.ico",
+      handler: () => connectWallet("walletconnect"),
+      type: "protocol"
     }
   ];
   
@@ -51,8 +75,10 @@ export default function WalletModal() {
   if (isDebugMode && !isNetlify) {
     walletOptions.push({
       name: "Debug Test Wallet (Dev Only)",
+      description: "For development testing only",
       icon: "https://icongr.am/material/bug.svg?size=128&color=2563eb",
-      handler: () => connectWallet("debug")
+      handler: () => connectWallet("debug"),
+      type: "debug"
     });
   }
 
@@ -60,34 +86,70 @@ export default function WalletModal() {
     <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-secondary">Connect your wallet</DialogTitle>
+          <DialogTitle className="text-xl font-bold text-secondary flex items-center gap-2">
+            <img src="https://cdn.worldvectorlogo.com/logos/vechain-1.svg" alt="VeChain" className="w-7 h-7" />
+            Connect Wallet
+          </DialogTitle>
           <DialogDescription>
             Connect with one of our available wallet providers to continue:
           </DialogDescription>
         </DialogHeader>
         
-        <div className="space-y-4 py-4">
+        <div className="space-y-6 py-4">
+          {/* Network selection section */}
+          <div>
+            <h3 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Network</h3>
+            <div className="bg-slate-900 text-white p-3 rounded-lg text-center">
+              {selectedNetwork}
+            </div>
+          </div>
+          
           {/* Show Network Instructions only on Netlify */}
           {isNetlify && <NetworkInstructions />}
           
-          {walletOptions.map((wallet, index) => (
-            <button
-              key={index}
-              className="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg p-4 flex items-center hover:shadow-md transition-shadow"
-              onClick={wallet.handler}
-              disabled={isConnecting}
-            >
-              <img src={wallet.icon} alt={wallet.name} className="w-6 h-6 mr-4" />
-              <span className="font-medium">{wallet.name}</span>
-              {isConnecting && <span className="ml-auto">Connecting...</span>}
-            </button>
-          ))}
+          {/* Wallet selection section */}
+          <div>
+            <h3 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Wallet</h3>
+            
+            <div className="grid grid-cols-3 gap-3">
+              {walletOptions.map((wallet, index) => (
+                <button
+                  key={index}
+                  className="flex flex-col items-center justify-center p-4 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  onClick={wallet.handler}
+                  disabled={isConnecting}
+                  title={wallet.description}
+                >
+                  <div className="w-12 h-12 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center mb-2">
+                    <img src={wallet.icon} alt={wallet.name} className="w-8 h-8" />
+                  </div>
+                  <span className="text-xs font-medium">{wallet.name}</span>
+                  {wallet.type === "desktop" && (
+                    <span className="text-[10px] text-blue-600 dark:text-blue-400 mt-1">Desktop App</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
           
           {error && (
-            <div className="text-destructive text-sm mt-2">
-              {error}
-            </div>
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
+          
+          {/* Connection instructions for desktop wallets */}
+          <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-lg">
+            <div className="flex items-start">
+              <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-blue-800 dark:text-blue-300">
+                <p className="font-medium mb-1">Desktop Wallet Connection</p>
+                <p className="text-xs">Desktop wallets like Sync and Sync2 will open in a separate application. 
+                Make sure you have installed the application and follow the prompts to connect.</p>
+              </div>
+            </div>
+          </div>
         </div>
         
         {/* Add real wallet mode toggle for development - Hide on Netlify */}

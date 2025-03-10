@@ -1,0 +1,63 @@
+index-DvS7esfR.js:603 NFTShuffle mounted, setting up rotation with interval: 20000
+index-DvS7esfR.js:534 Attempting to connect wallet: VeChain Real wallet mode: true
+index-DvS7esfR.js:534 Netlify environment detected, forcing real wallet mode
+index-DvS7esfR.js:534 Wallet connection error: Error: VeChain Thor wallet extension not detected. Please install the VeChain Thor wallet extension, configure it for TestNet, and refresh the page.
+    at index-DvS7esfR.js:534:21449
+    at T (index-DvS7esfR.js:591:11701)
+    at Object.Jbe (index-DvS7esfR.js:124:9873)
+    at txe (index-DvS7esfR.js:124:10030)
+    at rxe (index-DvS7esfR.js:124:10090)
+    at Yk (index-DvS7esfR.js:124:31563)
+    at lW (index-DvS7esfR.js:124:31981)
+    at index-DvS7esfR.js:124:36914
+    at q9 (index-DvS7esfR.js:127:36984)
+    at RH (index-DvS7esfR.js:124:9007)
+(anonymous) @ index-DvS7esfR.js:534Understand this errorAI
+2index-DvS7esfR.js:603 NFTShuffle mounted, setting up rotation with interval: 20000
+index-DvS7esfR.js:534 Attempting to connect wallet: VeChain Real wallet mode: true
+index-DvS7esfR.js:534 Netlify environment detected, forcing real wallet mode
+index-DvS7esfR.js:534 Wallet connection error: Error: VeChain Thor wallet extension not detected. Please install the VeChain Thor wallet extension, configure it for TestNet, and refresh the page.
+    at index-DvS7esfR.js:534:21449
+    at T (index-DvS7esfR.js:591:11701)
+    at Object.Jbe (index-DvS7esfR.js:124:9873)
+    at txe (index-DvS7esfR.js:124:10030)
+    at rxe (index-DvS7esfR.js:124:10090)
+    at Yk (index-DvS7esfR.js:124:31563)
+    at lW (index-DvS7esfR.js:124:31981)
+    at index-DvS7esfR.js:124:36914
+    at q9 (index-DvS7esfR.js:127:36984)
+    at RH (index-DvS7esfR.js:124:9007)
+(anonymous) @ index-DvS7esfR.js:534Understand this errorAI
+3index-DvS7esfR.js:603 NFTShuffle mounted, setting up rotation with interval: 20000
+
+here is our next debug, dealing with the wallet connect feature.. here is the error log index-DvS7esfR.js:603 NFTShuffle mounted, setting up rotation with interval: 20000
+index-DvS7esfR.js:534 Attempting to connect wallet: VeChain Real wallet mode: true
+index-DvS7esfR.js:534 Netlify environment detected, forcing real wallet mode
+index-DvS7esfR.js:534 Wallet connection error: Error: VeChain Thor wallet extension not detected. Please install the VeChain Thor wallet extension, configure it for TestNet, and refresh the page.
+    at index-DvS7esfR.js:534:21449
+    at T (index-DvS7esfR.js:591:11701)
+    at Object.Jbe (index-DvS7esfR.js:124:9873)
+    at txe (index-DvS7esfR.js:124:10030)
+    at rxe (index-DvS7esfR.js:124:10090)
+    at Yk (index-DvS7esfR.js:124:31563)
+    at lW (index-DvS7esfR.js:124:31981)
+    at index-DvS7esfR.js:124:36914
+    at q9 (index-DvS7esfR.js:127:36984)
+    at RH (index-DvS7esfR.js:124:9007)
+(anonymous) @ index-DvS7esfR.js:534Understand this errorAI
+2index-DvS7esfR.js:603 NFTShuffle mounted, setting up rotation with interval: 20000
+index-DvS7esfR.js:534 Attempting to connect wallet: VeChain Real wallet mode: true
+index-DvS7esfR.js:534 Netlify environment detected, forcing real wallet mode
+index-DvS7esfR.js:534 Wallet connection error: Error: VeChain Thor wallet extension not detected. Please install the VeChain Thor wallet extension, configure it for TestNet, and refresh the page.
+    at index-DvS7esfR.js:534:21449
+    at T (index-DvS7esfR.js:591:11701)
+    at Object.Jbe (index-DvS7esfR.js:124:9873)
+    at txe (index-DvS7esfR.js:124:10030)
+    at rxe (index-DvS7esfR.js:124:10090)
+    at Yk (index-DvS7esfR.js:124:31563)
+    at lW (index-DvS7esfR.js:124:31981)
+    at index-DvS7esfR.js:124:36914
+    at q9 (index-DvS7esfR.js:127:36984)
+    at RH (index-DvS7esfR.js:124:9007)
+(anonymous) @ index-DvS7esfR.js:534Understand this errorAI
+3index-DvS7esfR.js:603 NFTShuffle mounted, setting up rotation with interval: 20000
