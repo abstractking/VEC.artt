@@ -48,6 +48,8 @@ export default function NFTDetail() {
   const [isPurchasing, setPurchasing] = useState(false);
   const [isBidding, setBidding] = useState(false);
   const [bidAmount, setBidAmount] = useState("");
+  const [isFavorite, setIsFavorite] = useState<boolean>(false);
+  const [isTogglingFavorite, setIsTogglingFavorite] = useState<boolean>(false);
   const [isEditListingOpen, setEditListingOpen] = useState(false);
   const [isBuyDialogOpen, setBuyDialogOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>("");
@@ -99,6 +101,15 @@ export default function NFTDetail() {
     }
   }, [nft, nftLoading, params.id, setLocation, toast]);
   
+  // Check if NFT is in user's favorites when user changes
+  useEffect(() => {
+    if (user && nft) {
+      // Check if this NFT is in user's favorites
+      const favorites = user.favorites || [];
+      setIsFavorite(favorites.includes(nft.id));
+    }
+  }, [user, nft]);
+
   // Calculate auction time remaining
   useEffect(() => {
     if (!nft?.isBiddable || !nft?.metadata?.auctionEndDate) return;
@@ -371,6 +382,52 @@ export default function NFTDetail() {
     ? Math.max(...bids.map((bid: Bid) => parseFloat(bid.amount)))
     : 0;
 
+  // Handle toggle favorite
+  const handleToggleFavorite = async () => {
+    if (!user) {
+      toast({
+        title: "Not logged in",
+        description: "Please log in to favorite NFTs",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsTogglingFavorite(true);
+
+    try {
+      const favorites = [...(user.favorites || [])];
+      const updatedFavorites = isFavorite
+        ? favorites.filter(id => id !== nft.id)
+        : [...favorites, nft.id];
+
+      // Update user
+      await apiRequest("PATCH", `/api/users/${user.id}`, {
+        favorites: updatedFavorites
+      });
+
+      // Update local state
+      setIsFavorite(!isFavorite);
+      
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${user.id}`] });
+      
+      toast({
+        title: isFavorite ? "Removed from favorites" : "Added to favorites",
+        description: isFavorite ? `${nft.name} removed from your favorites` : `${nft.name} added to your favorites`,
+      });
+    } catch (error) {
+      console.error("Toggle favorite error:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update favorites",
+        variant: "destructive",
+      });
+    } finally {
+      setIsTogglingFavorite(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 pb-16">
       <div className="container mx-auto px-4">
@@ -529,9 +586,18 @@ export default function NFTDetail() {
             </div>
             
             <div className="flex gap-4 mb-6">
-              <Button variant="outline" className="flex items-center">
-                <Heart className="h-4 w-4 mr-2" />
-                Favorite
+              <Button 
+                variant={isFavorite ? "default" : "outline"}
+                className={`flex items-center ${isFavorite ? "bg-primary text-white" : ""}`}
+                onClick={handleToggleFavorite}
+                disabled={isTogglingFavorite}
+              >
+                {isTogglingFavorite ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Heart className={`h-4 w-4 mr-2 ${isFavorite ? "fill-current" : ""}`} />
+                )}
+                {isFavorite ? "Favorited" : "Favorite"}
               </Button>
               <Button variant="outline" className="flex items-center">
                 <Share className="h-4 w-4 mr-2" />
