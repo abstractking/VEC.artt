@@ -42,7 +42,8 @@ declare global {
     Buffer: typeof Buffer;
     global: typeof globalThis;
     process: typeof process;
-    crypto: any; // Use any type for crypto to avoid type conflicts
+    crypto: any; // Browser's built-in crypto
+    cryptoPolyfill: any; // Our Node.js crypto polyfill
     stream: any;
     http: any;
     https: any;
@@ -75,19 +76,31 @@ if (typeof window !== 'undefined') {
   // Add Node.js polyfills - ensure we use our already initialized process object
   window.process = window.process || processObj;
   
-  // For crypto, preserve the native browser crypto object and extend it
-  window.crypto = window.crypto || {};
-  // Add Node.js crypto methods to the browser's crypto object
-  Object.keys(cryptoBrowserify).forEach(key => {
-    if (!window.crypto[key]) {
-      window.crypto[key] = cryptoBrowserify[key];
-    }
-  });
+  // The browser's crypto object is read-only, so we can't extend it directly
+  // Instead, create a new object that includes both browser crypto and our crypto polyfill
+  const origCrypto = window.crypto;
   
-  // Explicitly set randomBytes as it's commonly used
-  if (!window.crypto.randomBytes && cryptoBrowserify.randomBytes) {
-    window.crypto.randomBytes = cryptoBrowserify.randomBytes;
+  // Create a separate cryptoPolyfill object instead of trying to modify window.crypto directly
+  // Use type assertion to help TypeScript understand what we're doing
+  (window as any).cryptoPolyfill = cryptoBrowserify;
+  
+  // Add browser's subtle crypto to our polyfill if it exists
+  if (origCrypto && origCrypto.subtle) {
+    (window as any).cryptoPolyfill.subtle = origCrypto.subtle;
   }
+  
+  // Ensure randomBytes is available
+  (window as any).cryptoPolyfill.randomBytes = cryptoBrowserify.randomBytes;
+  
+  // Add a reference to the polyfill on the global object too
+  try {
+    // @ts-ignore
+    global.cryptoPolyfill = (window as any).cryptoPolyfill;
+  } catch (e) {
+    console.warn("Could not set cryptoPolyfill on global object", e);
+  }
+  
+  console.log("Crypto polyfill initialized as window.cryptoPolyfill");
   
   // Add remaining polyfills
   window.stream = streamBrowserify;

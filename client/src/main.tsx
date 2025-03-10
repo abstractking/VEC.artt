@@ -7,9 +7,10 @@
 // This needs to be first as other modules may depend on global being defined
 import "./globalPolyfill.js";
 
-// Explicitly load process and buffer polyfills to address Vite externalization
+// Explicitly load process, buffer, and stream polyfills to address Vite externalization
 import "./processPolyfill.js";
 import "./bufferPolyfill.js";
+import "./streamPolyfill.js";
 
 // Then include the other Node.js polyfills
 import "./lib/polyfills";
