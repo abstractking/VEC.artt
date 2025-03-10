@@ -27,16 +27,25 @@ interface WalletProviderProps {
 }
 
 export function WalletProvider({ children }: WalletProviderProps) {
+  // For Replit development only - disable demo mode on Netlify
+  const isNetlify = typeof window !== 'undefined' && window.location.hostname.includes('netlify.app');
+  
   // Add debug mode for testing in environments without the wallet extension
   const isDebugMode = typeof window !== 'undefined' && 
     (import.meta.env.DEV || 
      window.location.hostname.includes('replit') || 
-     window.location.hostname.includes('netlify.app') ||
+     (window.location.hostname.includes('netlify.app') && false) || // Disable demo mode on Netlify
      import.meta.env.MODE !== 'production');
+     
   const testWalletAddress = '0xd41a7Be0D607e4cB8940DDf7E9Dc0657B91B4511'; // Test wallet address
   
-  // Check if real wallet interaction is enabled
+  // Force real wallet mode on Netlify, allow toggle elsewhere
   const [useRealWallet, setUseRealWallet] = useState(() => {
+    // Always use real wallet on Netlify
+    if (isNetlify) {
+      return true;
+    }
+    // Otherwise use stored preference or default to false
     return localStorage.getItem('useRealWallet') === 'true';
   });
   
@@ -115,6 +124,38 @@ export function WalletProvider({ children }: WalletProviderProps) {
     setError(null);
     
     try {
+      // On Netlify, always force real wallet mode
+      if (isNetlify) {
+        console.log("Netlify environment detected, forcing real wallet mode");
+        
+        // Check if Thor wallet extension is available
+        if (typeof window !== 'undefined' && (window as any).thor) {
+          // Connect to VeChain wallet
+          const result = await connectVeChainWallet();
+          
+          console.log("Wallet Connect Result:", result); // Debug log to check result structure
+          
+          if (result && result.vendor && result.vendor.address) {
+            console.log("Setting wallet address to:", result.vendor.address);
+            setWalletAddress(result.vendor.address);
+            setIsConnected(true);
+            setModalOpen(false);
+            
+            toast({
+              title: "Wallet Connected",
+              description: `Connected to ${walletType || 'VeChain'} wallet on TestNet`,
+            });
+          } else {
+            console.error("Wallet connect response does not match expected structure:", result);
+            throw new Error("Failed to connect wallet");
+          }
+        } else {
+          // Thor wallet not available, show more helpful message with TestNet info
+          throw new Error("VeChain Thor wallet extension not detected. Please install the VeChain Thor wallet extension, configure it for TestNet, and refresh the page.");
+        }
+        return;
+      }
+      
       // If not using real wallet and in debug mode, use test wallet
       if (!useRealWallet && isDebugMode) {
         console.log("Using mock wallet connection with address:", testWalletAddress);
@@ -180,7 +221,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
     } finally {
       setIsConnecting(false);
     }
-  }, [toast, setModalOpen, isDebugMode, testWalletAddress, useRealWallet]);
+  }, [toast, setModalOpen, isDebugMode, testWalletAddress, useRealWallet, isNetlify]);
 
   const disconnectWallet = useCallback(() => {
     console.log("Disconnecting wallet");
@@ -196,6 +237,16 @@ export function WalletProvider({ children }: WalletProviderProps) {
   
   // Toggle between real and mock wallet for development
   const toggleRealWallet = useCallback(() => {
+    // If we're on Netlify, always stay in real wallet mode
+    if (isNetlify) {
+      toast({
+        title: "Real Wallet Mode Required",
+        description: "Demo wallet mode is disabled on Netlify. You must use a real wallet extension.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     // If we're turning on real wallet mode, disconnect from any mock wallet first
     if (!useRealWallet) {
       // Disconnect any mock wallet if connected
@@ -226,7 +277,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
         description: "You'll use simulated blockchain interactions",
       });
     }
-  }, [useRealWallet, isConnected, disconnectWallet, toast]);
+  }, [useRealWallet, isConnected, disconnectWallet, toast, isNetlify]);
 
   const value = {
     walletAddress,

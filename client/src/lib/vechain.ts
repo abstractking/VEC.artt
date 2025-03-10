@@ -119,8 +119,16 @@ const isReplit =
   (window.location.hostname.endsWith(".repl.co") || 
    window.location.hostname.includes("replit"));
 
+// Define network type for better type safety
+export type VeChainNetwork = {
+  url: string;
+  socketUrl?: string;
+  chainId: string;
+  name: string;
+};
+
 // Get the selected network from environment variables
-export const getNetwork = () => {
+export const getNetwork = (): VeChainNetwork => {
   const selectedNetwork = import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK || 'test';
   return NETWORKS[selectedNetwork as keyof typeof NETWORKS] || NETWORKS.test;
 };

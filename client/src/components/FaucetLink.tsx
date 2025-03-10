@@ -12,9 +12,9 @@ import { getNetwork } from '@/lib/vechain';
 
 export default function FaucetLink() {
   const { isConnected, useRealWallet } = useWallet();
-  const network = getNetwork();
+  const networkConfig = getNetwork();
   
-  if (!isConnected || !useRealWallet || network !== 'test') {
+  if (!isConnected || !useRealWallet || networkConfig.name !== 'TestNet') {
     return null;
   }
   

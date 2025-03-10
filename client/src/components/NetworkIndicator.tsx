@@ -7,12 +7,12 @@ import { LucideShieldAlert, LucideShieldCheck } from 'lucide-react';
 
 export default function NetworkIndicator() {
   const { isConnected, useRealWallet } = useWallet();
-  const network = getNetwork();
+  const networkConfig = getNetwork();
   
   if (!isConnected) return null;
   
-  const isTestNet = network === 'test';
-  const isMainNet = network === 'main';
+  const isTestNet = networkConfig.name === 'TestNet';
+  const isMainNet = networkConfig.name === 'MainNet';
   
   let badgeVariant: 'default' | 'secondary' | 'destructive' | 'outline';
   let networkName: string;
