@@ -1,0 +1,89 @@
+Critical polyfills initialized via inline script
+index-D6tK8E4j.js:104 Browser environment polyfills initialized
+index-D6tK8E4j.js:529 Setting up crypto environment with cryptoPolyfill
+index-D6tK8E4j.js:608 All polyfills loaded in main entry point
+2index-D6tK8E4j.js:598 NFTShuffle mounted, setting up rotation with interval: 20000
+index-D6tK8E4j.js:529 Attempting to connect wallet: VeChain Real wallet mode: false
+index-D6tK8E4j.js:529  Wallet connection error: Error: Unable to connect wallet in the current mode
+    at index-D6tK8E4j.js:529:21543
+    at T (index-D6tK8E4j.js:586:11701)
+    at Object.Gbe (index-D6tK8E4j.js:124:9873)
+    at Zbe (index-D6tK8E4j.js:124:10030)
+    at Ybe (index-D6tK8E4j.js:124:10090)
+    at Hk (index-D6tK8E4j.js:124:31563)
+    at rW (index-D6tK8E4j.js:124:31981)
+    at index-D6tK8E4j.js:124:36914
+    at U9 (index-D6tK8E4j.js:127:36984)
+    at MH (index-D6tK8E4j.js:124:9007)
+(anonymous) @ index-D6tK8E4j.js:529
+index-D6tK8E4j.js:598 NFTShuffle mounted, setting up rotation with interval: 20000
+index-D6tK8E4j.js:529 Attempting to connect wallet: VeChain Real wallet mode: false
+index-D6tK8E4j.js:529  Wallet connection error: Error: Unable to connect wallet in the current mode
+    at index-D6tK8E4j.js:529:21543
+    at T (index-D6tK8E4j.js:586:11701)
+    at Object.Gbe (index-D6tK8E4j.js:124:9873)
+    at Zbe (index-D6tK8E4j.js:124:10030)
+    at Ybe (index-D6tK8E4j.js:124:10090)
+    at Hk (index-D6tK8E4j.js:124:31563)
+    at rW (index-D6tK8E4j.js:124:31981)
+    at index-D6tK8E4j.js:124:36914
+    at U9 (index-D6tK8E4j.js:127:36984)
+    at MH (index-D6tK8E4j.js:124:9007)
+(anonymous) @ index-D6tK8E4j.js:529
+index-D6tK8E4j.js:598 NFTShuffle mounted, setting up rotation with interval: 20000
+index-D6tK8E4j.js:529 Attempting to connect wallet: VeChain Real wallet mode: false
+index-D6tK8E4j.js:529  Wallet connection error: Error: Unable to connect wallet in the current mode
+    at index-D6tK8E4j.js:529:21543
+    at T (index-D6tK8E4j.js:586:11701)
+    at Object.Gbe (index-D6tK8E4j.js:124:9873)
+    at Zbe (index-D6tK8E4j.js:124:10030)
+    at Ybe (index-D6tK8E4j.js:124:10090)
+    at Hk (index-D6tK8E4j.js:124:31563)
+    at rW (index-D6tK8E4j.js:124:31981)
+    at index-D6tK8E4j.js:124:36914
+    at U9 (index-D6tK8E4j.js:127:36984)
+    at MH (index-D6tK8E4j.js:124:9007)
+(anonymous) @ index-D6tK8E4j.js:529
+index-D6tK8E4j.js:598 NFTShuffle mounted, setting up rotation with interval: 20000
+index-D6tK8E4j.js:529 Attempting to connect wallet: VeChain Real wallet mode: false
+index-D6tK8E4j.js:529  Wallet connection error: Error: Unable to connect wallet in the current mode
+    at index-D6tK8E4j.js:529:21543
+    at T (index-D6tK8E4j.js:586:11701)
+    at Object.Gbe (index-D6tK8E4j.js:124:9873)
+    at Zbe (index-D6tK8E4j.js:124:10030)
+    at Ybe (index-D6tK8E4j.js:124:10090)
+    at Hk (index-D6tK8E4j.js:124:31563)
+    at rW (index-D6tK8E4j.js:124:31981)
+    at index-D6tK8E4j.js:124:36914
+    at U9 (index-D6tK8E4j.js:127:36984)
+    at MH (index-D6tK8E4j.js:124:9007)
+(anonymous) @ index-D6tK8E4j.js:529
+5index-D6tK8E4j.js:598 NFTShuffle mounted, setting up rotation with interval: 20000
+index-D6tK8E4j.js:529 Attempting to connect wallet: VeChain Real wallet mode: false
+index-D6tK8E4j.js:529  Wallet connection error: Error: Unable to connect wallet in the current mode
+    at index-D6tK8E4j.js:529:21543
+    at K (index-D6tK8E4j.js:598:225195)
+    at Object.Gbe (index-D6tK8E4j.js:124:9873)
+    at Zbe (index-D6tK8E4j.js:124:10030)
+    at Ybe (index-D6tK8E4j.js:124:10090)
+    at Hk (index-D6tK8E4j.js:124:31563)
+    at rW (index-D6tK8E4j.js:124:31981)
+    at index-D6tK8E4j.js:124:36914
+    at U9 (index-D6tK8E4j.js:127:36984)
+    at MH (index-D6tK8E4j.js:124:9007)
+(anonymous) @ index-D6tK8E4j.js:529
+3index-D6tK8E4j.js:598 NFTShuffle mounted, setting up rotation with interval: 20000
+index-D6tK8E4j.js:529 Attempting to connect wallet: VeChain Real wallet mode: false
+index-D6tK8E4j.js:529  Wallet connection error: Error: Unable to connect wallet in the current mode
+    at index-D6tK8E4j.js:529:21543
+    at T (index-D6tK8E4j.js:586:11701)
+    at Object.Gbe (index-D6tK8E4j.js:124:9873)
+    at Zbe (index-D6tK8E4j.js:124:10030)
+    at Ybe (index-D6tK8E4j.js:124:10090)
+    at Hk (index-D6tK8E4j.js:124:31563)
+    at rW (index-D6tK8E4j.js:124:31981)
+    at index-D6tK8E4j.js:124:36914
+    at U9 (index-D6tK8E4j.js:127:36984)
+    at MH (index-D6tK8E4j.js:124:9007)
+(anonymous) @ index-D6tK8E4j.js:529
+index-D6tK8E4j.js:598 NFTShuffle mounted, setting up rotation with interval: 20000

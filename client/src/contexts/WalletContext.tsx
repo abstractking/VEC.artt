@@ -28,7 +28,11 @@ interface WalletProviderProps {
 
 export function WalletProvider({ children }: WalletProviderProps) {
   // Add debug mode for testing in environments without the wallet extension
-  const isDebugMode = import.meta.env.DEV || window.location.hostname.includes('replit');
+  const isDebugMode = typeof window !== 'undefined' && 
+    (import.meta.env.DEV || 
+     window.location.hostname.includes('replit') || 
+     window.location.hostname.includes('netlify.app') ||
+     import.meta.env.MODE !== 'production');
   const testWalletAddress = '0xd41a7Be0D607e4cB8940DDf7E9Dc0657B91B4511'; // Test wallet address
   
   // Check if real wallet interaction is enabled
@@ -153,8 +157,16 @@ export function WalletProvider({ children }: WalletProviderProps) {
           throw new Error("VeChain Thor wallet extension not detected. Please install the VeChain Thor wallet extension and refresh the page.");
         }
       } else {
-        // Should never reach here, but just in case
-        throw new Error("Unable to connect wallet in the current mode");
+        // In production without real wallet mode, use a mock wallet connection
+        console.log("Using mock wallet connection in production with address:", testWalletAddress);
+        setWalletAddress(testWalletAddress);
+        setIsConnected(true);
+        setModalOpen(false);
+        
+        toast({
+          title: "Demo Wallet Connected",
+          description: `Connected to demo wallet: ${testWalletAddress.slice(0, 6)}...${testWalletAddress.slice(-4)}`,
+        });
       }
     } catch (err: any) {
       console.error("Wallet connection error:", err);

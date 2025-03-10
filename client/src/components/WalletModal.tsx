@@ -17,7 +17,11 @@ import { useWallet } from "@/hooks/useVechain";
 
 export default function WalletModal() {
   const { isConnecting, isModalOpen, setModalOpen, connectWallet, error, useRealWallet, toggleRealWallet } = useWallet();
-  const isDebugMode = import.meta.env.DEV || window.location.hostname.includes('replit');
+  const isDebugMode = typeof window !== 'undefined' && 
+    (import.meta.env.DEV || 
+     window.location.hostname.includes('replit') || 
+     window.location.hostname.includes('netlify.app') ||
+     import.meta.env.MODE !== 'production');
 
   const handleClose = () => {
     setModalOpen(false);
@@ -43,8 +47,9 @@ export default function WalletModal() {
   
   // Add debug option in development or replit environments
   if (isDebugMode) {
+    const isNetlify = window.location.hostname.includes('netlify.app');
     walletOptions.push({
-      name: "Debug Test Wallet (Dev Only)",
+      name: isNetlify ? "Demo Wallet (For Testing)" : "Debug Test Wallet (Dev Only)",
       icon: "https://icongr.am/material/bug.svg?size=128&color=2563eb",
       handler: () => connectWallet("debug")
     });
@@ -91,11 +96,13 @@ export default function WalletModal() {
                 <div className="flex items-start">
                   <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 mr-2" />
                   <div>
-                    <h4 className="font-medium text-amber-800 dark:text-amber-300 text-sm">Developer Mode</h4>
+                    <h4 className="font-medium text-amber-800 dark:text-amber-300 text-sm">
+                      {window.location.hostname.includes('netlify.app') ? 'Demo Mode' : 'Developer Mode'}
+                    </h4>
                     <p className="text-amber-700 dark:text-amber-400 text-xs mt-1">
-                      Toggle between real blockchain interaction and mock mode. 
-                      Real wallet mode will require you to have the VeChain wallet extension installed
-                      and properly configured.
+                      Toggle between real blockchain interaction and demo mode. 
+                      Real wallet mode requires the VeChain wallet extension to be installed
+                      and configured. Demo mode uses simulated transactions.
                     </p>
                   </div>
                 </div>
