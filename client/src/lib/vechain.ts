@@ -468,49 +468,127 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             
             console.log("VeWorld wallet detected, creating Connex instance...");
             
-            // Create a Connex instance using VeWorld's newConnex method
-            if (typeof vechain.newConnex === 'function') {
-              console.log("Using vechain.newConnex() method");
+            // Get the network parameters based on configuration
+            const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
+            const isMainNet = networkType === Network.MAIN;
+            
+            // Hard-coded genesis ID values exactly as expected by VeWorld
+            const GENESIS_ID_MAINNET = "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a";
+            const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127";
+            
+            // Hard-coded network names exactly as expected by VeWorld
+            const NETWORK_NAME_MAIN = "main";
+            const NETWORK_NAME_TEST = "test";
+            
+            // Define node URLs
+            const NODE_URL_MAINNET = "https://mainnet.veblocks.net";
+            const NODE_URL_TESTNET = "https://testnet.veblocks.net";
+            
+            // Select appropriate values
+            const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
+            const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
+            const nodeUrl = isMainNet ? NODE_URL_MAINNET : NODE_URL_TESTNET;
+            
+            console.log("Using network parameters:", {
+              networkType,
+              genesisId,
+              networkName,
+              nodeUrl
+            });
+            
+            // Try multiple approaches in sequence
+            console.log("TRYING APPROACH 1: Network object with nested genesisId");
+            
+            try {
+              // Approach 1: Use network object with id and name
+              const connex1 = await vechain.newConnex({
+                node: nodeUrl,
+                network: {
+                  id: genesisId,
+                  name: networkName
+                }
+              });
               
-              // Get the network descriptor from our Network module
-              const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
+              const vendor1 = await vechain.newConnexVendor({
+                network: {
+                  id: genesisId,
+                  name: networkName
+                }
+              });
               
-              // Let's try using the most direct approach possible, aligned with the Driver requirements
-              // The key is "genesis" parameter which is directly taken from the official repo
-              const connexOptions = {
-                node: network.url,
-                // Use the genesis ID directly without network object
-                genesis: networkType === Network.MAIN 
-                  ? "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a"
-                  : "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127"
-              };
+              console.log("APPROACH 1 SUCCESS");
+              return { connex: connex1, vendor: vendor1 };
+            } catch (error1) {
+              console.log("APPROACH 1 FAILED:", error1);
+              console.log("TRYING APPROACH 2: Direct genesis parameter");
               
-              console.log("Connex options (stringified):", JSON.stringify(connexOptions));
-              
-              console.log("Connecting with network options:", connexOptions);
-              const connex = await vechain.newConnex(connexOptions);
-              
-              // Create a vendor for signing transactions using VeWorld's newConnexVendor method
-              if (typeof vechain.newConnexVendor === 'function') {
-                console.log("Using vechain.newConnexVendor() method");
+              try {
+                // Approach 2: Use direct genesis parameter
+                const connex2 = await vechain.newConnex({
+                  node: nodeUrl,
+                  genesis: genesisId
+                });
                 
-                // Based on the GenesisId validation error, it seems we need a more direct approach
-                // Let's try using the most minimal format possible - no explicit network object
-                const vendorOptions = networkType === Network.MAIN 
-                  ? { genesis: "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a" } 
-                  : { genesis: "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127" };
+                const vendor2 = await vechain.newConnexVendor({
+                  genesis: genesisId
+                });
                 
-                console.log("Creating vendor with options:", vendorOptions);
-                console.log("Vendor options JSON:", JSON.stringify(vendorOptions));
-                const vendor = await vechain.newConnexVendor(vendorOptions);
+                console.log("APPROACH 2 SUCCESS");
+                return { connex: connex2, vendor: vendor2 };
+              } catch (error2) {
+                console.log("APPROACH 2 FAILED:", error2);
+                console.log("TRYING APPROACH 3: Direct genesis parameter with name");
                 
-                // Return both the connex instance and the vendor
-                return { connex, vendor };
-              } else {
-                throw new Error("VeWorld wallet is missing newConnexVendor method");
+                try {
+                  // Approach 3: Use genesis parameter with name
+                  const connex3 = await vechain.newConnex({
+                    node: nodeUrl,
+                    genesis: genesisId,
+                    name: networkName
+                  });
+                  
+                  const vendor3 = await vechain.newConnexVendor({
+                    genesis: genesisId,
+                    name: networkName
+                  });
+                  
+                  console.log("APPROACH 3 SUCCESS");
+                  return { connex: connex3, vendor: vendor3 };
+                } catch (error3) {
+                  console.log("APPROACH 3 FAILED:", error3);
+                  console.log("TRYING APPROACH 4: Multiple vendor formats");
+                  
+                  try {
+                    // Approach 4: Use network with node URL and standard format
+                    const connex4 = await vechain.newConnex({
+                      node: nodeUrl,
+                      genesis: genesisId
+                    });
+                    
+                    // Try a few different vendor formats
+                    try {
+                      const vendor4a = await vechain.newConnexVendor({
+                        genesis: genesisId
+                      });
+                      
+                      console.log("APPROACH 4A SUCCESS");
+                      return { connex: connex4, vendor: vendor4a };
+                    } catch (e4a) {
+                      console.log("Vendor approach 4A failed:", e4a);
+                      
+                      const vendor4b = await vechain.newConnexVendor({
+                        network: networkName
+                      });
+                      
+                      console.log("APPROACH 4B SUCCESS");
+                      return { connex: connex4, vendor: vendor4b };
+                    }
+                  } catch (error4) {
+                    console.log("ALL APPROACHES FAILED");
+                    throw new Error("Could not connect to VeWorld wallet using any known method");
+                  }
+                }
               }
-            } else {
-              throw new Error("VeWorld wallet is missing newConnex method");
             }
           } catch (error) {
             console.error("VeWorld wallet connection error:", error);
