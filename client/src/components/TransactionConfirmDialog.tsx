@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2, AlertCircle, CheckCircle2, ExternalLink } from "lucide-react";
 import { useWallet } from "@/hooks/useVechain";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 export interface TransactionDetails {
   type: 'mint' | 'buy' | 'sell' | 'bid' | 'transfer';
