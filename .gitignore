@@ -1,11 +1,15 @@
 # Dependency directories
 node_modules/
+*/node_modules/
+**/node_modules/
 dist/
 build/
 .cache/
+.replit/
 
 # Environment files
 .env
+.env.*
 .env.local
 .env.development.local
 .env.test.local
@@ -32,3 +36,15 @@ coverage/
 *.swp
 *.swo
 .replit.backup
+
+# Credentials and keys
+*.pem
+*.key
+*.cert
+.ssh/
+credentials.json
+*credentials*
+*api-key*
+*apikey*
+*secret*
+*private*
