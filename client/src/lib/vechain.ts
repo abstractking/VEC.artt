@@ -475,22 +475,17 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
               // Get the network descriptor from our Network module
               const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
               
-              // IMPORTANT: Use completely hardcoded values that match their exact expected format
-              // This ensures complete consistency with what VeWorld expects
-              const networkDescriptor = {
-                id: networkType === Network.MAIN 
-                   ? "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a"
-                   : "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127",
-                name: networkType === Network.MAIN ? "main" : "test"
-              };
-              
-              // Create connexOptions using official network descriptor
+              // Let's try using the most direct approach possible, aligned with the Driver requirements
+              // The key is "genesis" parameter which is directly taken from the official repo
               const connexOptions = {
                 node: network.url,
-                network: networkDescriptor
+                // Use the genesis ID directly without network object
+                genesis: networkType === Network.MAIN 
+                  ? "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a"
+                  : "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127"
               };
               
-              console.log("Connex network descriptor (stringified):", JSON.stringify(networkDescriptor));
+              console.log("Connex options (stringified):", JSON.stringify(connexOptions));
               
               console.log("Connecting with network options:", connexOptions);
               const connex = await vechain.newConnex(connexOptions);
@@ -499,16 +494,11 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
               if (typeof vechain.newConnexVendor === 'function') {
                 console.log("Using vechain.newConnexVendor() method");
                 
-                // Create vendorOptions using completely hardcoded values for testing
-                // VeWorld might be extra strict with validation on vendor methods
-                const vendorOptions = {
-                  network: {
-                    id: networkType === Network.MAIN 
-                      ? "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a"
-                      : "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127",
-                    name: networkType === Network.MAIN ? "main" : "test"
-                  }
-                };
+                // Based on the GenesisId validation error, it seems we need a more direct approach
+                // Let's try using the most minimal format possible - no explicit network object
+                const vendorOptions = networkType === Network.MAIN 
+                  ? { genesis: "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a" } 
+                  : { genesis: "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127" };
                 
                 console.log("Creating vendor with options:", vendorOptions);
                 console.log("Vendor options JSON:", JSON.stringify(vendorOptions));
