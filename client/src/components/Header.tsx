@@ -210,119 +210,117 @@ export default function Header() {
       {/* Mobile Menu */}
       <div className={`md:hidden bg-background ${isMenuOpen ? 'block' : 'hidden'}`}>
         <div className="container mx-auto px-4 py-3">
-          <ScrollArea className="h-[calc(100vh-6rem)] pr-4">
-            <div className="flex flex-col space-y-4">
-              <div className="flex items-center space-x-2 pb-3">
-                {isConnected && <NotificationCenter />}
-                <form onSubmit={handleSearch} className="relative flex-1">
-                  <Input
-                    type="text"
-                    placeholder="Search items..."
-                    className="border border-input rounded-full px-4 py-2 pl-10 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <Search className="absolute left-3 top-2.5 text-muted-foreground h-5 w-5" />
-                </form>
-              </div>
-              
-              {/* Profile section - top priority */}
-              {isConnected && (
-                <Link 
-                  href={user ? `/profile/${user.id}` : "/profile"}
-                  className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold mr-2">
-                    {user?.username?.charAt(0).toUpperCase() || "U"}
-                  </div>
-                  <span>{user?.username || "Profile"}</span>
-                </Link>
-              )}
-              
-              {/* Wallet balance for mobile */}
-              {isConnected && (
-                <div className="flex items-center bg-muted/50 rounded-full px-3 py-1.5">
-                  <Wallet className="h-4 w-4 text-green-600 mr-1.5" />
-                  <span className="text-sm font-medium">
-                    {walletBalance.vet} VET
-                  </span>
-                </div>
-              )}
-              
-              <div className="h-px w-full bg-border my-2"></div>
-              
-              <Link 
-                href="/" 
-                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Search className="h-5 w-5 mr-2 text-blue-400" />
-                Home
-              </Link>
-
-              <Link 
-                href="/artists" 
-                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <BadgeCheck className="h-5 w-5 mr-2 text-blue-500" />
-                Artists
-              </Link>
-              
-              <Link 
-                href="/badges"
-                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center pl-6"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Trophy className="h-5 w-5 mr-2 text-amber-500" />
-                Achievements
-              </Link>
-              
-              <div className="h-px w-full bg-border my-2"></div>
-              
-              <Link 
-                href="/explore" 
-                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <Search className="h-5 w-5 mr-2 text-primary" />
-                Explore
-              </Link>
-              
-              <Link 
-                href="/create" 
-                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <ScrollText className="h-5 w-5 mr-2 text-purple-500" />
-                Create
-              </Link>
-              
-              <div className="h-px w-full bg-border my-2"></div>
-              
-              {isConnected ? (
-                <div 
-                  className="flex items-center text-destructive font-medium py-2 cursor-pointer"
-                  onClick={handleDisconnectWallet}
-                >
-                  <LogOut className="h-5 w-5 mr-2" />
-                  Disconnect Wallet
-                </div>
-              ) : (
-                <Button
-                  onClick={handleConnectWallet}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                >
-                  Connect Wallet
-                </Button>
-              )}
-              
-              <div className="flex justify-center py-2">
-                <ThemeToggle />
-              </div>
+          <div className="flex flex-col space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
+            <div className="flex items-center space-x-2 pb-3">
+              {isConnected && <NotificationCenter />}
+              <form onSubmit={handleSearch} className="relative flex-1">
+                <Input
+                  type="text"
+                  placeholder="Search items..."
+                  className="border border-input rounded-full px-4 py-2 pl-10 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <Search className="absolute left-3 top-2.5 text-muted-foreground h-5 w-5" />
+              </form>
             </div>
-          </ScrollArea>
+              
+            {/* Profile section - top priority */}
+            {isConnected && (
+              <Link 
+                href={user ? `/profile/${user.id}` : "/profile"}
+                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold mr-2">
+                  {user?.username?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <span>{user?.username || "Profile"}</span>
+              </Link>
+            )}
+            
+            {/* Wallet balance for mobile */}
+            {isConnected && (
+              <div className="flex items-center bg-muted/50 rounded-full px-3 py-1.5">
+                <Wallet className="h-4 w-4 text-green-600 mr-1.5" />
+                <span className="text-sm font-medium">
+                  {walletBalance.vet} VET
+                </span>
+              </div>
+            )}
+            
+            <div className="h-px w-full bg-border my-2"></div>
+            
+            <Link 
+              href="/" 
+              className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Search className="h-5 w-5 mr-2 text-blue-400" />
+              Home
+            </Link>
+
+            <Link 
+              href="/artists" 
+              className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <BadgeCheck className="h-5 w-5 mr-2 text-blue-500" />
+              Artists
+            </Link>
+            
+            <Link 
+              href="/badges"
+              className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center pl-6"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Trophy className="h-5 w-5 mr-2 text-amber-500" />
+              Achievements
+            </Link>
+            
+            <div className="h-px w-full bg-border my-2"></div>
+            
+            <Link 
+              href="/explore" 
+              className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Search className="h-5 w-5 mr-2 text-primary" />
+              Explore
+            </Link>
+            
+            <Link 
+              href="/create" 
+              className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <ScrollText className="h-5 w-5 mr-2 text-purple-500" />
+              Create
+            </Link>
+            
+            <div className="h-px w-full bg-border my-2"></div>
+            
+            {isConnected ? (
+              <div 
+                className="flex items-center text-destructive font-medium py-2 cursor-pointer"
+                onClick={handleDisconnectWallet}
+              >
+                <LogOut className="h-5 w-5 mr-2" />
+                Disconnect Wallet
+              </div>
+            ) : (
+              <Button
+                onClick={handleConnectWallet}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              >
+                Connect Wallet
+              </Button>
+            )}
+            
+            <div className="flex justify-center py-2">
+              <ThemeToggle />
+            </div>
+            </div>
         </div>
       </div>
     </header>
