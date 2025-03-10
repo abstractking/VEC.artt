@@ -549,11 +549,11 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
     switch(walletType.toLowerCase()) {
       case 'veworld':
         // Support for VeWorld wallet
-        if (typeof window !== 'undefined' && (window as any).vechain) {
+        if (typeof window !== 'undefined' && (window as any).VeWorld) {
           try {
             console.log("Connecting to VeWorld wallet...");
             
-            const vechain = (window as any).vechain;
+            const vechain = (window as any).VeWorld;
             console.log("VeWorld API methods available:", Object.keys(vechain));
             
             if (!vechain.isVeWorld) {

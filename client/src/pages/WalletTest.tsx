@@ -252,8 +252,9 @@ export default function WalletTest() {
                     <h3 className="text-lg font-medium mb-2">VeWorld Wallet</h3>
                     <p className="text-sm">
                       The newest official VeChain wallet extension requires specific network descriptors
-                      for proper connection. It injects a <code>window.vechain</code> object with methods
-                      like <code>newConnex()</code> and <code>newConnexVendor()</code>.
+                      for proper connection. It injects a <code>window.VeWorld</code> object with methods
+                      like <code>newConnex()</code>, <code>newConnexVendor()</code>, and <code>getVendor()</code>.
+                      Note the capitalization of "VeWorld" in the window object.
                     </p>
                   </div>
                   

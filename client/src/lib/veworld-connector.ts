@@ -21,6 +21,7 @@ interface VeWorldWallet {
   newConnex: (options: any) => Promise<any>;
   newConnexVendor: (options: any) => Promise<any>;
   newConnexSigner: (options: any) => Promise<any>;
+  getVendor?: () => Promise<any>; // Method to get vendor directly (may not be available in all versions)
   request: (options: any) => Promise<any>;
   on: (event: string, callback: Function) => void;
   removeListener: (event: string, callback: Function) => void;
@@ -42,7 +43,7 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
     console.log("VeWorldConnector: Connecting to VeWorld wallet...");
     
     // Check if VeWorld is available
-    if (typeof window === 'undefined' || !(window as any).vechain) {
+    if (typeof window === 'undefined' || !(window as any).VeWorld) {
       return { 
         connex: null, 
         vendor: null, 
@@ -50,7 +51,7 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
       };
     }
     
-    const vechain = (window as any).vechain as VeWorldWallet;
+    const vechain = (window as any).VeWorld as VeWorldWallet;
     
     console.log("VeWorldConnector: API methods available:", Object.keys(vechain));
     
@@ -78,6 +79,22 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
       networkName,
       nodeUrl 
     });
+    
+    // Check if VeWorld has a preferred connection method
+    if (typeof vechain.getVendor === 'function') {
+      console.log("Trying VeWorld's getVendor method...");
+      try {
+        const vendor = await vechain.getVendor();
+        
+        // If vendor provides its own connex instance, use that
+        if (vendor.connex) {
+          console.log("Using VeWorld's provided Connex instance");
+          return { connex: vendor.connex, vendor };
+        }
+      } catch (vendorError) {
+        console.log("getVendor method failed, falling back to standard approach:", vendorError);
+      }
+    }
     
     // Create Connex instance with exact format
     const connex = await vechain.newConnex({
@@ -120,7 +137,7 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
     console.log("VeWorldConnector (Alt): Connecting to VeWorld wallet...");
     
     // Check if VeWorld is available
-    if (typeof window === 'undefined' || !(window as any).vechain) {
+    if (typeof window === 'undefined' || !(window as any).VeWorld) {
       return { 
         connex: null, 
         vendor: null, 
@@ -128,7 +145,7 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
       };
     }
     
-    const vechain = (window as any).vechain as VeWorldWallet;
+    const vechain = (window as any).VeWorld as VeWorldWallet;
     
     if (!vechain.isVeWorld) {
       return { 
@@ -152,6 +169,22 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
       genesisId, 
       nodeUrl 
     });
+    
+    // Check if VeWorld has a preferred connection method
+    if (typeof vechain.getVendor === 'function') {
+      console.log("Trying VeWorld's getVendor method (Alt)...");
+      try {
+        const vendor = await vechain.getVendor();
+        
+        // If vendor provides its own connex instance, use that
+        if (vendor.connex) {
+          console.log("Using VeWorld's provided Connex instance (Alt)");
+          return { connex: vendor.connex, vendor };
+        }
+      } catch (vendorError) {
+        console.log("getVendor method failed, falling back to standard approach (Alt):", vendorError);
+      }
+    }
     
     // Create Connex instance with direct genesis parameter
     const connex = await vechain.newConnex({
