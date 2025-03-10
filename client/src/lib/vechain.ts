@@ -576,8 +576,8 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             
             // Define node URLs with better CORS support
             // Adding trailing slash to ensure proper URL format that VeWorld requires
-            const NODE_URL_MAINNET = "https://sync-mainnet.vechain.org/";
-            const NODE_URL_TESTNET = "https://sync-testnet.vechain.org/";
+            const NODE_URL_MAINNET = "https://mainnet.vechain.org/";
+            const NODE_URL_TESTNET = "https://testnet.vechain.org/";
             
             // Select appropriate values
             const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;

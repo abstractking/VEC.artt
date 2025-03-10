@@ -21,11 +21,11 @@ export interface NetworkDescriptor {
 // Network definitions exactly matching VeWorld's expectations
 export const NETWORKS: Record<Network, NetworkDescriptor> = {
   [Network.MAIN]: {
-    id: '0x1', // For mainnet, VeWorld expects 0x1
+    id: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a', // Updated Mainnet genesis ID
     name: 'main',
   },
   [Network.TEST]: {
-    id: '0x00000000c05d2f87b389c15e9e8e4f7b6c88e9e8a7b384f727e431355de5b093', // Updated TestNet genesis ID per VeChain docs
+    id: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127', // Updated TestNet genesis ID
     name: 'test',
   },
 };
