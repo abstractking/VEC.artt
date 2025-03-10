@@ -1,0 +1,57 @@
+11:06:55 AM: Netlify Build                                                 
+11:06:55 AM: ────────────────────────────────────────────────────────────────
+11:06:55 AM: ​
+11:06:55 AM: ❯ Version
+11:06:55 AM:   @netlify/build 29.59.2
+11:06:55 AM: ​
+11:06:55 AM: ❯ Flags
+11:06:55 AM:   accountId: 67b93ed93699b498398f4a5d
+11:06:55 AM:   baseRelDir: true
+11:06:55 AM:   buildId: 67cf0dee1619ab00083a8d54
+11:06:55 AM:   deployId: 67cf0dee1619ab00083a8d56
+11:06:55 AM: ​
+11:06:55 AM: ❯ Current directory
+11:06:55 AM:   /opt/build/repo
+11:06:55 AM: ​
+11:06:55 AM: ❯ Config file
+11:06:55 AM:   /opt/build/repo/netlify.toml
+11:06:55 AM: ​
+11:06:55 AM: ❯ Context
+11:06:55 AM:   production
+11:06:55 AM: ​
+11:06:55 AM: build.command from netlify.toml                               
+11:06:55 AM: ────────────────────────────────────────────────────────────────
+11:06:55 AM: ​
+11:06:55 AM: $ npm run build
+11:06:55 AM: > rest-express@1.0.0 build
+11:06:55 AM: > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+11:06:56 AM: vite v5.4.14 building for production...
+11:06:56 AM: transforming...
+11:06:57 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "http" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/https-browserify/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:06:57 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/browserify-zlib/lib/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:06:58 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/cipher-base/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:06:59 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/hash-base/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:06:59 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "vm" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/asn1.js/lib/asn1/api.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:07:00 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/pbkdf2.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:07:00 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/random-bytes.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:07:00 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/hmac.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:07:03 AM: ✓ 3912 modules transformed.
+11:07:04 AM: rendering chunks...
+11:07:04 AM: computing gzip size...
+11:07:04 AM: ../dist/public/index.html                     4.50 kB │ gzip:   1.26 kB
+11:07:04 AM: ../dist/public/assets/index-Bbz5Uz0d.css     92.69 kB │ gzip:  15.42 kB
+11:07:04 AM: ../dist/public/assets/index-DyQ_y9rE.js   2,079.77 kB │ gzip: 637.77 kB
+11:07:04 AM: 
+11:07:04 AM: (!) Some chunks are larger than 500 kB after minification. Consider:
+11:07:04 AM: - Using dynamic import() to code-split the application
+11:07:04 AM: - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+11:07:04 AM: - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+11:07:04 AM: ✓ built in 8.69s
+11:07:05 AM:   dist/index.js  36.7kb
+11:07:05 AM: ⚡ Done in 50ms
+11:07:05 AM: ​
+11:07:05 AM: (build.command completed in 9.3s)
+11:07:05 AM: ​
+11:07:10 AM: (Netlify Build completed in 14.7s)
+11:07:11 AM: Section completed: building
+11:07:45 AM: Finished processing build request in 1m29.316s

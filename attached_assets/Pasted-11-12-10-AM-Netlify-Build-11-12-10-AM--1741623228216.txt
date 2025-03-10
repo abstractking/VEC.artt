@@ -1,0 +1,105 @@
+11:12:10 AM: Netlify Build                                                 
+11:12:10 AM: ────────────────────────────────────────────────────────────────
+11:12:10 AM: ​
+11:12:10 AM: ❯ Version
+11:12:10 AM:   @netlify/build 29.59.2
+11:12:10 AM: ​
+11:12:10 AM: ❯ Flags
+11:12:10 AM:   accountId: 67b93ed93699b498398f4a5d
+11:12:10 AM:   baseRelDir: true
+11:12:10 AM:   buildId: 67cf0f37c78e10419991ceab
+11:12:10 AM:   deployId: 67cf0f37c78e10419991cead
+11:12:10 AM: ​
+11:12:10 AM: ❯ Current directory
+11:12:10 AM:   /opt/build/repo
+11:12:10 AM: ​
+11:12:10 AM: ❯ Config file
+11:12:10 AM:   /opt/build/repo/netlify.toml
+11:12:10 AM: ​
+11:12:10 AM: ❯ Context
+11:12:10 AM:   production
+11:12:10 AM: ​
+11:12:10 AM: build.command from netlify.toml                               
+11:12:10 AM: ────────────────────────────────────────────────────────────────
+11:12:10 AM: ​
+11:12:10 AM: $ npm run build
+11:12:10 AM: > rest-express@1.0.0 build
+11:12:10 AM: > vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+11:12:11 AM: vite v5.4.14 building for production...
+11:12:11 AM: transforming...
+11:12:11 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "http" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/https-browserify/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:11 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/browserify-zlib/lib/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:12 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/cipher-base/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:13 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "stream" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/hash-base/index.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:14 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/connex-driver/esm/driver.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:14 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "http" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-net.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:14 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "https" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/connex-driver/esm/simple-net.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:14 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "vm" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/asn1.js/lib/asn1/api.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:14 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/thor-devkit/esm/secp256k1.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:14 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/thor-devkit/esm/mnemonic.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:14 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/thor-devkit/esm/hdnode.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:14 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/pbkdf2.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:14 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/random-bytes.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:14 AM: [plugin:vite:resolve] [plugin vite:resolve] Module "crypto" has been externalized for browser compatibility, imported by "/opt/build/repo/node_modules/@vechain/ethers/utils/hmac.js". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+11:12:15 AM: ✓ 3908 modules transformed.
+11:12:15 AM: x Build failed in 4.11s
+11:12:15 AM: error during build:
+11:12:15 AM: node_modules/thor-devkit/esm/secp256k1.js (1:9): "randomBytes" is not exported by "__vite-browser-external", imported by "node_modules/thor-devkit/esm/secp256k1.js".
+11:12:15 AM: file: /opt/build/repo/node_modules/thor-devkit/esm/secp256k1.js:1:9
+11:12:15 AM: 
+11:12:15 AM: 1: import { randomBytes } from 'crypto';
+11:12:15 AM:             ^
+11:12:15 AM: 2: import { ec as EC } from 'elliptic';
+11:12:15 AM: 3: import { Buffer } from 'buffer';
+11:12:15 AM: 
+11:12:15 AM:     at getRollupError (file:///opt/build/repo/node_modules/rollup/dist/es/shared/parseAst.js:396:41)
+11:12:15 AM:     at error (file:///opt/build/repo/node_modules/rollup/dist/es/shared/parseAst.js:392:42)
+11:12:15 AM:     at Module.error (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:15588:16)
+11:12:15 AM:     at Module.traceVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:16037:29)
+11:12:15 AM:     at ModuleScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:13820:39)
+11:12:15 AM:     at ChildScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+11:12:15 AM:     at FunctionScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+11:12:15 AM:     at FunctionBodyScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+11:12:15 AM:     at FunctionScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+11:12:15 AM:     at FunctionBodyScope.findVariable (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:5283:38)
+11:12:15 AM: ​
+11:12:15 AM: "build.command" failed                                        
+11:12:15 AM: ────────────────────────────────────────────────────────────────
+11:12:15 AM: ​
+11:12:15 AM:   Error message
+11:12:15 AM:   Command failed with exit code 1: npm run build
+11:12:15 AM: ​
+11:12:15 AM:   Error location
+11:12:15 AM:   In build.command from netlify.toml:
+11:12:15 AM:   npm run build
+11:12:15 AM: ​
+11:12:15 AM:   Resolved config
+11:12:15 AM:   build:
+11:12:15 AM:     command: npm run build
+11:12:15 AM:     commandOrigin: config
+11:12:15 AM:     environment:
+11:12:15 AM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+11:12:15 AM:       - VITE_REACT_APP_VECHAIN_NETWORK
+11:12:15 AM:       - VITE_VECHAIN_PRIVATE_KEY
+11:12:15 AM:     publish: /opt/build/repo/dist
+11:12:15 AM:     publishOrigin: config
+11:12:15 AM:   headers:
+11:12:15 AM:     - for: /*
+      values:
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: /assets/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+11:12:15 AM: Build failed due to a user error: Build script returned non-zero exit code: 2
+11:12:19 AM: Failing build: Failed to build site
+11:12:21 AM: Failed during stage 'building site': Build script returned non-zero exit code: 2
+11:12:22 AM: Finished processing build request in 37.193s

@@ -2,10 +2,10 @@
 # This file helps with redirects and build settings for the VeCollab app
 
 [build]
-  # Where the built site is stored - Vite builds to dist by default
-  publish = "dist"
-  # The command to build the site - using Vite's build command
-  command = "npm run build"
+  # Where the built site is stored - Vite is building to dist/public
+  publish = "dist/public"
+  # The command to build the site - including patching, building, and post-build processing
+  command = "node scripts/patch-thor-devkit.js && npm run build && node scripts/prepare-netlify.js"
 
 # Redirects and rewrites
 [[redirects]]

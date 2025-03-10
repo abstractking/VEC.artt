@@ -78,7 +78,15 @@ These configurations tell Netlify to serve the `index.html` file for all routes,
 1. **404 Errors on Routes**: If you're still experiencing 404 errors on page refresh or direct URL access:
    - Verify that the `netlify.toml` file was included in your deployment
    - Check Netlify deploy logs for any errors
-   - Try adding the `_redirects` file directly to the `dist` folder after building
+   - Check that the publish directory in Netlify is set to `dist/public` (not just `dist`)
+   - Run the included `scripts/prepare-netlify.js` script manually after building:
+     ```
+     npm run build && node scripts/prepare-netlify.js
+     ```
+   - If all else fails, try adding the _redirects file manually through the Netlify dashboard:
+     1. Go to your site settings in Netlify
+     2. Navigate to "Deploys" > "Post processing" > "Redirects"
+     3. Add a rule from "/*" to "/index.html" with status code 200
 
 2. **Missing Environment Variables**: If wallet connections or API calls fail:
    - Check that all environment variables are properly set in Netlify
