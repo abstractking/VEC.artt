@@ -1,0 +1,81 @@
+[INFO] (#Ext) -  Starting ContentScriptController listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+(index):136 Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+index-_UO92Al7.js:104 Browser environment polyfills initialized
+index-_UO92Al7.js:554 Setting up crypto environment with cryptoPolyfill
+index-_UO92Al7.js:636 All polyfills loaded in main entry point
+index-_UO92Al7.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-_UO92Al7.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-_UO92Al7.js:556 Attempting to connect wallet: VeChain Real wallet mode: true
+index-_UO92Al7.js:556 Netlify environment detected, forcing real wallet mode
+index-_UO92Al7.js:554 Connecting to thor wallet type on TestNet...
+index-_UO92Al7.js:556 Failed to connect wallet: Error: VeChainThor wallet extension not detected. Please install the VeChainThor wallet extension, configure it for TestNet, and refresh the page.
+    at dI (index-_UO92Al7.js:554:13736)
+    at index-_UO92Al7.js:556:12070
+    at C (index-_UO92Al7.js:613:11718)
+    at Object.txe (index-_UO92Al7.js:124:9873)
+    at nxe (index-_UO92Al7.js:124:10030)
+    at ixe (index-_UO92Al7.js:124:10090)
+    at rR (index-_UO92Al7.js:124:31563)
+    at pW (index-_UO92Al7.js:124:31981)
+    at index-_UO92Al7.js:124:36914
+    at WN (index-_UO92Al7.js:127:36984)
+dI @ index-_UO92Al7.js:556
+(anonymous) @ index-_UO92Al7.js:556
+C @ index-_UO92Al7.js:613
+txe @ index-_UO92Al7.js:124
+nxe @ index-_UO92Al7.js:124
+ixe @ index-_UO92Al7.js:124
+rR @ index-_UO92Al7.js:124
+pW @ index-_UO92Al7.js:124
+(anonymous) @ index-_UO92Al7.js:124
+WN @ index-_UO92Al7.js:127
+FH @ index-_UO92Al7.js:124
+l_ @ index-_UO92Al7.js:124
+xN @ index-_UO92Al7.js:124
+xxe @ index-_UO92Al7.js:124Understand this errorAI
+index-_UO92Al7.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-_UO92Al7.js:556 Specific wallet connection error: Error: VeChainThor wallet extension not detected. Please install the VeChainThor wallet extension, configure it for TestNet, and refresh the page.
+    at dI (index-_UO92Al7.js:554:13736)
+    at index-_UO92Al7.js:556:12070
+    at C (index-_UO92Al7.js:613:11718)
+    at Object.txe (index-_UO92Al7.js:124:9873)
+    at nxe (index-_UO92Al7.js:124:10030)
+    at ixe (index-_UO92Al7.js:124:10090)
+    at rR (index-_UO92Al7.js:124:31563)
+    at pW (index-_UO92Al7.js:124:31981)
+    at index-_UO92Al7.js:124:36914
+    at WN (index-_UO92Al7.js:127:36984)
+(anonymous) @ index-_UO92Al7.js:556
+await in (anonymous)
+C @ index-_UO92Al7.js:613
+txe @ index-_UO92Al7.js:124
+nxe @ index-_UO92Al7.js:124
+ixe @ index-_UO92Al7.js:124
+rR @ index-_UO92Al7.js:124
+pW @ index-_UO92Al7.js:124
+(anonymous) @ index-_UO92Al7.js:124
+WN @ index-_UO92Al7.js:127
+FH @ index-_UO92Al7.js:124
+l_ @ index-_UO92Al7.js:124
+xN @ index-_UO92Al7.js:124
+xxe @ index-_UO92Al7.js:124Understand this errorAI
+index-_UO92Al7.js:556 Wallet connection error: Error: Wallet connection failed: VeChainThor wallet extension not detected. Please install the VeChainThor wallet extension, configure it for TestNet, and refresh the page.
+    at index-_UO92Al7.js:556:13416
+    at async C (index-_UO92Al7.js:613:11712)
+(anonymous) @ index-_UO92Al7.js:556
+await in (anonymous)
+C @ index-_UO92Al7.js:613
+txe @ index-_UO92Al7.js:124
+nxe @ index-_UO92Al7.js:124
+ixe @ index-_UO92Al7.js:124
+rR @ index-_UO92Al7.js:124
+pW @ index-_UO92Al7.js:124
+(anonymous) @ index-_UO92Al7.js:124
+WN @ index-_UO92Al7.js:127
+FH @ index-_UO92Al7.js:124
+l_ @ index-_UO92Al7.js:124
+xN @ index-_UO92Al7.js:124
+xxe @ index-_UO92Al7.js:124Understand this errorAI
+index-_UO92Al7.js:626 NFTShuffle mounted, setting up rotation with interval: 20000

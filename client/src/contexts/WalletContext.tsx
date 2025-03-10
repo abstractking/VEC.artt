@@ -1,6 +1,12 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import { connectWallet as connectVeChainWallet, getWalletAddress, getWalletBalance } from "@/lib/vechain";
 import { useToast } from "@/hooks/use-toast";
+import { 
+  VeChainWalletType, 
+  detectBestWalletOption,
+  validateWalletForNetwork,
+  getWalletDisplayName
+} from "@/lib/wallet-detection";
 
 interface WalletContextType {
   walletAddress: string | null;
