@@ -374,13 +374,17 @@ export const executeContractMethod = async (
   params: any[] = []
 ) => {
   try {
-    // For the Replit environment or development mode
-    if (window.location.hostname.includes('replit') || 
+    // Check if user wants to use real wallet interactions even in development
+    const useRealWallet = localStorage.getItem('useRealWallet') === 'true';
+    
+    // For the Replit environment or development mode, but only if not explicitly using real wallet
+    if (!useRealWallet && (
+        window.location.hostname.includes('replit') || 
         window.location.hostname === 'localhost' || 
         import.meta.env.DEV || 
-        import.meta.env.MODE === 'development') {
+        import.meta.env.MODE === 'development')) {
       
-      console.log(`Development environment detected for executing ${methodName}`);
+      console.log(`Development environment detected for executing ${methodName}, using TestNet interaction`);
       
       // Try to use environment private key first if available
       if (import.meta.env.VITE_VECHAIN_PRIVATE_KEY) {
@@ -407,24 +411,41 @@ export const executeContractMethod = async (
           const clause = method.asClause(...params);
           console.log(`Created clause for ${methodName} with params:`, params);
           
-          // Create simulated transaction result (for development)
+          // Execute a real transaction with the TestNet wallet
+          // This will still use the private key but will actually send the transaction
+          // to the TestNet instead of just returning a mock txid
+          
+          // Get driver
+          const driver = await Driver.connect(new SimpleNet(getNetwork().url));
+          
+          // Sign and send the transaction
+          const transaction = new Transaction({
+            chainTag: Number(connex.thor.genesis.id.slice(-2)), // Get chainTag from connex
+            blockRef: connex.thor.status.head.id.slice(0, 18), // Use current block as reference
+            expiration: 32, // Use 32 blocks as expiration (~640 seconds or ~10.7 minutes)
+            clauses: [clause], // Add the clause
+            gas: 2000000 // Set a reasonable gas limit
+          });
+          
+          const signedTx = account.sign(transaction);
+          const rawTx = '0x' + signedTx.encode().toString('hex');
+          
+          // Send the raw transaction
+          const txVisitor = driver.transaction(rawTx);
+          await txVisitor.send();
+          
+          // Return the result
           return {
-            txid: '0x' + Math.random().toString(16).substring(2, 66),
+            txid: transaction.id,
             signer: account.address
           };
         } catch (envError) {
-          console.warn("TestNet wallet execution failed, falling back to mock:", envError);
+          console.error("TestNet wallet execution failed:", envError);
+          throw new Error(`Transaction failed: ${envError.message || "Unknown error during transaction"}`);
         }
+      } else {
+        throw new Error("No private key available. Please enable real wallet interaction or add a test private key.");
       }
-      
-      // Fall back to mock vendor if environment key is not available or fails
-      console.log(`Mocking contract execution for ${methodName}`);
-      const mockVendorInstance = mockVendor();
-      return await mockVendorInstance.sign('tx', [{
-        to: contractAddress,
-        value: '0x0',
-        data: '0x' + Math.random().toString(16).substring(2, 10)
-      }]);
     }
     
     // For production: Check if Thor wallet is available in the browser
