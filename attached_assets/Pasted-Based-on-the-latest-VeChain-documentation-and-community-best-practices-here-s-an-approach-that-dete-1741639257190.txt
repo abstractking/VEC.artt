@@ -1,0 +1,79 @@
+Based on the latest VeChain documentation and community best practices, here’s an approach that detects and connects to any of the available wallet providers—whether they’re from VeWorld, Sync, or Sync2. The idea is to check for several known provider keys on the window object and then try to call a supported connection method (e.g. enable, createProvider, getProvider, getVendor, or connect).
+
+Below is an example of how you might implement this detection and connection logic:
+
+js
+Copy
+Edit
+// List of known wallet provider keys (these may be registered by different wallet extensions)
+const walletProviderKeys = ['veworld', 'sync', 'sync2'];
+
+// Function to detect a VeChain wallet provider
+function detectVeChainWallet() {
+  // Check for unified global object (if available)
+  if (window.vechain) {
+    console.log("Found unified wallet provider on window.vechain");
+    return window.vechain;
+  }
+  
+  // Otherwise, try individual keys from the list
+  for (const key of walletProviderKeys) {
+    if (window[key]) {
+      console.log(`Found wallet provider: ${key}`);
+      return window[key];
+    }
+  }
+  
+  // If no wallet is found, return null
+  return null;
+}
+
+// Function to connect to the detected wallet
+async function connectWallet() {
+  const wallet = detectVeChainWallet();
+  if (!wallet) {
+    console.error("No VeChain wallet detected");
+    return;
+  }
+
+  // Log available methods for debugging
+  console.log("Available wallet methods:", Object.keys(wallet));
+
+  // Try the common methods in order of priority
+  try {
+    if (typeof wallet.enable === 'function') {
+      await wallet.enable();
+      console.log("Wallet connected via enable()");
+    } else if (typeof wallet.createProvider === 'function') {
+      await wallet.createProvider();
+      console.log("Wallet connected via createProvider()");
+    } else if (typeof wallet.getProvider === 'function') {
+      await wallet.getProvider();
+      console.log("Wallet connected via getProvider()");
+    } else if (typeof wallet.getVendor === 'function') {
+      await wallet.getVendor();
+      console.log("Wallet connected via getVendor()");
+    } else if (typeof wallet.connect === 'function') {
+      await wallet.connect();
+      console.log("Wallet connected via connect()");
+    } else {
+      throw new Error("No supported connection method found on wallet provider");
+    }
+  } catch (error) {
+    console.error("Wallet connection error:", error);
+  }
+}
+
+// Example usage (for instance, when a user clicks a "Connect Wallet" button)
+document.getElementById("connectWalletButton").addEventListener("click", connectWallet);
+Explanation
+Detection:
+The function detectVeChainWallet() first checks if a unified provider is exposed as window.vechain (this is sometimes used as a standard across different wallets). If not, it iterates through the keys ["veworld", "sync", "sync2"] which are known to be used by the different wallet extensions.
+
+Connection:
+In connectWallet(), after detecting a provider, the code logs available methods (for debugging) and then attempts to call one of the connection methods in order. The order (enable, createProvider, getProvider, getVendor, connect) is based on community examples and documentation from VeChain (see for example the VeWorld User Guide 
+DOCS.VECHAIN.ORG
+).
+
+Error Handling:
+If none of the methods are available or the connection fails, the error is caught and logged. This makes it easier to troubleshoot if the wallet isn’t detected or if the connection is rejected (e.g. due to a network mismatch).

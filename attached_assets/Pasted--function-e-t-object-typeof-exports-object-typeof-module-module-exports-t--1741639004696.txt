@@ -1,0 +1,366 @@
+!function(e, t) {
+    "object" == typeof exports && "object" == typeof module ? module.exports = t() : "function" == typeof define && define.amd ? define([], t) : "object" == typeof exports ? exports.ConnexWalletBuddy = t() : e.ConnexWalletBuddy = t()
+}(self, (function() {
+    return ( () => {
+        "use strict";
+        var e = {
+            783: (e, t, o) => {
+                o.r(t),
+                o.d(t, {
+                    create: () => g
+                });
+                const n = class extends Promise {
+                    constructor() {
+                        if (arguments.length > 0)
+                            return super(arguments[0]),
+                            this.resolve = () => {
+                                throw new Error("Deferred.resolve is not callable")
+                            }
+                            ,
+                            void (this.reject = () => {
+                                throw new Error("Deferred.reject is not callable")
+                            }
+                            );
+                        let e, t;
+                        super(( (o, n) => {
+                            e = o,
+                            t = n
+                        }
+                        )),
+                        this.resolve = e,
+                        this.reject = t
+                    }
+                }
+                ;
+                var r = function(e, t, o) {
+                    this.name = e,
+                    this.version = t,
+                    this.os = o,
+                    this.type = "browser"
+                }
+                  , i = function(e, t, o, n) {
+                    this.name = e,
+                    this.version = t,
+                    this.os = o,
+                    this.bot = n,
+                    this.type = "bot-device"
+                }
+                  , s = function() {
+                    this.type = "bot",
+                    this.bot = !0,
+                    this.name = "bot",
+                    this.version = null,
+                    this.os = null
+                }
+                  , a = /(nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask\ Jeeves\/Teoma|ia_archiver)/
+                  , d = [["aol", /AOLShield\/([0-9\._]+)/], ["edge", /Edge\/([0-9\._]+)/], ["edge-ios", /EdgiOS\/([0-9\._]+)/], ["yandexbrowser", /YaBrowser\/([0-9\._]+)/], ["kakaotalk", /KAKAOTALK\s([0-9\.]+)/], ["samsung", /SamsungBrowser\/([0-9\.]+)/], ["silk", /\bSilk\/([0-9._-]+)\b/], ["miui", /MiuiBrowser\/([0-9\.]+)$/], ["beaker", /BeakerBrowser\/([0-9\.]+)/], ["edge-chromium", /EdgA?\/([0-9\.]+)/], ["chromium-webview", /(?!Chrom.*OPR)wv\).*Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/], ["chrome", /(?!Chrom.*OPR)Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/], ["phantomjs", /PhantomJS\/([0-9\.]+)(:?\s|$)/], ["crios", /CriOS\/([0-9\.]+)(:?\s|$)/], ["firefox", /Firefox\/([0-9\.]+)(?:\s|$)/], ["fxios", /FxiOS\/([0-9\.]+)/], ["opera-mini", /Opera Mini.*Version\/([0-9\.]+)/], ["opera", /Opera\/([0-9\.]+)(?:\s|$)/], ["opera", /OPR\/([0-9\.]+)(:?\s|$)/], ["ie", /Trident\/7\.0.*rv\:([0-9\.]+).*\).*Gecko$/], ["ie", /MSIE\s([0-9\.]+);.*Trident\/[4-7].0/], ["ie", /MSIE\s(7\.0)/], ["bb10", /BB10;\sTouch.*Version\/([0-9\.]+)/], ["android", /Android\s([0-9\.]+)/], ["ios", /Version\/([0-9\._]+).*Mobile.*Safari.*/], ["safari", /Version\/([0-9\._]+).*Safari/], ["facebook", /FBAV\/([0-9\.]+)/], ["instagram", /Instagram\s([0-9\.]+)/], ["ios-webview", /AppleWebKit\/([0-9\.]+).*Mobile/], ["ios-webview", /AppleWebKit\/([0-9\.]+).*Gecko\)$/], ["searchbot", /alexa|bot|crawl(er|ing)|facebookexternalhit|feedburner|google web preview|nagios|postrank|pingdom|slurp|spider|yahoo!|yandex/]]
+                  , c = [["iOS", /iP(hone|od|ad)/], ["Android OS", /Android/], ["BlackBerry OS", /BlackBerry|BB10/], ["Windows Mobile", /IEMobile/], ["Amazon OS", /Kindle/], ["Windows 3.11", /Win16/], ["Windows 95", /(Windows 95)|(Win95)|(Windows_95)/], ["Windows 98", /(Windows 98)|(Win98)/], ["Windows 2000", /(Windows NT 5.0)|(Windows 2000)/], ["Windows XP", /(Windows NT 5.1)|(Windows XP)/], ["Windows Server 2003", /(Windows NT 5.2)/], ["Windows Vista", /(Windows NT 6.0)/], ["Windows 7", /(Windows NT 6.1)/], ["Windows 8", /(Windows NT 6.2)/], ["Windows 8.1", /(Windows NT 6.3)/], ["Windows 10", /(Windows NT 10.0)/], ["Windows ME", /Windows ME/], ["Open BSD", /OpenBSD/], ["Sun OS", /SunOS/], ["Chrome OS", /CrOS/], ["Linux", /(Linux)|(X11)/], ["Mac OS", /(Mac_PowerPC)|(Macintosh)/], ["QNX", /QNX/], ["BeOS", /BeOS/], ["OS/2", /OS\/2/]];
+                function l(e) {
+                    var t = function(e) {
+                        return "" !== e && d.reduce((function(t, o) {
+                            var n = o[0]
+                              , r = o[1];
+                            if (t)
+                                return t;
+                            var i = r.exec(e);
+                            return !!i && [n, i]
+                        }
+                        ), !1)
+                    }(e);
+                    if (!t)
+                        return null;
+                    var o = t[0]
+                      , n = t[1];
+                    if ("searchbot" === o)
+                        return new s;
+                    var l = n[1] && n[1].split(/[._]/).slice(0, 3);
+                    l ? l.length < 3 && (l = function() {
+                        for (var e = 0, t = 0, o = arguments.length; t < o; t++)
+                            e += arguments[t].length;
+                        var n = Array(e)
+                          , r = 0;
+                        for (t = 0; t < o; t++)
+                            for (var i = arguments[t], s = 0, a = i.length; s < a; s++,
+                            r++)
+                                n[r] = i[s];
+                        return n
+                    }(l, function(e) {
+                        for (var t = [], o = 0; o < e; o++)
+                            t.push("0");
+                        return t
+                    }(3 - l.length))) : l = [];
+                    var u = l.join(".")
+                      , h = function(e) {
+                        for (var t = 0, o = c.length; t < o; t++) {
+                            var n = c[t]
+                              , r = n[0];
+                            if (n[1].exec(e))
+                                return r
+                        }
+                        return null
+                    }(e)
+                      , f = a.exec(e);
+                    return f && f[1] ? new i(o,u,h,f[1]) : new r(o,u,h)
+                }
+                const u = "undefined" == typeof document && "undefined" != typeof navigator && "ReactNative" === navigator.product ? new function() {
+                    this.type = "react-native",
+                    this.name = "react-native",
+                    this.version = null,
+                    this.os = null
+                }
+                : "undefined" != typeof navigator ? l(navigator.userAgent) : "undefined" != typeof process && process.version ? new function(e) {
+                    this.version = e,
+                    this.type = "node",
+                    this.name = "node",
+                    this.os = process.platform
+                }
+                (process.version.slice(1)) : null;
+                function h(e) {
+                    const t = ( () => {
+                        switch (u && u.os) {
+                        case "iOS":
+                        case "android":
+                        case "Android OS":
+                            return {};
+                        default:
+                            return {
+                                target: "sync|" + window.location.host,
+                                features: "width=360,height=640,resizable,scrollbars=yes,dependent,modal"
+                            }
+                        }
+                    }
+                    )();
+                    setTimeout(( () => {
+                        window.open(new URL("#/sign?src=" + encodeURIComponent(e),"https://lite.sync.vecha.in/").href, t.target, t.features)
+                    }
+                    ))
+                }
+                const f = ( () => {
+                    let e = null;
+                    return () => (e && e.parentElement || (e = document.createElement("iframe"),
+                    e.style.display = "none",
+                    document.body.appendChild(e)),
+                    e)
+                }
+                )();
+                var p = function(e, t, o, n) {
+                    return new (o || (o = Promise))((function(r, i) {
+                        function s(e) {
+                            try {
+                                d(n.next(e))
+                            } catch (e) {
+                                i(e)
+                            }
+                        }
+                        function a(e) {
+                            try {
+                                d(n.throw(e))
+                            } catch (e) {
+                                i(e)
+                            }
+                        }
+                        function d(e) {
+                            var t;
+                            e.done ? r(e.value) : (t = e.value,
+                            t instanceof o ? t : new o((function(e) {
+                                e(t)
+                            }
+                            ))).then(s, a)
+                        }
+                        d((n = n.apply(e, t || [])).next())
+                    }
+                    ))
+                };
+                const m = "https://tos.vecha.in/";
+                function w(e) {
+                    return new Promise((t => {
+                        setTimeout(t, e)
+                    }
+                    ))
+                }
+                function y(e, t, o, n, r) {
+                    return p(this, void 0, void 0, (function*() {
+                        let i = 0;
+                        const s = Date.now() + o;
+                        for (; Date.now() < s; )
+                            try {
+                                const o = yield Promise.race([r, fetch(new URL(`${e}${t}?wait=1`,n).href)])
+                                  , i = yield Promise.race([r, o.text()]);
+                                if (i)
+                                    return i
+                            } catch (e) {
+                                if (++i > 2)
+                                    throw new Error("failed fetch response");
+                                yield Promise.race([r, w(3e3)])
+                            }
+                        throw new Error("timeout")
+                    }
+                    ))
+                }
+                let v = null;
+                function b(e, t, o, r, i, s, a) {
+                    return p(this, void 0, void 0, (function*() {
+                        v && v.reject(new Error("aborted"));
+                        const d = v = new n
+                          , c = o.onAccepted
+                          , l = {
+                            type: e,
+                            gid: r,
+                            payload: {
+                                message: t,
+                                options: Object.assign(Object.assign({}, o), {
+                                    onAccepted: void 0
+                                })
+                            },
+                            nonce: i()
+                        }
+                          , m = JSON.stringify(l)
+                          , b = s(m)
+                          , g = function(e) {
+                            try {
+                                const t = "connex:sign?src=" + encodeURIComponent(e)
+                                  , o = u && u.os || "";
+                                if ("Mac OS" !== o && "Linux" !== o && !o.startsWith("Windows"))
+                                    return h(e),
+                                    {
+                                        show() {},
+                                        hide() {}
+                                    };
+                                f().contentWindow.location.href = t
+                            } catch (e) {}
+                            const t = function() {
+                                const e = document.createElement("iframe");
+                                return e.style.border = "none",
+                                e.style.position = "fixed",
+                                e.style.zIndex = "9999",
+                                e.style.width = "100vw",
+                                e.style.height = "110px",
+                                e.style.left = e.style.bottom = "0px",
+                                e.src = URL.createObjectURL(new Blob(['<html> <head> <meta charset="utf-8"> <style>body,html{margin:0;box-sizing:border-box}*,:after,:before{box-sizing:inherit}body{font-family:Roboto,-apple-system,Helvetica Neue,Helvetica,Arial,sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;line-height:1.5;font-size:16px;width:100vw;height:100vh}.lds-dual-ring{display:inline-block;width:1em;height:1em}.lds-dual-ring:after{content:"";display:block;width:1em;height:1em;border-radius:50%;border:.16em solid;border-color:currentColor transparent currentColor transparent;animation:lds-dual-ring .8s linear infinite}@keyframes lds-dual-ring{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}.footer{background:rgba(0,0,0,.7);position:absolute;left:0;bottom:0;width:100%;color:#fff;padding:12px 16px 24px 16px;box-shadow:0 0 4px rgba(0,0,0,.3)}.button{border:0;background:#1e88e5;color:#fff;font-family:system-ui,sans-serif;font-size:1rem;line-height:1.2;white-space:nowrap;text-decoration:none;padding:.25rem 1rem;margin-left:.5rem;margin-right:.5rem;cursor:pointer;outline:0}.close{border:0;background:0 0;color:#fff;font-size:1rem;text-decoration:none;padding:.25rem .5rem;margin-left:.5rem;margin-right:.5rem;cursor:pointer;outline:0}</style> </head> <body> <div class="footer"> <div> <div class="lds-dual-ring" style="margin-right:.5em"></div> Launching Sync2 ... <button style="float:right" class="close" onclick=\'post("close")\'>&#x2715;</button> </div> <div style="text-align:center;margin-top:.5rem"> <a href="javascript:post(\'lite\')" style="margin-right:2rem;color:#f5f5f5;font-size:90%">Try out Sync2-lite</a> <a class="button" href="javascript:post(\'install\')">Install</a> </div> </div> <script>function post(e){parent.postMessage({src:"connex-helper",action:e},"*")}<\/script> </body> </html>'],{
+                                    type: "text/html"
+                                })),
+                                e
+                            }()
+                              , o = n => {
+                                if (n.data && "connex-helper" === n.data.src && n.data.action)
+                                    switch (n.data.action) {
+                                    case "close":
+                                        return void (t.parentNode && (t.parentNode.removeChild(t),
+                                        window.removeEventListener("message", o)));
+                                    case "lite":
+                                        return void h(e);
+                                    case "install":
+                                        return void window.open("https://sync.vecha.in/")
+                                    }
+                            }
+                            ;
+                            return {
+                                show() {
+                                    t.parentNode || (document.body.appendChild(t),
+                                    window.addEventListener("message", o))
+                                },
+                                hide() {
+                                    t.parentNode && (t.parentNode.removeChild(t),
+                                    window.removeEventListener("message", o))
+                                }
+                            }
+                        }(new URL(b,a).href);
+                        let x = !1;
+                        try {
+                            yield function(e, t, o, n) {
+                                return p(this, void 0, void 0, (function*() {
+                                    const r = new URL(e,o).href;
+                                    for (let e = 0; e < 3; e++)
+                                        try {
+                                            return yield Promise.race([n, fetch(r, {
+                                                method: "POST",
+                                                body: t,
+                                                headers: new Headers({
+                                                    "Content-Type": "application/json"
+                                                })
+                                            })])
+                                        } catch (e) {
+                                            yield Promise.race([n, w(2e3)])
+                                        }
+                                    throw new Error("failed to submit request")
+                                }
+                                ))
+                            }(b, m, a, d),
+                            ( () => {
+                                p(this, void 0, void 0, (function*() {
+                                    try {
+                                        yield Promise.race([d, w(1500)]),
+                                        !x && g.show()
+                                    } catch (e) {}
+                                }
+                                ))
+                            }
+                            )(),
+                            ( () => {
+                                p(this, void 0, void 0, (function*() {
+                                    try {
+                                        yield y(b, ".accepted", 6e4, a, d),
+                                        x = !0,
+                                        g.hide(),
+                                        c && c()
+                                    } catch (e) {}
+                                }
+                                ))
+                            }
+                            )();
+                            const e = yield y(b, ".resp", 6e5, a, d)
+                              , t = JSON.parse(e);
+                            if (t.error)
+                                throw new Error(t.error);
+                            return t.payload
+                        } finally {
+                            d.reject(new Error("aborted")),
+                            g.hide()
+                        }
+                    }
+                    ))
+                }
+                function g(e, t, o, n) {
+                    return {
+                        signTx: (r, i) => b("tx", r, i, e, t, o, n || m),
+                        signCert: (r, i) => b("cert", r, i, e, t, o, n || m)
+                    }
+                }
+                const x = JSON.parse('{"u2":"@vechain/connex-wallet-buddy","i8":"0.1.9"}');
+                console.log(`[${x.u2}] v${x.i8} loaded`)
+            }
+        }
+          , t = {};
+        function o(n) {
+            if (t[n])
+                return t[n].exports;
+            var r = t[n] = {
+                exports: {}
+            };
+            return e[n](r, r.exports, o),
+            r.exports
+        }
+        return o.d = (e, t) => {
+            for (var n in t)
+                o.o(t, n) && !o.o(e, n) && Object.defineProperty(e, n, {
+                    enumerable: !0,
+                    get: t[n]
+                })
+        }
+        ,
+        o.o = (e, t) => Object.prototype.hasOwnProperty.call(e, t),
+        o.r = e => {
+            "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, {
+                value: "Module"
+            }),
+            Object.defineProperty(e, "__esModule", {
+                value: !0
+            })
+        }
+        ,
+        o(783)
+    }
+    )()
+}
+));
+//# sourceMappingURL=bundle.min.js.map

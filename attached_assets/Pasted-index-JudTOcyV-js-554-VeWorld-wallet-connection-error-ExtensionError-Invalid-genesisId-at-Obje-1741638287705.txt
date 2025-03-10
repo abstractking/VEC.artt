@@ -1,0 +1,78 @@
+index-JudTOcyV.js:554 VeWorld wallet connection error: ExtensionError: Invalid genesisId
+    at Object.invalidParams (VeWorldAPI.js:1:14303)
+    at validateGenesisId (VeWorldAPI.js:101:80391)
+    at Object.newConnexVendor (VeWorldAPI.js:101:80004)
+    at BI (index-JudTOcyV.js:554:13652)
+    at async index-JudTOcyV.js:556:14457
+    at async T (index-JudTOcyV.js:613:11712)
+BI @ index-JudTOcyV.js:554
+await in BI
+(anonymous) @ index-JudTOcyV.js:556
+T @ index-JudTOcyV.js:613
+zxe @ index-JudTOcyV.js:124
+Wxe @ index-JudTOcyV.js:124
+Hxe @ index-JudTOcyV.js:124
+CR @ index-JudTOcyV.js:124
+WH @ index-JudTOcyV.js:124
+(anonymous) @ index-JudTOcyV.js:124
+y9 @ index-JudTOcyV.js:127
+mH @ index-JudTOcyV.js:124
+T_ @ index-JudTOcyV.js:124
+H7 @ index-JudTOcyV.js:124
+lwe @ index-JudTOcyV.js:124Understand this errorAI
+index-JudTOcyV.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected
+    at BI (index-JudTOcyV.js:554:13908)
+    at async index-JudTOcyV.js:556:14457
+    at async T (index-JudTOcyV.js:613:11712)
+BI @ index-JudTOcyV.js:556
+await in BI
+(anonymous) @ index-JudTOcyV.js:556
+T @ index-JudTOcyV.js:613
+zxe @ index-JudTOcyV.js:124
+Wxe @ index-JudTOcyV.js:124
+Hxe @ index-JudTOcyV.js:124
+CR @ index-JudTOcyV.js:124
+WH @ index-JudTOcyV.js:124
+(anonymous) @ index-JudTOcyV.js:124
+y9 @ index-JudTOcyV.js:127
+mH @ index-JudTOcyV.js:124
+T_ @ index-JudTOcyV.js:124
+H7 @ index-JudTOcyV.js:124
+lwe @ index-JudTOcyV.js:124Understand this errorAI
+index-JudTOcyV.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected
+    at BI (index-JudTOcyV.js:554:13908)
+    at async index-JudTOcyV.js:556:14457
+    at async T (index-JudTOcyV.js:613:11712)
+(anonymous) @ index-JudTOcyV.js:556
+await in (anonymous)
+T @ index-JudTOcyV.js:613
+zxe @ index-JudTOcyV.js:124
+Wxe @ index-JudTOcyV.js:124
+Hxe @ index-JudTOcyV.js:124
+CR @ index-JudTOcyV.js:124
+WH @ index-JudTOcyV.js:124
+(anonymous) @ index-JudTOcyV.js:124
+y9 @ index-JudTOcyV.js:127
+mH @ index-JudTOcyV.js:124
+T_ @ index-JudTOcyV.js:124
+H7 @ index-JudTOcyV.js:124
+lwe @ index-JudTOcyV.js:124Understand this errorAI
+index-JudTOcyV.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected
+    at index-JudTOcyV.js:556:15252
+    at async T (index-JudTOcyV.js:613:11712)
+(anonymous) @ index-JudTOcyV.js:556
+await in (anonymous)
+T @ index-JudTOcyV.js:613
+zxe @ index-JudTOcyV.js:124
+Wxe @ index-JudTOcyV.js:124
+Hxe @ index-JudTOcyV.js:124
+CR @ index-JudTOcyV.js:124
+WH @ index-JudTOcyV.js:124
+(anonymous) @ index-JudTOcyV.js:124
+y9 @ index-JudTOcyV.js:127
+mH @ index-JudTOcyV.js:124
+T_ @ index-JudTOcyV.js:124
+H7 @ index-JudTOcyV.js:124
+lwe @ index-JudTOcyV.js:124Understand this errorAI
+index-JudTOcyV.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-JudTOcyV.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
