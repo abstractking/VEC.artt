@@ -1,238 +1,120 @@
-#!/usr/bin/env node
-
 /**
- * This script patches the thor-devkit and @vechain/connex-driver packages to use browser-compatible versions
- * of Node.js core modules. This is necessary for building in Netlify environment.
+ * This script patches the thor-devkit module to use browser-compatible crypto functions
+ * It should be run before the build process
  */
 
+const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
-// Directory paths
-const rootDir = path.resolve('.');
-const nodeModulesDir = path.join(rootDir, 'node_modules');
-const thorDevkitDir = path.join(nodeModulesDir, 'thor-devkit');
-const connexDriverDir = path.join(nodeModulesDir, '@vechain/connex-driver');
+// Log start of process
+console.log('Starting VeChain Thor-devkit patching process...');
 
-// Create inline polyfill for crypto to avoid path resolution issues
-const inlineThorPolyfills = `
-// Inline thor-polyfills to avoid path resolution issues
-import * as cryptoBrowserify from 'crypto-browserify';
-export const randomBytes = cryptoBrowserify.randomBytes;
-export const createHash = cryptoBrowserify.createHash;
-export const createHmac = cryptoBrowserify.createHmac;
-export const pbkdf2 = cryptoBrowserify.pbkdf2;
-export const pbkdf2Sync = cryptoBrowserify.pbkdf2Sync;
-export default cryptoBrowserify;
-`;
+// Run the improved patch script if it exists
+const patchImprovedPath = path.resolve('./scripts/patch-thor-devkit-improved.cjs');
+const patchLegacyPath = path.resolve('./scripts/patch-thor-devkit.cjs');
 
-const inlineSecp256k1Browser = `
-// Inline secp256k1-browser implementation to avoid path resolution issues
-import * as cryptoBrowserify from 'crypto-browserify';
-import * as elliptic from 'elliptic';
-
-const secp256k1 = new elliptic.ec('secp256k1');
-
-export function generatePrivateKey() {
-  const bytes = cryptoBrowserify.randomBytes(32);
-  return Buffer.from(bytes);
-}
-
-export function deriveAddress(pubKey) {
-  return pubKey.toString('hex');
-}
-
-export function sign(msgHash, privKey) {
-  const keyPair = secp256k1.keyFromPrivate(privKey);
-  const signature = keyPair.sign(msgHash, { canonical: true });
-  const r = signature.r.toBuffer();
-  const s = signature.s.toBuffer();
-  return Buffer.concat([r, s, Buffer.from([signature.recoveryParam])]);
-}
-
-export function recover(msgHash, sig) {
-  const r = sig.slice(0, 32);
-  const s = sig.slice(32, 64);
-  const v = sig[64];
-  
-  const point = secp256k1.recoverPubKey(
-    msgHash,
-    { r: r.toString('hex'), s: s.toString('hex') },
-    v
-  );
-  
-  return Buffer.from(point.encode('hex', false).slice(2), 'hex');
-}
-
-export default {
-  generatePrivateKey,
-  deriveAddress,
-  sign,
-  recover
-};
-`;
-
-// Create the polyfill files in node_modules
-fs.writeFileSync(path.join(nodeModulesDir, 'thor-polyfills.js'), inlineThorPolyfills);
-fs.writeFileSync(path.join(nodeModulesDir, 'secp256k1-browser.js'), inlineSecp256k1Browser);
-
-// Check if packages exist
-let patchCount = 0;
-
-if (fs.existsSync(thorDevkitDir)) {
-  patchCount++;
+if (fs.existsSync(patchImprovedPath)) {
+  console.log('Found improved patching script, executing...');
+  try {
+    execSync(`node ${patchImprovedPath}`, { stdio: 'inherit' });
+    console.log('Successfully ran improved patching script!');
+  } catch (error) {
+    console.error('Error running improved patching script:', error.message);
+    console.log('Falling back to legacy patch script...');
+    
+    // Try the legacy script if the improved one fails
+    if (fs.existsSync(patchLegacyPath)) {
+      try {
+        execSync(`node ${patchLegacyPath}`, { stdio: 'inherit' });
+        console.log('Successfully ran legacy patching script!');
+      } catch (legacyError) {
+        console.error('Error running legacy patching script:', legacyError.message);
+        console.log('Attempting basic patching as a last resort...');
+        performBasicPatching();
+      }
+    } else {
+      console.log('Legacy patch script not found, performing basic patching...');
+      performBasicPatching();
+    }
+  }
+} else if (fs.existsSync(patchLegacyPath)) {
+  console.log('Found legacy patching script, executing...');
+  try {
+    execSync(`node ${patchLegacyPath}`, { stdio: 'inherit' });
+    console.log('Successfully ran legacy patching script!');
+  } catch (error) {
+    console.error('Error running legacy patching script:', error.message);
+    console.log('Performing basic patching...');
+    performBasicPatching();
+  }
 } else {
-  console.error('❌ thor-devkit package not found in node_modules.');
+  console.log('No existing patch scripts found, performing basic patching...');
+  performBasicPatching();
 }
 
-if (fs.existsSync(connexDriverDir)) {
-  patchCount++;
-} else {
-  console.error('❌ @vechain/connex-driver package not found in node_modules.');
-}
+// Basic fallback patching function
+function performBasicPatching() {
+  // Paths to the files we need to patch
+  const secp256k1Path = path.resolve('./node_modules/thor-devkit/esm/secp256k1.js');
+  const mnemonicPath = path.resolve('./node_modules/thor-devkit/esm/mnemonic.js');
+  const hdnodePath = path.resolve('./node_modules/thor-devkit/esm/hdnode.js');
 
-if (patchCount === 0) {
-  console.error('❌ No packages to patch. Exiting.');
-  process.exit(0);
-}
-
-console.log('🔧 Starting patching process for browser compatibility...');
-
-// Function to recursively find files
-function findFiles(dir, pattern, callback) {
-  const files = fs.readdirSync(dir);
-  
-  for (const file of files) {
-    const filePath = path.join(dir, file);
-    const stat = fs.statSync(filePath);
+  // Function to patch a file
+  function patchFile(filePath, searchString, replacement) {
+    console.log(`Patching file: ${filePath}`);
     
-    if (stat.isDirectory()) {
-      findFiles(filePath, pattern, callback);
-    } else if (pattern.test(file)) {
-      callback(filePath);
+    try {
+      // Check if file exists
+      if (!fs.existsSync(filePath)) {
+        console.log(`File not found: ${filePath}`);
+        return;
+      }
+      
+      // Read the file
+      const content = fs.readFileSync(filePath, 'utf8');
+      
+      // Check if the file contains the string we're looking for
+      if (content.includes(searchString)) {
+        // Replace the string
+        const patchedContent = content.replace(searchString, replacement);
+        
+        // Write the patched content back to the file
+        fs.writeFileSync(filePath, patchedContent, 'utf8');
+        console.log(`Successfully patched: ${filePath}`);
+      } else {
+        console.log(`String not found in ${filePath}, skipping...`);
+      }
+    } catch (error) {
+      console.error(`Error patching ${filePath}:`, error);
     }
   }
-}
 
-// Function to replace crypto imports in a file
-function patchFile(filePath) {
-  console.log(`📄 Patching file: ${filePath}`);
-  
-  let content = fs.readFileSync(filePath, 'utf8');
-  let modified = false;
-  
-  // Handle specific imports for randomBytes from crypto
-  if (content.includes("import { randomBytes } from 'crypto'") || content.includes('import { randomBytes } from "crypto"')) {
-    content = content.replace(
-      /import\s*{\s*randomBytes\s*}\s*from\s*['"]crypto['"]/g,
-      "import { randomBytes } from 'crypto-browserify'"
-    );
-    modified = true;
-  }
-  
-  // Handle other specific named imports from crypto
-  if (content.includes("from 'crypto'") || content.includes('from "crypto"')) {
-    content = content.replace(
-      /import\s*{\s*([^}]+)\s*}\s*from\s*['"]crypto['"]/g,
-      "import { $1 } from 'crypto-browserify'"
-    );
-    modified = true;
-  }
-  
-  // Replace require('crypto') with browser-compatible version
-  if (content.includes("require('crypto')") || content.includes('require("crypto")')) {
-    content = content.replace(
-      /const\s+(?:crypto|[{}\s\w,]+)\s*=\s*require\(['"]crypto['"]\)/g,
-      "const crypto = require('crypto-browserify')"
-    );
-    modified = true;
-  }
-  
-  // Replace import from 'crypto' with browser-compatible version
-  if (content.includes("from 'crypto'") || content.includes('from "crypto"')) {
-    content = content.replace(
-      /import\s+(?:[{}\s\w,]+)\s+from\s+['"]crypto['"]/g,
-      "import * as crypto from 'crypto-browserify'"
-    );
-    modified = true;
-  }
-  
-  // Replace references to Buffer with browser-compatible version
-  if (content.includes('new Buffer(') || content.includes('Buffer.from(')) {
-    content = content.replace(
-      /new Buffer\(/g,
-      'Buffer.from('
-    );
-    modified = true;
-  }
-  
-  // Replace secp256k1 with browser-compatible version
-  if (content.includes("require('secp256k1')") || content.includes('require("secp256k1")')) {
-    content = content.replace(
-      /const\s+(?:secp256k1|[{}\s\w,]+)\s*=\s*require\(['"]secp256k1['"]\)/g,
-      "const secp256k1 = require('../secp256k1-browser.js')"
-    );
-    modified = true;
-  }
-  
-  // Replace other Node.js specific modules
-  const nodeModules = {
-    'fs': 'fs-extra',
-    'path': 'path-browserify',
-    'os': 'os-browserify/browser',
-    'stream': 'stream-browserify',
-    'http': 'stream-http',
-    'https': 'https-browserify',
-    'zlib': 'browserify-zlib',
-    'events': 'events/'
-  };
-  
-  for (const [mod, replacement] of Object.entries(nodeModules)) {
-    const requireRegex = new RegExp(`require\\(['"]${mod}['"]\\)`, 'g');
-    const importRegex = new RegExp(`import\\s+(?:[{\\}\\s\\w,]+)\\s+from\\s+['"]${mod}['"]`, 'g');
-    
-    if (requireRegex.test(content)) {
-      content = content.replace(requireRegex, `require('${replacement}')`);
-      modified = true;
+  // Patches for each file
+  const patches = [
+    {
+      path: secp256k1Path,
+      search: `import { randomBytes } from 'crypto';`,
+      replace: `import { randomBytes } from 'crypto-browserify';`
+    },
+    {
+      path: mnemonicPath,
+      search: `import crypto from 'crypto';`,
+      replace: `import crypto from 'crypto-browserify';`
+    },
+    {
+      path: hdnodePath,
+      search: `import crypto from 'crypto';`,
+      replace: `import crypto from 'crypto-browserify';`
     }
-    
-    if (importRegex.test(content)) {
-      content = content.replace(importRegex, `import * as ${mod} from '${replacement}'`);
-      modified = true;
-    }
-  }
-  
-  // Write changes if modified
-  if (modified) {
-    fs.writeFileSync(filePath, content, 'utf8');
-    console.log(`✅ Patched: ${filePath}`);
-  } else {
-    console.log(`⏩ No changes needed: ${filePath}`);
-  }
+  ];
+
+  // Apply all patches
+  patches.forEach(patch => {
+    patchFile(patch.path, patch.search, patch.replace);
+  });
+
+  console.log('Basic patching completed!');
 }
 
-// Patch thor-devkit
-if (fs.existsSync(thorDevkitDir)) {
-  console.log('🔍 Searching for JavaScript files in thor-devkit package...');
-  findFiles(thorDevkitDir, /\.(js|mjs)$/, patchFile);
-  
-  console.log('🔍 Searching for TypeScript declaration files in thor-devkit package...');
-  findFiles(thorDevkitDir, /\.d\.ts$/, patchFile);
-  
-  console.log('✅ thor-devkit patching completed successfully!');
-}
-
-// Patch @vechain/connex-driver
-if (fs.existsSync(connexDriverDir)) {
-  console.log('🔍 Searching for JavaScript files in @vechain/connex-driver package...');
-  findFiles(connexDriverDir, /\.(js|mjs)$/, patchFile);
-  
-  console.log('🔍 Searching for TypeScript declaration files in @vechain/connex-driver package...');
-  findFiles(connexDriverDir, /\.d\.ts$/, patchFile);
-  
-  console.log('✅ @vechain/connex-driver patching completed successfully!');
-}
-
-console.log('🎉 All patching completed successfully!');
-console.log('⚠️ Note: This patching is only needed for browser environments. The original functionality is preserved for Node.js environments.');
+console.log('All patching operations complete!');

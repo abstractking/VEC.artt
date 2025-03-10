@@ -1,0 +1,76 @@
+11:31:30 AM: Netlify Build                                                 
+11:31:30 AM: ────────────────────────────────────────────────────────────────
+11:31:30 AM: ​
+11:31:30 AM: ❯ Version
+11:31:30 AM:   @netlify/build 29.59.2
+11:31:30 AM: ​
+11:31:30 AM: ❯ Flags
+11:31:30 AM:   accountId: 67b93ed93699b498398f4a5d
+11:31:30 AM:   baseRelDir: true
+11:31:30 AM:   buildId: 67cf13c31f52eb3ffd6b9997
+11:31:30 AM:   deployId: 67cf13c31f52eb3ffd6b9999
+11:31:30 AM: ​
+11:31:30 AM: ❯ Current directory
+11:31:30 AM:   /opt/build/repo
+11:31:30 AM: ​
+11:31:30 AM: ❯ Config file
+11:31:30 AM:   /opt/build/repo/netlify.toml
+11:31:30 AM: ​
+11:31:30 AM: ❯ Context
+11:31:30 AM:   production
+11:31:30 AM: ​
+11:31:30 AM: build.command from netlify.toml                               
+11:31:30 AM: ────────────────────────────────────────────────────────────────
+11:31:30 AM: ​
+11:31:30 AM: $ node scripts/patch-thor-devkit.js && npm run build && node scripts/prepare-netlify.js
+11:31:30 AM: file:///opt/build/repo/scripts/patch-thor-devkit.js:6
+11:31:30 AM: const { execSync } = require('child_process');
+11:31:30 AM:                      ^
+11:31:30 AM: ReferenceError: require is not defined in ES module scope, you can use import instead
+11:31:30 AM: This file is being treated as an ES module because it has a '.js' file extension and '/opt/build/repo/package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+11:31:30 AM:     at file:///opt/build/repo/scripts/patch-thor-devkit.js:6:22
+11:31:30 AM:     at ModuleJob.run (node:internal/modules/esm/module_job:271:25)
+11:31:30 AM:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:578:26)
+11:31:30 AM:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:116:5)
+11:31:30 AM: Node.js v22.14.0
+11:31:30 AM: ​
+11:31:30 AM: "build.command" failed                                        
+11:31:30 AM: ────────────────────────────────────────────────────────────────
+11:31:30 AM: ​
+11:31:30 AM:   Error message
+11:31:30 AM:   Command failed with exit code 1: node scripts/patch-thor-devkit.js && npm run build && node scripts/prepare-netlify.js
+11:31:30 AM: ​
+11:31:30 AM:   Error location
+11:31:30 AM:   In build.command from netlify.toml:
+11:31:30 AM:   node scripts/patch-thor-devkit.js && npm run build && node scripts/prepare-netlify.js
+11:31:30 AM: ​
+11:31:30 AM:   Resolved config
+11:31:30 AM:   build:
+11:31:30 AM:     command: node scripts/patch-thor-devkit.js && npm run build && node scripts/prepare-netlify.js
+11:31:30 AM:     commandOrigin: config
+11:31:30 AM:     environment:
+11:31:30 AM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+11:31:30 AM:       - VITE_REACT_APP_VECHAIN_NETWORK
+11:31:30 AM:       - VITE_VECHAIN_PRIVATE_KEY
+11:31:30 AM:     publish: /opt/build/repo/dist/public
+11:31:30 AM:     publishOrigin: config
+11:31:30 AM:   headers:
+11:31:31 AM:     - for: /*
+      values:
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: /assets/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+11:31:31 AM: Build failed due to a user error: Build script returned non-zero exit code: 2
+11:31:31 AM: Failing build: Failed to build site
+11:31:32 AM: Failed during stage 'building site': Build script returned non-zero exit code: 2
+11:31:33 AM: Finished processing build request in 23.631s

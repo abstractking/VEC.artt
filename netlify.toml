@@ -5,7 +5,7 @@
   # Where the built site is stored - Vite is building to dist/public
   publish = "dist/public"
   # The command to build the site - including patching, building, and post-build processing
-  command = "node scripts/patch-thor-devkit.js && npm run build && node scripts/prepare-netlify.js"
+  command = "node scripts/patch-thor-devkit.cjs && npm run build && node scripts/prepare-netlify.cjs"
 
 # Redirects and rewrites
 [[redirects]]

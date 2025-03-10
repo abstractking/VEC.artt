@@ -1,107 +1,76 @@
 # Deployment Guide for VeCollab Marketplace
 
-This guide provides instructions for deploying the VeCollab Marketplace to production.
+This document provides detailed instructions for deploying the VeCollab Marketplace on Netlify.
 
 ## Prerequisites
 
-- Node.js 16+ installed
-- A Netlify account
-- VeChain wallet credentials for production
+Before deploying, ensure you have:
 
-## Build Process
+1. A Netlify account
+2. Access to the GitHub repository
+3. Required environment variables (if applicable)
 
-1. Ensure all dependencies are installed:
-   ```
-   npm install
-   ```
+## Environment Variables
 
-2. Build the application:
-   ```
+The following environment variables need to be set in your Netlify deployment settings:
+
+- `VITE_VECHAIN_PRIVATE_KEY`: Private key for VeChain testnet wallet (for development and testing only)
+- `VITE_REACT_APP_VECHAIN_NETWORK`: Set to `test` for TestNet or `main` for MainNet
+
+## Deployment Steps
+
+### Option 1: Direct Deployment from GitHub
+
+1. Log in to your Netlify account
+2. Click "New site from Git"
+3. Select GitHub as your Git provider
+4. Authorize Netlify to access your GitHub account
+5. Select the repository containing the VeCollab Marketplace
+6. Configure build settings:
+   - Build command: `node scripts/patch-thor-devkit.cjs && npm run build && node scripts/prepare-netlify.cjs`
+   - Publish directory: `dist/public`
+7. Add the required environment variables
+8. Click "Deploy site"
+
+### Option 2: Manual Deployment
+
+1. Build the project locally:
+   ```bash
    npm run build
    ```
-
-3. The build output will be in the `dist` directory.
-
-## Deployment to Netlify
-
-### Option 1: Deploy from Netlify Dashboard
-
-1. Connect your GitHub repository to Netlify
-2. Configure the build settings:
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-3. Add environment variables:
-   - `VITE_VECHAIN_NETWORK`: Set to `main` for mainnet or `test` for testnet
-   - `VITE_VECHAIN_PRIVATE_KEY`: Your VeChain private key (if using test mode)
-   - `NODE_ENV`: Set to `production`
-
-### Option 2: Deploy with Netlify CLI
-
-1. Install Netlify CLI if you haven't already:
-   ```
-   npm install -g netlify-cli
+2. Deploy the `dist/public` directory to Netlify:
+   ```bash
+   npx netlify deploy --prod --dir=dist/public
    ```
 
-2. Log in to your Netlify account:
-   ```
-   netlify login
-   ```
+## Build Configuration
 
-3. Initialize Netlify in your project (if not already done):
-   ```
-   netlify init
-   ```
+The build process includes several critical steps:
 
-4. Deploy your site:
-   ```
-   netlify deploy --prod
-   ```
+1. **Patching thor-devkit**: The `patch-thor-devkit.cjs` script modifies the thor-devkit library to work in the browser environment.
+2. **Building the application**: `npm run build` compiles and bundles the application.
+3. **Post-build processing**: `prepare-netlify.cjs` sets up necessary Netlify configuration files like `_redirects` and `_headers`.
 
-## Client-Side Routing Configuration
+## Important Notes
 
-To fix 404 errors with client-side routing, the project includes:
+- **Module Format**: The project uses ES modules by default. Build scripts use the `.cjs` extension to ensure proper CommonJS execution in the Netlify environment.
+- **Browser Compatibility**: Extensive polyfills are used to ensure compatibility with VeChain libraries in the browser.
+- **Redirects**: The deployment includes configuration for client-side routing via the `_redirects` file.
 
-1. A `netlify.toml` file with redirect rules
-2. A `public/_redirects` file as a backup
+## Troubleshooting
 
-These configurations tell Netlify to serve the `index.html` file for all routes, allowing the client-side router to handle them properly.
+Common issues and their solutions:
 
-## Security Considerations
+1. **White screen / app not loading**: Check browser console for missing polyfills or crypto-related errors.
+2. **API connectivity issues**: Ensure proper network selection (TestNet vs MainNet).
+3. **Build failures**: Look for issues with CommonJS/ESM compatibility in the build logs.
 
-1. Never commit private keys to the repository
-2. Use environment variables for sensitive information
-3. In production, always use a secure wallet connection rather than storing private keys
-4. Ensure proper headers are set in the `netlify.toml` file
+## Monitoring and Maintenance
 
-## Troubleshooting Deployment Issues
+After deployment:
 
-1. **404 Errors on Routes**: If you're still experiencing 404 errors on page refresh or direct URL access:
-   - Verify that the `netlify.toml` file was included in your deployment
-   - Check Netlify deploy logs for any errors
-   - Check that the publish directory in Netlify is set to `dist/public` (not just `dist`)
-   - Run the included `scripts/prepare-netlify.js` script manually after building:
-     ```
-     npm run build && node scripts/prepare-netlify.js
-     ```
-   - If all else fails, try adding the _redirects file manually through the Netlify dashboard:
-     1. Go to your site settings in Netlify
-     2. Navigate to "Deploys" > "Post processing" > "Redirects"
-     3. Add a rule from "/*" to "/index.html" with status code 200
+1. Check site functionality thoroughly
+2. Monitor error logs in the Netlify dashboard
+3. Set up notifications for build failures
 
-2. **Missing Environment Variables**: If wallet connections or API calls fail:
-   - Check that all environment variables are properly set in Netlify
-   - Ensure variable names match exactly what the application expects
-
-3. **Build Failures**: If the build process fails:
-   - Check Node.js version compatibility
-   - Verify all dependencies are installed correctly
-   - Look for polyfill issues that might affect the build process
-
-## Post-Deployment Verification
-
-After deployment, verify that:
-1. The application loads correctly on the root path
-2. Navigating to different routes directly works without 404 errors
-3. Wallet connections work
-4. NFT minting and trading functions operate as expected
-5. All APIs are responding properly
+For questions or additional support, refer to the project repository documentation.
