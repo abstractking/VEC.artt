@@ -7,6 +7,8 @@ import { useWallet } from "@/hooks/useVechain";
 import { useAuth } from "@/hooks/useAuth";
 import ThemeToggle from "@/components/ThemeToggle";
 import NotificationCenter from "@/components/NotificationCenter";
+import NetworkIndicator from "@/components/NetworkIndicator";
+import FaucetLink from "@/components/FaucetLink";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -129,10 +131,16 @@ export default function Header() {
                     
                     {/* Wallet Balance - Second item */}
                     <DropdownMenuItem asChild>
-                      <div className="flex items-center">
-                        <Wallet className="h-4 w-4 mr-2 text-green-600" />
-                        <span>{walletBalance.vet} VET</span>
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center">
+                          <Wallet className="h-4 w-4 mr-2 text-green-600" />
+                          <span>{walletBalance.vet} VET</span>
+                        </div>
+                        <NetworkIndicator />
                       </div>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <FaucetLink />
                     </DropdownMenuItem>
                     
                     <DropdownMenuSeparator />
