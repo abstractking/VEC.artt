@@ -381,6 +381,15 @@ export default function Create() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 pb-16">
+      {/* Transaction Confirmation Dialog */}
+      {transaction && (
+        <TransactionConfirmDialog
+          isOpen={showTxConfirm}
+          onClose={() => setShowTxConfirm(false)}
+          transaction={transaction}
+        />
+      )}
+      
       <div className="container mx-auto px-4">
         <div className="flex flex-col mb-10">
           <h1 className="text-3xl font-bold font-poppins text-secondary dark:text-white mb-2">
