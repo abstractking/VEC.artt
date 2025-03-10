@@ -60,43 +60,43 @@ export default function CreatorSpotlight() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {topCreators.length > 0 ? (
             topCreators.map((creator: User) => (
-              <div key={creator.id} className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-shadow flex flex-col items-center">
-                <div className="relative mb-4">
-                  <div className="w-20 h-20 rounded-full border-4 border-card shadow-md overflow-hidden bg-muted">
-                    {creator.profileImage ? (
-                      <img 
-                        src={creator.profileImage} 
-                        alt={creator.username} 
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary text-2xl font-bold">
-                        {creator.username.charAt(0).toUpperCase()}
-                      </div>
-                    )}
+              <Link href={`/profile/${creator.id}`} className="block w-full">
+                <div className="bg-card border border-border rounded-xl p-6 hover:shadow-md transition-shadow flex flex-col items-center h-full cursor-pointer">
+                  <div className="relative mb-4">
+                    <div className="w-20 h-20 rounded-full border-4 border-card shadow-md overflow-hidden bg-muted">
+                      {creator.profileImage ? (
+                        <img 
+                          src={creator.profileImage} 
+                          alt={creator.username} 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary text-2xl font-bold">
+                          {creator.username.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                    </div>
+                    <div className="absolute bottom-0 right-0 bg-primary rounded-full p-1">
+                      <i className="fas fa-check text-primary-foreground text-xs"></i>
+                    </div>
                   </div>
-                  <div className="absolute bottom-0 right-0 bg-primary rounded-full p-1">
-                    <i className="fas fa-check text-primary-foreground text-xs"></i>
+                  <h3 className="font-bold text-lg mb-1 text-foreground">{creator.username}</h3>
+                  <p className="text-muted-foreground text-sm mb-3">@{creator.username.toLowerCase()}</p>
+                  <div className="mb-4">
+                    <span className="text-primary font-semibold">285K VET</span>
+                    <span className="text-muted-foreground text-sm"> volume</span>
                   </div>
-                </div>
-                <h3 className="font-bold text-lg mb-1 text-foreground">{creator.username}</h3>
-                <p className="text-muted-foreground text-sm mb-3">@{creator.username.toLowerCase()}</p>
-                <div className="mb-4">
-                  <span className="text-primary font-semibold">285K VET</span>
-                  <span className="text-muted-foreground text-sm"> volume</span>
-                </div>
-                <div className="grid grid-cols-3 gap-2 w-full mb-4">
-                  {/* NFT thumbnails would go here in a real app */}
-                  <div className="w-full h-12 bg-muted rounded-md"></div>
-                  <div className="w-full h-12 bg-muted rounded-md"></div>
-                  <div className="w-full h-12 bg-muted rounded-md"></div>
-                </div>
-                <Link href={`/profile/${creator.id}`}>
-                  <Button variant="outline" className="w-full text-primary">
+                  <div className="grid grid-cols-3 gap-2 w-full mb-4">
+                    {/* NFT thumbnails would go here in a real app */}
+                    <div className="w-full h-12 bg-muted rounded-md"></div>
+                    <div className="w-full h-12 bg-muted rounded-md"></div>
+                    <div className="w-full h-12 bg-muted rounded-md"></div>
+                  </div>
+                  <div className="w-full py-2 px-4 bg-primary/10 text-primary font-medium rounded-md text-center">
                     View Profile
-                  </Button>
-                </Link>
-              </div>
+                  </div>
+                </div>
+              </Link>
             ))
           ) : (
             <div className="col-span-full text-center py-10">
