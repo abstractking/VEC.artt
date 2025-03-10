@@ -1,0 +1,44 @@
+ sh: 1: vite: not found
+2:34:04 PM: ​
+2:34:04 PM: "build.command" failed                                        
+2:34:04 PM: ────────────────────────────────────────────────────────────────
+2:34:04 PM: ​
+2:34:04 PM:   Error message
+2:34:04 PM:   Command failed with exit code 127: rm -rf node_modules/.cache && node scripts/patch-thor-devkit.cjs && node scripts/veworld-vendor-patch.cjs && npm run build && node scripts/prepare-netlify.cjs (https://ntl.fyi/exit-code-127)
+2:34:04 PM: ​
+2:34:04 PM:   Error location
+2:34:04 PM:   In build.command from netlify.toml:
+2:34:04 PM:   rm -rf node_modules/.cache && node scripts/patch-thor-devkit.cjs && node scripts/veworld-vendor-patch.cjs && npm run build && node scripts/prepare-netlify.cjs
+2:34:04 PM: ​
+2:34:04 PM:   Resolved config
+2:34:04 PM:   build:
+2:34:04 PM:     command: rm -rf node_modules/.cache && node scripts/patch-thor-devkit.cjs && node scripts/veworld-vendor-patch.cjs && npm run build && node scripts/prepare-netlify.cjs
+2:34:04 PM:     commandOrigin: config
+2:34:04 PM:     environment:
+2:34:04 PM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+2:34:04 PM:       - VITE_REACT_APP_VECHAIN_NETWORK
+2:34:04 PM:       - VITE_VECHAIN_EXPLORER_URL
+2:34:04 PM:       - VITE_VECHAIN_PRIVATE_KEY
+2:34:04 PM:       - NETLIFY_CACHE_BUST
+2:34:04 PM:       - NODE_ENV
+2:34:04 PM:     publish: /opt/build/repo/dist/public
+2:34:04 PM:     publishOrigin: config
+2:34:04 PM:   headers:
+2:34:04 PM:     - for: /*
+      values:
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: /assets/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+2:34:04 PM: Build failed due to a user error: Build script returned non-zero exit code: 2
+2:34:04 PM: Failing build: Failed to build site
+2:34:04 PM: Finished processing build request in 29.059s

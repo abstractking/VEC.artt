@@ -5,13 +5,15 @@
   # Where the built site is stored - Vite is building to dist/public
   publish = "dist/public"
   # The command to build the site - including patching, building, and post-build processing
-  command = "rm -rf node_modules/.cache && node scripts/patch-thor-devkit.cjs && node scripts/veworld-vendor-patch.cjs && npm run build && node scripts/prepare-netlify.cjs"
+  command = "rm -rf node_modules/.cache && npx node scripts/patch-thor-devkit.cjs && npx node scripts/veworld-vendor-patch.cjs && npm run build && npx node scripts/prepare-netlify.cjs"
 
 [build.environment]
   # Force a clean build of the project
   NETLIFY_CACHE_BUST = "true" 
   # Ensure cache is cleared
   NODE_ENV = "production"
+  # Make sure NPM installs all dev dependencies
+  NPM_FLAGS = "--production=false"
 
 # Redirects and rewrites
 [[redirects]]
