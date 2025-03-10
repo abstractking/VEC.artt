@@ -217,39 +217,37 @@ export const BADGES: Badge[] = [
 
 // Helper functions for badge system
 export function getUserBadges(user: User): Badge[] {
-  const userBadgeIds = (user.badges as UserBadge[] || []).map(b => b.id);
-  return BADGES.filter(badge => userBadgeIds.includes(badge.id));
+  if (!user) return [];
+  
+  // Since badges column doesn't exist in the database yet, 
+  // we'll determine badges based on user stats
+  return BADGES.filter(badge => badge.criteria(user));
 }
 
 export function getUnlockedBadges(user: User): Badge[] {
+  if (!user) return [];
   return BADGES.filter(badge => badge.criteria(user));
 }
 
 export function getNewlyUnlockedBadges(user: User): Badge[] {
-  const currentUserBadgeIds = (user.badges as UserBadge[] || []).map(b => b.id);
-  return BADGES.filter(badge => 
-    !currentUserBadgeIds.includes(badge.id) && badge.criteria(user)
-  );
+  if (!user) return [];
+  
+  // Since we can't track which badges were previously unlocked without the badges field,
+  // we'll return all unlocked badges as "new" for display purposes
+  // This will be fixed once the badges column is added to the database
+  return getUnlockedBadges(user);
 }
 
 export function updateUserBadges(user: User): { user: User, newBadges: Badge[] } {
+  if (!user) return { user, newBadges: [] };
+  
   const newBadges = getNewlyUnlockedBadges(user);
   
-  if (newBadges.length > 0) {
-    const newUserBadges: UserBadge[] = newBadges.map(badge => ({
-      id: badge.id,
-      unlockedAt: new Date()
-    }));
-    
-    const updatedUser = {
-      ...user,
-      badges: [...(user.badges as UserBadge[] || []), ...newUserBadges]
-    };
-    
-    return { user: updatedUser, newBadges };
-  }
+  // In a future database update, we would store the badges here
+  // For now, since the badges column doesn't exist, we'll just return the badges
+  // that would be unlocked without modifying the user object
   
-  return { user, newBadges: [] };
+  return { user, newBadges };
 }
 
 export function getBadgeById(badgeId: string): Badge | undefined {
