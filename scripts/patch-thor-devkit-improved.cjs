@@ -96,6 +96,17 @@ function patchFile(filePath) {
     modified = true;
   }
   
+  // Special case for thor-polyfills (which was causing the Netlify build error)
+  if (content.includes('../../../client/src/lib/thor-polyfills')) {
+    const absolutePath = path.resolve(rootDir, 'client/src/lib/thor-polyfills');
+    // Use client-side import path that will be properly resolved by Vite
+    content = content.replace(
+      /(from|require\()(['"])(?:\.\.\/){3}client\/src\/lib\/thor-polyfills(['")\s;])/g,
+      `$1$2/client/src/lib/thor-polyfills$3`
+    );
+    modified = true;
+  }
+  
   // Replace Node.js specific modules with browser-compatible versions
   const nodeModules = {
     'fs': null, // We'll skip this completely
@@ -188,6 +199,13 @@ const thorCrypto = {
   },
   createHmac: (algorithm, key) => {
     return cryptoBrowserify.createHmac(algorithm, key);
+  },
+  // Add other crypto functions used by thor-devkit
+  pbkdf2: (password, salt, iterations, keylen, digest, callback) => {
+    return cryptoBrowserify.pbkdf2(password, salt, iterations, keylen, digest, callback);
+  },
+  pbkdf2Sync: (password, salt, iterations, keylen, digest) => {
+    return cryptoBrowserify.pbkdf2Sync(password, salt, iterations, keylen, digest);
   }
 };
 
@@ -195,9 +213,17 @@ const thorCrypto = {
 export const randomBytes = thorCrypto.randomBytes;
 export const createHash = thorCrypto.createHash;
 export const createHmac = thorCrypto.createHmac;
+export const pbkdf2 = thorCrypto.pbkdf2;
+export const pbkdf2Sync = thorCrypto.pbkdf2Sync;
 
 // Default export
-export default thorCrypto;`;
+export default thorCrypto;
+
+// If we're in a browser environment, make the helpers available globally
+// This helps with direct imports in patched node_modules
+if (typeof window !== 'undefined') {
+  window.thorCrypto = thorCrypto;
+}`;
 
 fs.writeFileSync(path.join(clientLibDir, 'thor-polyfills.ts'), thorCryptoPolyfillContent);
 console.log(`✅ Created thor-devkit crypto polyfill: ${path.join(clientLibDir, 'thor-polyfills.ts')}`);

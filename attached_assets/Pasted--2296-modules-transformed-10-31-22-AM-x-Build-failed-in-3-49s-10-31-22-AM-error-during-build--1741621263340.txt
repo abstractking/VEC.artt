@@ -1,0 +1,70 @@
+✓ 2296 modules transformed.
+10:31:22 AM: x Build failed in 3.49s
+10:31:22 AM: error during build:
+10:31:22 AM: Could not resolve "../../../client/src/lib/thor-polyfills" from "node_modules/@vechain/connex-driver/esm/driver.js"
+10:31:22 AM: file: /opt/build/repo/node_modules/@vechain/connex-driver/esm/driver.js
+10:31:22 AM:     at getRollupError (file:///opt/build/repo/node_modules/rollup/dist/es/shared/parseAst.js:396:41)
+10:31:22 AM:     at error (file:///opt/build/repo/node_modules/rollup/dist/es/shared/parseAst.js:392:42)
+10:31:22 AM:     at ModuleLoader.handleInvalidResolvedId (file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:20065:24)
+10:31:22 AM:     at file:///opt/build/repo/node_modules/rollup/dist/es/shared/node-entry.js:20025:26
+10:31:22 AM: ​
+10:31:22 AM: "build.command" failed                                        
+10:31:22 AM: ────────────────────────────────────────────────────────────────
+10:31:22 AM: ​
+10:31:22 AM:   Error message
+10:31:22 AM:   Command failed with exit code 1: NODE_ENV=development npm ci && node scripts/patch-thor-devkit.cjs && npm run build (https://ntl.fyi/exit-code-1)
+10:31:22 AM: ​
+10:31:22 AM:   Error location
+10:31:22 AM:   In build.command from netlify.toml:
+10:31:22 AM:   NODE_ENV=development npm ci && node scripts/patch-thor-devkit.cjs && npm run build
+10:31:22 AM: ​
+10:31:22 AM:   Resolved config
+10:31:22 AM:   build:
+10:31:22 AM:     command: NODE_ENV=development npm ci && node scripts/patch-thor-devkit.cjs && npm run build
+10:31:22 AM:     commandOrigin: config
+10:31:22 AM:     environment:
+10:31:22 AM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+10:31:22 AM:       - VITE_REACT_APP_VECHAIN_NETWORK
+10:31:22 AM:       - VITE_VECHAIN_PRIVATE_KEY
+10:31:22 AM:       - NODE_VERSION
+10:31:22 AM:       - NODE_ENV
+10:31:22 AM:     publish: /opt/build/repo/dist
+10:31:22 AM:     publishOrigin: config
+10:31:22 AM:   headers:
+10:31:22 AM:     - for: /*
+      values:
+        Cache-Control: public, max-age=31536000, must-revalidate
+        Content-Security-Policy: |-
+          default-src 'self'; 
+                connect-src 'self' https://testnet.veblocks.net https://mainnet.veblocks.net wss://testnet.veblocks.net/socket wss://mainnet.veblocks.net/socket wss://*.replit.dev wss://*.netlify.app https://*.netlify.app; 
+                script-src 'self' 'unsafe-inline' 'unsafe-eval'; 
+                style-src 'self' 'unsafe-inline'; 
+                img-src 'self' data: blob: https:; 
+                font-src 'self' data:; 
+                object-src 'none';
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: '*.js'
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+    - for: '*.css'
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+    - for: /images/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /api/*
+      status: 200
+      to: /.netlify/functions/api/:splat
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+10:31:22 AM: Build failed due to a user error: Build script returned non-zero exit code: 2
+10:31:23 AM: Failing build: Failed to build site
+10:31:25 AM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)
+10:31:25 AM: Finished processing build request in 1m1.629s
