@@ -20,8 +20,10 @@ Before deploying, ensure you have:
 3. Connect to your Git provider (GitHub, GitLab, etc.)
 4. Select your VeCollab repository
 5. Keep the default settings from the `netlify.toml` file:
-   - Build command: `npm run build`
+   - Build command: `npm ci && npm run build` (ensures dependencies are installed first)
    - Publish directory: `dist`
+
+> **Important**: The build command explicitly includes `npm ci` to ensure all dependencies are installed properly before running the build. Without this, you might encounter `vite: not found` errors during deployment.
 
 ### 2. Configure Environment Variables
 
@@ -49,6 +51,24 @@ After deployment, verify the following:
 4. Verify blockchain interactions are working as expected
 
 ## Troubleshooting
+
+### Build Errors
+
+#### "vite: not found" Error
+
+If you encounter a build error like this:
+```
+sh: 1: vite: not found
+Error message: Command failed with exit code 127: npm run build
+```
+
+Solutions:
+1. Make sure your `netlify.toml` file includes `npm ci` before the build command:
+   ```toml
+   command = "npm ci && npm run build"
+   ```
+2. Check that `vite` is included in your package.json's devDependencies
+3. Verify your Node.js version in Netlify is compatible (we recommend Node 18+)
 
 ### WebSocket Connection Issues
 
