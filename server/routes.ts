@@ -702,6 +702,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: 'Failed to retrieve transactions' });
     }
   });
+  
+  // Custom notification endpoint for handling transaction events from client
+  app.post('/api/notifications', async (req: Request, res: Response) => {
+    try {
+      const { userId, type, status, txId, metadata, timestamp } = req.body;
+      
+      if (!userId || !type || !status) {
+        return res.status(400).json({ error: 'Missing required notification fields' });
+      }
+      
+      // Validate user exists
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      
+      // Generate notification message based on transaction type and status
+      let message = '';
+      let notificationType = 'transaction';
+      
+      // Process different transaction types and statuses
+      if (status === 'initiated') {
+        message = `Your ${type} transaction has been initiated and is awaiting confirmation.`;
+      } else if (status === 'completed') {
+        switch(type) {
+          case 'mint':
+            message = `Successfully minted your new NFT${metadata?.nftName ? ` "${metadata.nftName}"` : ''}!`;
+            notificationType = 'mint';
+            break;
+          case 'buy':
+            message = `Successfully purchased NFT${metadata?.nftName ? ` "${metadata.nftName}"` : ''} for ${metadata?.price || ''} ${metadata?.currency || 'VET'}!`;
+            notificationType = 'sale';
+            break;
+          case 'sell':
+            message = `Successfully listed NFT${metadata?.nftName ? ` "${metadata.nftName}"` : ''} for ${metadata?.price || ''} ${metadata?.currency || 'VET'}!`;
+            notificationType = 'listing';
+            break;
+          case 'bid':
+            message = `Your bid of ${metadata?.price || ''} ${metadata?.currency || 'VET'} was successfully placed!`;
+            notificationType = 'bid';
+            break;
+          case 'transfer':
+            message = `Successfully transferred NFT${metadata?.nftName ? ` "${metadata.nftName}"` : ''} to ${metadata?.recipient || 'recipient'}!`;
+            notificationType = 'transfer';
+            break;
+          default:
+            message = `Your ${type} transaction was completed successfully!`;
+        }
+      } else if (status === 'failed') {
+        message = `Your ${type} transaction has failed. Please try again.`;
+      }
+      
+      // Create notification object
+      const notification = {
+        id: generateId(),
+        notificationType,
+        message,
+        timestamp: timestamp || new Date().toISOString(),
+        txId,
+        metadata
+      };
+      
+      // Log notification for debugging
+      console.log(`Sending notification to user #${userId}:`, notification.message);
+      
+      // Send notification through WebSocket
+      sendNotification(userId, notification);
+      
+      // Respond to client
+      res.status(200).json({ 
+        success: true,
+        notification
+      });
+    } catch (err: any) {
+      console.error('Notification error:', err);
+      res.status(500).json({ error: err.message });
+    }
+  });
 
   return httpServer;
 }

@@ -93,8 +93,9 @@ export default function NotificationCenter() {
             setNotifications((prev) => [newNotification, ...prev].slice(0, 50)); // Keep last 50 notifications
             setUnreadCount((prev) => prev + 1);
             
-            // Show browser notification if permission is granted
-            if (Notification.permission === "granted" && !document.hasFocus()) {
+            // Show browser notification if supported and permission is granted
+            if (typeof window !== 'undefined' && 'Notification' in window && 
+                Notification.permission === "granted" && !document.hasFocus()) {
               new Notification("VeCollab Marketplace", { 
                 body: newNotification.message,
                 icon: "/logo.svg" 
@@ -122,8 +123,9 @@ export default function NotificationCenter() {
     
     connectWebSocket();
     
-    // Request notification permission
-    if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+    // Request notification permission if browser supports it
+    if (typeof window !== 'undefined' && 'Notification' in window && 
+        Notification.permission !== "granted" && Notification.permission !== "denied") {
       Notification.requestPermission();
     }
     
