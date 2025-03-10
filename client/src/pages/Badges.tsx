@@ -119,14 +119,16 @@ export default function Badges() {
               </div>
 
               <Tabs defaultValue="all">
-                <TabsList className="mb-6">
-                  <TabsTrigger value="all">All Badges</TabsTrigger>
-                  <TabsTrigger value="creator">Creator</TabsTrigger>
-                  <TabsTrigger value="collector">Collector</TabsTrigger>
-                  <TabsTrigger value="trader">Trader</TabsTrigger>
-                  <TabsTrigger value="community">Community</TabsTrigger>
-                  <TabsTrigger value="achievement">Achievements</TabsTrigger>
-                </TabsList>
+                <div className="overflow-x-auto pb-2">
+                  <TabsList className="mb-6 w-full flex-nowrap overflow-x-auto">
+                    <TabsTrigger value="all">All Badges</TabsTrigger>
+                    <TabsTrigger value="creator">Creator</TabsTrigger>
+                    <TabsTrigger value="collector">Collector</TabsTrigger>
+                    <TabsTrigger value="trader">Trader</TabsTrigger>
+                    <TabsTrigger value="community">Community</TabsTrigger>
+                    <TabsTrigger value="achievement">Achievements</TabsTrigger>
+                  </TabsList>
+                </div>
                 
                 <TabsContent value="all">
                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
-import { Menu, X, Search, LogOut, Wallet, Trophy } from "lucide-react";
+import { Menu, X, Search, LogOut, Wallet, Trophy, User, BadgeCheck, ScrollText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useWallet } from "@/hooks/useVechain";
@@ -11,8 +11,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Header() {
   const [, navigate] = useLocation();
@@ -82,13 +84,14 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* Desktop Search */}
-          <div className="hidden md:flex items-center relative">
+          {/* Desktop Search and Notification */}
+          <div className="hidden md:flex items-center space-x-2">
+            {isConnected && <NotificationCenter />}
             <form onSubmit={handleSearch} className="relative">
               <Input
                 type="text"
-                placeholder="Search items, collections, and accounts"
-                className="border border-input rounded-full px-4 py-2 pl-10 w-64 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                placeholder="Search items..."
+                className="border border-input rounded-full px-4 py-2 pl-10 w-48 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -101,23 +104,6 @@ export default function Header() {
             <div className="hidden md:block">
               <ThemeToggle />
             </div>
-            
-            {/* Notification Center */}
-            {isConnected && (
-              <div className="hidden md:block">
-                <NotificationCenter />
-              </div>
-            )}
-            
-            {/* Wallet Balance for Desktop */}
-            {isConnected && (
-              <div className="hidden md:flex items-center bg-muted/50 rounded-full px-3 py-1.5 mr-2">
-                <Wallet className="h-4 w-4 text-primary mr-1.5" />
-                <span className="text-sm font-medium">
-                  {walletBalance.vet} VET
-                </span>
-              </div>
-            )}
             
             {isConnected ? (
               <DropdownMenu>
@@ -132,31 +118,69 @@ export default function Header() {
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem asChild>
-                    <Link href={user ? `/profile/${user.id}` : "/profile"} className="cursor-pointer">
-                      Profile
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/create" className="cursor-pointer">
-                      Create NFT
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/badges" className="cursor-pointer flex items-center">
-                      <Trophy className="h-4 w-4 mr-2 text-amber-500" />
-                      Achievement Badges
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <div 
-                      className="flex items-center text-destructive cursor-pointer"
-                      onClick={handleDisconnectWallet}
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Disconnect Wallet
-                    </div>
-                  </DropdownMenuItem>
+                  <ScrollArea className="h-80 rounded-md">
+                    {/* Profile - First in the list */}
+                    <DropdownMenuItem asChild>
+                      <Link href={user ? `/profile/${user.id}` : "/profile"} className="cursor-pointer flex items-center">
+                        <User className="h-4 w-4 mr-2 text-primary" />
+                        Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    
+                    {/* Wallet Balance - Second item */}
+                    <DropdownMenuItem asChild>
+                      <div className="flex items-center">
+                        <Wallet className="h-4 w-4 mr-2 text-green-600" />
+                        <span>{walletBalance.vet} VET</span>
+                      </div>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Artist section with Achievements underneath */}
+                    <DropdownMenuItem asChild>
+                      <Link href="/artists" className="cursor-pointer flex items-center">
+                        <BadgeCheck className="h-4 w-4 mr-2 text-blue-500" />
+                        Artists
+                      </Link>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem asChild>
+                      <Link href="/badges" className="cursor-pointer flex items-center pl-6">
+                        <Trophy className="h-4 w-4 mr-2 text-amber-500" />
+                        Achievements
+                      </Link>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Other menu items */}
+                    <DropdownMenuItem asChild>
+                      <Link href="/create" className="cursor-pointer flex items-center">
+                        <ScrollText className="h-4 w-4 mr-2 text-purple-500" />
+                        Create NFT
+                      </Link>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem asChild>
+                      <Link href="/explore" className="cursor-pointer flex items-center">
+                        <Search className="h-4 w-4 mr-2 text-blue-400" />
+                        Explore
+                      </Link>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    <DropdownMenuItem asChild>
+                      <div 
+                        className="flex items-center text-destructive cursor-pointer"
+                        onClick={handleDisconnectWallet}
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Disconnect Wallet
+                      </div>
+                    </DropdownMenuItem>
+                  </ScrollArea>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
@@ -186,62 +210,24 @@ export default function Header() {
       {/* Mobile Menu */}
       <div className={`md:hidden bg-background ${isMenuOpen ? 'block' : 'hidden'}`}>
         <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-col space-y-4">
-            <form onSubmit={handleSearch} className="relative">
-              <Input
-                type="text"
-                placeholder="Search items, collections, and accounts"
-                className="border border-input rounded-full px-4 py-2 pl-10 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <Search className="absolute left-3 top-2.5 text-muted-foreground h-5 w-5" />
-            </form>
-            
-            <Link 
-              href="/" 
-              className="font-medium text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Home
-            </Link>
-            
-            <Link 
-              href="/explore" 
-              className="font-medium text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Explore
-            </Link>
-            
-            <Link 
-              href="/create" 
-              className="font-medium text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Create
-            </Link>
-            
-            <Link 
-              href="/artists" 
-              className="font-medium text-foreground hover:text-primary transition-colors py-2"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Artists
-            </Link>
-            
-            {/* Wallet balance for mobile */}
-            {isConnected && (
-              <div className="flex items-center bg-muted/50 rounded-full px-3 py-1.5">
-                <Wallet className="h-4 w-4 text-primary mr-1.5" />
-                <span className="text-sm font-medium">
-                  {walletBalance.vet} VET
-                </span>
+          <ScrollArea className="h-[calc(100vh-6rem)] pr-4">
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center space-x-2 pb-3">
+                {isConnected && <NotificationCenter />}
+                <form onSubmit={handleSearch} className="relative flex-1">
+                  <Input
+                    type="text"
+                    placeholder="Search items..."
+                    className="border border-input rounded-full px-4 py-2 pl-10 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <Search className="absolute left-3 top-2.5 text-muted-foreground h-5 w-5" />
+                </form>
               </div>
-            )}
-            
-            {isConnected ? (
-              <>
+              
+              {/* Profile section - top priority */}
+              {isConnected && (
                 <Link 
                   href={user ? `/profile/${user.id}` : "/profile"}
                   className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
@@ -252,16 +238,70 @@ export default function Header() {
                   </div>
                   <span>{user?.username || "Profile"}</span>
                 </Link>
-                
-                <Link 
-                  href="/badges"
-                  className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <Trophy className="h-5 w-5 mr-2 text-amber-500" />
-                  Achievement Badges
-                </Link>
-                
+              )}
+              
+              {/* Wallet balance for mobile */}
+              {isConnected && (
+                <div className="flex items-center bg-muted/50 rounded-full px-3 py-1.5">
+                  <Wallet className="h-4 w-4 text-green-600 mr-1.5" />
+                  <span className="text-sm font-medium">
+                    {walletBalance.vet} VET
+                  </span>
+                </div>
+              )}
+              
+              <div className="h-px w-full bg-border my-2"></div>
+              
+              <Link 
+                href="/" 
+                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Search className="h-5 w-5 mr-2 text-blue-400" />
+                Home
+              </Link>
+
+              <Link 
+                href="/artists" 
+                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <BadgeCheck className="h-5 w-5 mr-2 text-blue-500" />
+                Artists
+              </Link>
+              
+              <Link 
+                href="/badges"
+                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center pl-6"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Trophy className="h-5 w-5 mr-2 text-amber-500" />
+                Achievements
+              </Link>
+              
+              <div className="h-px w-full bg-border my-2"></div>
+              
+              <Link 
+                href="/explore" 
+                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Search className="h-5 w-5 mr-2 text-primary" />
+                Explore
+              </Link>
+              
+              <Link 
+                href="/create" 
+                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <ScrollText className="h-5 w-5 mr-2 text-purple-500" />
+                Create
+              </Link>
+              
+              <div className="h-px w-full bg-border my-2"></div>
+              
+              {isConnected ? (
                 <div 
                   className="flex items-center text-destructive font-medium py-2 cursor-pointer"
                   onClick={handleDisconnectWallet}
@@ -269,27 +309,20 @@ export default function Header() {
                   <LogOut className="h-5 w-5 mr-2" />
                   Disconnect Wallet
                 </div>
-              </>
-            ) : (
-              <Button
-                onClick={handleConnectWallet}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                Connect Wallet
-              </Button>
-            )}
-            
-            {/* Mobile Notification Center */}
-            {isConnected && (
-              <div className="py-2">
-                <NotificationCenter />
+              ) : (
+                <Button
+                  onClick={handleConnectWallet}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  Connect Wallet
+                </Button>
+              )}
+              
+              <div className="flex justify-center py-2">
+                <ThemeToggle />
               </div>
-            )}
-            
-            <div className="flex justify-center py-2">
-              <ThemeToggle />
             </div>
-          </div>
+          </ScrollArea>
         </div>
       </div>
     </header>

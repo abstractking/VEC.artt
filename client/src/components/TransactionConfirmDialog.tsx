@@ -372,14 +372,16 @@ export default function TransactionConfirmDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{transaction.title}</DialogTitle>
         </DialogHeader>
         
-        {renderContent()}
+        <div className="my-2 overflow-y-auto">
+          {renderContent()}
+        </div>
         
-        <DialogFooter className="flex space-x-2">
+        <DialogFooter className="flex flex-col sm:flex-row gap-2 sm:gap-0 sm:space-x-2 mt-4 pt-2 border-t">
           {renderFooter()}
         </DialogFooter>
       </DialogContent>
