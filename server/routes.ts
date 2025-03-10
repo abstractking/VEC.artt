@@ -807,5 +807,111 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // VeChain Network Proxy Endpoints
+  // These endpoints solve CORS issues by proxying requests to VeChain nodes
+
+  // Define VeChain node URLs
+  const VECHAIN_NODES = {
+    mainnet: 'https://sync-mainnet.vechain.org',
+    testnet: 'https://sync-testnet.vechain.org'
+  };
+
+  // Generic proxy middleware for VeChain API requests
+  const veChainProxy = async (req: Request, res: Response, network: 'mainnet' | 'testnet') => {
+    try {
+      const baseUrl = VECHAIN_NODES[network];
+      const path = req.path.replace(`/api/vechain/${network}`, '');
+      const url = `${baseUrl}${path}`;
+      
+      console.log(`[VeChain Proxy] Forwarding request to: ${url}`);
+      
+      const params = new URLSearchParams();
+      for (const [key, value] of Object.entries(req.query)) {
+        params.append(key, value as string);
+      }
+      
+      const queryString = params.toString();
+      const fullUrl = queryString ? `${url}?${queryString}` : url;
+      
+      const options: any = {
+        method: req.method,
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      };
+      
+      // Forward request body for non-GET requests
+      if (req.method !== 'GET' && req.body) {
+        options.body = JSON.stringify(req.body);
+      }
+      
+      const response = await fetch(fullUrl, options);
+      const data = await response.json();
+      
+      res.status(response.status).json(data);
+    } catch (error: any) {
+      console.error('[VeChain Proxy] Error:', error);
+      res.status(500).json({ 
+        error: 'Failed to proxy request to VeChain node',
+        message: error.message
+      });
+    }
+  };
+
+  // Proxy routes for VeChain TestNet
+  app.get('/api/vechain/testnet/*', (req: Request, res: Response) => {
+    veChainProxy(req, res, 'testnet');
+  });
+  
+  app.post('/api/vechain/testnet/*', (req: Request, res: Response) => {
+    veChainProxy(req, res, 'testnet');
+  });
+
+  // Proxy routes for VeChain MainNet
+  app.get('/api/vechain/mainnet/*', (req: Request, res: Response) => {
+    veChainProxy(req, res, 'mainnet');
+  });
+  
+  app.post('/api/vechain/mainnet/*', (req: Request, res: Response) => {
+    veChainProxy(req, res, 'mainnet');
+  });
+
+  // Specific endpoints for commonly used VeChain API endpoints
+  app.get('/api/vechain/best-block', async (req: Request, res: Response) => {
+    try {
+      const network = req.query.network === 'main' ? 'mainnet' : 'testnet';
+      const response = await fetch(`${VECHAIN_NODES[network]}/blocks/best`);
+      const data = await response.json();
+      res.json(data);
+    } catch (error: any) {
+      console.error('[VeChain API] Error fetching best block:', error);
+      res.status(500).json({ 
+        error: 'Failed to fetch best block',
+        message: error.message
+      });
+    }
+  });
+
+  app.get('/api/vechain/genesis-id', async (req: Request, res: Response) => {
+    try {
+      const network = req.query.network === 'main' ? 'mainnet' : 'testnet';
+      // For TestNet, the genesis block is block 0
+      const blockNum = '0';
+      const response = await fetch(`${VECHAIN_NODES[network]}/blocks/${blockNum}`);
+      const data = await response.json();
+      res.json({
+        genesisId: data.id,
+        network: network
+      });
+    } catch (error: any) {
+      console.error('[VeChain API] Error fetching genesis ID:', error);
+      res.status(500).json({ 
+        error: 'Failed to fetch genesis ID',
+        message: error.message
+      });
+    }
+  });
+
   return httpServer;
 }
