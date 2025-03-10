@@ -9,6 +9,7 @@ interface WalletContextType {
   isModalOpen: boolean;
   error: string | null;
   useRealWallet: boolean;
+  walletType: string | null;
   walletBalance: {
     vet: string;
     vtho: string;
@@ -127,34 +128,68 @@ export function WalletProvider({ children }: WalletProviderProps) {
     setError(null);
     
     try {
-      // On Netlify, always force real wallet mode
+      // On Netlify, always force real wallet mode and use the specific wallet provider
       if (isNetlify) {
         console.log("Netlify environment detected, forcing real wallet mode");
         
-        // Check if Thor wallet extension is available
-        if (typeof window !== 'undefined' && (window as any).thor) {
-          // Connect to VeChain wallet
-          const result = await connectVeChainWallet();
+        try {
+          // Connect to the specified wallet type
+          const result = await connectVeChainWallet(walletType);
           
           console.log("Wallet Connect Result:", result); // Debug log to check result structure
           
-          if (result && result.vendor && result.vendor.address) {
-            console.log("Setting wallet address to:", result.vendor.address);
-            setWalletAddress(result.vendor.address);
-            setIsConnected(true);
-            setModalOpen(false);
+          if (result && result.vendor) {
+            // Handle desktop wallets that might not immediately provide an address
+            if (walletType === 'sync' || walletType === 'sync2') {
+              const walletName = walletType === 'sync2' ? 'Sync2' : 'Sync';
+              setWalletType(walletType);
+              
+              // For desktop wallets, we don't get an immediate address
+              // We'll set a temporary state and show instructions to the user
+              toast({
+                title: `${walletName} Connection Instructions`,
+                description: `Please open ${walletName} desktop application and approve the connection request.`,
+                duration: 10000, // Show for longer
+              });
+              
+              // Return early - the user will need to handle the connection in the desktop app
+              setIsConnecting(false);
+              return;
+            }
             
-            toast({
-              title: "Wallet Connected",
-              description: `Connected to ${walletType || 'VeChain'} wallet on TestNet`,
-            });
+            // Handle browser wallets (VeWorld, Thor) that provide an address immediately
+            if (result.vendor.address) {
+              console.log("Setting wallet address to:", result.vendor.address);
+              setWalletAddress(result.vendor.address);
+              setIsConnected(true);
+              setWalletType(walletType || 'thor');
+              setModalOpen(false);
+              
+              toast({
+                title: "Wallet Connected",
+                description: `Connected to ${walletType || 'VeChain'} wallet on TestNet`,
+              });
+            } else {
+              console.error("Wallet vendor doesn't have an address:", result);
+              throw new Error("Connected to wallet but no address was provided");
+            }
           } else {
             console.error("Wallet connect response does not match expected structure:", result);
             throw new Error("Failed to connect wallet");
           }
-        } else {
-          // Thor wallet not available, show more helpful message with TestNet info
-          throw new Error("VeChain Thor wallet extension not detected. Please install the VeChain Thor wallet extension, configure it for TestNet, and refresh the page.");
+        } catch (err: any) {
+          console.error("Specific wallet connection error:", err);
+          
+          // Provide more helpful error messages based on wallet type
+          if (walletType === 'veworld') {
+            throw new Error("VeWorld wallet extension not detected or connection rejected. Please install the VeWorld extension for your browser, configure it for TestNet, and try again.");
+          } else if (walletType === 'thor') {
+            throw new Error("VeChain Thor wallet extension not detected or connection rejected. Please install the Thor wallet extension, configure it for TestNet, and try again.");
+          } else if (walletType === 'sync' || walletType === 'sync2') {
+            throw new Error(`${walletType === 'sync2' ? 'Sync2' : 'Sync'} desktop application connection failed. Please ensure the application is installed and running.`);
+          } else {
+            throw new Error(`Wallet connection failed: ${err.message}`);
+          }
         }
         return;
       }
@@ -164,6 +199,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
         console.log("Using mock wallet connection with address:", testWalletAddress);
         setWalletAddress(testWalletAddress);
         setIsConnected(true);
+        setWalletType('debug');
         setModalOpen(false);
         
         toast({
@@ -173,19 +209,36 @@ export function WalletProvider({ children }: WalletProviderProps) {
         return;
       }
       
-      // If using real wallet, need Thor wallet extension
+      // If using real wallet, connect to the specified wallet type
       if (useRealWallet) {
-        // Check if Thor wallet extension is available
-        if (typeof window !== 'undefined' && (window as any).thor) {
-          // Connect to VeChain wallet
-          const result = await connectVeChainWallet();
+        // Connect to the specified wallet
+        const result = await connectVeChainWallet(walletType);
+        
+        console.log("Wallet Connect Result:", result);
+        
+        if (result && result.vendor) {
+          // For desktop wallets that don't provide an immediate address
+          if (walletType === 'sync' || walletType === 'sync2') {
+            const walletName = walletType === 'sync2' ? 'Sync2' : 'Sync';
+            setWalletType(walletType);
+            
+            toast({
+              title: `${walletName} Connection Instructions`,
+              description: `Please open ${walletName} desktop application and approve the connection request.`,
+              duration: 10000, // Show for longer
+            });
+            
+            // Return early
+            setIsConnecting(false);
+            return;
+          }
           
-          console.log("Wallet Connect Result:", result); // Debug log to check result structure
-          
-          if (result && result.vendor && result.vendor.address) {
+          // For browser wallets with immediate address
+          if (result.vendor.address) {
             console.log("Setting wallet address to:", result.vendor.address);
             setWalletAddress(result.vendor.address);
             setIsConnected(true);
+            setWalletType(walletType || 'thor');
             setModalOpen(false);
             
             toast({
@@ -193,18 +246,19 @@ export function WalletProvider({ children }: WalletProviderProps) {
               description: `Connected to ${walletType || 'VeChain'} wallet`,
             });
           } else {
-            console.error("Wallet connect response does not match expected structure:", result);
-            throw new Error("Failed to connect wallet");
+            console.error("Wallet vendor doesn't have an address:", result);
+            throw new Error("Connected to wallet but no address was provided");
           }
         } else {
-          // Thor wallet not available, show more helpful message
-          throw new Error("VeChain Thor wallet extension not detected. Please install the VeChain Thor wallet extension and refresh the page.");
+          console.error("Wallet connect response does not match expected structure:", result);
+          throw new Error("Failed to connect wallet");
         }
       } else {
         // In production without real wallet mode, use a mock wallet connection
         console.log("Using mock wallet connection in production with address:", testWalletAddress);
         setWalletAddress(testWalletAddress);
         setIsConnected(true);
+        setWalletType('debug');
         setModalOpen(false);
         
         toast({
@@ -289,6 +343,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
     isModalOpen,
     error,
     useRealWallet,
+    walletType,
     walletBalance,
     connectWallet,
     disconnectWallet,

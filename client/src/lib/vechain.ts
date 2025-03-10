@@ -346,9 +346,10 @@ export const connectWalletWithEnvKey = async () => {
 };
 
 // Connect to wallet
-export const connectWallet = async (privateKey?: string) => {
+export const connectWallet = async (walletType: string = 'thor', privateKey?: string) => {
   try {
     const network = getNetwork();
+    console.log(`Connecting to ${walletType} wallet type on ${network.name}...`);
     
     // If private key is provided directly, use it to create a wallet
     if (privateKey) {
@@ -423,6 +424,130 @@ export const connectWallet = async (privateKey?: string) => {
       };
       
       return { connex: framework, vendor };
+    }
+    
+    // Handle different wallet types
+    switch(walletType.toLowerCase()) {
+      case 'veworld':
+        // Support for VeWorld wallet
+        if (typeof window !== 'undefined' && (window as any).vechain) {
+          try {
+            console.log("Connecting to VeWorld wallet...");
+            const vendor = await (window as any).vechain.enable();
+            if (!vendor) {
+              throw new Error("Failed to enable VeWorld wallet");
+            }
+            const connex = await getConnex();
+            return { connex, vendor };
+          } catch (error) {
+            console.error("VeWorld wallet connection error:", error);
+            throw new Error("VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.");
+          }
+        } else {
+          throw new Error("VeWorld wallet extension not detected. Please install the VeWorld wallet extension, configure it for TestNet, and refresh the page.");
+        }
+        
+      case 'thor':
+        // Support for VeChainThor wallet extension
+        if (typeof window !== 'undefined' && (window as any).thor) {
+          try {
+            console.log("Connecting to VeChainThor wallet...");
+            const vendor = await (window as any).thor.enable();
+            if (!vendor) {
+              throw new Error("Failed to enable VeChainThor wallet");
+            }
+            const connex = await getConnex();
+            return { connex, vendor };
+          } catch (error) {
+            console.error("Thor wallet connection error:", error);
+            throw new Error("Thor wallet not available or connection rejected. Please ensure the Thor wallet extension is installed properly.");
+          }
+        } else {
+          throw new Error("VeChainThor wallet extension not detected. Please install the VeChainThor wallet extension, configure it for TestNet, and refresh the page.");
+        }
+        
+      case 'sync':
+      case 'sync2':
+        // Sync and Sync2 are desktop applications
+        try {
+          console.log(`Opening ${walletType} desktop application...`);
+          
+          // Construct the URI to open the desktop application
+          const isSyncV2 = walletType.toLowerCase() === 'sync2';
+          const connex = await getConnex();
+          
+          // Create a popup with instructions for users
+          if (typeof window !== 'undefined') {
+            // For desktop wallets, we need to inform the user to open their app
+            alert(`Please open your ${isSyncV2 ? 'Sync2' : 'Sync'} application to connect.\n\nIf you don't have it installed, please download it from the VeChain website.`);
+            
+            // We'll need to provide instructions for the user to follow in the desktop app
+            // This is a simplified approach as we can't directly integrate with desktop apps
+            // In a production environment, you might want to implement a more sophisticated solution
+            
+            // For now, we'll implement a basic check for when users manually connect
+            // This won't actually connect automatically, but it provides a better UX than just an error
+            
+            return {
+              connex,
+              vendor: {
+                address: null, // Will be filled when user manually connects
+                name: isSyncV2 ? 'Sync2' : 'Sync',
+                sign: async () => {
+                  throw new Error(`Please use your ${isSyncV2 ? 'Sync2' : 'Sync'} application to sign this transaction`);
+                },
+                signCert: async () => {
+                  throw new Error(`Please use your ${isSyncV2 ? 'Sync2' : 'Sync'} application to sign this certificate`);
+                }
+              }
+            };
+          } else {
+            throw new Error(`${walletType} desktop application connection is not supported in this environment`);
+          }
+        } catch (error) {
+          console.error(`${walletType} connection error:`, error);
+          throw new Error(`Could not connect to ${walletType} desktop application. Please ensure it's installed and running.`);
+        }
+      
+      case 'walletconnect':
+        // Support for WalletConnect protocol
+        try {
+          console.log("Connecting via WalletConnect...");
+          // WalletConnect implementation would go here
+          throw new Error("WalletConnect integration is still in development for VeChain.");
+        } catch (error) {
+          console.error("WalletConnect error:", error);
+          throw new Error("WalletConnect is not yet fully supported for VeChain integration.");
+        }
+        
+      case 'debug':
+        // Special debug wallet for testing only
+        console.log("Using debug wallet for development testing");
+        
+        // Create a mock vendor and connex for testing
+        const vendor = mockVendor();
+        const connex = mockConnex();
+        
+        return { connex, vendor };
+        
+      default:
+        // Default to Thor wallet if type not specified
+        console.log("Defaulting to Thor wallet type");
+        if (typeof window !== 'undefined' && (window as any).thor) {
+          try {
+            const vendor = await (window as any).thor.enable();
+            if (!vendor) {
+              throw new Error("Failed to enable Thor wallet");
+            }
+            const connex = await getConnex();
+            return { connex, vendor };
+          } catch (error) {
+            console.error("Default wallet connection error:", error);
+            throw new Error("Wallet not available or connection rejected");
+          }
+        } else {
+          throw new Error("No compatible wallet detected. Please install a VeChain wallet extension.");
+        }
     }
     
     // For the Replit environment or development mode, use private key from environment if available
