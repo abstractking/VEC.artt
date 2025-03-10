@@ -96,6 +96,7 @@ export const NETWORKS = {
     url: 'https://mainnet.veblocks.net', // More reliable HTTP endpoint
     socketUrl: 'wss://mainnet.veblocks.net/socket', // WebSocket endpoint
     chainId: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
+    genesisId: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
     name: 'MainNet'
   },
   test: {
@@ -103,12 +104,14 @@ export const NETWORKS = {
     url: 'https://testnet.veblocks.net', // More reliable HTTP endpoint
     socketUrl: 'wss://testnet.veblocks.net/socket', // WebSocket endpoint
     chainId: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
+    genesisId: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
     name: 'TestNet'
   },
   solo: {
     // Local solo network for development (if needed)
     url: 'http://localhost:8669',
     chainId: '0x00000000973ceb7f343a58b08f0693d6701a5fd354ff73dc1bcfb261a985b234',
+    genesisId: '0x00000000973ceb7f343a58b08f0693d6701a5fd354ff73dc1bcfb261a985b234',
     name: 'Solo'
   }
 };
@@ -124,6 +127,7 @@ export type VeChainNetwork = {
   url: string;
   socketUrl?: string;
   chainId: string;
+  genesisId?: string;
   name: string;
 };
 
@@ -451,7 +455,7 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
               const connexOptions = {
                 node: network.url,
                 network: {
-                  id: network.chainId,
+                  id: (network as any).genesisId || network.chainId,
                   name: network.name
                 }
               };
@@ -464,9 +468,10 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
                 console.log("Using vechain.newConnexVendor() method");
                 
                 // Create vendorOptions with the same network configuration
+                // Must use genesisId for VeWorld wallet vendor
                 const vendorOptions = {
                   network: {
-                    id: network.chainId,
+                    id: (network as any).genesisId || network.chainId,
                     name: network.name
                   }
                 };

@@ -1,0 +1,84 @@
+content-scripts.iife.js:1 [INFO] (#Ext) -  Starting ContentScriptController listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+(index):136 Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+index-D4jy9sUO.js:104 Browser environment polyfills initialized
+index-D4jy9sUO.js:554 Setting up crypto environment with cryptoPolyfill
+index-D4jy9sUO.js:636 All polyfills loaded in main entry point
+index-D4jy9sUO.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-D4jy9sUO.js:617 Available wallets: (3) ['veworld', 'sync', 'sync2']
+index-D4jy9sUO.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-D4jy9sUO.js:556 Attempting to connect wallet: veworld Real wallet mode: true
+index-D4jy9sUO.js:556 Netlify environment detected, forcing real wallet mode
+index-D4jy9sUO.js:556 Wallet validation result: {available: true, installed: true, walletType: 'veworld', message: 'VeWorld wallet detected'}
+index-D4jy9sUO.js:554 Connecting to veworld wallet type on TestNet...
+index-D4jy9sUO.js:554 Connecting to VeWorld wallet...
+index-D4jy9sUO.js:554 VeWorld API methods available: (7) ['isVeWorld', 'newConnex', 'newConnexVendor', 'newConnexSigner', 'request', 'on', 'removeListener']
+index-D4jy9sUO.js:554 VeWorld wallet detected, creating Connex instance...
+index-D4jy9sUO.js:554 Using vechain.newConnex() method
+index-D4jy9sUO.js:554 Connecting with network options: {node: 'https://testnet.veblocks.net', network: {…}}
+index-D4jy9sUO.js:626 NFTShuffle mounted, setting up rotation with interval: 20000
+index-D4jy9sUO.js:554 Using vechain.newConnexVendor() method
+index-D4jy9sUO.js:554 Creating vendor with options: {network: {…}}
+index-D4jy9sUO.js:554 VeWorld wallet connection error: ExtensionError: Invalid genesisId
+    at Object.invalidParams (VeWorldAPI.js:1:14303)
+    at validateGenesisId (VeWorldAPI.js:101:80391)
+    at Object.newConnexVendor (VeWorldAPI.js:101:80004)
+    at mI (index-D4jy9sUO.js:554:13471)
+    at async index-D4jy9sUO.js:556:14445
+    at async C (index-D4jy9sUO.js:613:11712)
+mI @ index-D4jy9sUO.js:554
+await in mI
+(anonymous) @ index-D4jy9sUO.js:556
+C @ index-D4jy9sUO.js:613
+oxe @ index-D4jy9sUO.js:124
+cxe @ index-D4jy9sUO.js:124
+fxe @ index-D4jy9sUO.js:124
+aR @ index-D4jy9sUO.js:124
+yH @ index-D4jy9sUO.js:124
+(anonymous) @ index-D4jy9sUO.js:124
+GN @ index-D4jy9sUO.js:127
+VW @ index-D4jy9sUO.js:124
+c_ @ index-D4jy9sUO.js:124
+wN @ index-D4jy9sUO.js:124
+Mxe @ index-D4jy9sUO.js:124Understand this errorAI
+index-D4jy9sUO.js:556 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-D4jy9sUO.js:554:13723)
+    at async index-D4jy9sUO.js:556:14445
+    at async C (index-D4jy9sUO.js:613:11712)
+mI @ index-D4jy9sUO.js:556
+await in mI
+(anonymous) @ index-D4jy9sUO.js:556
+C @ index-D4jy9sUO.js:613
+oxe @ index-D4jy9sUO.js:124
+cxe @ index-D4jy9sUO.js:124
+fxe @ index-D4jy9sUO.js:124
+aR @ index-D4jy9sUO.js:124
+yH @ index-D4jy9sUO.js:124
+(anonymous) @ index-D4jy9sUO.js:124
+GN @ index-D4jy9sUO.js:127
+VW @ index-D4jy9sUO.js:124
+c_ @ index-D4jy9sUO.js:124
+wN @ index-D4jy9sUO.js:124
+Mxe @ index-D4jy9sUO.js:124Understand this errorAI
+index-D4jy9sUO.js:556 Specific wallet connection error: Error: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at mI (index-D4jy9sUO.js:554:13723)
+    at async index-D4jy9sUO.js:556:14445
+    at async C (index-D4jy9sUO.js:613:11712)
+(anonymous) @ index-D4jy9sUO.js:556
+await in (anonymous)
+C @ index-D4jy9sUO.js:613
+oxe @ index-D4jy9sUO.js:124
+cxe @ index-D4jy9sUO.js:124
+fxe @ index-D4jy9sUO.js:124
+aR @ index-D4jy9sUO.js:124
+yH @ index-D4jy9sUO.js:124
+(anonymous) @ index-D4jy9sUO.js:124
+GN @ index-D4jy9sUO.js:127
+VW @ index-D4jy9sUO.js:124
+c_ @ index-D4jy9sUO.js:124
+wN @ index-D4jy9sUO.js:124
+Mxe @ index-D4jy9sUO.js:124Understand this errorAI
+index-D4jy9sUO.js:556 Wallet connection error: Error: Wallet connection failed: VeWorld wallet not available or connection rejected. Please install the VeWorld wallet extension and try again.
+    at index-D4jy9sUO.js:556:15240
+    at async C (index-D4jy9sUO.js:613:11712)
