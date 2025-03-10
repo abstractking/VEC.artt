@@ -335,7 +335,7 @@ export const getConnex = async () => {
         error: wsError,
         message: wsError instanceof Error ? wsError.message : String(wsError),
         stack: wsError instanceof Error ? wsError.stack : undefined,
-        wsUrl: wsUrl,
+        wsUrl: network.socketUrl || 'unknown',
         network
       });
       
