@@ -585,30 +585,32 @@ export default function NFTDetail() {
               )}
             </div>
             
-            <div className="flex gap-4 mb-6">
+            <div className="flex flex-wrap gap-2 md:gap-4 mb-6">
               <Button 
                 variant={isFavorite ? "default" : "outline"}
                 className={`flex items-center ${isFavorite ? "bg-primary text-white" : ""}`}
                 onClick={handleToggleFavorite}
                 disabled={isTogglingFavorite}
+                size="sm"
               >
                 {isTogglingFavorite ? (
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="h-4 w-4 mr-1" />
                 ) : (
-                  <Heart className={`h-4 w-4 mr-2 ${isFavorite ? "fill-current" : ""}`} />
+                  <Heart className={`h-4 w-4 mr-1 ${isFavorite ? "fill-current" : ""}`} />
                 )}
                 {isFavorite ? "Favorited" : "Favorite"}
               </Button>
-              <Button variant="outline" className="flex items-center">
-                <Share className="h-4 w-4 mr-2" />
+              <Button variant="outline" className="flex items-center" size="sm">
+                <Share className="h-4 w-4 mr-1" />
                 Share
               </Button>
               <Button
                 variant="outline"
-                className="flex items-center"
+                className="flex items-center text-xs"
+                size="sm"
                 onClick={() => window.open(`https://explore-testnet.vechain.org/tokens/${nft.tokenId}`, "_blank")}
               >
-                <ExternalLink className="h-4 w-4 mr-2" />
+                <ExternalLink className="h-4 w-4 mr-1" />
                 View on Explorer
               </Button>
             </div>
