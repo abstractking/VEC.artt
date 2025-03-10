@@ -1,19 +1,9 @@
-/**
- * Explicit Buffer polyfill
- * This is needed because Vite treats 'buffer' as an external module
- */
+// Import Buffer from the buffer package
+import { Buffer } from 'buffer';
 
-// Import the actual Buffer module
-import { Buffer as BufferPolyfill } from 'buffer';
+// Ensure Buffer is available in the global scope
+if (typeof window !== 'undefined') {
+  window.Buffer = Buffer;
+}
 
-// Directly assign to window and global
-window.Buffer = BufferPolyfill;
-
-// Ensure we have global defined first
-window.global = window.global || window;
-global = window;
-
-// Make Buffer available on global too
-global.Buffer = BufferPolyfill;
-
-console.log("Buffer polyfill explicitly initialized");
+export { Buffer };

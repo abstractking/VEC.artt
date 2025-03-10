@@ -3,28 +3,26 @@
  * This file provides browser-compatible implementations of Node.js crypto functions
  */
 
-import cryptoBrowserify from 'crypto-browserify';
+import * as cryptoBrowserify from 'crypto-browserify';
 
-// Create a namespace that matches the Node.js crypto module interface
+// Create a custom implementation of Node's crypto module to match what thor-devkit expects
 const thorCrypto = {
-  // Implement the specific functions needed by thor-devkit
+  // Implement the exact functions used by thor-devkit
   randomBytes: (size: number): Buffer => {
-    return cryptoBrowserify.randomBytes(size);
+    return Buffer.from(cryptoBrowserify.randomBytes(size));
   },
-  
   createHash: (algorithm: string) => {
     return cryptoBrowserify.createHash(algorithm);
   },
-  
   createHmac: (algorithm: string, key: Buffer | string) => {
     return cryptoBrowserify.createHmac(algorithm, key);
   }
 };
 
-// Export the namespace as the default export
-export default thorCrypto;
-
-// Also export individual functions to match Node.js crypto module interface
+// Named exports for direct importing
 export const randomBytes = thorCrypto.randomBytes;
 export const createHash = thorCrypto.createHash;
 export const createHmac = thorCrypto.createHmac;
+
+// Default export for require() style imports
+export default thorCrypto;

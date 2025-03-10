@@ -1,24 +1,11 @@
-/**
- * Explicit Stream polyfill
- * This provides the Transform implementation that's being externalized by Vite
- */
+// Import stream from the stream-browserify package
+import * as stream from 'stream-browserify';
 
-// Import the stream module
-import streamBrowserify from 'stream-browserify';
+// Make specific classes available
+export const Transform = stream.Transform;
+export const Readable = stream.Readable;
+export const Writable = stream.Writable;
+export const Duplex = stream.Duplex;
 
-// Create a named export for Transform class
-export const Transform = streamBrowserify.Transform;
-
-// Add it to the window object as well
-if (typeof window !== 'undefined') {
-  // Make sure stream is available on window
-  (window).stream = (window).stream || streamBrowserify;
-  
-  // Add Transform as a properly attached property 
-  (window).stream.Transform = Transform;
-  
-  // Also add directly to window for libraries that might expect it
-  (window).Transform = Transform;
-  
-  console.log("Stream Transform class explicitly initialized");
-}
+// Export the entire module as default
+export default stream;
