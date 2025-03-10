@@ -207,7 +207,7 @@ export default function Profile() {
                     </button>
                   </div>
                   <a
-                    href={`https://explore-testnet.vechain.org/accounts/${user?.walletAddress}`}
+                    href={`https://testnet.vechainstats.com/account/${user?.walletAddress}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="ml-3 text-primary hover:text-primary/80 flex items-center text-sm"
