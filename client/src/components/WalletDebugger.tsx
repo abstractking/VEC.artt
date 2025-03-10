@@ -232,7 +232,7 @@ export default function WalletDebugger() {
       try {
         // Create connexOptions
         const connexOptions = {
-          node: 'https://testnet.veblocks.net',
+          node: 'https://testnet.veblocks.net/', // Adding trailing slash for VeWorld compatibility
           network: networkDescriptor
         };
         
@@ -257,7 +257,7 @@ export default function WalletDebugger() {
           console.log("Trying genesis parameter approach...");
           
           const connexOptions = {
-            node: 'https://testnet.veblocks.net',
+            node: 'https://testnet.veblocks.net/', // Adding trailing slash for VeWorld compatibility
             genesis: networkDescriptor.id
           };
           
