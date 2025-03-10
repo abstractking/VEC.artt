@@ -1,6 +1,5 @@
 import { Framework } from '@vechain/connex-framework';
 import { Driver, SimpleNet, SimpleWallet } from '@vechain/connex-driver';
-import { utils } from '@vechain.energy/connex-utils';
 
 // Define network options (from https://docs.vechain.org/developer-resources/how-to-build-on-vechain/connect-to-the-network)
 export const NETWORKS = {
@@ -213,6 +212,69 @@ export const connectWallet = async (privateKey?: string) => {
   } catch (error) {
     console.error('Failed to connect wallet:', error);
     throw error; // Re-throw the error to handle it in the caller
+  }
+};
+
+// Helper function to format wei values to ether (1 ether = 10^18 wei)
+const formatWei = (weiValue: string, decimals = 2): string => {
+  try {
+    // Convert wei string to a number (wei is 10^18 of an ether)
+    const wei = BigInt(weiValue);
+    const divisor = BigInt(10 ** 18); // 1 ether = 10^18 wei
+    
+    // Calculate ether value with proper precision
+    const etherValue = Number(wei) / Number(divisor);
+    return etherValue.toFixed(decimals);
+  } catch (e) {
+    console.error('Failed to format wei value:', e);
+    return '0.00';
+  }
+};
+
+// Get wallet balance in VET for an address
+export const getWalletBalance = async (address: string): Promise<{ vet: string; vtho: string }> => {
+  try {
+    // Default mock balance for development environments
+    if ((window.location.hostname.includes('replit') || 
+        window.location.hostname === 'localhost' || 
+        import.meta.env.DEV || 
+        import.meta.env.MODE === 'development') && 
+        !import.meta.env.VITE_VECHAIN_PRIVATE_KEY) {
+      
+      // Return mock balance for development/testing
+      return {
+        vet: "100.00",
+        vtho: "25.50"
+      };
+    }
+    
+    // Get actual balance from blockchain
+    const connex = await getConnex();
+    if (!connex) {
+      throw new Error("Failed to initialize Connex");
+    }
+    
+    // Get VET balance (main token)
+    const account = await connex.thor.account(address).get();
+    if (!account) {
+      throw new Error("Failed to get account information");
+    }
+    
+    // Format the balances - VET is in balance, VTHO is in energy
+    const vetFormatted = formatWei(account.balance || '0');
+    const vthoFormatted = formatWei(account.energy || '0');
+    
+    return {
+      vet: vetFormatted,
+      vtho: vthoFormatted
+    };
+  } catch (error) {
+    console.error('Failed to get wallet balance:', error);
+    // Return default values on error
+    return {
+      vet: "0.00",
+      vtho: "0.00"
+    };
   }
 };
 

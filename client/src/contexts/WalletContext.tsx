@@ -1,5 +1,5 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
-import { connectWallet as connectVeChainWallet, getWalletAddress } from "@/lib/vechain";
+import { connectWallet as connectVeChainWallet, getWalletAddress, getWalletBalance } from "@/lib/vechain";
 import { useToast } from "@/hooks/use-toast";
 
 interface WalletContextType {
@@ -9,10 +9,15 @@ interface WalletContextType {
   isModalOpen: boolean;
   error: string | null;
   useRealWallet: boolean;
+  walletBalance: {
+    vet: string;
+    vtho: string;
+  };
   connectWallet: (walletType?: string) => Promise<void>;
   disconnectWallet: () => void;
   setModalOpen: (isOpen: boolean) => void;
   toggleRealWallet: () => void;
+  refreshWalletBalance: () => Promise<void>;
 }
 
 export const WalletContext = createContext<WalletContextType | null>(null);
@@ -38,6 +43,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isModalOpen, setIsModalOpenState] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [walletBalance, setWalletBalance] = useState<{ vet: string; vtho: string }>({ vet: "0.00", vtho: "0.00" });
   const { toast } = useToast();
   
   // Use useCallback for setModalOpen to ensure stable reference
@@ -66,6 +72,38 @@ export function WalletProvider({ children }: WalletProviderProps) {
 
     checkWalletConnection();
   }, []);
+  
+  // Function to refresh wallet balance
+  const refreshWalletBalance = useCallback(async () => {
+    if (walletAddress) {
+      try {
+        console.log("Refreshing wallet balance for:", walletAddress);
+        const balance = await getWalletBalance(walletAddress);
+        console.log("Wallet balance retrieved:", balance);
+        setWalletBalance(balance);
+      } catch (err) {
+        console.error("Failed to refresh wallet balance:", err);
+        // Don't show a toast for balance refresh errors to avoid spamming user
+      }
+    }
+  }, [walletAddress]);
+
+  // Set up periodic wallet balance refresh (every 10 seconds)
+  useEffect(() => {
+    // Only run if wallet is connected
+    if (!isConnected || !walletAddress) return;
+    
+    // Refresh immediately on connection
+    refreshWalletBalance();
+    
+    // Set up interval for balance updates
+    const intervalId = setInterval(() => {
+      refreshWalletBalance();
+    }, 10000); // 10 seconds
+    
+    // Clean up interval on unmount or when wallet disconnects
+    return () => clearInterval(intervalId);
+  }, [isConnected, walletAddress, refreshWalletBalance]);
 
   const connectWallet = useCallback(async (walletType?: string) => {
     console.log("Attempting to connect wallet:", walletType || "VeChain", "Real wallet mode:", useRealWallet);
@@ -136,6 +174,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
     console.log("Disconnecting wallet");
     setWalletAddress(null);
     setIsConnected(false);
+    setWalletBalance({ vet: "0.00", vtho: "0.00" });
     
     toast({
       title: "Wallet Disconnected",
@@ -184,10 +223,12 @@ export function WalletProvider({ children }: WalletProviderProps) {
     isModalOpen,
     error,
     useRealWallet,
+    walletBalance,
     connectWallet,
     disconnectWallet,
     setModalOpen,
     toggleRealWallet,
+    refreshWalletBalance,
   };
 
   return (

@@ -1,12 +1,18 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "wouter";
-import { Menu, X, Search } from "lucide-react";
+import { Menu, X, Search, LogOut, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useWallet } from "@/hooks/useVechain";
 import { useAuth } from "@/hooks/useAuth";
 import ThemeToggle from "@/components/ThemeToggle";
 import NotificationCenter from "@/components/NotificationCenter";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 export default function Header() {
   const [, navigate] = useLocation();
