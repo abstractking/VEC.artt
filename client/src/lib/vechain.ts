@@ -473,7 +473,8 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             const isMainNet = networkType === Network.MAIN;
             
             // Hard-coded genesis ID values exactly as expected by VeWorld
-            const GENESIS_ID_MAINNET = "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a";
+            // For mainnet, VeWorld specifically expects 0x1 according to documentation
+            const GENESIS_ID_MAINNET = "0x1";
             const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127";
             
             // Hard-coded network names exactly as expected by VeWorld
@@ -582,6 +583,20 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
                       
                       console.log("APPROACH 4B SUCCESS");
                       return { connex: connex4, vendor: vendor4b };
+                    } catch (e4b) {
+                      console.log("Vendor approach 4B failed:", e4b);
+                      console.log("TRYING APPROACH 5: Exact VeChain Documentation Format");
+                      
+                      // Follow exactly the format from VeChain documentation
+                      const vendorExact = await vechain.newConnexVendor({
+                        network: {
+                          id: genesisId,
+                          name: networkName
+                        }
+                      });
+                      
+                      console.log("APPROACH 5 SUCCESS");
+                      return { connex: connex4, vendor: vendorExact };
                     }
                   } catch (error4) {
                     console.log("ALL APPROACHES FAILED");
