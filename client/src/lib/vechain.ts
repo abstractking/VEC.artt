@@ -317,8 +317,8 @@ export const getConnex = async () => {
       } catch (error) {
         console.warn("Could not determine WebSocket URL:", error);
         wsUrl = network.name.toLowerCase() === 'main' 
-          ? 'wss://sync-mainnet.vechain.org'
-          : 'wss://sync-testnet.vechain.org';
+          ? 'wss://mainnet.vechain.org'
+          : 'wss://testnet.vechain.org';
       }
         
       // Try WebSocket connection first for better performance
@@ -567,8 +567,8 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             const isMainNet = networkType === Network.MAIN;
             
             // Hard-coded genesis ID values exactly as expected by VeWorld
-            const GENESIS_ID_MAINNET = "0x1"; // For mainnet, VeWorld expects 0x1
-            const GENESIS_ID_TESTNET = "0x00000000c05d2f87b389c15e9e8e4f7b6c88e9e8a7b384f727e431355de5b093"; // Updated TestNet genesis ID per VeChain docs
+            const GENESIS_ID_MAINNET = "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a"; // Updated Mainnet genesis ID
+            const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127"; // Updated TestNet genesis ID per VeChain docs
             
             // Hard-coded network names exactly as expected by VeWorld
             const NETWORK_NAME_MAIN = "main";
