@@ -16,7 +16,7 @@ import {
 
 export default function Header() {
   const [, navigate] = useLocation();
-  const { isConnected, connectWallet } = useWallet();
+  const { isConnected, connectWallet, disconnectWallet, walletAddress, walletBalance } = useWallet();
   const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -37,6 +37,11 @@ export default function Header() {
 
   const handleConnectWallet = async () => {
     await connectWallet();
+    setIsMenuOpen(false);
+  };
+  
+  const handleDisconnectWallet = () => {
+    disconnectWallet();
     setIsMenuOpen(false);
   };
 
@@ -104,18 +109,50 @@ export default function Header() {
               </div>
             )}
             
-            {isConnected ? (
-              <Link 
-                href={user ? `/profile/${user.id}` : "/profile"} 
-                className="hidden md:flex items-center"
-              >
-                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold mr-2">
-                  {user?.username?.charAt(0).toUpperCase() || "U"}
-                </div>
-                <span className="font-medium text-foreground">
-                  {user?.username || "Profile"}
+            {/* Wallet Balance for Desktop */}
+            {isConnected && (
+              <div className="hidden md:flex items-center bg-muted/50 rounded-full px-3 py-1.5 mr-2">
+                <Wallet className="h-4 w-4 text-primary mr-1.5" />
+                <span className="text-sm font-medium">
+                  {walletBalance.vet} VET
                 </span>
-              </Link>
+              </div>
+            )}
+            
+            {isConnected ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <div className="hidden md:flex items-center cursor-pointer hover:opacity-90 transition-opacity">
+                    <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold mr-2">
+                      {user?.username?.charAt(0).toUpperCase() || "U"}
+                    </div>
+                    <span className="font-medium text-foreground">
+                      {user?.username || "Profile"}
+                    </span>
+                  </div>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuItem asChild>
+                    <Link href={user ? `/profile/${user.id}` : "/profile"} className="cursor-pointer">
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/create" className="cursor-pointer">
+                      Create NFT
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <div 
+                      className="flex items-center text-destructive cursor-pointer"
+                      onClick={handleDisconnectWallet}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" />
+                      Disconnect Wallet
+                    </div>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
               <Button
                 onClick={handleConnectWallet}
@@ -187,17 +224,37 @@ export default function Header() {
               Artists
             </Link>
             
+            {/* Wallet balance for mobile */}
+            {isConnected && (
+              <div className="flex items-center bg-muted/50 rounded-full px-3 py-1.5">
+                <Wallet className="h-4 w-4 text-primary mr-1.5" />
+                <span className="text-sm font-medium">
+                  {walletBalance.vet} VET
+                </span>
+              </div>
+            )}
+            
             {isConnected ? (
-              <Link 
-                href={user ? `/profile/${user.id}` : "/profile"}
-                className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold mr-2">
-                  {user?.username?.charAt(0).toUpperCase() || "U"}
+              <>
+                <Link 
+                  href={user ? `/profile/${user.id}` : "/profile"}
+                  className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold mr-2">
+                    {user?.username?.charAt(0).toUpperCase() || "U"}
+                  </div>
+                  <span>{user?.username || "Profile"}</span>
+                </Link>
+                
+                <div 
+                  className="flex items-center text-destructive font-medium py-2 cursor-pointer"
+                  onClick={handleDisconnectWallet}
+                >
+                  <LogOut className="h-5 w-5 mr-2" />
+                  Disconnect Wallet
                 </div>
-                <span>{user?.username || "Profile"}</span>
-              </Link>
+              </>
             ) : (
               <Button
                 onClick={handleConnectWallet}
