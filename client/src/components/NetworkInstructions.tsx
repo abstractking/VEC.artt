@@ -22,8 +22,12 @@ export default function NetworkInstructions() {
   const isNetlify = typeof window !== 'undefined' && window.location.hostname.includes('netlify.app');
   const [isExpanded, setIsExpanded] = useState(false);
   
-  // Only show instructions on Netlify deployment for TestNet
-  if (!isNetlify || networkConfig.name !== 'TestNet') {
+  // For testing purposes, let's show this in development too
+  // Regular condition: Only show instructions on Netlify deployment for TestNet
+  const isDev = typeof process !== 'undefined' && process.env?.NODE_ENV === 'development';
+  const showForTesting = isDev; // Show in development for testing
+  
+  if ((!isNetlify && !showForTesting) || networkConfig.name !== 'TestNet') {
     return null;
   }
   
