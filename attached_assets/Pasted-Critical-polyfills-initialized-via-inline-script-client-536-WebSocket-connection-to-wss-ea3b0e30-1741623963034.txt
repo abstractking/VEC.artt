@@ -1,0 +1,25 @@
+Critical polyfills initialized via inline script
+client:536  WebSocket connection to 'wss://ea3b0e30-8c34-4255-b9de-77c2f2e3b5b3-00-2sbl9yw61444k.janeway.replit.dev/?token=aZntZ3MhdS_y' failed: 
+setupWebSocket @ client:536
+client:536  Uncaught (in promise) SyntaxError: Failed to construct 'WebSocket': The URL 'wss://localhost:undefined/?token=aZntZ3MhdS_y' is invalid.
+    at setupWebSocket (client:536:19)
+    at fallback (client:509:16)
+    at WebSocket.<anonymous> (client:555:7)
+browser-external:util:9  Module "util" has been externalized for browser compatibility. Cannot access "util.debuglog" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+get @ browser-external:util:9
+browser-external:util:9  Module "util" has been externalized for browser compatibility. Cannot access "util.inspect" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+get @ browser-external:util:9
+2browser-external:stream:9  Module "stream" has been externalized for browser compatibility. Cannot access "stream.Transform" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+get @ browser-external:stream:9
+browser-external:util:9  Module "util" has been externalized for browser compatibility. Cannot access "util.debuglog" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+get @ browser-external:util:9
+browser-external:util:9  Module "util" has been externalized for browser compatibility. Cannot access "util.inspect" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+get @ browser-external:util:9
+browser-external:util:9  Module "util" has been externalized for browser compatibility. Cannot access "util.debuglog" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+get @ browser-external:util:9
+browser-external:util:9  Module "util" has been externalized for browser compatibility. Cannot access "util.inspect" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+get @ browser-external:util:9
+browser-external:stream:9  Module "stream" has been externalized for browser compatibility. Cannot access "stream.Transform" in client code. See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+get @ browser-external:stream:9
+build-polyfills.ts:30  Uncaught TypeError: Cannot set property crypto of #<Window> which has only a getter
+    at build-polyfills.ts:30:10

@@ -27,17 +27,24 @@ if (typeof window !== 'undefined') {
   window.global = window.global || window;
   
   // Make Node.js modules available through window
-  window.crypto = window.crypto || crypto;
-  window.stream = stream;
-  window.http = http;
-  window.https = https;
-  window.path = path;
-  window.os = os;
-  window.events = events;
-  window.url = url;
-  window.assert = assert;
-  window.zlib = zlib;
-  window.util = util;
+  // Don't attempt to override native crypto - use a different property name
+  window.cryptoPolyfill = crypto;
+  
+  // Safely assign other modules
+  try {
+    window.stream = stream;
+    window.http = http;
+    window.https = https;
+    window.path = path;
+    window.os = os;
+    window.events = events;
+    window.url = url;
+    window.assert = assert;
+    window.zlib = zlib;
+    window.util = util;
+  } catch (e) {
+    console.warn('Error setting up browser polyfills:', e);
+  }
 }
 
 // Export these modules for use elsewhere
