@@ -185,7 +185,7 @@ export default function NotificationCenter() {
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <Badge 
-              className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-[10px] bg-primary text-primary-foreground"
+              className="absolute top-0 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[9px] bg-primary text-primary-foreground"
               variant="destructive"
             >
               {unreadCount > 9 ? '9+' : unreadCount}
