@@ -12,11 +12,14 @@ export default function Hero() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   
   // Fetch NFTs for showcase
-  const { data: nfts, isLoading } = useQuery({
+  const { data: nfts, isLoading } = useQuery<NFT[]>({
     queryKey: ['/api/nfts'],
-    select: (data) => {
+    select: (data: NFT[]) => {
       // Get up to 5 NFTs for the showcase
-      return data?.slice(0, 5) || [];
+      if (Array.isArray(data)) {
+        return data.slice(0, 5);
+      }
+      return [];
     }
   });
   
@@ -56,7 +59,7 @@ export default function Hero() {
   // Get the current NFT to display
   const currentNFT = nfts && nfts.length > 0 ? nfts[currentIndex] : null;
   // Get the previous NFT to create the stacked effect
-  const prevIndex = currentIndex === 0 ? nfts?.length - 1 : currentIndex - 1;
+  const prevIndex = currentIndex === 0 ? (nfts?.length ?? 0) - 1 : currentIndex - 1;
   const prevNFT = nfts && nfts.length > 0 ? nfts[prevIndex] : null;
   
   return (
@@ -185,7 +188,7 @@ export default function Hero() {
                   {/* Pagination dots */}
                   {nfts.length > 1 && (
                     <div className="absolute -bottom-8 left-0 right-0 flex justify-center space-x-2">
-                      {nfts.map((_, i) => (
+                      {nfts.map((_, i: number) => (
                         <button
                           key={i}
                           className={`w-2 h-2 rounded-full transition-colors ${
