@@ -37,6 +37,7 @@ function Router() {
         <Route path="/artists" component={Artists} />
         <Route path="/badges" component={Badges} />
         <Route path="/wallet-test" component={WalletTest} />
+        <Route path="/test-wallet" component={WalletTest} />
         
         {/* Footer pages */}
         <Route path="/help" component={HelpCenter} />
