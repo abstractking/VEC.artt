@@ -6,15 +6,23 @@
  * Optimized for mobile users and enhanced error handling.
  */
 
-import { Network } from './Network';
+import { Network, getNetwork, getNodeUrl } from './Network';
+
+// Get network definitions
+const mainnetNetwork = getNetwork(Network.MAIN);
+const testnetNetwork = getNetwork(Network.TEST);
 
 // The exact genesis ID values VeWorld expects
-const GENESIS_ID_MAINNET = "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a"; // Mainnet genesis ID
-const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127"; // TestNet genesis ID per VeChain docs
+const GENESIS_ID_MAINNET = mainnetNetwork.id;
+const GENESIS_ID_TESTNET = testnetNetwork.id;
 
 // The exact network names VeWorld expects
-const NETWORK_NAME_MAIN = "main";
-const NETWORK_NAME_TEST = "test";
+const NETWORK_NAME_MAIN = mainnetNetwork.name;
+const NETWORK_NAME_TEST = testnetNetwork.name;
+
+// Node URLs from environment variables
+const NODE_URL_MAINNET = getNodeUrl(Network.MAIN);
+const NODE_URL_TESTNET = getNodeUrl(Network.TEST);
 
 // Interface for VeWorld wallet API
 interface VeWorldWallet {
@@ -80,11 +88,9 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
     const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
     const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
     
-    // Use VeBlocks URLs for better compatibility - strip trailing slash
+    // Use node URLs from environment variables
     // VeWorld mobile has issues with trailing slashes in URLs
-    const nodeUrl = isMainNet 
-      ? "https://mainnet.veblocks.net" 
-      : "https://testnet.veblocks.net";
+    const nodeUrl = isMainNet ? NODE_URL_MAINNET : NODE_URL_TESTNET;
     
     console.log("VeWorldConnector: Using network parameters:", { 
       networkType, 
@@ -203,10 +209,8 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
     const isMainNet = networkType === Network.MAIN;
     const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
     
-    // Use VeBlocks URLs without trailing slash
-    const nodeUrl = isMainNet 
-      ? "https://mainnet.veblocks.net" 
-      : "https://testnet.veblocks.net";
+    // Use node URLs from environment variables
+    const nodeUrl = isMainNet ? NODE_URL_MAINNET : NODE_URL_TESTNET;
     
     console.log("VeWorldConnector (Alt): Using direct genesis parameter:", { 
       networkType, 
