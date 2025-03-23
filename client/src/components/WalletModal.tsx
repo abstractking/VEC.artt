@@ -109,19 +109,7 @@ export default function WalletModal() {
     }
   ];
   
-  // Add debug option in development or replit environments, but NOT on Netlify
-  if (isDebugMode && !isNetlify) {
-    walletOptions.push({
-      id: "debug" as any,
-      name: "Debug Test Wallet (Dev Only)",
-      description: "For development testing only",
-      icon: "https://icongr.am/material/bug.svg?size=128&color=2563eb",
-      handler: () => connectWallet("debug"),
-      type: "debug",
-      available: true,
-      installed: true
-    });
-  }
+  // Demo wallet functionality has been disabled for all deployments
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
@@ -217,19 +205,17 @@ export default function WalletModal() {
             </div>
             
             {/* Other Connection Methods */}
-            {walletOptions.filter(w => w.type === "protocol" || w.type === "debug").length > 0 && (
+            {walletOptions.filter(w => w.type === "protocol").length > 0 && (
               <div>
                 <h4 className="text-xs font-medium mb-2 text-primary">Other Connection Methods</h4>
                 <div className="grid grid-cols-2 gap-2">
-                  {walletOptions.filter(w => w.type === "protocol" || w.type === "debug").map((wallet, index) => (
+                  {walletOptions.filter(w => w.type === "protocol").map((wallet, index) => (
                     <button
                       key={index}
                       className={`flex items-center p-3 rounded-lg transition-colors border border-transparent 
-                        ${wallet.type === "debug" 
-                          ? "bg-amber-50 dark:bg-amber-950 hover:bg-amber-100 dark:hover:bg-amber-900 hover:border-amber-400" 
-                          : wallet.available
-                            ? "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-primary"
-                            : "bg-gray-100/50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400"
+                        ${wallet.available
+                           ? "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 hover:border-primary"
+                           : "bg-gray-100/50 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400"
                         }`}
                       onClick={wallet.handler}
                       disabled={isConnecting || !wallet.available}
@@ -239,17 +225,12 @@ export default function WalletModal() {
                         <img 
                           src={wallet.icon} 
                           alt={wallet.name} 
-                          className={`w-6 h-6 ${!wallet.available && wallet.type !== "debug" ? "opacity-50" : ""}`} 
+                          className={`w-6 h-6 ${!wallet.available ? "opacity-50" : ""}`} 
                         />
                       </div>
                       <div className="text-left flex-grow">
                         <div className="flex items-center justify-between">
                           <span className="text-sm font-medium block">{wallet.name}</span>
-                          {wallet.type === "debug" && (
-                            <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300">
-                              Dev Only
-                            </span>
-                          )}
                           {wallet.type === "protocol" && wallet.available && (
                             <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
                               Available
@@ -290,68 +271,12 @@ export default function WalletModal() {
           </div>
         </div>
         
-        {/* Add real wallet mode toggle for development - Hide on Netlify */}
-        {isDebugMode && !isNetlify && (
-          <>
-            <Separator className="my-4" />
-            
-            <div className="flex flex-col space-y-4">
-              <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-md p-4">
-                <div className="flex items-start">
-                  <AlertCircle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5 mr-2" />
-                  <div>
-                    <h4 className="font-medium text-amber-800 dark:text-amber-300 text-sm">
-                      Developer Mode
-                    </h4>
-                    <p className="text-amber-700 dark:text-amber-400 text-xs mt-1">
-                      Toggle between real blockchain interaction and demo mode. 
-                      Real wallet mode requires the VeChain wallet extension to be installed
-                      and configured. Demo mode uses simulated transactions.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex flex-col space-y-1">
-                  <Label htmlFor="real-wallet-toggle" className="font-medium">
-                    {useRealWallet ? "Real Wallet Interaction" : "Mock Wallet Interaction"}
-                  </Label>
-                  <p className="text-sm text-gray-500">
-                    {useRealWallet
-                      ? "All transactions will require wallet signatures"
-                      : "Transactions will be simulated (no real blockchain interaction)"}
-                  </p>
-                </div>
-                <div className="flex items-center space-x-2">
-                  {useRealWallet ? (
-                    <ToggleRight className="h-6 w-6 text-primary" />
-                  ) : (
-                    <ToggleLeft className="h-6 w-6 text-gray-400" />
-                  )}
-                  <Switch
-                    id="real-wallet-toggle"
-                    checked={useRealWallet}
-                    onCheckedChange={toggleRealWallet}
-                  />
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-        
         <div className="mt-4 text-sm text-gray-500 text-center">
-          <p>By connecting your wallet, you agree to our <a href="#" className="text-primary">Terms of Service</a> and <a href="#" className="text-primary">Privacy Policy</a>.</p>
+          <p>By connecting your wallet, you agree to our Terms of Service and Privacy Policy</p>
         </div>
         
-        <DialogFooter className="sm:justify-start">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={handleClose}
-          >
-            Close
-          </Button>
+        <DialogFooter>
+          <Button variant="outline" onClick={handleClose}>Cancel</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
