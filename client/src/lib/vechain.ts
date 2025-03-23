@@ -224,13 +224,13 @@ export const initializeConnex = async (wallet?: SimpleWallet) => {
       connexInstance = new Framework(driver);
       return connexInstance;
     } else {
-      // Mock a connex instance for SSR or testing
-      console.warn('Creating mock Connex instance for non-browser environment');
-      return mockConnex();
+      // We're transitioning to testnet, no mock instance is allowed
+      console.warn('Non-browser environment detected but no mock instance is allowed');
+      throw new Error('Cannot initialize Connex in non-browser environment');
     }
   } catch (error) {
     console.error('Failed to initialize Connex:', error);
-    return mockConnex();
+    throw new Error('Failed to initialize Connex: ' + (error instanceof Error ? error.message : String(error)));
   }
 };
 
