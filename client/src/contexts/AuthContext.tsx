@@ -69,38 +69,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [queryClient, toast]);
 
-  // Auto-create a debug user when in debug mode and wallet is connected
+  // Debug user auto-creation is disabled for all deployments
   useEffect(() => {
-    const createDebugUser = async () => {
-      // Check if we're in debug mode with a connected wallet but no user
-      if (isDebugMode && isConnected && walletAddress && !user && !isLoading) {
-        console.log("Creating debug user for wallet:", walletAddress);
-        try {
-          // Check if user exists first by directly fetching
-          const userCheckResponse = await fetch(`/api/users/wallet/${walletAddress}`);
-          
-          // Only create a new user if one doesn't exist
-          if (!userCheckResponse.ok && userCheckResponse.status === 404) {
-            // Auto-create a debug user
-            await login("DebugUser", walletAddress);
-            // Refetch to update the context with the newly created user
-            setTimeout(() => refetch(), 500);
-          } else if (userCheckResponse.ok) {
-            // User exists, no need to create
-            const userData = await userCheckResponse.json();
-            console.log("Found existing user for debug wallet:", userData);
-          } else {
-            // If there was no 404, something else might be wrong
-            console.error("Unexpected response when checking for debug user:", userCheckResponse.status);
-          }
-        } catch (err) {
-          console.error("Error creating debug user:", err);
-        }
-      }
-    };
-    
-    createDebugUser();
-  }, [isDebugMode, isConnected, walletAddress, user, isLoading, refetch, login]);
+    // Check if wallet is connected but user doesn't exist
+    if (isConnected && walletAddress && !user && !isLoading) {
+      console.log("Wallet connected but no user exists. Manual sign up required.");
+      // No debug user creation - user must sign up manually
+    }
+  }, [isConnected, walletAddress, user, isLoading]);
 
   // When wallet connects, try to fetch user
   useEffect(() => {

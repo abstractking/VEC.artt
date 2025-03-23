@@ -204,17 +204,14 @@ export function WalletProvider({ children }: WalletProviderProps) {
         return;
       }
       
-      // If not using real wallet and in debug mode, use test wallet
-      if (!useRealWallet && isDebugMode) {
-        console.log("Using mock wallet connection with address:", testWalletAddress);
-        setWalletAddress(testWalletAddress);
-        setIsConnected(true);
-        setWalletType('debug');
-        setModalOpen(false);
+      // Demo wallet functionality is disabled for all deployments
+      if (!useRealWallet) {
+        console.log("Demo wallet functionality has been disabled for all deployments");
         
         toast({
-          title: "Mock Wallet Connected",
-          description: `Connected to test wallet: ${testWalletAddress.slice(0, 6)}...${testWalletAddress.slice(-4)}`,
+          title: "Demo Mode Disabled",
+          description: "Demo wallet functionality has been disabled. Please use a real wallet extension.",
+          variant: "destructive",
         });
         return;
       }
@@ -264,16 +261,13 @@ export function WalletProvider({ children }: WalletProviderProps) {
           throw new Error("Failed to connect wallet");
         }
       } else {
-        // In production without real wallet mode, use a mock wallet connection
-        console.log("Using mock wallet connection in production with address:", testWalletAddress);
-        setWalletAddress(testWalletAddress);
-        setIsConnected(true);
-        setWalletType('debug');
-        setModalOpen(false);
+        // Demo wallet functionality is disabled for all deployments
+        console.log("Demo wallet functionality has been disabled for all deployments");
         
         toast({
-          title: "Demo Wallet Connected",
-          description: `Connected to demo wallet: ${testWalletAddress.slice(0, 6)}...${testWalletAddress.slice(-4)}`,
+          title: "Demo Mode Disabled",
+          description: "Demo wallet functionality has been disabled. Please use a real wallet extension.",
+          variant: "destructive",
         });
       }
     } catch (err: any) {
@@ -302,19 +296,16 @@ export function WalletProvider({ children }: WalletProviderProps) {
     });
   }, [toast]);
   
-  // Toggle between real and mock wallet for development
+  // Demo wallet functionality is disabled for all deployments
   const toggleRealWallet = useCallback(() => {
-    // If we're on Netlify, always stay in real wallet mode
-    if (isNetlify) {
-      toast({
-        title: "Real Wallet Mode Required",
-        description: "Demo wallet mode is disabled on Netlify. You must use a real wallet extension.",
-        variant: "destructive",
-      });
-      return;
-    }
+    // Always enforce real wallet mode
+    toast({
+      title: "Real Wallet Mode Required",
+      description: "Demo wallet mode is disabled for all deployments. You must use a real wallet extension.",
+      variant: "destructive",
+    });
     
-    // If we're turning on real wallet mode, disconnect from any mock wallet first
+    // If somehow not in real wallet mode, set it
     if (!useRealWallet) {
       // Disconnect any mock wallet if connected
       if (isConnected) {
@@ -324,27 +315,8 @@ export function WalletProvider({ children }: WalletProviderProps) {
       // Set real wallet mode in localStorage
       localStorage.setItem('useRealWallet', 'true');
       setUseRealWallet(true);
-      
-      toast({
-        title: "Real Wallet Mode Enabled",
-        description: "You'll now interact with the actual VeChain blockchain",
-      });
-    } else {
-      // If turning off real wallet mode, disconnect any real wallet first
-      if (isConnected) {
-        disconnectWallet();
-      }
-      
-      // Set mock wallet mode in localStorage
-      localStorage.setItem('useRealWallet', 'false');
-      setUseRealWallet(false);
-      
-      toast({
-        title: "Mock Wallet Mode Enabled",
-        description: "You'll use simulated blockchain interactions",
-      });
     }
-  }, [useRealWallet, isConnected, disconnectWallet, toast, isNetlify]);
+  }, [useRealWallet, isConnected, disconnectWallet, toast]);
 
   const value = {
     walletAddress,
