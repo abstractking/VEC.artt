@@ -5,21 +5,87 @@ import { useToast } from '@/hooks/use-toast';
 // than what our types suggest
 const getConnex = async (options: any) => {
   try {
-    const utils = await import('@vechain.energy/connex-utils');
-    if (typeof utils.getConnex === 'function') {
-      return utils.getConnex(options);
-    } else if (typeof utils.createConnex === 'function') {
-      return utils.createConnex(options);
-    } else if (typeof utils.default?.getConnex === 'function') {
-      return utils.default.getConnex(options);
-    } else {
-      // Fallback to our own implementation
-      console.warn('Using fallback Connex creation');
-      return window.connex || null;
+    // Check if we already have window.connex from a wallet
+    if (window.connex && window.connex.thor && window.connex.thor.genesis) {
+      console.log('Using existing window.connex');
+      return window.connex;
     }
+    
+    // Try various ways to create a connex instance
+    try {
+      const utils = await import('@vechain.energy/connex-utils');
+      
+      if (typeof utils.getConnex === 'function') {
+        console.log('Using @vechain.energy/connex-utils getConnex with options:', options);
+        return utils.getConnex(options);
+      } else if (typeof utils.createConnex === 'function') {
+        console.log('Using @vechain.energy/connex-utils createConnex with options:', options);
+        return utils.createConnex(options);
+      } else if (typeof utils.default?.getConnex === 'function') {
+        console.log('Using @vechain.energy/connex-utils default.getConnex with options:', options);
+        return utils.default.getConnex(options);
+      }
+    } catch (importError) {
+      console.warn('Error with connex-utils import:', importError);
+      // Continue to fallbacks
+    }
+    
+    // Fallback: Try alternate node URLs if the original fails
+    if (options.node) {
+      const alternateTestnetNodes = [
+        'https://testnet.veblocks.net',
+        'https://testnet.vecha.in',
+        'https://sync-testnet.vechain.org'
+      ];
+      
+      const alternateMainnetNodes = [
+        'https://mainnet.veblocks.net',
+        'https://mainnet.vecha.in',
+        'https://sync-mainnet.vechain.org'
+      ];
+      
+      // Determine which alternates to try based on current network
+      const alternateNodes = options.network === 'main' || 
+                            options.genesis === '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a' ?
+                            alternateMainnetNodes : alternateTestnetNodes;
+      
+      // Don't retry the current node
+      const uniqueAlternates = alternateNodes.filter(node => node !== options.node);
+      
+      // Try each alternate node
+      for (const alternateNode of uniqueAlternates) {
+        try {
+          console.log(`Trying alternate node: ${alternateNode}`);
+          const { Framework } = await import('@vechain/connex-framework');
+          const { Driver } = await import('@vechain/connex-driver');
+          
+          const driver = await Driver.connect(alternateNode);
+          const framework = new Framework(driver);
+          
+          console.log('Successfully connected using alternate node');
+          return framework;
+        } catch (nodeError) {
+          console.warn(`Failed with alternate node ${alternateNode}:`, nodeError);
+          // Continue to next alternate
+        }
+      }
+    }
+    
+    // Last resort: Check if we have window.connex anyway
+    if (window.connex) {
+      console.warn('Using fallback window.connex');
+      return window.connex;
+    }
+    
+    throw new Error('Could not initialize Connex with any available method');
   } catch (e) {
-    console.error('Error importing connex-utils:', e);
-    return window.connex || null;
+    console.error('Error in getConnex:', e);
+    // Always try window.connex as a last resort
+    if (window.connex) {
+      console.warn('Using last resort window.connex after error');
+      return window.connex;
+    }
+    throw e;
   }
 };
 

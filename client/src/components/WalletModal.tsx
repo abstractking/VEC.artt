@@ -123,7 +123,7 @@ export default function WalletModal() {
       name: "Wallet Connect",
       description: "Connect via WalletConnect protocol",
       icon: "https://walletconnect.org/favicon.ico",
-      handler: () => connectWallet("environment"), // Using environment as fallback since walletconnect isn't in VeChainWalletType
+      handler: () => connectWallet("walletconnect"), // Now using proper type
       type: "protocol",
       available: false,  // Not fully implemented yet
       installed: false,

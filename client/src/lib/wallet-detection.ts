@@ -163,6 +163,15 @@ export function verifyWalletAvailability(walletType: VeChainWalletType): WalletD
           : "No environment key available. This option is only available in development mode."
       };
       
+    case 'walletconnect':
+      // WalletConnect is not yet fully implemented
+      return {
+        available: false, // Set to false until fully implemented
+        installed: false,
+        walletType: 'walletconnect',
+        message: "WalletConnect integration is coming soon."
+      };
+      
     default:
       return {
         available: false,
@@ -202,6 +211,7 @@ export function getWalletDisplayName(walletType: VeChainWalletType): string {
     case 'sync': return 'Sync';
     case 'sync2': return 'Sync2';
     case 'environment': return 'Development Key';
+    case 'walletconnect': return 'WalletConnect';
     default: return 'Unknown Wallet';
   }
 }
