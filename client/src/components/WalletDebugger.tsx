@@ -74,44 +74,56 @@ export default function WalletDebugger() {
     const walletProviderKeys = ['veworld', 'vechain', 'sync', 'sync2', 'thor', 'thorify'];
     
     try {
-      // Check VeWorld through official method
-      if (typeof window !== 'undefined' && (window as any).vechain) {
+      // Check for VeWorld - the object can be available at either lowercase 'vechain' or 'VeWorld'
+      const vechain = (window as any).vechain;
+      const VeWorld = (window as any).VeWorld;
+      
+      if (typeof window !== 'undefined' && (vechain || VeWorld)) {
         try {
-          const vechain = (window as any).vechain;
+          // Prioritize lowercase 'vechain' which is more common
+          const walletObj = vechain || VeWorld;
           
-          console.log("Found vechain object, methods:", Object.keys(vechain));
+          console.log("Found wallet object, methods:", Object.keys(walletObj));
           
-          // Check if it's explicitly VeWorld
-          if (vechain.isVeWorld) {
+          // Check if it's explicitly VeWorld by looking for isVeWorld flag or specific methods
+          if (walletObj.isVeWorld || 
+              (typeof walletObj.newConnex === 'function' && typeof walletObj.newConnexVendor === 'function')) {
             hasVeWorld = true;
             details['veworld'] = {
               available: true,
               version: 'Unknown', // VeWorld doesn't expose version info directly
-              methods: Object.keys(vechain).join(', '),
-              connectionMethods: getConnectionMethods(vechain),
+              objectName: vechain ? 'vechain (lowercase)' : 'VeWorld (uppercase)',
+              methods: Object.keys(walletObj).join(', '),
+              connectionMethods: getConnectionMethods(walletObj),
               supportsTestNet: true,
-              isConnected: false
+              isConnected: false,
+              hasConnex: typeof (window as any).connex !== 'undefined',
+              hasIsVeWorld: !!walletObj.isVeWorld
             };
           } else {
             // It's a VeChain provider but not explicitly VeWorld
             details['veworld'] = {
               available: false,
-              error: 'vechain object exists but isVeWorld is falsy',
-              methods: Object.keys(vechain).join(', '),
-              connectionMethods: getConnectionMethods(vechain),
+              objectName: vechain ? 'vechain (lowercase)' : 'VeWorld (uppercase)',
+              error: 'VeChain object exists but missing required methods',
+              methods: Object.keys(walletObj).join(', '),
+              connectionMethods: getConnectionMethods(walletObj),
+              hasConnex: typeof (window as any).connex !== 'undefined'
             };
           }
         } catch (e) {
           console.error("Error checking VeWorld details:", e);
           details['veworld'] = {
             available: false,
-            error: e instanceof Error ? e.message : String(e)
+            error: e instanceof Error ? e.message : String(e),
+            objectFound: !!vechain ? 'vechain' : (!!VeWorld ? 'VeWorld' : 'none')
           };
         }
       } else {
         details['veworld'] = {
           available: false,
-          error: 'vechain object not found in window'
+          error: 'No vechain or VeWorld object found in window',
+          hasConnex: typeof (window as any).connex !== 'undefined'
         };
       }
       
@@ -208,18 +220,25 @@ export default function WalletDebugger() {
       setConnectionError(null);
       setActiveWallet('veworld');
       
-      if (typeof window === 'undefined' || !(window as any).vechain) {
-        throw new Error("VeWorld wallet not available");
+      // Check for the wallet object at both lowercase and capitalized positions
+      const vechain = (window as any).vechain;
+      const VeWorld = (window as any).VeWorld;
+      
+      if (typeof window === 'undefined' || !(vechain || VeWorld)) {
+        throw new Error("VeWorld wallet not available in window object");
       }
       
-      const vechain = (window as any).vechain;
+      // Use whichever object is available, prioritizing lowercase (more common)
+      const walletObj = vechain || VeWorld;
       
-      if (!vechain.isVeWorld) {
-        throw new Error("Not a valid VeWorld wallet extension");
+      // Allow connection if either isVeWorld flag is true or necessary methods exist
+      if (!walletObj.isVeWorld && 
+          !(typeof walletObj.newConnex === 'function' && typeof walletObj.newConnexVendor === 'function')) {
+        throw new Error("Not a valid VeWorld wallet extension. Missing required methods.");
       }
       
       // Log available methods
-      console.log("VeWorld API methods:", Object.keys(vechain));
+      console.log("VeWorld API methods:", Object.keys(walletObj));
       
       // Test network configuration for TestNet
       const networkDescriptor = NETWORK_DESCRIPTORS[Network.TEST];
@@ -228,53 +247,80 @@ export default function WalletDebugger() {
       let vendor = null;
       let successMethod = "";
       
-      // First try with the complete network object format
+      // Try multiple connection strategies in order of preference
+      
+      // APPROACH 1: Try window.connex if available
       try {
-        // Create connexOptions
-        const connexOptions = {
-          node: 'https://testnet.vechain.org/', // Adding trailing slash for VeWorld compatibility
-          network: networkDescriptor
-        };
-        
-        console.log("Trying network object format:", connexOptions);
-        connex = await vechain.newConnex(connexOptions);
-        
-        // Create a vendor
-        const vendorOptions = {
-          network: networkDescriptor
-        };
-        
-        console.log("Creating vendor with network object:", vendorOptions);
-        vendor = await vechain.newConnexVendor(vendorOptions);
-        
-        successMethod = "network object format";
-      } catch (error) {
-        const methodError = error as Error;
-        console.log("Network object format failed:", methodError.message);
-        
-        // If that fails, try with the genesis parameter approach
-        try {
-          console.log("Trying genesis parameter approach...");
+        if ((window as any).connex) {
+          console.log("Using window.connex provided by VeWorld...");
+          connex = (window as any).connex;
           
-          const connexOptions = {
-            node: 'https://testnet.vechain.org/', // Adding trailing slash for VeWorld compatibility
-            genesis: networkDescriptor.id
-          };
+          // Try to get vendor from the wallet
+          if (typeof walletObj.getVendor === 'function') {
+            try {
+              vendor = await walletObj.getVendor();
+              successMethod = "window.connex + getVendor";
+            } catch (vendorError) {
+              console.log("Could not get vendor, creating manually...");
+            }
+          }
           
-          connex = await vechain.newConnex(connexOptions);
-          
-          const vendorOptions = {
-            genesis: networkDescriptor.id
-          };
-          
-          vendor = await vechain.newConnexVendor(vendorOptions);
-          
-          successMethod = "genesis parameter";
-        } catch (error) {
-          const altMethodError = error as Error;
-          console.error("Alternative method also failed:", altMethodError.message);
-          throw new Error(`Both connection methods failed:\n1. ${methodError.message}\n2. ${altMethodError.message}`);
+          // Create vendor with genesis parameter only if not already obtained
+          if (!vendor) {
+            vendor = await walletObj.newConnexVendor({
+              genesis: networkDescriptor.id
+            });
+            successMethod = "window.connex + manual vendor";
+          }
         }
+      } catch (error) {
+        console.error("Window.connex approach failed:", error);
+      }
+      
+      // APPROACH 2: Try minimal URL-less approach
+      if (!connex || !vendor) {
+        try {
+          console.log("Using minimal URL-less approach...");
+          
+          // Create vendor with genesis parameter only
+          vendor = await walletObj.newConnexVendor({
+            genesis: networkDescriptor.id
+          });
+          
+          // Try creating connex with genesis parameter only (no URL)
+          connex = await walletObj.newConnex({
+            genesis: networkDescriptor.id
+          });
+          
+          successMethod = "genesis-only approach";
+        } catch (error) {
+          console.error("Minimal approach failed:", error);
+        }
+      }
+      
+      // APPROACH 3: Try network-only approach
+      if (!connex || !vendor) {
+        try {
+          console.log("Using network-only approach...");
+          
+          // Create Connex with network parameters but no node URL
+          connex = await walletObj.newConnex({
+            network: networkDescriptor
+          });
+          
+          vendor = await walletObj.newConnexVendor({
+            network: networkDescriptor
+          });
+          
+          successMethod = "network-only approach";
+        } catch (error) {
+          console.error("Network-only approach failed:", error);
+        }
+      }
+      
+      // If all approaches failed, throw an error
+      if (!connex || !vendor) {
+        throw new Error("All connection methods failed. Please check your wallet extension and network settings.");
       }
       
       if (!connex || !vendor) {

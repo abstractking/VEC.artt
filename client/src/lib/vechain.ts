@@ -548,13 +548,22 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
     // Handle different wallet types
     switch(walletType.toLowerCase()) {
       case 'veworld':
-        // Support for VeWorld wallet
-        if (typeof window !== 'undefined' && (window as any).VeWorld) {
+        // Support for VeWorld wallet - using lowercase 'vechain' as that's how VeWorld injects itself
+        if (typeof window !== 'undefined' && (window as any).vechain) {
           try {
             console.log("Connecting to VeWorld wallet...");
             
-            const vechain = (window as any).VeWorld;
+            const vechain = (window as any).vechain;
             console.log("VeWorld API methods available:", Object.keys(vechain));
+            
+            // Log all available window objects for debugging
+            console.log("Available window objects:", 
+              Object.keys(window).filter(key => 
+                key.toLowerCase().includes('vechain') || 
+                key.toLowerCase().includes('veworld') || 
+                key.toLowerCase() === 'connex'
+              )
+            );
             
             if (!vechain.isVeWorld) {
               throw new Error("Not a valid VeWorld wallet extension");
@@ -566,29 +575,32 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
             const isMainNet = networkType === Network.MAIN;
             
-            // Hard-coded genesis ID values exactly as expected by VeWorld
-            const GENESIS_ID_MAINNET = "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a"; // Updated Mainnet genesis ID
-            const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127"; // Updated TestNet genesis ID per VeChain docs
+            // Use environment variables with fallback to hardcoded genesis ID values
+            const GENESIS_ID_MAINNET = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || 
+                                      "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a";
+            const GENESIS_ID_TESTNET = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || 
+                                      "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127";
+            
+            // Log the genesis IDs we're using
+            console.log("Genesis IDs from environment:", {
+              mainnet: import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID,
+              testnet: import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID,
+              fallbackMainnet: "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a",
+              fallbackTestnet: "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127"
+            });
             
             // Hard-coded network names exactly as expected by VeWorld
             const NETWORK_NAME_MAIN = "main";
             const NETWORK_NAME_TEST = "test";
             
-            // Define node URLs with better compatibility for Sync 2 and VeWorld wallets
-            // Remove trailing slash to prevent URL construction errors
-            const NODE_URL_MAINNET = "https://mainnet.veblocks.net";
-            const NODE_URL_TESTNET = "https://testnet.veblocks.net";
-            
             // Select appropriate values
             const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
             const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
-            const nodeUrl = isMainNet ? NODE_URL_MAINNET : NODE_URL_TESTNET;
             
             console.log("Using network parameters:", {
               networkType,
               genesisId,
-              networkName,
-              nodeUrl
+              networkName
             });
             
             // APPROACH 1: Use specialized connector
@@ -673,13 +685,12 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
               console.error("Minimal connection failed:", minimalError);
             }
             
-            // APPROACH 5: Try standard approach
+            // APPROACH 5: Try standard network-only approach
             try {
-              console.log("Trying standard network approach...");
+              console.log("Trying standard network-only approach...");
               
-              // Create Connex with proper parameters
+              // Create Connex with network parameters but no node URL
               const connex = await vechain.newConnex({
-                node: nodeUrl,
                 network: {
                   id: genesisId,
                   name: networkName
@@ -693,26 +704,27 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
                 }
               });
               
-              console.log("Standard network approach successful!");
+              console.log("Standard network-only approach successful!");
               return { connex, vendor };
             } catch (standardError) {
               console.error("Standard approach failed:", standardError);
               
-              // APPROACH 6: Try direct genesis approach
+              // APPROACH 6: Try name+genesis approach
               try {
-                console.log("Trying direct genesis approach...");
+                console.log("Trying name+genesis approach...");
                 
-                // Create connex with direct genesis parameter
+                // Create connex with name and genesis parameter
                 const connex = await vechain.newConnex({
-                  node: nodeUrl,
-                  genesis: genesisId
+                  genesis: genesisId,
+                  name: networkName
                 });
                 
                 const vendor = await vechain.newConnexVendor({
-                  genesis: genesisId
+                  genesis: genesisId,
+                  name: networkName
                 });
                 
-                console.log("Direct genesis approach successful!");
+                console.log("Name+genesis approach successful!");
                 return { connex, vendor };
               } catch (genesisError) {
                 console.error("All connection approaches failed. Last error:", genesisError);

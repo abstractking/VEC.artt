@@ -1,0 +1,152 @@
+Action Plan for VeWorld Wallet Connection Fix
+1. Fix the Object Reference
+The first step is to confirm the correct wallet object name in the browser environment, as there might be confusion between window.vechain and window.VeWorld. To do this, we’ll add diagnostic logging to identify what’s available.
+Implementation:
+In your WalletContext.tsx file (or wherever the wallet connection is initialized), add the following code:
+javascript
+console.log("Available window objects:", Object.keys(window).filter(key => key.toLowerCase().includes('vechain') || key.toLowerCase().includes('veworld')));
+
+Why This Helps:
+This logs all window object keys containing "vechain" or "veworld" (case-insensitive), revealing whether window.vechain, window.VeWorld, or another variant exists.
+
+Once identified, update your connection logic to use the correct object (e.g., window.VeWorld instead of window.vechain).
+2. Fix the Environment Detection
+The logs indicate useRealWallet is false when it should be true on Netlify, suggesting the environment detection logic is failing. We need a more reliable way to detect the Netlify environment.
+Implementation:
+Update the detection logic in WalletContext.tsx to:
+javascript
+const isNetlify = process.env.REACT_APP_DEPLOYMENT_ENV === 'netlify';
+const useRealWallet = isNetlify; // Adjust based on your logic
+
+Then, in your Netlify dashboard, set this environment variable:
+Key: REACT_APP_DEPLOYMENT_ENV
+
+Value: netlify
+Why This Helps:
+Using an explicit environment variable avoids unreliable hostname checks (e.g., window.location.hostname.includes('netlify.app')), which may fail on custom domains.
+
+Ensures useRealWallet is correctly set to true in the Netlify production environment.
+3. Create a Pure Genesis-Only Connection Method
+To eliminate the URL construction error, we’ll implement a connection method that relies solely on the Genesis ID, bypassing node URLs entirely. The VeChain documentation indicates Connex can work with just a genesis ID when the wallet provides context.
+Implementation:
+Modify your connection function:
+javascript
+try {
+  const genesisId = process.env.REACT_APP_VECHAIN_TESTNET_GENESIS_ID || '0x00000000c05d2906d9d31b5b2d25ffef1ff1e70bb9f2ae0d8e7132e097e9db82'; // Testnet default
+  const connex = VeWorldAPI.newConnex({ genesis: genesisId });
+  console.log("Successfully connected with genesis ID only");
+  return connex;
+} catch (err) {
+  console.error("Genesis-only connection failed:", err);
+  // Handle fallback if needed
+}
+
+Why This Helps:
+Avoids invalid node URL errors by not specifying a URL.
+
+Leverages the wallet extension’s built-in network awareness, making the connection simpler and more robust.
+4. Add Direct Error Logging from the Extension
+To pinpoint the exact cause of any remaining issues, we’ll add detailed logging around connection attempts, capturing the parameters and errors.
+Implementation:
+Enhance the connection code with logging:
+javascript
+const genesisId = process.env.REACT_APP_VECHAIN_TESTNET_GENESIS_ID || '0x00000000c05d2906d9d31b5b2d25ffef1ff1e70bb9f2ae0d8e7132e097e9db82';
+console.log("Attempting to connect with parameters:", { genesis: genesisId });
+try {
+  const connex = VeWorldAPI.newConnex({ genesis: genesisId });
+  console.log("Connection successful");
+  return connex;
+} catch (err) {
+  console.error("Connection failed with parameters:", { genesis: genesisId }, "Error:", err);
+  throw err; // Or handle appropriately
+}
+
+Why This Helps:
+Provides visibility into the exact parameters and errors, making debugging easier if the genesis-only approach fails.
+
+Logs will appear in the browser console, accessible during testing on Netlify.
+5. Update the Netlify Build Configuration
+We need to ensure all environment variables are correctly set in Netlify and included in the production build, as missing variables could cause runtime issues.
+Implementation:
+In your Netlify dashboard, under Environment Variables, add:
+REACT_APP_VECHAIN_TESTNET_GENESIS_ID=0x00000000c05d2906d9d31b5b2d25ffef1ff1e70bb9f2ae0d8e7132e097e9db82
+
+REACT_APP_VECHAIN_MAINNET_GENESIS_ID=0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a (if needed)
+
+REACT_APP_DEPLOYMENT_ENV=netlify
+Then, verify your build command (e.g., npm run build) and check the Netlify build logs for errors.
+Why This Helps:
+Ensures the application has access to critical configuration data at runtime.
+
+Prefixing with REACT_APP_ ensures React picks up these variables during the build process.
+6. Add Fallback Connection Strategy
+As a final safeguard, we’ll check if the wallet extension provides a pre-created Connex object (window.connex) and use it directly, avoiding the need to create our own instance.
+Implementation:
+Add this check at the start of your connection logic:
+javascript
+if (typeof window !== 'undefined' && window.connex) {
+  console.log("Using wallet-provided Connex instance");
+  return window.connex;
+}
+// Proceed with genesis-only connection if no pre-existing connex
+const genesisId = process.env.REACT_APP_VECHAIN_TESTNET_GENESIS_ID || '0x00000000c05d2906d9d31b5b2d25ffef1ff1e70bb9f2ae0d8e7132e097e9db82';
+console.log("Attempting to connect with parameters:", { genesis: genesisId });
+const connex = VeWorldAPI.newConnex({ genesis: genesisId });
+return connex;
+
+Why This Helps:
+If the VeWorld extension already provides a configured connex instance, we can use it directly, bypassing potential configuration errors.
+
+Reduces complexity and aligns with the wallet’s intended usage.
+Putting It All Together
+Here’s how your updated connection logic might look in WalletContext.tsx:
+javascript
+export const connectToWallet = () => {
+  // Step 6: Check for wallet-provided Connex
+  if (typeof window !== 'undefined' && window.connex) {
+    console.log("Using wallet-provided Connex instance");
+    return window.connex;
+  }
+
+  // Step 1: Log available wallet objects
+  console.log("Available window objects:", Object.keys(window).filter(key => key.toLowerCase().includes('vechain') || key.toLowerCase().includes('veworld')));
+
+  // Step 2 & 5: Environment detection and variables
+  const isNetlify = process.env.REACT_APP_DEPLOYMENT_ENV === 'netlify';
+  const genesisId = process.env.REACT_APP_VECHAIN_TESTNET_GENESIS_ID || '0x00000000c05d2906d9d31b5b2d25ffef1ff1e70bb9f2ae0d8e7132e097e9db82';
+
+  // Step 3 & 4: Genesis-only connection with logging
+  console.log("Attempting to connect with parameters:", { genesis: genesisId });
+  try {
+    const connex = VeWorldAPI.newConnex({ genesis: genesisId });
+    console.log("Connection successful");
+    return connex;
+  } catch (err) {
+    console.error("Connection failed with parameters:", { genesis: genesisId }, "Error:", err);
+    throw err;
+  }
+};
+
+Next Steps
+Implement the Changes: Apply the code updates to your project.
+
+Set Environment Variables: Configure them in Netlify as described.
+
+Redeploy: Push the changes and redeploy your app on Netlify.
+
+Test: Open the browser console and test the wallet connection, checking the logs for success or errors.
+
+Debug: If issues persist, use the detailed logs to identify the problem (e.g., incorrect genesis ID, missing wallet object).
+Why This Will Work
+Object Reference: Ensures we’re using the correct wallet object.
+
+Environment Detection: Guarantees proper runtime behavior on Netlify.
+
+Genesis-Only Connection: Avoids URL-related errors entirely.
+
+Logging: Provides actionable insights for debugging.
+
+Netlify Config: Secures environment variable access.
+
+Fallback: Leverages the wallet’s built-in capabilities as a safety net.
+
