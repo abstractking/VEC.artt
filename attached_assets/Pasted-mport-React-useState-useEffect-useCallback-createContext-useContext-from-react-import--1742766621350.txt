@@ -1,0 +1,197 @@
+mport React, { useState, useEffect, useCallback, createContext, useContext } from 'react';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { getConnex } from '@vechain.energy/connex-utils';
+import bent from 'bent';
+
+const postJSON = bent('POST', 'json');
+const isConnexV1 = (connex) => (connex?.version?.split('.')[0] === '1');
+
+const testDelegation = async ({ connex, url, options, origin, clauses }) => {
+  try {
+    const testResponse = await postJSON(url, {
+      clauses,
+      options,
+      origin
+    });
+    if (!testResponse.success) {
+      throw new Error(testResponse.message || 'Delegation test failed');
+    }
+  } catch (error) {
+    console.error('Delegation test error:', error);
+    throw error;
+  }
+};
+
+export const useVeChain = () => {
+  const context = useContext(VeChainContext);
+  if (!context) {
+    throw new Error('useVeChain must be used within a VeChainProvider');
+  }
+  return context;
+};
+
+export const VeChainContext = createContext();
+
+const getVeChainConfig = () => {
+  const isProduction = process.env.NODE_ENV === 'production';
+  
+  return {
+    node: isProduction 
+      ? 'https://mainnet.veblocks.net'  // or keep testnet for testing
+      : 'https://testnet.veblocks.net',
+    network: isProduction ? 'main' : 'test',
+    // Add any other environment-specific config
+  };
+};
+
+export const VeChainProvider = ({ children }) => {
+  const config = getVeChainConfig();
+  const [connex, setConnex] = useState(null);
+  const [isInitializing, setIsInitializing] = useState(true);
+  const [error, setError] = useState(null);
+  const [transactionIds, setTransactionIds] = useState([]);
+  const [account, setAccount] = useLocalStorage('account', null);
+  const [defaultOptions, setDefaultOptions] = useState({});
+
+  const getGlobalConnexIfNetworkMatches = useCallback(() => {
+    if (window.connex && window.connex.thor?.genesis?.id === connex?.thor?.genesis?.id) {
+      return window.connex;
+    }
+    return connex;
+  }, [connex]);
+
+  const connect = useCallback(async (payloadOrContent = 'identification') => {
+    const currentConnex = getGlobalConnexIfNetworkMatches();
+    if (!currentConnex) {
+      throw new Error('Connex is not initialized. Please try again in a few seconds.');
+    }
+    
+    try {
+      const payload = typeof (payloadOrContent) === 'object' ? { ...payloadOrContent } : { type: 'text', content: payloadOrContent };
+      const certificate = { purpose: 'agreement', payload };
+
+      const result = await (isConnexV1(currentConnex) 
+        ? currentConnex.vendor.sign('cert').request(certificate) 
+        : currentConnex.vendor.sign('cert', certificate).request());
+      
+      setAccount(result.annex.signer);
+      return result;
+    } catch (error) {
+      console.error('Connection error:', error);
+      throw error;
+    }
+  }, [getGlobalConnexIfNetworkMatches, setAccount]);
+
+  const disconnect = useCallback(() => {
+    setAccount(null);
+  }, [setAccount]);
+
+  // Initialize Connex
+  useEffect(() => {
+    const initConnex = async () => {
+      setIsInitializing(true);
+      setError(null);
+      try {
+        const connexInstance = await getConnex(config);
+        
+        if (!connexInstance?.thor) {
+          throw new Error('Failed to initialize Connex properly');
+        }
+        
+        setConnex(connexInstance);
+        console.log('Connex initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize Connex:', error);
+        setError(error);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    initConnex();
+  }, [config]);
+
+  useEffect(() => {
+    setDefaultOptions(config);
+  }, [config]);
+
+  const waitForTransactionId = useCallback(async function waitForTransactionId(id) {
+    const connex = getGlobalConnexIfNetworkMatches();
+    if (!connex) {
+      throw new Error('Connex is not initialized');
+    }
+
+    const transaction = connex.thor.transaction(id);
+    let receipt = await transaction.getReceipt();
+    while (!receipt) {
+      await connex.thor.ticker().next();
+      receipt = await transaction.getReceipt();
+    }
+
+    if (receipt.reverted) {
+      const transactionData = await transaction.get();
+      const explainedTransaction = await connex.thor.explain(transactionData.clauses)
+        .caller(transactionData.origin)
+        .execute();
+
+      const revertReasons = explainedTransaction.map(({ revertReason }) => revertReason).join(' ,');
+      throw new Error(revertReasons || 'Transaction was reverted');
+    }
+
+    setTransactionIds(transactionIds => [...transactionIds, id]);
+    return transaction;
+  }, [getGlobalConnexIfNetworkMatches]);
+
+  const submitTransaction = useCallback(async function submitTransaction(clauses, options = {}) {
+    const connex = getGlobalConnexIfNetworkMatches();
+    if (!connex) {
+      throw new Error('Connex is not initialized');
+    }
+
+    const transaction = isConnexV1(connex) ? connex.vendor.sign('tx') : connex.vendor.sign('tx', clauses);
+    const { delegateTest, ...optionsWithDefaults } = { ...defaultOptions, ...options };
+    
+    for (const key of Object.keys(optionsWithDefaults)) {
+      if (key === 'delegate') {
+        applyConnexV1DelegateCompatilibity({ connex, transaction, delegate: optionsWithDefaults[key] });
+      } else if (Array.isArray(optionsWithDefaults[key])) {
+        transaction[key].call(transaction, ...optionsWithDefaults[key]);
+      } else {
+        transaction[key].call(transaction, optionsWithDefaults[key]);
+      }
+    }
+
+    if (delegateTest) {
+      const origin = Array.isArray(optionsWithDefaults.delegate) && optionsWithDefaults.delegate.length > 1 ? optionsWithDefaults.delegate[1] : (account || '0x0000000000000000000000000000000000000000');
+      await testDelegation({ connex, url: delegateTest, options: optionsWithDefaults, origin, clauses });
+    }
+    const { txid } = await (isConnexV1(connex) ? transaction.request(clauses) : transaction.request());
+    return txid;
+  }, [getGlobalConnexIfNetworkMatches, account, defaultOptions]);
+
+  return (
+    <VeChainContext.Provider value={{ 
+      connex, 
+      connect, 
+      disconnect, 
+      account,
+      isInitializing,
+      error,
+      submitTransaction, 
+      waitForTransactionId, 
+      transactionIds 
+    }}>
+      {children}
+    </VeChainContext.Provider>
+  );
+};
+
+function applyConnexV1DelegateCompatilibity({ connex, delegate, transaction }) {
+  if (isConnexV1(connex)) {
+    transaction.delegate((args) => postJSON(delegate, args));
+  } else if (Array.isArray(delegate)) {
+    transaction.delegate(...delegate);
+  } else {
+    transaction.delegate(delegate);
+  }
+}

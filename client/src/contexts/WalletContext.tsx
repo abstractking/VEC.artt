@@ -1,12 +1,8 @@
-import React, { createContext, useState, useEffect, useCallback } from "react";
-import { connectWallet as connectVeChainWallet, getWalletAddress, getWalletBalance } from "@/lib/vechain";
-import { useToast } from "@/hooks/use-toast";
-import { 
-  VeChainWalletType, 
-  detectBestWalletOption,
-  validateWalletForNetwork,
-  getWalletDisplayName
-} from "@/lib/wallet-detection";
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useVeChain } from './VeChainContext';
+import { getWalletBalance } from '@/lib/vechain';
+import { VeChainWalletType, detectBestWalletOption, verifyWalletAvailability, getWalletDisplayName } from '@/lib/wallet-detection';
+import { useToast } from '@/hooks/use-toast';
 
 interface WalletContextType {
   walletAddress: string | null;
@@ -15,12 +11,12 @@ interface WalletContextType {
   isModalOpen: boolean;
   error: string | null;
   useRealWallet: boolean;
-  walletType: string | null;
+  walletType: VeChainWalletType | null;
   walletBalance: {
     vet: string;
     vtho: string;
   };
-  connectWallet: (walletType?: string) => Promise<void>;
+  connectWallet: (walletType?: VeChainWalletType) => Promise<void>;
   disconnectWallet: () => void;
   setModalOpen: (isOpen: boolean) => void;
   toggleRealWallet: () => void;
@@ -34,263 +30,162 @@ interface WalletProviderProps {
 }
 
 export function WalletProvider({ children }: WalletProviderProps) {
-  // For Replit development only - disable demo mode on Netlify
-  const isNetlify = typeof window !== 'undefined' && window.location.hostname.includes('netlify.app');
-  
-  // Add debug mode for testing in environments without the wallet extension
-  const isDebugMode = typeof window !== 'undefined' && 
-    (import.meta.env.DEV || 
-     window.location.hostname.includes('replit') || 
-     (window.location.hostname.includes('netlify.app') && false) || // Disable demo mode on Netlify
-     import.meta.env.MODE !== 'production');
-     
-  const testWalletAddress = '0xd41a7Be0D607e4cB8940DDf7E9Dc0657B91B4511'; // Test wallet address
-  
-  // Force real wallet mode on Netlify, allow toggle elsewhere
-  const [useRealWallet, setUseRealWallet] = useState(() => {
-    // Always use real wallet on Netlify or in production
-    if (isNetlify) {
-      return true;
-    }
-    // Otherwise use stored preference or default to true
-    return localStorage.getItem('useRealWallet') !== 'false';
-  });
-  
-  // Track which wallet type the user is connecting with
-  const [walletType, setWalletType] = useState<string | null>(null);
-  
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
-  const [isModalOpen, setIsModalOpenState] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [walletBalance, setWalletBalance] = useState<{ vet: string; vtho: string }>({ vet: "0.00", vtho: "0.00" });
+  const [useRealWallet, setUseRealWallet] = useState(true);
+  const [walletType, setWalletType] = useState<VeChainWalletType | null>(null);
+  const [walletBalance, setWalletBalance] = useState({ vet: '0', vtho: '0' });
+
   const { toast } = useToast();
   
-  // Use useCallback for setModalOpen to ensure stable reference
-  const setModalOpen = useCallback((isOpen: boolean) => {
-    console.log("Setting modal open state to:", isOpen);
-    setIsModalOpenState(isOpen);
-  }, []);
+  // Get access to our VeChain context
+  const vechain = useVeChain();
 
-  // Check if wallet is already connected on mount
+  // Load wallet state from local storage on initial load
   useEffect(() => {
-    const checkWalletConnection = async () => {
-      try {
-        // Check if Thor wallet extension is available
-        if ((window as any).thor) {
-          const address = await getWalletAddress();
-          if (address) {
-            setWalletAddress(address);
-            setIsConnected(true);
-          }
-        }
-      } catch (err) {
-        console.error("Failed to check wallet connection:", err);
-        // Don't show an error toast here as it's just a check
-      }
-    };
-
-    checkWalletConnection();
-  }, []);
-  
-  // Function to refresh wallet balance
-  const refreshWalletBalance = useCallback(async () => {
-    if (walletAddress) {
-      try {
-        console.log("Refreshing wallet balance for:", walletAddress);
-        const balance = await getWalletBalance(walletAddress);
-        console.log("Wallet balance retrieved:", balance);
-        setWalletBalance(balance);
-      } catch (err) {
-        console.error("Failed to refresh wallet balance:", err);
-        // Don't show a toast for balance refresh errors to avoid spamming user
-      }
+    const savedWalletType = localStorage.getItem('walletType');
+    const savedAddress = localStorage.getItem('walletAddress');
+    const savedConnected = localStorage.getItem('walletConnected') === 'true';
+    const savedUseRealWallet = localStorage.getItem('useRealWallet') !== 'false'; // Default to true
+    
+    // Only set the wallet type if it's one of our valid types
+    if (savedWalletType && ['veworld', 'thor', 'sync', 'sync2', 'environment'].includes(savedWalletType)) {
+      setWalletType(savedWalletType as VeChainWalletType);
     }
-  }, [walletAddress]);
+    
+    if (savedAddress) setWalletAddress(savedAddress);
+    if (savedConnected && savedAddress) setIsConnected(true);
+    setUseRealWallet(savedUseRealWallet);
+    
+    // Auto-connect to vechain context
+    if (vechain.account) {
+      setWalletAddress(vechain.account);
+      setIsConnected(true);
+    }
+  }, [vechain.account]);
 
-  // Set up periodic wallet balance refresh (every 10 seconds)
+  // Update wallet address when vechain context account changes
   useEffect(() => {
-    // Only run if wallet is connected
-    if (!isConnected || !walletAddress) return;
-    
-    // Refresh immediately on connection
-    refreshWalletBalance();
-    
-    // Set up interval for balance updates
-    const intervalId = setInterval(() => {
-      refreshWalletBalance();
-    }, 10000); // 10 seconds
-    
-    // Clean up interval on unmount or when wallet disconnects
-    return () => clearInterval(intervalId);
-  }, [isConnected, walletAddress, refreshWalletBalance]);
+    if (vechain.account) {
+      setWalletAddress(vechain.account);
+      setIsConnected(true);
+    }
+  }, [vechain.account]);
 
-  const connectWallet = useCallback(async (walletTypeInput?: string) => {
-    const walletType = (walletTypeInput || detectBestWalletOption()) as VeChainWalletType;
-    console.log("Attempting to connect wallet:", walletType);
+  // Refresh wallet balance when address changes
+  useEffect(() => {
+    if (walletAddress && isConnected) {
+      refreshWalletBalance();
+    }
+  }, [walletAddress, isConnected]);
+
+  // Connect to wallet
+  const connectWallet = useCallback(async (preferredWalletType?: VeChainWalletType) => {
     setIsConnecting(true);
     setError(null);
     
     try {
-      // Always attempt to connect to a real wallet
-      // If in Netlify environment, do additional validation
-      if (isNetlify) {
-        console.log("Netlify environment detected, connecting to real wallet");
-        
-        try {
-          // Validate the wallet availability first
-          const walletValidation = validateWalletForNetwork(walletType);
-          console.log("Wallet validation result:", walletValidation);
-          
-          // Check wallet availability before attempting connection
-          if (!walletValidation.available && walletType !== 'sync' && walletType !== 'sync2') {
-            // For browser extensions, we can detect if they're not installed
-            throw new Error(walletValidation.message);
-          }
-          
-          // Connect to the specified wallet type
-          const result = await connectVeChainWallet(walletType);
-          
-          console.log("Wallet Connect Result:", result);
-          
-          if (result && result.vendor) {
-            // Handle desktop wallets that might not immediately provide an address
-            if (walletType === 'sync' || walletType === 'sync2') {
-              const walletName = getWalletDisplayName(walletType);
-              setWalletType(walletType);
-              
-              // For desktop wallets, we don't get an immediate address
-              // We'll set a temporary state and show instructions to the user
-              toast({
-                title: `${walletName} Connection Instructions`,
-                description: `Please open ${walletName} desktop application and approve the connection request.`,
-                duration: 10000, // Show for longer
-              });
-              
-              // Return early - the user will need to handle the connection in the desktop app
-              setIsConnecting(false);
-              return;
-            }
-            
-            // Handle browser wallets (VeWorld, Thor) that provide an address immediately
-            if (result.vendor.address) {
-              console.log("Setting wallet address to:", result.vendor.address);
-              setWalletAddress(result.vendor.address);
-              setIsConnected(true);
-              setWalletType(walletType);
-              setModalOpen(false);
-              
-              toast({
-                title: "Wallet Connected",
-                description: `Connected to ${getWalletDisplayName(walletType)} wallet on TestNet`,
-              });
-            } else {
-              console.error("Wallet vendor doesn't have an address:", result);
-              throw new Error("Connected to wallet but no address was provided");
-            }
-          } else {
-            console.error("Wallet connect response does not match expected structure:", result);
-            throw new Error("Failed to connect wallet");
-          }
-        } catch (err: any) {
-          console.error("Specific wallet connection error:", err);
-          
-          // Provide more helpful error messages based on wallet type
-          throw new Error(`Wallet connection failed: ${err.message}`);
-        }
-        return;
+      // Determine which wallet to use
+      const walletTypeToUse = preferredWalletType || detectBestWalletOption();
+      
+      // Verify wallet is available
+      const walletStatus = verifyWalletAvailability(walletTypeToUse);
+      if (!walletStatus.available) {
+        throw new Error(walletStatus.message);
       }
       
-      // Make sure we're in real wallet mode
-      if (!useRealWallet) {
-        localStorage.setItem('useRealWallet', 'true');
-        setUseRealWallet(true);
-      }
+      // Connect via VeChain context
+      console.log(`Connecting to ${getWalletDisplayName(walletTypeToUse)} wallet...`);
+      const result = await vechain.connect();
       
-      // Connect to the specified wallet
-      const result = await connectVeChainWallet(walletType);
-      
-      console.log("Wallet Connect Result:", result);
-      
-      if (result && result.vendor) {
-        // For desktop wallets that don't provide an immediate address
-        if (walletType === 'sync' || walletType === 'sync2') {
-          const walletName = walletType === 'sync2' ? 'Sync2' : 'Sync';
-          setWalletType(walletType);
-          
-          toast({
-            title: `${walletName} Connection Instructions`,
-            description: `Please open ${walletName} desktop application and approve the connection request.`,
-            duration: 10000, // Show for longer
-          });
-          
-          // Return early
-          setIsConnecting(false);
-          return;
-        }
+      if (result && vechain.account) {
+        console.log('Connected successfully to wallet:', vechain.account);
+        setWalletAddress(vechain.account);
+        setWalletType(walletTypeToUse);
+        setIsConnected(true);
+        setIsModalOpen(false);
         
-        // For browser wallets with immediate address
-        if (result.vendor.address) {
-          console.log("Setting wallet address to:", result.vendor.address);
-          setWalletAddress(result.vendor.address);
-          setIsConnected(true);
-          setWalletType(walletType || 'thor');
-          setModalOpen(false);
-          
-          toast({
-            title: "Wallet Connected",
-            description: `Connected to ${walletType || 'VeChain'} wallet`,
-          });
-        } else {
-          console.error("Wallet vendor doesn't have an address:", result);
-          throw new Error("Connected to wallet but no address was provided");
-        }
+        // Save to local storage
+        localStorage.setItem('walletType', walletTypeToUse);
+        localStorage.setItem('walletAddress', vechain.account);
+        localStorage.setItem('walletConnected', 'true');
+        
+        // Get wallet balance
+        refreshWalletBalance();
+        
+        toast({
+          title: "Wallet Connected",
+          description: `Connected to ${getWalletDisplayName(walletTypeToUse)}`,
+        });
       } else {
-        console.error("Wallet connect response does not match expected structure:", result);
-        throw new Error("Failed to connect wallet");
+        throw new Error('Failed to connect to wallet - no account returned');
       }
-    } catch (err: any) {
-      console.error("Wallet connection error:", err);
-      setError(err.message || "Failed to connect wallet");
-      
+    } catch (err) {
+      console.error('Wallet connection error:', err);
+      setError(err instanceof Error ? err.message : String(err));
       toast({
         title: "Connection Failed",
-        description: err.message || "Failed to connect wallet",
-        variant: "destructive",
+        description: err instanceof Error ? err.message : String(err),
+        variant: "destructive"
       });
     } finally {
       setIsConnecting(false);
     }
-  }, [toast, setModalOpen, useRealWallet, isNetlify]);
+  }, [vechain, toast]);
 
+  // Disconnect wallet
   const disconnectWallet = useCallback(() => {
-    console.log("Disconnecting wallet");
-    setWalletAddress(null);
     setIsConnected(false);
-    setWalletBalance({ vet: "0.00", vtho: "0.00" });
+    setWalletAddress(null);
+    setWalletType(null);
+    setWalletBalance({ vet: '0', vtho: '0' });
+    
+    // Clear local storage
+    localStorage.removeItem('walletType');
+    localStorage.removeItem('walletAddress');
+    localStorage.removeItem('walletConnected');
+    
+    // Disconnect from VeChain context
+    vechain.disconnect();
     
     toast({
       title: "Wallet Disconnected",
-      description: "Your wallet has been disconnected",
+      description: "You've been disconnected from your wallet",
     });
-  }, [toast]);
-  
-  // Always ensure real wallet mode is enabled
-  const toggleRealWallet = useCallback(() => {
-    // We always want to use real wallet mode
-    if (!useRealWallet) {
-      localStorage.setItem('useRealWallet', 'true');
-      setUseRealWallet(true);
-      
-      toast({
-        title: "Real Wallet Mode Enabled",
-        description: "You are now using real wallet mode.",
-      });
-    }
-  }, [useRealWallet, toast]);
+  }, [vechain, toast]);
 
-  const value = {
+  // Toggle between real and environment wallet
+  const toggleRealWallet = useCallback(() => {
+    // Disconnect current wallet first
+    if (isConnected) {
+      disconnectWallet();
+    }
+    
+    // Toggle the setting
+    setUseRealWallet(prev => {
+      const newValue = !prev;
+      localStorage.setItem('useRealWallet', String(newValue));
+      return newValue;
+    });
+  }, [isConnected, disconnectWallet]);
+
+  // Refresh wallet balance
+  const refreshWalletBalance = useCallback(async () => {
+    if (!walletAddress || !isConnected) return;
+    
+    try {
+      const balance = await getWalletBalance(walletAddress);
+      setWalletBalance(balance);
+    } catch (err) {
+      console.error('Error fetching wallet balance:', err);
+    }
+  }, [walletAddress, isConnected]);
+
+  // Context value
+  const value: WalletContextType = {
     walletAddress,
     isConnected,
     isConnecting,
@@ -301,9 +196,9 @@ export function WalletProvider({ children }: WalletProviderProps) {
     walletBalance,
     connectWallet,
     disconnectWallet,
-    setModalOpen,
+    setModalOpen: setIsModalOpen,
     toggleRealWallet,
-    refreshWalletBalance,
+    refreshWalletBalance
   };
 
   return (
@@ -311,4 +206,13 @@ export function WalletProvider({ children }: WalletProviderProps) {
       {children}
     </WalletContext.Provider>
   );
+}
+
+// Custom hook for using the wallet context
+export function useWallet() {
+  const context = useContext(WalletContext);
+  if (!context) {
+    throw new Error('useWallet must be used within a WalletProvider');
+  }
+  return context;
 }
