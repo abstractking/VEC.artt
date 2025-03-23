@@ -68,7 +68,7 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
     const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
     const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
     
-    // Use fully qualified URLs with paths as required by VeWorld
+    // Use VeBlocks URLs for better compatibility with Sync 2 and VeWorld wallets
     const nodeUrl = isMainNet 
       ? "https://mainnet.veblocks.net/" 
       : "https://testnet.veblocks.net/";
@@ -159,7 +159,7 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
     const isMainNet = networkType === Network.MAIN;
     const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
     
-    // Use fully qualified URLs with paths as required by VeWorld
+    // Use VeBlocks URLs for better compatibility with Sync 2 and VeWorld wallets
     const nodeUrl = isMainNet 
       ? "https://mainnet.veblocks.net/" 
       : "https://testnet.veblocks.net/";
