@@ -575,9 +575,9 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             const NETWORK_NAME_TEST = "test";
             
             // Define node URLs with better compatibility for Sync 2 and VeWorld wallets
-            // Adding trailing slash to ensure proper URL format that VeWorld requires
-            const NODE_URL_MAINNET = "https://mainnet.veblocks.net/";
-            const NODE_URL_TESTNET = "https://testnet.veblocks.net/";
+            // Remove trailing slash to prevent URL construction errors
+            const NODE_URL_MAINNET = "https://mainnet.veblocks.net";
+            const NODE_URL_TESTNET = "https://testnet.veblocks.net";
             
             // Select appropriate values
             const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
@@ -591,34 +591,91 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
               nodeUrl
             });
             
-            // Standard VeWorld connection approach per documentation
+            // APPROACH 1: Use specialized connector
             try {
-              console.log("Connecting to VeWorld with official network format...");
-              
-              // Log the expected parameters for debugging
-              console.log("Connecting with parameters:", {
-                node: nodeUrl,
-                network: {
-                  id: genesisId,
-                  name: networkName
-                }
+              console.log("Using specialized veworld-connector...");
+              const result = await import('./veworld-connector').then(module => {
+                return module.connectVeWorld(isMainNet ? 'main' as Network : 'test' as Network);
               });
               
-              // First check if VeWorld has a preferred connection method
-              if (typeof vechain.getVendor === 'function') {
-                console.log("Trying VeWorld's getVendor method...");
-                try {
-                  const vendor = await vechain.getVendor();
-                  
-                  // If vendor provides its own connex instance, use that
-                  if (vendor.connex) {
-                    console.log("Using VeWorld's provided Connex instance");
-                    return { connex: vendor.connex, vendor };
-                  }
-                } catch (vendorError) {
-                  console.log("getVendor method failed, falling back to standard approach:", vendorError);
-                }
+              if (result.connex && result.vendor) {
+                console.log("VeWorld connection successful via specialized connector!");
+                return result;
               }
+            } catch (importError) {
+              console.error("Specialized connector failed:", importError);
+            }
+            
+            // APPROACH 2: Check for window.connex
+            if ((window as any).connex) {
+              try {
+                console.log("Using window.connex provided by VeWorld...");
+                const connex = (window as any).connex;
+                
+                // Try to get vendor from the wallet
+                if (typeof vechain.getVendor === 'function') {
+                  try {
+                    const vendor = await vechain.getVendor();
+                    if (vendor) {
+                      console.log("Retrieved vendor from VeWorld");
+                      return { connex, vendor };
+                    }
+                  } catch (vendorError) {
+                    console.log("Could not get vendor, creating manually...");
+                  }
+                }
+                
+                // Create vendor with genesis parameter only
+                const vendor = await vechain.newConnexVendor({
+                  genesis: genesisId
+                });
+                
+                console.log("Using window.connex with manually created vendor");
+                return { connex, vendor };
+              } catch (windowConnexError) {
+                console.error("Window.connex approach failed:", windowConnexError);
+              }
+            }
+            
+            // APPROACH 3: Try getVendor for direct access
+            if (typeof vechain.getVendor === 'function') {
+              console.log("Trying VeWorld's getVendor method...");
+              try {
+                const vendor = await vechain.getVendor();
+                
+                // If vendor provides its own connex instance, use that
+                if (vendor && vendor.connex) {
+                  console.log("Using VeWorld's provided Connex instance");
+                  return { connex: vendor.connex, vendor };
+                }
+              } catch (vendorError) {
+                console.log("getVendor method failed:", vendorError);
+              }
+            }
+            
+            // APPROACH 4: Try minimal URL-less approach
+            try {
+              console.log("Using minimal URL-less approach...");
+              
+              // Create vendor with genesis parameter only
+              const vendor = await vechain.newConnexVendor({
+                genesis: genesisId
+              });
+              
+              // Try creating connex with genesis parameter only (no URL)
+              const connex = await vechain.newConnex({
+                genesis: genesisId
+              });
+              
+              console.log("Minimal connection successful!");
+              return { connex, vendor };
+            } catch (minimalError) {
+              console.error("Minimal connection failed:", minimalError);
+            }
+            
+            // APPROACH 5: Try standard approach
+            try {
+              console.log("Trying standard network approach...");
               
               // Create Connex with proper parameters
               const connex = await vechain.newConnex({
@@ -636,31 +693,16 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
                 }
               });
               
-              console.log("VeWorld connection successful!");
+              console.log("Standard network approach successful!");
               return { connex, vendor };
-            } catch (error) {
-              console.error("VeWorld connection failed with standard approach:", {
-                error,
-                message: error instanceof Error ? error.message : String(error),
-                stack: error instanceof Error ? error.stack : undefined,
-                networkParams: {
-                  nodeUrl,
-                  genesisId,
-                  networkName
-                }
-              });
+            } catch (standardError) {
+              console.error("Standard approach failed:", standardError);
               
-              // Try alternative connection method with genesis parameter
+              // APPROACH 6: Try direct genesis approach
               try {
-                console.log("Trying alternative connection method with genesis parameter...");
+                console.log("Trying direct genesis approach...");
                 
-                // Log the expected parameters for debugging
-                console.log("Connecting with alternative parameters:", {
-                  node: nodeUrl,
-                  genesis: genesisId
-                });
-                
-                // Create Connex with genesis parameter
+                // Create connex with direct genesis parameter
                 const connex = await vechain.newConnex({
                   node: nodeUrl,
                   genesis: genesisId
@@ -670,19 +712,11 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
                   genesis: genesisId
                 });
                 
-                console.log("VeWorld connection successful with alternative method!");
+                console.log("Direct genesis approach successful!");
                 return { connex, vendor };
-              } catch (alternativeError) {
-                console.error("VeWorld alternative connection method failed:", {
-                  error: alternativeError,
-                  message: alternativeError instanceof Error ? alternativeError.message : String(alternativeError),
-                  stack: alternativeError instanceof Error ? alternativeError.stack : undefined,
-                  networkParams: {
-                    nodeUrl,
-                    genesisId
-                  }
-                });
-                throw new Error("Could not connect to VeWorld wallet. Please check your wallet configuration and try again.");
+              } catch (genesisError) {
+                console.error("All connection approaches failed. Last error:", genesisError);
+                throw new Error("Could not connect to VeWorld wallet after multiple attempts. Please check your wallet configuration and try again.");
               }
             }
           } catch (error) {

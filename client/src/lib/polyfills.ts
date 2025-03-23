@@ -70,8 +70,8 @@ if (isBrowser) {
   Object.assign(window.thorCrypto, thorPolyfills);
   
   // Set up secp256k1 browser compatibility
-  if (typeof window.secp256k1 === 'undefined') {
-    window.secp256k1 = secp256k1Browser;
+  if (typeof (window as any).secp256k1 === 'undefined') {
+    (window as any).secp256k1 = secp256k1Browser;
   }
   
   // Map Node.js modules to window properties safely

@@ -272,6 +272,9 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
 /**
  * Ultra minimal connection attempt for problematic environments
  * This is a last resort when other approaches fail
+ * 
+ * Based on the research document, we'll prioritize using the wallet's
+ * built-in connex instance rather than creating our own with a URL
  */
 export async function connectVeWorldWalletMinimal(networkType: Network): Promise<VeWorldConnection> {
   try {
@@ -302,12 +305,41 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
     
     console.log("VeWorldConnector (Minimal): Using absolute minimal configuration");
     
-    // Try to get vendor directly without any parameters
+    // FIRST APPROACH: Check if window.connex is available (injected by wallet)
+    if (typeof window !== 'undefined' && (window as any).connex) {
+      try {
+        console.log("Using window.connex provided by wallet");
+        const connex = (window as any).connex;
+        
+        // Try to get vendor directly
+        if (typeof vechain.getVendor === 'function') {
+          const vendor = await vechain.getVendor();
+          if (vendor) {
+            console.log("Successfully retrieved vendor from wallet");
+            return { connex, vendor };
+          }
+        }
+        
+        // If we can't get vendor but have connex, try creating just the vendor
+        console.log("Creating vendor with minimal parameters");
+        const vendor = await vechain.newConnexVendor({
+          genesis: genesisId
+        });
+        
+        return { connex, vendor };
+      } catch (e) {
+        console.log("Window.connex approach failed:", e);
+        // Continue to next approach
+      }
+    }
+    
+    // SECOND APPROACH: Try to get vendor directly without any parameters
     if (typeof vechain.getVendor === 'function') {
       try {
         console.log("Attempting direct vendor access...");
         const vendor = await vechain.getVendor();
         if (vendor && vendor.connex) {
+          console.log("Successfully using vendor-provided connex");
           return { connex: vendor.connex, vendor };
         }
       } catch (e) {
@@ -315,9 +347,9 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
       }
     }
     
-    // Try the absolute minimal connection approach - no node URL
+    // THIRD APPROACH: No URL method - use only genesis ID
     try {
-      console.log("Trying most minimal connection parameters possible");
+      console.log("Trying genesis-only connection method");
       
       // Create vendor first with only genesis
       const vendor = await vechain.newConnexVendor({
@@ -326,17 +358,41 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
       
       console.log("Minimal vendor created");
       
-      // Then create connex with only genesis
+      // Then create connex with only genesis - no node URL
       const connex = await vechain.newConnex({
         genesis: genesisId
       });
       
-      console.log("Minimal connex created");
+      console.log("Minimal connex created without node URL");
       
       return { connex, vendor };
-    } catch (error) {
-      console.error("Even minimal connection failed:", error);
-      throw error;
+    } catch (firstError) {
+      console.error("Genesis-only connection failed:", firstError);
+      
+      // FOURTH APPROACH: Try with special format
+      try {
+        console.log("Trying special request format...");
+        
+        // Request format that doesn't use URL constructor internally
+        const vendor = await vechain.newConnexVendor({
+          genesis: genesisId,
+          name: isMainNet ? "main" : "test"
+        });
+        
+        const connex = await vechain.request({
+          method: "newConnex", 
+          params: [{
+            genesis: genesisId,
+            name: isMainNet ? "main" : "test" 
+          }]
+        });
+        
+        console.log("Special request format successful");
+        return { connex, vendor };
+      } catch (error) {
+        console.error("All connection approaches failed:", error);
+        throw error;
+      }
     }
   } catch (error) {
     console.error("VeWorldConnector (Minimal) error:", error);
