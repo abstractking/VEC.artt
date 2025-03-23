@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, Check, RefreshCw, Bug, HelpCircle, Copy } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { useVeChain } from "@/hooks/useVechain";
 
 /**
  * Wallet Debugger Component for troubleshooting VeChain wallet connections
@@ -22,6 +23,9 @@ export default function WalletDebugger() {
   const [extensionDetails, setExtensionDetails] = useState<any>({});
   const [isChecking, setIsChecking] = useState<boolean>(false);
   const { toast } = useToast();
+  
+  // Access VeChain context
+  const vechain = useVeChain();
   
   const detectBrowser = () => {
     if (typeof window === 'undefined') return null;
