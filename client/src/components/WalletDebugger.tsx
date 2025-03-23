@@ -224,124 +224,31 @@ export default function WalletDebugger() {
       setConnectionError(null);
       setActiveWallet('veworld');
       
-      // Check for the wallet object at both lowercase and capitalized positions
-      const vechain = (window as any).vechain;
-      const VeWorld = (window as any).VeWorld;
+      // Use our VeChainContext to handle the complex wallet connection logic
+      console.log("Connecting to VeWorld wallet using VeChainContext...");
       
-      if (typeof window === 'undefined' || !(vechain || VeWorld)) {
-        throw new Error("VeWorld wallet not available in window object");
+      // Start connection using our context's connect method
+      const result = await vechain.connect();
+      
+      if (!result || !vechain.account) {
+        throw new Error("Failed to connect to wallet - no account returned");
       }
       
-      // Use whichever object is available, prioritizing lowercase (more common)
-      const walletObj = vechain || VeWorld;
+      console.log("Successfully connected to wallet:", vechain.account);
       
-      // Allow connection if either isVeWorld flag is true or necessary methods exist
-      if (!walletObj.isVeWorld && 
-          !(typeof walletObj.newConnex === 'function' && typeof walletObj.newConnexVendor === 'function')) {
-        throw new Error("Not a valid VeWorld wallet extension. Missing required methods.");
-      }
-      
-      // Log available methods
-      console.log("VeWorld API methods:", Object.keys(walletObj));
-      
-      // Test network configuration for TestNet
-      const networkDescriptor = NETWORK_DESCRIPTORS[Network.TEST];
-      
-      let connex = null;
-      let vendor = null;
-      let successMethod = "";
-      
-      // Try multiple connection strategies in order of preference
-      
-      // APPROACH 1: Try window.connex if available
-      try {
-        if ((window as any).connex) {
-          console.log("Using window.connex provided by VeWorld...");
-          connex = (window as any).connex;
-          
-          // Try to get vendor from the wallet
-          if (typeof walletObj.getVendor === 'function') {
-            try {
-              vendor = await walletObj.getVendor();
-              successMethod = "window.connex + getVendor";
-            } catch (vendorError) {
-              console.log("Could not get vendor, creating manually...");
-            }
-          }
-          
-          // Create vendor with genesis parameter only if not already obtained
-          if (!vendor) {
-            vendor = await walletObj.newConnexVendor({
-              genesis: networkDescriptor.id
-            });
-            successMethod = "window.connex + manual vendor";
-          }
-        }
-      } catch (error) {
-        console.error("Window.connex approach failed:", error);
-      }
-      
-      // APPROACH 2: Try minimal URL-less approach
-      if (!connex || !vendor) {
-        try {
-          console.log("Using minimal URL-less approach...");
-          
-          // Create vendor with genesis parameter only
-          vendor = await walletObj.newConnexVendor({
-            genesis: networkDescriptor.id
-          });
-          
-          // Try creating connex with genesis parameter only (no URL)
-          connex = await walletObj.newConnex({
-            genesis: networkDescriptor.id
-          });
-          
-          successMethod = "genesis-only approach";
-        } catch (error) {
-          console.error("Minimal approach failed:", error);
-        }
-      }
-      
-      // APPROACH 3: Try network-only approach
-      if (!connex || !vendor) {
-        try {
-          console.log("Using network-only approach...");
-          
-          // Create Connex with network parameters but no node URL
-          connex = await walletObj.newConnex({
-            network: networkDescriptor
-          });
-          
-          vendor = await walletObj.newConnexVendor({
-            network: networkDescriptor
-          });
-          
-          successMethod = "network-only approach";
-        } catch (error) {
-          console.error("Network-only approach failed:", error);
-        }
-      }
-      
-      // If all approaches failed, throw an error
-      if (!connex || !vendor) {
-        throw new Error("All connection methods failed. Please check your wallet extension and network settings.");
-      }
-      
-      if (!connex || !vendor) {
-        throw new Error("Failed to initialize Connex or Vendor");
-      }
-      
+      // Get connection details from the context
       setConnectionDetails({
-        connex: connex ? "Connected" : "Failed",
-        vendor: vendor ? "Connected" : "Failed",
-        networkDescriptor,
-        successMethod,
-        walletType: "VeWorld"
+        connex: vechain.connex ? "Connected" : "Failed",
+        vendor: vechain.vendor ? "Connected" : "Failed",
+        networkDescriptor: NETWORK_DESCRIPTORS[vechain.networkType],
+        address: vechain.account,
+        walletType: "VeWorld",
+        successMethod: "VeChainContext"
       });
       
       toast({
         title: "Connected Successfully",
-        description: `Wallet connected using ${successMethod} approach`,
+        description: `Wallet connected via new VeChainContext approach`,
         duration: 3000
       });
     } catch (error: any) {
@@ -363,23 +270,25 @@ export default function WalletDebugger() {
       setConnectionError(null);
       setActiveWallet('thor');
       
-      if (typeof window === 'undefined' || !(window as any).thor) {
-        throw new Error("Thor wallet not available");
+      // Use VeChainContext to handle the wallet connection
+      console.log("Connecting to Thor wallet using VeChainContext...");
+      
+      // Connect using context - VeChainContext will detect and use the Thor provider
+      const result = await vechain.connect();
+      
+      if (!result || !vechain.account) {
+        throw new Error("Failed to connect to wallet - no account returned");
       }
       
-      console.log("Connecting to Thor wallet...");
-      const vendor = await (window as any).thor.enable();
-      
-      if (!vendor) {
-        throw new Error("Failed to enable Thor wallet");
-      }
-      
-      console.log("Thor wallet connected successfully:", vendor);
+      console.log("Thor wallet connected successfully:", vechain.account);
       
       setConnectionDetails({
-        vendor: vendor ? "Connected" : "Failed",
+        connex: vechain.connex ? "Connected" : "Failed",
+        vendor: vechain.vendor ? "Connected" : "Failed",
+        networkDescriptor: NETWORK_DESCRIPTORS[vechain.networkType],
+        address: vechain.account,
         walletType: "Thor",
-        address: vendor.address || "Unknown"
+        successMethod: "VeChainContext"
       });
       
       toast({
@@ -536,6 +445,7 @@ export default function WalletDebugger() {
                       <div><strong>Connex:</strong> {connectionDetails.connex}</div>
                       <div><strong>Vendor:</strong> {connectionDetails.vendor}</div>
                       <div><strong>Network:</strong> {connectionDetails.networkDescriptor?.name}</div>
+                      <div><strong>Address:</strong> {connectionDetails.address}</div>
                     </div>
                   </div>
                 )}
@@ -576,8 +486,11 @@ export default function WalletDebugger() {
                       Connection Successful
                     </h4>
                     <Separator className="my-2" />
-                    <div className="text-sm">
+                    <div className="text-sm space-y-2">
+                      <div><strong>Connex:</strong> {connectionDetails.connex}</div>
                       <div><strong>Vendor:</strong> {connectionDetails.vendor}</div>
+                      <div><strong>Network:</strong> {connectionDetails.networkDescriptor?.name}</div>
+                      <div><strong>Address:</strong> {connectionDetails.address}</div>
                     </div>
                   </div>
                 )}

@@ -14,7 +14,7 @@ const isTestNet = typeof process !== 'undefined' && process.env.VITE_REACT_APP_V
 /**
  * Available VeChain wallet types
  */
-export type VeChainWalletType = 'veworld' | 'thor' | 'sync' | 'sync2' | 'environment';
+export type VeChainWalletType = 'veworld' | 'thor' | 'sync' | 'sync2' | 'environment' | 'walletconnect';
 
 /**
  * Result from wallet detection

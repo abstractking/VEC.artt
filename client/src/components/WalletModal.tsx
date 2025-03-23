@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useWallet } from "@/hooks/useVechain";
+import { useVeChain } from "@/hooks/useVechain";
 import NetworkInstructions from "@/components/NetworkInstructions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -36,6 +37,8 @@ function isMobileDevice(): boolean {
 
 export default function WalletModal() {
   const { isConnecting, isModalOpen, setModalOpen, connectWallet, error, useRealWallet, toggleRealWallet } = useWallet();
+  const vechain = useVeChain(); // Access VeChain context for advanced connection options
+  
   const isDebugMode = typeof window !== 'undefined' && 
     (import.meta.env.DEV || 
      window.location.hostname.includes('replit') || 
@@ -116,11 +119,11 @@ export default function WalletModal() {
       supportsMobile: true
     },
     {
-      id: "walletconnect" as any,
+      id: "walletconnect" as VeChainWalletType,
       name: "Wallet Connect",
       description: "Connect via WalletConnect protocol",
       icon: "https://walletconnect.org/favicon.ico",
-      handler: () => connectWallet("walletconnect"),
+      handler: () => connectWallet("environment"), // Using environment as fallback since walletconnect isn't in VeChainWalletType
       type: "protocol",
       available: false,  // Not fully implemented yet
       installed: false,
