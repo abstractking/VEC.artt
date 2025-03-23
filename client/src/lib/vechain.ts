@@ -105,17 +105,17 @@ export const NODES = {
     // Use proxy endpoints to avoid CORS issues with direct VeChain node access
     url: `${getBaseUrl()}/api/vechain/mainnet`,
     socketUrl: `${getBaseUrl()}/api/vechain/mainnet`,
-    // Keep direct URLs for reference and for wallet connections
-    directUrl: 'https://mainnet.vechain.org',
-    directSocketUrl: 'wss://mainnet.vechain.org',
+    // Using VeBlocks links for better compatibility with Sync 2 and VeWorld wallets
+    directUrl: 'https://mainnet.veblocks.net',
+    directSocketUrl: 'wss://mainnet.veblocks.net',
   },
   test: {
     // Use proxy endpoints to avoid CORS issues with direct VeChain node access
     url: `${getBaseUrl()}/api/vechain/testnet`,
     socketUrl: `${getBaseUrl()}/api/vechain/testnet`,
-    // Keep direct URLs for reference and for wallet connections
-    directUrl: 'https://testnet.vechain.org',
-    directSocketUrl: 'wss://testnet.vechain.org',
+    // Using VeBlocks links for better compatibility with Sync 2 and VeWorld wallets
+    directUrl: 'https://testnet.veblocks.net',
+    directSocketUrl: 'wss://testnet.veblocks.net',
   },
   solo: {
     url: 'http://localhost:8669',
@@ -310,15 +310,15 @@ export const getConnex = async () => {
       // WebSocket URL (if available)
       let wsUrl = '';
       try {
-        // Use vechain.org node endpoints for better compatibility
+        // Use VeBlocks node endpoints for better compatibility with Sync 2 and VeWorld wallets
         wsUrl = (network as any).socketUrl || (network.name.toLowerCase() === 'main' 
-          ? 'wss://mainnet.vechain.org'
-          : 'wss://testnet.vechain.org');
+          ? 'wss://mainnet.veblocks.net'
+          : 'wss://testnet.veblocks.net');
       } catch (error) {
         console.warn("Could not determine WebSocket URL:", error);
         wsUrl = network.name.toLowerCase() === 'main' 
-          ? 'wss://mainnet.vechain.org'
-          : 'wss://testnet.vechain.org';
+          ? 'wss://mainnet.veblocks.net'
+          : 'wss://testnet.veblocks.net';
       }
         
       // Try WebSocket connection first for better performance
@@ -574,10 +574,10 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             const NETWORK_NAME_MAIN = "main";
             const NETWORK_NAME_TEST = "test";
             
-            // Define node URLs with better CORS support
+            // Define node URLs with better compatibility for Sync 2 and VeWorld wallets
             // Adding trailing slash to ensure proper URL format that VeWorld requires
-            const NODE_URL_MAINNET = "https://mainnet.vechain.org/";
-            const NODE_URL_TESTNET = "https://testnet.vechain.org/";
+            const NODE_URL_MAINNET = "https://mainnet.veblocks.net/";
+            const NODE_URL_TESTNET = "https://testnet.veblocks.net/";
             
             // Select appropriate values
             const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
