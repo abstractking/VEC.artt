@@ -87,7 +87,13 @@ export default function WalletTest() {
           </TabsList>
           
           <TabsContent value="debugger">
-            <WalletDebugger />
+            {error ? (
+              <div className="mb-8">
+                <BlockchainConnectionError onRetry={() => window.location.reload()} />
+              </div>
+            ) : (
+              <WalletDebugger />
+            )}
           </TabsContent>
           
           <TabsContent value="config">
