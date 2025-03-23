@@ -70,8 +70,8 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
     
     // Use fully qualified URLs with paths as required by VeWorld
     const nodeUrl = isMainNet 
-      ? "https://mainnet.vechain.org/" 
-      : "https://testnet.vechain.org/";
+      ? "https://mainnet.veblocks.net/" 
+      : "https://testnet.veblocks.net/";
     
     console.log("VeWorldConnector: Using network parameters:", { 
       networkType, 
@@ -161,8 +161,8 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
     
     // Use fully qualified URLs with paths as required by VeWorld
     const nodeUrl = isMainNet 
-      ? "https://mainnet.vechain.org/" 
-      : "https://testnet.vechain.org/";
+      ? "https://mainnet.veblocks.net/" 
+      : "https://testnet.veblocks.net/";
     
     console.log("VeWorldConnector (Alt): Using direct genesis parameter:", { 
       networkType, 
