@@ -603,6 +603,34 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
               networkName
             });
             
+            // APPROACH 0: Try direct request method first (completely bypasses URL validation)
+            try {
+              console.log("Trying direct request method approach...");
+              
+              // Use raw request method instead of newConnex to avoid URL construction
+              const connex = await vechain.request({
+                method: "newConnex",
+                params: [{
+                  genesis: genesisId,
+                  name: networkName
+                }]
+              });
+              
+              // Use raw request method instead of newConnexVendor to avoid URL construction
+              const vendor = await vechain.request({
+                method: "newConnexVendor",
+                params: [{
+                  genesis: genesisId,
+                  name: networkName
+                }]
+              });
+              
+              console.log("Direct request method succeeded");
+              return { connex, vendor };
+            } catch (requestError) {
+              console.error("Direct request method failed:", requestError);
+            }
+
             // APPROACH 1: Use specialized connector
             try {
               console.log("Using specialized veworld-connector...");
