@@ -15,8 +15,8 @@ export const isDev = process.env.NODE_ENV === 'development';
 export const isProd = process.env.NODE_ENV === 'production';
 
 // VeChain network detection
-export const isTestNet = process.env.VITE_REACT_APP_VECHAIN_NETWORK === 'test';
-export const isMainNet = process.env.VITE_REACT_APP_VECHAIN_NETWORK === 'main';
+export const isTestNet = import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK === 'test';
+export const isMainNet = import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK === 'main';
 
 // Feature detection
 export const hasWebSocket = typeof WebSocket !== 'undefined';

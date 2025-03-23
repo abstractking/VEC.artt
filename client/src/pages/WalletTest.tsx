@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import Layout from '@/components/Layout';
 import WalletDebugger from '@/components/WalletDebugger';
+import BlockchainConnectionError from '@/components/BlockchainConnectionError';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,7 @@ import { AlertTriangle, Check, RefreshCw, Bug, HelpCircle, ArrowRight } from 'lu
 import { useToast } from "@/hooks/use-toast";
 import { NETWORKS as NETWORK_DESCRIPTORS, Network } from '@/lib/Network';
 import { NETWORKS } from '@/lib/vechain';
+import { useVeChain } from '@/contexts/VeChainContext';
 
 /**
  * Wallet Test page for troubleshooting VeChain wallet connections
@@ -19,6 +21,7 @@ export default function WalletTest() {
   const [isTestingProxy, setIsTestingProxy] = useState(false);
   const [genesisId, setGenesisId] = useState<string | null>(null);
   const { toast } = useToast();
+  const { error, isInitializing } = useVeChain();
 
   // Function to test server-side proxy
   const testServerProxy = async () => {
