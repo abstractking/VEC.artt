@@ -3,6 +3,7 @@
  * 
  * This module provides a specialized connector for the VeWorld wallet
  * that directly matches the exact format expected by the VeWorld API.
+ * Optimized for mobile users and enhanced error handling.
  */
 
 import { Network } from './Network';
@@ -35,8 +36,19 @@ interface VeWorldConnection {
 }
 
 /**
+ * Detect if running on a mobile device
+ * This is used to adapt the connection approach for mobile
+ */
+function isMobileDevice(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+/**
  * Connect to VeWorld wallet with precise parameters
  * This function uses the exact format expected by VeWorld
+ * Optimized for mobile devices with additional checks
  */
 export async function connectVeWorldWallet(networkType: Network): Promise<VeWorldConnection> {
   try {
@@ -68,16 +80,18 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
     const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
     const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
     
-    // Use VeBlocks URLs for better compatibility with Sync 2 and VeWorld wallets
+    // Use VeBlocks URLs for better compatibility - strip trailing slash
+    // VeWorld mobile has issues with trailing slashes in URLs
     const nodeUrl = isMainNet 
-      ? "https://mainnet.veblocks.net/" 
-      : "https://testnet.veblocks.net/";
+      ? "https://mainnet.veblocks.net" 
+      : "https://testnet.veblocks.net";
     
     console.log("VeWorldConnector: Using network parameters:", { 
       networkType, 
       genesisId, 
       networkName,
-      nodeUrl 
+      nodeUrl,
+      isMobile: isMobileDevice()
     });
     
     // Check if VeWorld has a preferred connection method
@@ -87,7 +101,7 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
         const vendor = await vechain.getVendor();
         
         // If vendor provides its own connex instance, use that
-        if (vendor.connex) {
+        if (vendor && vendor.connex) {
           console.log("Using VeWorld's provided Connex instance");
           return { connex: vendor.connex, vendor };
         }
@@ -95,29 +109,59 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
         console.log("getVendor method failed, falling back to standard approach:", vendorError);
       }
     }
-    
-    // Create Connex instance with exact format
-    const connex = await vechain.newConnex({
-      node: nodeUrl,
-      network: {
-        id: genesisId,
-        name: networkName
+
+    // Special handling for mobile devices
+    if (isMobileDevice()) {
+      console.log("Mobile device detected, using simplified connection parameters");
+      
+      // For mobile, try simpler parameters first
+      try {
+        // Use simplified parameters for mobile
+        const vendor = await vechain.newConnexVendor({
+          genesis: genesisId
+        });
+        
+        // Create Connex instance with simplified node parameter
+        const connex = await vechain.newConnex({
+          node: nodeUrl,
+          genesis: genesisId
+        });
+        
+        console.log("VeWorldConnector: Mobile connection successful");
+        return { connex, vendor };
+      } catch (mobileError) {
+        console.error("Mobile connection approach failed:", mobileError);
+        // Fall through to try the standard approach
       }
-    });
+    }
     
-    console.log("VeWorldConnector: Connex created successfully");
-    
-    // Create vendor with exact format VeWorld expects
-    const vendor = await vechain.newConnexVendor({
-      network: {
-        id: genesisId,
-        name: networkName
-      }
-    });
-    
-    console.log("VeWorldConnector: Vendor created successfully");
-    
-    return { connex, vendor };
+    // Create Connex instance with exact format for desktop browsers
+    try {
+      const connex = await vechain.newConnex({
+        node: nodeUrl,
+        network: {
+          id: genesisId,
+          name: networkName
+        }
+      });
+      
+      console.log("VeWorldConnector: Connex created successfully");
+      
+      // Create vendor with exact format VeWorld expects
+      const vendor = await vechain.newConnexVendor({
+        network: {
+          id: genesisId,
+          name: networkName
+        }
+      });
+      
+      console.log("VeWorldConnector: Vendor created successfully");
+      
+      return { connex, vendor };
+    } catch (error) {
+      console.error("Standard parameters failed:", error);
+      throw error;
+    }
   } catch (error) {
     console.error("VeWorldConnector error:", error);
     return { 
@@ -129,8 +173,8 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
 }
 
 /**
- * Alternative connection method that tries with direct genesis parameter
- * This is a fallback in case the nested network object doesn't work
+ * Alternative connection method with direct genesis parameter
+ * This is a fallback approach that works with some VeWorld versions
  */
 export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeWorldConnection> {
   try {
@@ -159,10 +203,10 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
     const isMainNet = networkType === Network.MAIN;
     const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
     
-    // Use VeBlocks URLs for better compatibility with Sync 2 and VeWorld wallets
+    // Use VeBlocks URLs without trailing slash
     const nodeUrl = isMainNet 
-      ? "https://mainnet.veblocks.net/" 
-      : "https://testnet.veblocks.net/";
+      ? "https://mainnet.veblocks.net" 
+      : "https://testnet.veblocks.net";
     
     console.log("VeWorldConnector (Alt): Using direct genesis parameter:", { 
       networkType, 
@@ -170,38 +214,51 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
       nodeUrl 
     });
     
-    // Check if VeWorld has a preferred connection method
-    if (typeof vechain.getVendor === 'function') {
-      console.log("Trying VeWorld's getVendor method (Alt)...");
+    // Try simpler parameters for mobile devices
+    if (isMobileDevice()) {
+      console.log("Mobile device detected in alt connection, using minimal parameters");
+      
       try {
-        const vendor = await vechain.getVendor();
+        // For mobile, create vendor first with minimal parameters
+        const vendor = await vechain.newConnexVendor({
+          genesis: genesisId
+        });
         
-        // If vendor provides its own connex instance, use that
-        if (vendor.connex) {
-          console.log("Using VeWorld's provided Connex instance (Alt)");
-          return { connex: vendor.connex, vendor };
-        }
-      } catch (vendorError) {
-        console.log("getVendor method failed, falling back to standard approach (Alt):", vendorError);
+        // Create a simple connex instance with minimal parameters
+        const connex = await vechain.newConnex({
+          genesis: genesisId
+        });
+        
+        console.log("VeWorldConnector (Alt): Mobile minimal connection successful");
+        return { connex, vendor };
+      } catch (minimalError) {
+        console.error("Minimal parameters failed:", minimalError);
+        // Continue with standard alt approach
       }
     }
     
-    // Create Connex instance with direct genesis parameter
-    const connex = await vechain.newConnex({
-      node: nodeUrl,
-      genesis: genesisId
-    });
-    
-    console.log("VeWorldConnector (Alt): Connex created successfully");
-    
-    // Create vendor with direct genesis parameter
-    const vendor = await vechain.newConnexVendor({
-      genesis: genesisId
-    });
-    
-    console.log("VeWorldConnector (Alt): Vendor created successfully");
-    
-    return { connex, vendor };
+    // Standard alternative approach with node URL
+    try {
+      // Create Connex instance with direct genesis parameter
+      const connex = await vechain.newConnex({
+        node: nodeUrl,
+        genesis: genesisId
+      });
+      
+      console.log("VeWorldConnector (Alt): Connex created successfully");
+      
+      // Create vendor with direct genesis parameter
+      const vendor = await vechain.newConnexVendor({
+        genesis: genesisId
+      });
+      
+      console.log("VeWorldConnector (Alt): Vendor created successfully");
+      
+      return { connex, vendor };
+    } catch (error) {
+      console.error("Standard alt approach failed:", error);
+      throw error;
+    }
   } catch (error) {
     console.error("VeWorldConnector (Alt) error:", error);
     return { 
@@ -213,17 +270,38 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
 }
 
 /**
- * Comprehensive connect method that tries both approaches
+ * Comprehensive connect method that tries multiple approaches
+ * This function tries different connection strategies based on device type
  */
 export async function connectVeWorld(networkType: Network): Promise<VeWorldConnection> {
-  // Try standard method first
-  const result = await connectVeWorldWallet(networkType);
-  if (result.connex && result.vendor) {
-    return result;
+  console.log("Connecting to VeWorld wallet (patched)...");
+  
+  // Check if running on mobile
+  const mobile = isMobileDevice();
+  
+  if (mobile) {
+    console.log("Mobile device detected, using mobile-optimized connection sequence");
+    
+    // For mobile, try Alt method first as it tends to work better on mobile
+    const altResult = await connectVeWorldWalletAlt(networkType);
+    if (altResult.connex && altResult.vendor) {
+      return altResult;
+    }
+    
+    console.log("VeWorldConnector: Mobile Alt method failed, trying standard...");
+    
+    // Fall back to standard method
+    return connectVeWorldWallet(networkType);
+  } else {
+    // For desktop, try standard method first
+    const result = await connectVeWorldWallet(networkType);
+    if (result.connex && result.vendor) {
+      return result;
+    }
+    
+    console.log("VeWorldConnector: Standard method failed, trying alternative...");
+    
+    // Fall back to alternative method
+    return connectVeWorldWalletAlt(networkType);
   }
-  
-  console.log("VeWorldConnector: Standard method failed, trying alternative...");
-  
-  // Try alternative method
-  return connectVeWorldWalletAlt(networkType);
 }

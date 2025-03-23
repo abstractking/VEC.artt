@@ -1,0 +1,52 @@
+[INFO] (#Ext) -  Starting ContentScriptController listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+(index):136 Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+index-C3yuAnKo.js:104 Browser environment polyfills initialized
+index-C3yuAnKo.js:539 Setting up crypto environment with cryptoPolyfill
+index-C3yuAnKo.js:627 Application initialized successfully
+index-C3yuAnKo.js:611 NFTShuffle mounted, setting up rotation with interval: 20000
+index-C3yuAnKo.js:602 Available wallets: Array(4)
+index-C3yuAnKo.js:611 NFTShuffle mounted, setting up rotation with interval: 20000
+index-C3yuAnKo.js:541 Attempting to connect wallet: veworld
+index-C3yuAnKo.js:539 Connecting to veworld wallet type on TestNet...
+index-C3yuAnKo.js:539 Connecting to VeWorld wallet (patched)...
+index-C3yuAnKo.js:539 VeWorld API methods available: Array(7)
+index-C3yuAnKo.js:539 VeWorld wallet connection error: ExtensionError: Invalid Connex options node URL: TypeError: Failed to construct 'URL': Invalid URL
+    at Object.invalidParams (VeWorldAPI.js:1:14303)
+    at validateConnexOptions (VeWorldAPI.js:2214:152315)
+    at Object.newConnex (VeWorldAPI.js:2214:151719)
+    at DA (index-C3yuAnKo.js:539:189911)
+    at index-C3yuAnKo.js:541:15298
+    at T (index-C3yuAnKo.js:598:11693)
+    at Object.Jpe (index-C3yuAnKo.js:124:9873)
+    at tme (index-C3yuAnKo.js:124:10030)
+    at rme (index-C3yuAnKo.js:124:10090)
+    at XT (index-C3yuAnKo.js:124:31563)
+DA @ index-C3yuAnKo.js:539Understand this errorAI
+index-C3yuAnKo.js:541 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected
+    at DA (index-C3yuAnKo.js:539:190258)
+    at index-C3yuAnKo.js:541:15298
+    at T (index-C3yuAnKo.js:598:11693)
+    at Object.Jpe (index-C3yuAnKo.js:124:9873)
+    at tme (index-C3yuAnKo.js:124:10030)
+    at rme (index-C3yuAnKo.js:124:10090)
+    at XT (index-C3yuAnKo.js:124:31563)
+    at XV (index-C3yuAnKo.js:124:31981)
+    at index-C3yuAnKo.js:124:36914
+    at B7 (index-C3yuAnKo.js:127:36984)
+DA @ index-C3yuAnKo.js:541Understand this errorAI
+index-C3yuAnKo.js:611 NFTShuffle mounted, setting up rotation with interval: 20000
+index-C3yuAnKo.js:541 Wallet connection error: Error: VeWorld wallet not available or connection rejected
+    at DA (index-C3yuAnKo.js:539:190258)
+    at index-C3yuAnKo.js:541:15298
+    at T (index-C3yuAnKo.js:598:11693)
+    at Object.Jpe (index-C3yuAnKo.js:124:9873)
+    at tme (index-C3yuAnKo.js:124:10030)
+    at rme (index-C3yuAnKo.js:124:10090)
+    at XT (index-C3yuAnKo.js:124:31563)
+    at XV (index-C3yuAnKo.js:124:31981)
+    at index-C3yuAnKo.js:124:36914
+    at B7 (index-C3yuAnKo.js:127:36984)
+(anonymous) @ index-C3yuAnKo.js:541Understand this errorAI
+index-C3yuAnKo.js:611 NFTShuffle mounted, setting up rotation with interval: 20000
