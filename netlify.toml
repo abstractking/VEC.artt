@@ -16,6 +16,10 @@
   NPM_FLAGS = "--production=false"
   # CI install flags
   CI_NPM_FLAGS = "--no-audit --no-fund"
+  # VeChain network configuration
+  VITE_REACT_APP_VECHAIN_NETWORK = "test"
+  VITE_VECHAIN_NODE_URL_TESTNET = "https://testnet.veblocks.net"
+  VITE_VECHAIN_NODE_URL_MAINNET = "https://mainnet.veblocks.net"
 
 # Redirects and rewrites
 [[redirects]]
