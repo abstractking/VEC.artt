@@ -1,28 +1,15 @@
 /**
- * Main polyfill file for browser compatibility
- * This ensures all Node.js modules are properly polyfilled in the browser
+ * Unified polyfill system for browser compatibility
+ * 
+ * This file serves as the central polyfill manager, reducing redundancy and potential conflicts
+ * by coordinating all polyfill setup in one place.
  */
 
 import { isBrowser } from './browser-info';
 
-// Make Buffer available globally
+// Core polyfills
 import { Buffer } from 'buffer';
-if (isBrowser) {
-  window.Buffer = window.Buffer || Buffer;
-}
-
-// Make process available globally
 import process from 'process';
-if (isBrowser) {
-  window.process = window.process || process;
-}
-
-// Make sure global is defined
-if (isBrowser) {
-  window.global = window.global || window;
-}
-
-// Import and expose browserify modules
 import * as buffer from 'buffer';
 import * as crypto from 'crypto-browserify';
 import * as stream from 'stream-browserify';
@@ -36,23 +23,29 @@ import * as assert from 'assert';
 import * as zlib from 'browserify-zlib';
 import * as util from 'util';
 
-// Make modules available through window
+// VeChain specific polyfills
+import * as thorPolyfills from './thor-polyfills';
+import * as secp256k1Browser from './secp256k1-browser';
+
+// Only run in browser environment
 if (isBrowser) {
-  // Create a new object to hold our crypto implementation
-  const cryptoPolyfill = Object.create(null);
-  Object.assign(cryptoPolyfill, crypto);
+  console.log("Setting up unified polyfill system...");
   
-  // Make crypto browserify available without trying to redefine the native crypto
-  window.cryptoPolyfill = cryptoPolyfill;
+  // Set up global object/context
+  window.global = window.global || window;
   
-  // Create a safe util implementation
-  const safeUtil = {
-    ...util,
-    debuglog: () => () => {}, // Stub implementation
-    inspect: (obj: any) => JSON.stringify(obj, null, 2), // Simple inspect implementation
-  };
+  // Set up core polyfills
+  window.Buffer = window.Buffer || Buffer;
+  window.process = window.process || process;
   
-  // Create a safe stream implementation
+  // Configure crypto carefully - don't override native crypto
+  if (!window.cryptoPolyfill) {
+    const cryptoPolyfill = Object.create(null);
+    Object.assign(cryptoPolyfill, crypto);
+    window.cryptoPolyfill = cryptoPolyfill;
+  }
+  
+  // Create a safer stream implementation with null checks
   const safeStream = {
     ...stream,
     Transform: stream.Transform || null,
@@ -61,7 +54,27 @@ if (isBrowser) {
     Duplex: stream.Duplex || null,
   };
   
-  // Add Node.js-compatible modules to window safely
+  // Create a safer util implementation for browser compatibility
+  const safeUtil = {
+    ...util,
+    debuglog: () => () => {}, // Stub implementation
+    inspect: (obj: any) => JSON.stringify(obj, null, 2), // Simple inspect implementation
+  };
+  
+  // Set up thor-specific crypto polyfills
+  if (!window.thorCrypto) {
+    window.thorCrypto = Object.create(null);
+  }
+  
+  // Merge thor polyfills with existing object
+  Object.assign(window.thorCrypto, thorPolyfills);
+  
+  // Set up secp256k1 browser compatibility
+  if (typeof window.secp256k1 === 'undefined') {
+    window.secp256k1 = secp256k1Browser;
+  }
+  
+  // Map Node.js modules to window properties safely
   const moduleMapping: Record<string, unknown> = {
     stream: safeStream,
     http,
@@ -75,10 +88,9 @@ if (isBrowser) {
     util: safeUtil
   };
   
-  // Safely assign modules to window
+  // Safely assign Node.js modules to window properties
   Object.entries(moduleMapping).forEach(([key, value]) => {
     try {
-      // Using type assertion for TypeScript compatibility
       if (!(key in window)) {
         (window as any)[key] = value;
       }
@@ -86,16 +98,11 @@ if (isBrowser) {
       console.warn(`Could not assign ${key} to window:`, e);
     }
   });
+  
+  console.log("Unified polyfill system initialized successfully");
 }
 
-// Set up thor-specific polyfills
-import * as thorPolyfills from './thor-polyfills';
-if (isBrowser && window.thorCrypto) {
-  // Merge thor polyfills with existing object instead of overwriting
-  Object.assign(window.thorCrypto, thorPolyfills);
-}
-
-// Export modules for TypeScript compatibility
+// Export all modules for TypeScript compatibility and direct imports
 export {
   buffer,
   process,
@@ -110,5 +117,6 @@ export {
   assert,
   zlib,
   util,
-  thorPolyfills
+  thorPolyfills,
+  secp256k1Browser
 };
