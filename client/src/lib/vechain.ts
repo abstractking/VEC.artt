@@ -603,32 +603,92 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
               networkName
             });
             
-            // APPROACH 0: Try direct request method first (completely bypasses URL validation)
+            // APPROACH 0: Try to use only the pre-injected window.connex if available
+            // This completely avoids any URL or parameter issues
+            if (typeof window !== 'undefined' && (window as any).connex) {
+              try {
+                console.log("Found window.connex, using pre-injected instance...");
+                const connex = (window as any).connex;
+                
+                // Try to get the address from the connex instance
+                const address = await connex.thor.status.head.signer;
+                console.log("Found address from connex:", address);
+                
+                // Create a minimal vendor object
+                const vendor = {
+                  name: "VeWorld", 
+                  address: address,
+                  // Create minimal implementations of required methods
+                  sign: async (type: string, message: any) => {
+                    // Just forward requests to the real connex vendor
+                    return connex.vendor.sign(type, message);
+                  }
+                };
+                
+                console.log("Using pre-injected window.connex successfully");
+                return { connex, vendor };
+              } catch (connexError) {
+                console.error("Using window.connex directly failed:", connexError);
+              }
+            }
+            
+            // APPROACH 0.5: Try direct request method as the most minimal API approach
             try {
               console.log("Trying direct request method approach...");
               
-              // Use raw request method instead of newConnex to avoid URL construction
+              // First try without any URLs at all
               const connex = await vechain.request({
                 method: "newConnex",
-                params: [{
-                  genesis: genesisId,
-                  name: networkName
-                }]
+                params: [{ name: networkName }]
               });
               
-              // Use raw request method instead of newConnexVendor to avoid URL construction
               const vendor = await vechain.request({
                 method: "newConnexVendor",
-                params: [{
-                  genesis: genesisId,
-                  name: networkName
-                }]
+                params: [{ name: networkName }]
               });
               
-              console.log("Direct request method succeeded");
+              console.log("Direct request method with name-only succeeded");
               return { connex, vendor };
-            } catch (requestError) {
-              console.error("Direct request method failed:", requestError);
+            } catch (nameOnlyError) {
+              console.error("Name-only request failed:", nameOnlyError);
+              
+              try {
+                // Now try with only genesis
+                console.log("Trying genesis-only direct request...");
+                const connex = await vechain.request({
+                  method: "newConnex",
+                  params: [{ genesis: genesisId }]
+                });
+                
+                const vendor = await vechain.request({
+                  method: "newConnexVendor",
+                  params: [{ genesis: genesisId }]
+                });
+                
+                console.log("Genesis-only direct request succeeded");
+                return { connex, vendor };
+              } catch (genesisOnlyError) {
+                console.error("Genesis-only request failed:", genesisOnlyError);
+                
+                // Last attempt - the most minimal possible
+                try {
+                  console.log("Trying empty params direct request...");
+                  const connex = await vechain.request({
+                    method: "newConnex",
+                    params: [{}]
+                  });
+                  
+                  const vendor = await vechain.request({
+                    method: "newConnexVendor",
+                    params: [{}]
+                  });
+                  
+                  console.log("Empty params direct request succeeded");
+                  return { connex, vendor };
+                } catch (emptyParamsError) {
+                  console.error("Empty params request failed:", emptyParamsError);
+                }
+              }
             }
 
             // APPROACH 1: Use specialized connector

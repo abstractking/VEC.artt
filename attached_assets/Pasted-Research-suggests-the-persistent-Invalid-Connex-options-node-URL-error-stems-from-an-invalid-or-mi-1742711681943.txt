@@ -1,0 +1,59 @@
+Research suggests the persistent "Invalid Connex options node URL" error stems from an invalid or missing node URL parameter in the Connex initialization, despite attempts to use genesis IDs or window.connex.
+
+It seems likely that the issue persists due to a mismatch between the environment variables set in Netlify and how they’re accessed in your Vite-based project, or a failure to properly detect and use the wallet’s window.connex.
+
+The evidence leans toward needing to verify recent commits in your GitHub repository, ensure correct environment variable usage, and refine the connection logic to align with VeChain’s best practices.
+Direct Answer
+The error "Invalid Connex options node URL: TypeError: Failed to construct 'URL': Invalid URL" persists despite your recent changes, indicating we need to dig deeper into your repository (https://github.com/abstractking/VEC.artt) and refine the wallet connection approach. Here’s how we’ll resolve it:
+Step 1: Check Recent Commits in VEC.artt
+Since I can’t directly access your repository’s commit history in real-time, I’ll infer based on your provided logs and the Replit AI’s updates. Recent changes likely include:
+Modifications to WalletContext.tsx to force real wallet mode and streamline connections.
+
+Updates to veworld-connector.ts to use genesis IDs or window.connex.
+
+Addition of environment variables in .env or Netlify for node URLs or genesis IDs.
+Action:
+Visit https://github.com/abstractking/VEC.artt/commits/main and review the latest commits. Look for changes to:
+client/src/contexts/WalletContext.tsx
+
+client/src/lib/veworld-connector.ts
+
+client/src/lib/Network.ts
+
+.env or netlify.toml
+Check if commits align with setting VITE_VECHAIN_TESTNET_GENESIS_ID or modifying the connection logic to avoid URLs.
+Step 2: Analyze the Error
+The logs show:
+VeWorld API methods available: ['isVeWorld', 'newConnex', ...] confirms the wallet extension is detected.
+
+Invalid Connex options node URL: TypeError: Failed to construct 'URL': Invalid URL indicates newConnex is still being called with an invalid node parameter, despite efforts to use genesis IDs.
+This suggests:
+The code might still be passing a node URL (e.g., from an environment variable or hardcoded value) that’s malformed or unset.
+
+The fallback to window.connex isn’t triggering as expected.
+Step 3: Refine the Connection Logic
+Update your veworld-connector.ts to prioritize window.connex and use a genesis-only approach as a fallback, avoiding URLs entirely:
+javascript
+import { Connex } from '@vechain/connex'; // Ensure correct import based on your setup
+
+export async function connectVeWorld() {
+  console.log("Checking for wallet-provided Connex...");
+  if (typeof window !== 'undefined' && window.connex) {
+    console.log("Using wallet-provided Connex instance");
+    return window.connex;
+  }
+
+  console.log("Window.connex not found, falling back to genesis-based connection");
+  const genesisId = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127';
+  console.log("Using genesis ID:", genesisId);
+
+  try {
+    const connex = new Connex({ genesis: genesisId });
+    console.log("Genesis-only connection successful");
+    return connex;
+  } catch (err) {
+    console.error("Genesis connection failed:", err);
+    throw new Error("Failed to connect to VeWorld wallet");
+  }
+}
+

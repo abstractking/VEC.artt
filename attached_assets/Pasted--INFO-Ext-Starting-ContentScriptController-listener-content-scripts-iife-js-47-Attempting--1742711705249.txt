@@ -1,0 +1,91 @@
+[INFO] (#Ext) -  Starting ContentScriptController listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+(index):136 Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+index-RwSxd0gh.js:104 Browser environment polyfills initialized
+index-RwSxd0gh.js:544 Setting up crypto environment with cryptoPolyfill
+index-RwSxd0gh.js:630 Application initialized successfully
+index-RwSxd0gh.js:616 NFTShuffle mounted, setting up rotation with interval: 20000
+index-RwSxd0gh.js:607 Available wallets: (4) ['veworld', 'sync', 'sync2', 'environment']
+2index-RwSxd0gh.js:616 NFTShuffle mounted, setting up rotation with interval: 20000
+index-RwSxd0gh.js:546 Attempting to connect wallet: veworld
+index-RwSxd0gh.js:544 Connecting to veworld wallet type on TestNet...
+index-RwSxd0gh.js:544 Connecting to VeWorld wallet (patched)...
+index-RwSxd0gh.js:544 VeWorld API methods available: (7) ['isVeWorld', 'newConnex', 'newConnexVendor', 'newConnexSigner', 'request', 'on', 'removeListener']
+index-RwSxd0gh.js:544 VeWorld wallet connection error: ExtensionError: Invalid Connex options node URL: TypeError: Failed to construct 'URL': Invalid URL
+    at Object.invalidParams (VeWorldAPI.js:1:14303)
+    at validateConnexOptions (VeWorldAPI.js:2214:152315)
+    at Object.newConnex (VeWorldAPI.js:2214:151719)
+    at WA (index-RwSxd0gh.js:544:190109)
+    at index-RwSxd0gh.js:546:15298
+    at T (index-RwSxd0gh.js:603:11693)
+    at Object.vme (index-RwSxd0gh.js:124:9873)
+    at yme (index-RwSxd0gh.js:124:10030)
+    at bme (index-RwSxd0gh.js:124:10090)
+    at aC (index-RwSxd0gh.js:124:31563)
+WA @ index-RwSxd0gh.js:544
+(anonymous) @ index-RwSxd0gh.js:546
+T @ index-RwSxd0gh.js:603
+vme @ index-RwSxd0gh.js:124
+yme @ index-RwSxd0gh.js:124
+bme @ index-RwSxd0gh.js:124
+aC @ index-RwSxd0gh.js:124
+sU @ index-RwSxd0gh.js:124
+(anonymous) @ index-RwSxd0gh.js:124
+z7 @ index-RwSxd0gh.js:127
+AV @ index-RwSxd0gh.js:124
+j3 @ index-RwSxd0gh.js:124
+y7 @ index-RwSxd0gh.js:124
+Ome @ index-RwSxd0gh.js:124Understand this errorAI
+index-RwSxd0gh.js:546 Failed to connect wallet: Error: VeWorld wallet not available or connection rejected
+    at WA (index-RwSxd0gh.js:544:190456)
+    at index-RwSxd0gh.js:546:15298
+    at T (index-RwSxd0gh.js:603:11693)
+    at Object.vme (index-RwSxd0gh.js:124:9873)
+    at yme (index-RwSxd0gh.js:124:10030)
+    at bme (index-RwSxd0gh.js:124:10090)
+    at aC (index-RwSxd0gh.js:124:31563)
+    at sU (index-RwSxd0gh.js:124:31981)
+    at index-RwSxd0gh.js:124:36914
+    at z7 (index-RwSxd0gh.js:127:36984)
+WA @ index-RwSxd0gh.js:546
+(anonymous) @ index-RwSxd0gh.js:546
+T @ index-RwSxd0gh.js:603
+vme @ index-RwSxd0gh.js:124
+yme @ index-RwSxd0gh.js:124
+bme @ index-RwSxd0gh.js:124
+aC @ index-RwSxd0gh.js:124
+sU @ index-RwSxd0gh.js:124
+(anonymous) @ index-RwSxd0gh.js:124
+z7 @ index-RwSxd0gh.js:127
+AV @ index-RwSxd0gh.js:124
+j3 @ index-RwSxd0gh.js:124
+y7 @ index-RwSxd0gh.js:124
+Ome @ index-RwSxd0gh.js:124Understand this errorAI
+index-RwSxd0gh.js:616 NFTShuffle mounted, setting up rotation with interval: 20000
+index-RwSxd0gh.js:546 Wallet connection error: Error: VeWorld wallet not available or connection rejected
+    at WA (index-RwSxd0gh.js:544:190456)
+    at index-RwSxd0gh.js:546:15298
+    at T (index-RwSxd0gh.js:603:11693)
+    at Object.vme (index-RwSxd0gh.js:124:9873)
+    at yme (index-RwSxd0gh.js:124:10030)
+    at bme (index-RwSxd0gh.js:124:10090)
+    at aC (index-RwSxd0gh.js:124:31563)
+    at sU (index-RwSxd0gh.js:124:31981)
+    at index-RwSxd0gh.js:124:36914
+    at z7 (index-RwSxd0gh.js:127:36984)
+(anonymous) @ index-RwSxd0gh.js:546
+await in (anonymous)
+T @ index-RwSxd0gh.js:603
+vme @ index-RwSxd0gh.js:124
+yme @ index-RwSxd0gh.js:124
+bme @ index-RwSxd0gh.js:124
+aC @ index-RwSxd0gh.js:124
+sU @ index-RwSxd0gh.js:124
+(anonymous) @ index-RwSxd0gh.js:124
+z7 @ index-RwSxd0gh.js:127
+AV @ index-RwSxd0gh.js:124
+j3 @ index-RwSxd0gh.js:124
+y7 @ index-RwSxd0gh.js:124
+Ome @ index-RwSxd0gh.js:124Understand this errorAI
+index-RwSxd0gh.js:616 NFTShuffle mounted, setting up rotation with interval: 20000
