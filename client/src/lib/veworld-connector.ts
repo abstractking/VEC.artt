@@ -270,6 +270,85 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
 }
 
 /**
+ * Ultra minimal connection attempt for problematic environments
+ * This is a last resort when other approaches fail
+ */
+export async function connectVeWorldWalletMinimal(networkType: Network): Promise<VeWorldConnection> {
+  try {
+    console.log("VeWorldConnector (Minimal): Last resort connection attempt...");
+    
+    // Check if VeWorld is available
+    if (typeof window === 'undefined' || !(window as any).VeWorld) {
+      return { 
+        connex: null, 
+        vendor: null, 
+        error: "VeWorld wallet extension not detected"
+      };
+    }
+    
+    const vechain = (window as any).VeWorld as VeWorldWallet;
+    
+    if (!vechain.isVeWorld) {
+      return { 
+        connex: null, 
+        vendor: null, 
+        error: "Not a valid VeWorld wallet extension"
+      };
+    }
+    
+    // Determine network parameters based on type
+    const isMainNet = networkType === Network.MAIN;
+    const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
+    
+    console.log("VeWorldConnector (Minimal): Using absolute minimal configuration");
+    
+    // Try to get vendor directly without any parameters
+    if (typeof vechain.getVendor === 'function') {
+      try {
+        console.log("Attempting direct vendor access...");
+        const vendor = await vechain.getVendor();
+        if (vendor && vendor.connex) {
+          return { connex: vendor.connex, vendor };
+        }
+      } catch (e) {
+        console.log("Direct vendor access failed:", e);
+      }
+    }
+    
+    // Try the absolute minimal connection approach - no node URL
+    try {
+      console.log("Trying most minimal connection parameters possible");
+      
+      // Create vendor first with only genesis
+      const vendor = await vechain.newConnexVendor({
+        genesis: genesisId
+      });
+      
+      console.log("Minimal vendor created");
+      
+      // Then create connex with only genesis
+      const connex = await vechain.newConnex({
+        genesis: genesisId
+      });
+      
+      console.log("Minimal connex created");
+      
+      return { connex, vendor };
+    } catch (error) {
+      console.error("Even minimal connection failed:", error);
+      throw error;
+    }
+  } catch (error) {
+    console.error("VeWorldConnector (Minimal) error:", error);
+    return { 
+      connex: null, 
+      vendor: null, 
+      error: error instanceof Error ? error.message : String(error)
+    };
+  }
+}
+
+/**
  * Comprehensive connect method that tries multiple approaches
  * This function tries different connection strategies based on device type
  */
@@ -282,26 +361,55 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
   if (mobile) {
     console.log("Mobile device detected, using mobile-optimized connection sequence");
     
-    // For mobile, try Alt method first as it tends to work better on mobile
-    const altResult = await connectVeWorldWalletAlt(networkType);
-    if (altResult.connex && altResult.vendor) {
-      return altResult;
+    // For mobile, try minimal method first as it tends to work better on mobile
+    try {
+      const minimalResult = await connectVeWorldWalletMinimal(networkType);
+      if (minimalResult.connex && minimalResult.vendor) {
+        console.log("Minimal connection successful!");
+        return minimalResult;
+      }
+    } catch (e) {
+      console.log("Minimal approach failed:", e);
     }
     
-    console.log("VeWorldConnector: Mobile Alt method failed, trying standard...");
+    // Then try Alt method
+    try {
+      const altResult = await connectVeWorldWalletAlt(networkType);
+      if (altResult.connex && altResult.vendor) {
+        console.log("Alt connection successful!");
+        return altResult;
+      }
+    } catch (e) {
+      console.log("Alt approach failed:", e);
+    }
     
     // Fall back to standard method
     return connectVeWorldWallet(networkType);
   } else {
     // For desktop, try standard method first
-    const result = await connectVeWorldWallet(networkType);
-    if (result.connex && result.vendor) {
-      return result;
+    try {
+      const result = await connectVeWorldWallet(networkType);
+      if (result.connex && result.vendor) {
+        console.log("Standard connection successful!");
+        return result;
+      }
+    } catch (e) {
+      console.log("Standard approach failed:", e);
     }
     
-    console.log("VeWorldConnector: Standard method failed, trying alternative...");
+    // Then try alternative method
+    try {
+      const altResult = await connectVeWorldWalletAlt(networkType);
+      if (altResult.connex && altResult.vendor) {
+        console.log("Alt connection successful!");
+        return altResult;
+      }
+    } catch (e) {
+      console.log("Alt approach failed:", e);
+    }
     
-    // Fall back to alternative method
-    return connectVeWorldWalletAlt(networkType);
+    // Finally try minimal as last resort
+    console.log("All standard approaches failed, trying minimal connection...");
+    return connectVeWorldWalletMinimal(networkType);
   }
 }

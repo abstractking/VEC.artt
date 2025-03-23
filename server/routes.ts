@@ -822,13 +822,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // VeChain Network Proxy Endpoints
   // These endpoints solve CORS issues by proxying requests to VeChain nodes
 
-  // Define VeChain node URLs
+  // Define VeChain node URLs - using veblocks.net for better compatibility
   const VECHAIN_NODES = {
-    mainnet: 'https://mainnet.vechain.org',
-    testnet: 'https://testnet.vechain.org'
+    mainnet: 'https://mainnet.veblocks.net',
+    testnet: 'https://testnet.veblocks.net'
   };
 
-  // Generic proxy middleware for VeChain API requests
+  // Enhanced proxy middleware for VeChain API requests with better CORS handling
   const veChainProxy = async (req: Request, res: Response, network: 'mainnet' | 'testnet') => {
     try {
       const baseUrl = VECHAIN_NODES[network];
@@ -837,20 +837,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`[VeChain Proxy] Forwarding request to: ${url}`);
       
+      // Set CORS headers to ensure browsers accept our response
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+      
+      // Handle preflight requests
+      if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+      }
+      
+      // Build query parameters
       const params = new URLSearchParams();
       for (const [key, value] of Object.entries(req.query)) {
-        params.append(key, value as string);
+        if (value !== undefined) {
+          params.append(key, value as string);
+        }
       }
       
       const queryString = params.toString();
       const fullUrl = queryString ? `${url}?${queryString}` : url;
       
+      // Copy headers from the original request
+      const headers: Record<string, string> = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      };
+      
+      // Copy important headers from the client request
+      const headersToForward = ['authorization', 'x-api-key'];
+      for (const header of headersToForward) {
+        const value = req.headers[header];
+        if (value) {
+          headers[header] = value as string;
+        }
+      }
+      
       const options: any = {
         method: req.method,
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
+        headers: headers,
       };
       
       // Forward request body for non-GET requests
@@ -858,20 +884,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
         options.body = JSON.stringify(req.body);
       }
       
+      console.log(`[VeChain Proxy] Request options:`, {
+        url: fullUrl,
+        method: options.method,
+        headersLength: Object.keys(options.headers).length,
+        hasBody: !!options.body
+      });
+      
       const response = await fetch(fullUrl, options);
-      const data = await response.json();
+      
+      // Handle various response types
+      const contentType = response.headers.get('content-type');
+      let data;
+      
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        // For non-JSON responses, use text
+        data = { text: await response.text() };
+      }
+      
+      // Forward important response headers
+      // Use Array.from to convert iterator to array to work with TypeScript
+      const headerEntries = Array.from(response.headers.entries());
+      for (const entry of headerEntries) {
+        const [key, value] = entry;
+        // Skip headers that might cause CORS issues
+        if (!['content-length', 'connection'].includes(key.toLowerCase())) {
+          res.header(key, value);
+        }
+      }
       
       res.status(response.status).json(data);
     } catch (error: any) {
       console.error('[VeChain Proxy] Error:', error);
       res.status(500).json({ 
         error: 'Failed to proxy request to VeChain node',
-        message: error.message
+        message: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       });
     }
   };
 
-  // Proxy routes for VeChain TestNet
+  // Proxy routes for VeChain TestNet with CORS support
+  app.options('/api/vechain/testnet/*', (req: Request, res: Response) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.status(200).end();
+  });
+  
   app.get('/api/vechain/testnet/*', (req: Request, res: Response) => {
     veChainProxy(req, res, 'testnet');
   });
@@ -880,7 +942,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     veChainProxy(req, res, 'testnet');
   });
 
-  // Proxy routes for VeChain MainNet
+  // Proxy routes for VeChain MainNet with CORS support
+  app.options('/api/vechain/mainnet/*', (req: Request, res: Response) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.status(200).end();
+  });
+  
   app.get('/api/vechain/mainnet/*', (req: Request, res: Response) => {
     veChainProxy(req, res, 'mainnet');
   });
