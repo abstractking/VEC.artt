@@ -48,21 +48,19 @@ export function WalletProvider({ children }: WalletProviderProps) {
   
   // Force real wallet mode on Netlify, allow toggle elsewhere
   const [useRealWallet, setUseRealWallet] = useState(() => {
-    // Always use real wallet on Netlify
+    // Always use real wallet on Netlify or in production
     if (isNetlify) {
       return true;
     }
-    // Otherwise use stored preference or default to false
-    return localStorage.getItem('useRealWallet') === 'true';
+    // Otherwise use stored preference or default to true
+    return localStorage.getItem('useRealWallet') !== 'false';
   });
   
   // Track which wallet type the user is connecting with
   const [walletType, setWalletType] = useState<string | null>(null);
   
-  const [walletAddress, setWalletAddress] = useState<string | null>(
-    (!useRealWallet && isDebugMode) ? testWalletAddress : null
-  );
-  const [isConnected, setIsConnected] = useState((!useRealWallet && isDebugMode)); // Auto-connect in debug mode only if not using real wallet
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isModalOpen, setIsModalOpenState] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -130,14 +128,15 @@ export function WalletProvider({ children }: WalletProviderProps) {
 
   const connectWallet = useCallback(async (walletTypeInput?: string) => {
     const walletType = (walletTypeInput || detectBestWalletOption()) as VeChainWalletType;
-    console.log("Attempting to connect wallet:", walletType, "Real wallet mode:", useRealWallet);
+    console.log("Attempting to connect wallet:", walletType);
     setIsConnecting(true);
     setError(null);
     
     try {
-      // On Netlify, always force real wallet mode and use the specific wallet provider
+      // Always attempt to connect to a real wallet
+      // If in Netlify environment, do additional validation
       if (isNetlify) {
-        console.log("Netlify environment detected, forcing real wallet mode");
+        console.log("Netlify environment detected, connecting to real wallet");
         
         try {
           // Validate the wallet availability first
@@ -153,7 +152,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
           // Connect to the specified wallet type
           const result = await connectVeChainWallet(walletType);
           
-          console.log("Wallet Connect Result:", result); // Debug log to check result structure
+          console.log("Wallet Connect Result:", result);
           
           if (result && result.vendor) {
             // Handle desktop wallets that might not immediately provide an address
@@ -198,77 +197,58 @@ export function WalletProvider({ children }: WalletProviderProps) {
           console.error("Specific wallet connection error:", err);
           
           // Provide more helpful error messages based on wallet type
-          // We already have detailed error messages from validateWalletForNetwork
           throw new Error(`Wallet connection failed: ${err.message}`);
         }
         return;
       }
       
-      // Demo wallet functionality is disabled for all deployments
+      // Make sure we're in real wallet mode
       if (!useRealWallet) {
-        console.log("Demo wallet functionality has been disabled for all deployments");
-        
-        toast({
-          title: "Demo Mode Disabled",
-          description: "Demo wallet functionality has been disabled. Please use a real wallet extension.",
-          variant: "destructive",
-        });
-        return;
+        localStorage.setItem('useRealWallet', 'true');
+        setUseRealWallet(true);
       }
       
-      // If using real wallet, connect to the specified wallet type
-      if (useRealWallet) {
-        // Connect to the specified wallet
-        const result = await connectVeChainWallet(walletType);
-        
-        console.log("Wallet Connect Result:", result);
-        
-        if (result && result.vendor) {
-          // For desktop wallets that don't provide an immediate address
-          if (walletType === 'sync' || walletType === 'sync2') {
-            const walletName = walletType === 'sync2' ? 'Sync2' : 'Sync';
-            setWalletType(walletType);
-            
-            toast({
-              title: `${walletName} Connection Instructions`,
-              description: `Please open ${walletName} desktop application and approve the connection request.`,
-              duration: 10000, // Show for longer
-            });
-            
-            // Return early
-            setIsConnecting(false);
-            return;
-          }
+      // Connect to the specified wallet
+      const result = await connectVeChainWallet(walletType);
+      
+      console.log("Wallet Connect Result:", result);
+      
+      if (result && result.vendor) {
+        // For desktop wallets that don't provide an immediate address
+        if (walletType === 'sync' || walletType === 'sync2') {
+          const walletName = walletType === 'sync2' ? 'Sync2' : 'Sync';
+          setWalletType(walletType);
           
-          // For browser wallets with immediate address
-          if (result.vendor.address) {
-            console.log("Setting wallet address to:", result.vendor.address);
-            setWalletAddress(result.vendor.address);
-            setIsConnected(true);
-            setWalletType(walletType || 'thor');
-            setModalOpen(false);
-            
-            toast({
-              title: "Wallet Connected",
-              description: `Connected to ${walletType || 'VeChain'} wallet`,
-            });
-          } else {
-            console.error("Wallet vendor doesn't have an address:", result);
-            throw new Error("Connected to wallet but no address was provided");
-          }
+          toast({
+            title: `${walletName} Connection Instructions`,
+            description: `Please open ${walletName} desktop application and approve the connection request.`,
+            duration: 10000, // Show for longer
+          });
+          
+          // Return early
+          setIsConnecting(false);
+          return;
+        }
+        
+        // For browser wallets with immediate address
+        if (result.vendor.address) {
+          console.log("Setting wallet address to:", result.vendor.address);
+          setWalletAddress(result.vendor.address);
+          setIsConnected(true);
+          setWalletType(walletType || 'thor');
+          setModalOpen(false);
+          
+          toast({
+            title: "Wallet Connected",
+            description: `Connected to ${walletType || 'VeChain'} wallet`,
+          });
         } else {
-          console.error("Wallet connect response does not match expected structure:", result);
-          throw new Error("Failed to connect wallet");
+          console.error("Wallet vendor doesn't have an address:", result);
+          throw new Error("Connected to wallet but no address was provided");
         }
       } else {
-        // Demo wallet functionality is disabled for all deployments
-        console.log("Demo wallet functionality has been disabled for all deployments");
-        
-        toast({
-          title: "Demo Mode Disabled",
-          description: "Demo wallet functionality has been disabled. Please use a real wallet extension.",
-          variant: "destructive",
-        });
+        console.error("Wallet connect response does not match expected structure:", result);
+        throw new Error("Failed to connect wallet");
       }
     } catch (err: any) {
       console.error("Wallet connection error:", err);
@@ -282,7 +262,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
     } finally {
       setIsConnecting(false);
     }
-  }, [toast, setModalOpen, isDebugMode, testWalletAddress, useRealWallet, isNetlify]);
+  }, [toast, setModalOpen, useRealWallet, isNetlify]);
 
   const disconnectWallet = useCallback(() => {
     console.log("Disconnecting wallet");
@@ -296,27 +276,19 @@ export function WalletProvider({ children }: WalletProviderProps) {
     });
   }, [toast]);
   
-  // Demo wallet functionality is disabled for all deployments
+  // Always ensure real wallet mode is enabled
   const toggleRealWallet = useCallback(() => {
-    // Always enforce real wallet mode
-    toast({
-      title: "Real Wallet Mode Required",
-      description: "Demo wallet mode is disabled for all deployments. You must use a real wallet extension.",
-      variant: "destructive",
-    });
-    
-    // If somehow not in real wallet mode, set it
+    // We always want to use real wallet mode
     if (!useRealWallet) {
-      // Disconnect any mock wallet if connected
-      if (isConnected) {
-        disconnectWallet();
-      }
-      
-      // Set real wallet mode in localStorage
       localStorage.setItem('useRealWallet', 'true');
       setUseRealWallet(true);
+      
+      toast({
+        title: "Real Wallet Mode Enabled",
+        description: "You are now using real wallet mode.",
+      });
     }
-  }, [useRealWallet, isConnected, disconnectWallet, toast]);
+  }, [useRealWallet, toast]);
 
   const value = {
     walletAddress,
