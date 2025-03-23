@@ -1,7 +1,8 @@
 import { Framework } from '@vechain/connex-framework';
-import { Driver, SimpleNet, SimpleWallet } from '@vechain/connex-driver';
+import { Driver, SimpleWallet } from '@vechain/connex-driver';
 import Connex from '@vechain/connex';
 import { Buffer } from 'buffer';
+import { BrowserNet } from './browser-net';
 
 // Type declarations for VeChain Connex and Thor responses
 interface TxResponse {
@@ -93,14 +94,28 @@ setupCryptoEnvironment();
 import { Network, NETWORKS as NETWORK_DESCRIPTORS, NetworkDescriptor } from './Network';
 
 // Setup our nodes with the right endpoints
+// Calculate the base URL for our API proxy endpoints
+const getBaseUrl = () => {
+  // In production or Replit environment, use relative paths
+  return '';
+};
+
 export const NODES = {
   main: {
-    url: 'https://mainnet.veblocks.net',
-    socketUrl: 'wss://mainnet.veblocks.net/socket',
+    // Use proxy endpoints to avoid CORS issues with direct VeChain node access
+    url: `${getBaseUrl()}/api/vechain/mainnet`,
+    socketUrl: `${getBaseUrl()}/api/vechain/mainnet`,
+    // Using VeBlocks links for better compatibility with Sync 2 and VeWorld wallets
+    directUrl: 'https://mainnet.veblocks.net',
+    directSocketUrl: 'wss://mainnet.veblocks.net',
   },
   test: {
-    url: 'https://testnet.veblocks.net',
-    socketUrl: 'wss://testnet.veblocks.net/socket',
+    // Use proxy endpoints to avoid CORS issues with direct VeChain node access
+    url: `${getBaseUrl()}/api/vechain/testnet`,
+    socketUrl: `${getBaseUrl()}/api/vechain/testnet`,
+    // Using VeBlocks links for better compatibility with Sync 2 and VeWorld wallets
+    directUrl: 'https://testnet.veblocks.net',
+    directSocketUrl: 'wss://testnet.veblocks.net',
   },
   solo: {
     url: 'http://localhost:8669',
@@ -171,37 +186,51 @@ export const initializeConnex = async (wallet?: SimpleWallet) => {
     if (typeof window !== 'undefined') {
       if (isReplit) {
         console.log("Replit environment detected - using HTTP polling for VeChain connection");
-      }
-      
-      // For Replit environment, use a specialized configuration
-      if (isReplit) {
+        
+        // For Replit environment, use a specialized configuration
         try {
-          // Initialize with direct HTTP connection
-          const connex = new Connex({
-            node: network.url, // Use reliable HTTP endpoint
-            network: network.name.toLowerCase() as any // Either 'main' or 'test'
-            // No WebSocket in Replit - the default Connex configuration will handle this
-          });
+          // Check if we have a private key for test environment
+          const privateKey = import.meta.env.VITE_VECHAIN_PRIVATE_KEY;
           
-          connexInstance = connex;
-          return connex;
+          if (privateKey) {
+            // Create a wallet with the private key
+            const wallet = new SimpleWallet();
+            wallet.import(privateKey);
+            
+            // Create a dedicated network instance for this wallet
+            const net = new BrowserNet(network.url);
+            const driver = await Driver.connect(net, wallet);
+            const framework = new Framework(driver);
+            
+            connexInstance = framework;
+            return framework;
+          } else {
+            // Initialize with direct HTTP connection without a wallet
+            const net = new BrowserNet(network.url);
+            const driver = await Driver.connect(net);
+            const framework = new Framework(driver);
+            
+            connexInstance = framework;
+            return framework;
+          }
         } catch (connexError) {
           console.error("Connex initialization failed:", connexError);
+          throw connexError;
         }
       }
       
       // Default initialization for non-Replit environments or fallback
-      const driver = await Driver.connect(new SimpleNet(network.url), wallet);
+      const driver = await Driver.connect(new BrowserNet(network.url), wallet);
       connexInstance = new Framework(driver);
       return connexInstance;
     } else {
-      // Mock a connex instance for SSR or testing
-      console.warn('Creating mock Connex instance for non-browser environment');
-      return mockConnex();
+      // We're transitioning to testnet, no mock instance is allowed
+      console.warn('Non-browser environment detected but no mock instance is allowed');
+      throw new Error('Cannot initialize Connex in non-browser environment');
     }
   } catch (error) {
     console.error('Failed to initialize Connex:', error);
-    return mockConnex();
+    throw new Error('Failed to initialize Connex: ' + (error instanceof Error ? error.message : String(error)));
   }
 };
 
@@ -231,18 +260,47 @@ export const getConnex = async () => {
           wallet.import(import.meta.env.VITE_VECHAIN_PRIVATE_KEY);
           
           // Use the wallet to connect to TestNet
-          const driver = await Driver.connect(new SimpleNet(network.url), wallet);
+          const driver = await Driver.connect(new BrowserNet(network.url), wallet);
           connexInstance = new Framework(driver);
           console.log("Connected to TestNet with private key wallet");
           return connexInstance;
         } else {
           // No private key, use regular connection
-          const driver = await Driver.connect(new SimpleNet(network.url));
-          connexInstance = new Framework(driver);
+          console.log("Initializing VeChain connection to:", network.url);
+          
+          const net = new BrowserNet(network.url);
+          console.log("Created BrowserNet instance");
+          
+          const driver = await Driver.connect(net).catch(error => {
+            console.error("Driver connection failed:", {
+              error,
+              message: error instanceof Error ? error.message : String(error),
+              stack: error instanceof Error ? error.stack : undefined,
+              network
+            });
+            throw error;
+          });
+          console.log("Driver connected successfully");
+          
+          const framework = new Framework(driver);
+          console.log("Framework initialized");
+          
+          connexInstance = framework;
           return connexInstance;
         }
       } catch (devError) {
-        console.error("Development Connex initialization failed:", devError);
+        console.error("Development Connex initialization failed:", {
+          error: devError,
+          message: devError instanceof Error ? devError.message : String(devError),
+          stack: devError instanceof Error ? devError.stack : undefined,
+          network: getNetwork(),
+          environment: {
+            isDev: import.meta.env.DEV,
+            mode: import.meta.env.MODE,
+            isReplit,
+            hasPrivateKey: !!import.meta.env.VITE_VECHAIN_PRIVATE_KEY
+          }
+        });
         return mockConnex();
       }
     }
@@ -250,24 +308,60 @@ export const getConnex = async () => {
     // For production: Try WebSocket first, then fallback to HTTP
     try {
       // WebSocket URL (if available)
-      const wsUrl = (network as any).socketUrl || (network.name.toLowerCase() === 'main' 
-        ? 'wss://mainnet.veblocks.net/socket'
-        : 'wss://testnet.veblocks.net/socket');
+      let wsUrl = '';
+      try {
+        // Use VeBlocks node endpoints for better compatibility with Sync 2 and VeWorld wallets
+        wsUrl = (network as any).socketUrl || (network.name.toLowerCase() === 'main' 
+          ? 'wss://mainnet.veblocks.net'
+          : 'wss://testnet.veblocks.net');
+      } catch (error) {
+        console.warn("Could not determine WebSocket URL:", error);
+        wsUrl = network.name.toLowerCase() === 'main' 
+          ? 'wss://mainnet.veblocks.net'
+          : 'wss://testnet.veblocks.net';
+      }
         
       // Try WebSocket connection first for better performance
-      const driver = await Driver.connect(new SimpleNet(wsUrl));
-      connexInstance = new Framework(driver);
+      console.log("Attempting WebSocket connection to:", wsUrl);
+      const wsDriver = await Driver.connect(new BrowserNet(wsUrl));
+      console.log("WebSocket driver connected successfully");
+      
+      connexInstance = new Framework(wsDriver);
+      console.log("WebSocket Connex framework initialized");
+      
       return connexInstance;
     } catch (wsError) {
-      console.warn("WebSocket connection failed, falling back to HTTP:", wsError);
+      console.warn("WebSocket connection failed, falling back to HTTP:", {
+        error: wsError,
+        message: wsError instanceof Error ? wsError.message : String(wsError),
+        stack: wsError instanceof Error ? wsError.stack : undefined,
+        wsUrl: network.socketUrl || 'unknown',
+        network
+      });
       
       // Fall back to HTTP
       try {
-        const driver = await Driver.connect(new SimpleNet(network.url));
+        console.log("Attempting HTTP fallback connection to:", network.url);
+        const driver = await Driver.connect(new BrowserNet(network.url));
+        console.log("HTTP driver connected successfully");
+        
         connexInstance = new Framework(driver);
+        console.log("HTTP Connex framework initialized");
+        
         return connexInstance;
       } catch (httpError) {
-        console.error("HTTP fallback failed:", httpError);
+        console.error("HTTP fallback connection failed:", {
+          error: httpError,
+          message: httpError instanceof Error ? httpError.message : String(httpError),
+          stack: httpError instanceof Error ? httpError.stack : undefined,
+          network,
+          environment: {
+            isDev: import.meta.env.DEV,
+            mode: import.meta.env.MODE,
+            isReplit,
+            hasPrivateKey: !!import.meta.env.VITE_VECHAIN_PRIVATE_KEY
+          }
+        });
         return mockConnex();
       }
     }
@@ -294,7 +388,7 @@ export const connectWalletWithEnvKey = async () => {
     
     // Create a dedicated network instance for this wallet
     const network = getNetwork();
-    const net = new SimpleNet(network.url);
+    const net = new BrowserNet(network.url);
     
     // Create a custom driver for this wallet
     const driver = await Driver.connect(net, wallet);
@@ -384,7 +478,7 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
     
       // Create a dedicated network instance for this wallet
       const network = getNetwork();
-      const net = new SimpleNet(network.url);
+      const net = new BrowserNet(network.url);
       
       // Create a custom driver for this wallet
       const driver = await Driver.connect(net, wallet);
@@ -454,13 +548,22 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
     // Handle different wallet types
     switch(walletType.toLowerCase()) {
       case 'veworld':
-        // Support for VeWorld wallet
+        // Support for VeWorld wallet - using lowercase 'vechain' as that's how VeWorld injects itself
         if (typeof window !== 'undefined' && (window as any).vechain) {
           try {
             console.log("Connecting to VeWorld wallet...");
             
             const vechain = (window as any).vechain;
             console.log("VeWorld API methods available:", Object.keys(vechain));
+            
+            // Log all available window objects for debugging
+            console.log("Available window objects:", 
+              Object.keys(window).filter(key => 
+                key.toLowerCase().includes('vechain') || 
+                key.toLowerCase().includes('veworld') || 
+                key.toLowerCase() === 'connex'
+              )
+            );
             
             if (!vechain.isVeWorld) {
               throw new Error("Not a valid VeWorld wallet extension");
@@ -472,148 +575,248 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
             const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
             const isMainNet = networkType === Network.MAIN;
             
-            // Hard-coded genesis ID values exactly as expected by VeWorld
-            // For mainnet, VeWorld specifically expects 0x1 according to documentation
-            const GENESIS_ID_MAINNET = "0x1";
-            const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127";
+            // Use environment variables with fallback to hardcoded genesis ID values
+            const GENESIS_ID_MAINNET = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || 
+                                      "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a";
+            const GENESIS_ID_TESTNET = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || 
+                                      "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127";
+            
+            // Log the genesis IDs we're using
+            console.log("Genesis IDs from environment:", {
+              mainnet: import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID,
+              testnet: import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID,
+              fallbackMainnet: "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a",
+              fallbackTestnet: "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127"
+            });
             
             // Hard-coded network names exactly as expected by VeWorld
             const NETWORK_NAME_MAIN = "main";
             const NETWORK_NAME_TEST = "test";
             
-            // Define node URLs
-            const NODE_URL_MAINNET = "https://mainnet.veblocks.net";
-            const NODE_URL_TESTNET = "https://testnet.veblocks.net";
-            
             // Select appropriate values
             const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
             const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
-            const nodeUrl = isMainNet ? NODE_URL_MAINNET : NODE_URL_TESTNET;
             
             console.log("Using network parameters:", {
               networkType,
               genesisId,
-              networkName,
-              nodeUrl
+              networkName
             });
             
-            // Try multiple approaches in sequence
-            console.log("TRYING APPROACH 1: Network object with nested genesisId");
+            // APPROACH 0: Try to use only the pre-injected window.connex if available
+            // This completely avoids any URL or parameter issues
+            if (typeof window !== 'undefined' && (window as any).connex) {
+              try {
+                console.log("Found window.connex, using pre-injected instance...");
+                const connex = (window as any).connex;
+                
+                // Try to get the address from the connex instance
+                const address = await connex.thor.status.head.signer;
+                console.log("Found address from connex:", address);
+                
+                // Create a minimal vendor object
+                const vendor = {
+                  name: "VeWorld", 
+                  address: address,
+                  // Create minimal implementations of required methods
+                  sign: async (type: string, message: any) => {
+                    // Just forward requests to the real connex vendor
+                    return connex.vendor.sign(type, message);
+                  }
+                };
+                
+                console.log("Using pre-injected window.connex successfully");
+                return { connex, vendor };
+              } catch (connexError) {
+                console.error("Using window.connex directly failed:", connexError);
+              }
+            }
             
+            // APPROACH 0.5: Try direct request method as the most minimal API approach
             try {
-              // Approach 1: Use network object with id and name
-              const connex1 = await vechain.newConnex({
-                node: nodeUrl,
-                network: {
-                  id: genesisId,
-                  name: networkName
-                }
+              console.log("Trying direct request method approach...");
+              
+              // First try without any URLs at all
+              const connex = await vechain.request({
+                method: "newConnex",
+                params: [{ name: networkName }]
               });
               
-              const vendor1 = await vechain.newConnexVendor({
-                network: {
-                  id: genesisId,
-                  name: networkName
-                }
+              const vendor = await vechain.request({
+                method: "newConnexVendor",
+                params: [{ name: networkName }]
               });
               
-              console.log("APPROACH 1 SUCCESS");
-              return { connex: connex1, vendor: vendor1 };
-            } catch (error1) {
-              console.log("APPROACH 1 FAILED:", error1);
-              console.log("TRYING APPROACH 2: Direct genesis parameter");
+              console.log("Direct request method with name-only succeeded");
+              return { connex, vendor };
+            } catch (nameOnlyError) {
+              console.error("Name-only request failed:", nameOnlyError);
               
               try {
-                // Approach 2: Use direct genesis parameter
-                const connex2 = await vechain.newConnex({
-                  node: nodeUrl,
-                  genesis: genesisId
+                // Now try with only genesis
+                console.log("Trying genesis-only direct request...");
+                const connex = await vechain.request({
+                  method: "newConnex",
+                  params: [{ genesis: genesisId }]
                 });
                 
-                const vendor2 = await vechain.newConnexVendor({
-                  genesis: genesisId
+                const vendor = await vechain.request({
+                  method: "newConnexVendor",
+                  params: [{ genesis: genesisId }]
                 });
                 
-                console.log("APPROACH 2 SUCCESS");
-                return { connex: connex2, vendor: vendor2 };
-              } catch (error2) {
-                console.log("APPROACH 2 FAILED:", error2);
-                console.log("TRYING APPROACH 3: Direct genesis parameter with name");
+                console.log("Genesis-only direct request succeeded");
+                return { connex, vendor };
+              } catch (genesisOnlyError) {
+                console.error("Genesis-only request failed:", genesisOnlyError);
                 
+                // Last attempt - the most minimal possible
                 try {
-                  // Approach 3: Use genesis parameter with name
-                  const connex3 = await vechain.newConnex({
-                    node: nodeUrl,
-                    genesis: genesisId,
-                    name: networkName
+                  console.log("Trying empty params direct request...");
+                  const connex = await vechain.request({
+                    method: "newConnex",
+                    params: [{}]
                   });
                   
-                  const vendor3 = await vechain.newConnexVendor({
-                    genesis: genesisId,
-                    name: networkName
+                  const vendor = await vechain.request({
+                    method: "newConnexVendor",
+                    params: [{}]
                   });
                   
-                  console.log("APPROACH 3 SUCCESS");
-                  return { connex: connex3, vendor: vendor3 };
-                } catch (error3) {
-                  console.log("APPROACH 3 FAILED:", error3);
-                  console.log("TRYING APPROACH 4: Multiple vendor formats");
-                  
+                  console.log("Empty params direct request succeeded");
+                  return { connex, vendor };
+                } catch (emptyParamsError) {
+                  console.error("Empty params request failed:", emptyParamsError);
+                }
+              }
+            }
+
+            // APPROACH 1: Use specialized connector
+            try {
+              console.log("Using specialized veworld-connector...");
+              const result = await import('./veworld-connector').then(module => {
+                return module.connectVeWorld(isMainNet ? 'main' as Network : 'test' as Network);
+              });
+              
+              if (result.connex && result.vendor) {
+                console.log("VeWorld connection successful via specialized connector!");
+                return result;
+              }
+            } catch (importError) {
+              console.error("Specialized connector failed:", importError);
+            }
+            
+            // APPROACH 2: Check for window.connex
+            if ((window as any).connex) {
+              try {
+                console.log("Using window.connex provided by VeWorld...");
+                const connex = (window as any).connex;
+                
+                // Try to get vendor from the wallet
+                if (typeof vechain.getVendor === 'function') {
                   try {
-                    // Approach 4: Use network with node URL and standard format
-                    const connex4 = await vechain.newConnex({
-                      node: nodeUrl,
-                      genesis: genesisId
-                    });
-                    
-                    // Try different vendor format approaches one by one
-                    try {
-                      // Approach 4A: Try with genesis parameter
-                      console.log("Trying vendor approach 4A with genesis parameter");
-                      const vendor4a = await vechain.newConnexVendor({
-                        genesis: genesisId
-                      });
-                      
-                      console.log("APPROACH 4A SUCCESS");
-                      return { connex: connex4, vendor: vendor4a };
-                    } catch (e4a) {
-                      console.log("Vendor approach 4A failed:", e4a);
-                      
-                      try {
-                        // Approach 4B: Try with network name as string
-                        console.log("Trying vendor approach 4B with network name");
-                        const vendor4b = await vechain.newConnexVendor({
-                          network: networkName
-                        });
-                        
-                        console.log("APPROACH 4B SUCCESS");
-                        return { connex: connex4, vendor: vendor4b };
-                      } catch (e4b) {
-                        console.log("Vendor approach 4B failed:", e4b);
-                        
-                        try {
-                          // Approach 5: Try with network object (official format)
-                          console.log("TRYING APPROACH 5: Exact VeChain Documentation Format");
-                          const vendorExact = await vechain.newConnexVendor({
-                            network: {
-                              id: genesisId,
-                              name: networkName
-                            }
-                          });
-                          
-                          console.log("APPROACH 5 SUCCESS");
-                          return { connex: connex4, vendor: vendorExact };
-                        } catch (e5) {
-                          console.log("APPROACH 5 FAILED:", e5);
-                          throw new Error("Could not connect to VeWorld wallet using any known method");
-                        }
-                      }
+                    const vendor = await vechain.getVendor();
+                    if (vendor) {
+                      console.log("Retrieved vendor from VeWorld");
+                      return { connex, vendor };
                     }
-                  } catch (error4) {
-                    console.log("ALL APPROACHES FAILED");
-                    throw new Error("Could not connect to VeWorld wallet using any known method");
+                  } catch (vendorError) {
+                    console.log("Could not get vendor, creating manually...");
                   }
                 }
+                
+                // Create vendor with genesis parameter only
+                const vendor = await vechain.newConnexVendor({
+                  genesis: genesisId
+                });
+                
+                console.log("Using window.connex with manually created vendor");
+                return { connex, vendor };
+              } catch (windowConnexError) {
+                console.error("Window.connex approach failed:", windowConnexError);
+              }
+            }
+            
+            // APPROACH 3: Try getVendor for direct access
+            if (typeof vechain.getVendor === 'function') {
+              console.log("Trying VeWorld's getVendor method...");
+              try {
+                const vendor = await vechain.getVendor();
+                
+                // If vendor provides its own connex instance, use that
+                if (vendor && vendor.connex) {
+                  console.log("Using VeWorld's provided Connex instance");
+                  return { connex: vendor.connex, vendor };
+                }
+              } catch (vendorError) {
+                console.log("getVendor method failed:", vendorError);
+              }
+            }
+            
+            // APPROACH 4: Try minimal URL-less approach
+            try {
+              console.log("Using minimal URL-less approach...");
+              
+              // Create vendor with genesis parameter only
+              const vendor = await vechain.newConnexVendor({
+                genesis: genesisId
+              });
+              
+              // Try creating connex with genesis parameter only (no URL)
+              const connex = await vechain.newConnex({
+                genesis: genesisId
+              });
+              
+              console.log("Minimal connection successful!");
+              return { connex, vendor };
+            } catch (minimalError) {
+              console.error("Minimal connection failed:", minimalError);
+            }
+            
+            // APPROACH 5: Try standard network-only approach
+            try {
+              console.log("Trying standard network-only approach...");
+              
+              // Create Connex with network parameters but no node URL
+              const connex = await vechain.newConnex({
+                network: {
+                  id: genesisId,
+                  name: networkName
+                }
+              });
+              
+              const vendor = await vechain.newConnexVendor({
+                network: {
+                  id: genesisId,
+                  name: networkName
+                }
+              });
+              
+              console.log("Standard network-only approach successful!");
+              return { connex, vendor };
+            } catch (standardError) {
+              console.error("Standard approach failed:", standardError);
+              
+              // APPROACH 6: Try name+genesis approach
+              try {
+                console.log("Trying name+genesis approach...");
+                
+                // Create connex with name and genesis parameter
+                const connex = await vechain.newConnex({
+                  genesis: genesisId,
+                  name: networkName
+                });
+                
+                const vendor = await vechain.newConnexVendor({
+                  genesis: genesisId,
+                  name: networkName
+                });
+                
+                console.log("Name+genesis approach successful!");
+                return { connex, vendor };
+              } catch (genesisError) {
+                console.error("All connection approaches failed. Last error:", genesisError);
+                throw new Error("Could not connect to VeWorld wallet after multiple attempts. Please check your wallet configuration and try again.");
               }
             }
           } catch (error) {
@@ -642,6 +845,7 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
         } else {
           throw new Error("VeChainThor wallet extension not detected. Please install the VeChainThor wallet extension, configure it for TestNet, and refresh the page.");
         }
+        break;
         
       case 'sync':
       case 'sync2':
@@ -685,6 +889,7 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
           console.error(`${walletType} connection error:`, error);
           throw new Error(`Could not connect to ${walletType} desktop application. Please ensure it's installed and running.`);
         }
+        break;
       
       case 'walletconnect':
         // Support for WalletConnect protocol
@@ -696,6 +901,7 @@ export const connectWallet = async (walletType: string = 'thor', privateKey?: st
           console.error("WalletConnect error:", error);
           throw new Error("WalletConnect is not yet fully supported for VeChain integration.");
         }
+        break;
         
       case 'debug':
         // Special debug wallet for testing only
@@ -1450,6 +1656,10 @@ export const getTransactionReceipt = async (txId: string) => {
 };
 
 // Mock Connex for development environments without blockchain access
+/**
+ * Mock Connex implementation for development and testing
+ * This is ONLY used when a real VeChain connection is not available or fails
+ */
 function mockConnex() {
   console.warn("Using enhanced mock Connex implementation for development");
   
