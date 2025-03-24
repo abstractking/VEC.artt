@@ -8,6 +8,34 @@
 import { Network, getNetwork } from './Network';
 import { connectVeWorld } from './veworld-connector';
 
+// Define properly typed certificate and signing types
+// This ensures compatibility with Connex signature requirements
+interface ConnexSignCertificateOptions {
+  purpose: "identification" | "agreement";
+  payload: {
+    type: "text" | "binary";
+    content: string;
+  };
+}
+
+interface ConnexSignTxOptions {
+  to: string | null;
+  value: string;
+  data?: string;
+}
+
+interface ConnexVendorSignResult {
+  annex?: {
+    domain: string;
+    timestamp: number;
+    signer: string;
+  };
+  signature?: string;
+  certified?: boolean;
+  txid?: string;
+  signer?: string;
+}
+
 // Interface for wallet connection result
 interface WalletConnectionResult {
   connex: any;
@@ -134,14 +162,15 @@ export async function connectMobileWallet(networkType: Network = Network.TEST): 
           
           // Get certificate to verify wallet connection
           try {
-            const certificate = { 
-              purpose: 'identification', 
-              payload: { type: 'text', content: 'Connect to VeCollab Marketplace' } 
+            // Create properly typed certificate
+            const certificate: ConnexSignCertificateOptions = { 
+              purpose: 'identification' as "identification", 
+              payload: { type: 'text' as "text", content: 'Connect to VeCollab Marketplace' } 
             };
             
             // Handle the type checking issue with the sign method
-            // We need to use any because the Connex types don't align with the actual response
-            const result: any = await connex.vendor.sign('cert', certificate).request();
+            // Properly typed for Connex but using any for response due to inconsistencies
+            const result: ConnexVendorSignResult = await connex.vendor.sign('cert', certificate).request();
             
             if (result && result.annex && result.annex.signer) {
               return { 
@@ -221,14 +250,14 @@ export async function connectSmartWallet(networkType: Network = Network.TEST): P
         const connex = window.connex;
         
         // Get certificate to verify wallet connection
-        const certificate = { 
-          purpose: 'identification', 
-          payload: { type: 'text', content: 'Connect to VeCollab Marketplace' } 
+        const certificate: ConnexSignCertificateOptions = { 
+          purpose: 'identification' as "identification", 
+          payload: { type: 'text' as "text", content: 'Connect to VeCollab Marketplace' } 
         };
         
         // Handle the type checking issue with the sign method
-        // We need to use any because the Connex types don't align with the actual response
-        const result: any = await connex.vendor.sign('cert', certificate).request();
+        // Properly typed for Connex
+        const result: ConnexVendorSignResult = await connex.vendor.sign('cert', certificate).request();
         
         if (result && result.annex && result.annex.signer) {
           return { 

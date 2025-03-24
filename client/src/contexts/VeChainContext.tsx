@@ -280,9 +280,84 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
     }
     
     try {
+      // Check if we're on a mobile device
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      console.log(`Device detection: ${isMobile ? 'MOBILE' : 'DESKTOP'}`);
+      
+      // Log environment variables
+      console.log('Environment variables:', {
+        VITE_REACT_APP_VECHAIN_NETWORK: import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK,
+        VITE_VECHAIN_TESTNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID,
+        VITE_VECHAIN_MAINNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID,
+        VITE_VECHAIN_NODE_URL_TESTNET: import.meta.env.VITE_VECHAIN_NODE_URL_TESTNET,
+        VITE_VECHAIN_NODE_URL_MAINNET: import.meta.env.VITE_VECHAIN_NODE_URL_MAINNET
+      });
+      
       // First try VeWorld if available
       if (window.vechain && window.vechain.isVeWorld) {
         console.log('Attempting to connect via VeWorld wallet...');
+        
+        // Log VeWorld wallet object for diagnostic
+        console.log('VeWorld wallet detected:',
+          {
+            isVeWorld: window.vechain.isVeWorld,
+            methods: Object.keys(window.vechain),
+            hasMethods: {
+              newConnex: typeof window.vechain.newConnex === 'function',
+              newConnexVendor: typeof window.vechain.newConnexVendor === 'function',
+              getVendor: typeof window.vechain.getVendor === 'function'
+            }
+          });
+          
+        // Special handling for mobile VeWorld
+        if (isMobile) {
+          console.log('Mobile VeWorld connection path activated');
+          
+          // Get network parameters from environment variables
+          const isMainNet = config.network === 'main';
+          
+          const genesisIdMainnet = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || 
+            '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a';
+          const genesisIdTestnet = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || 
+            '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127';
+            
+          const genesisId = isMainNet ? genesisIdMainnet : genesisIdTestnet;
+          const networkName = isMainNet ? 'main' : 'test';
+          
+          console.log('Mobile connection parameters:', { genesisId, networkName });
+          
+          try {
+            // Direct minimal approach for mobile - use only genesis parameter
+            const newVendor = await window.vechain.newConnexVendor({
+              genesis: genesisId
+            });
+            
+            console.log('Successfully created vendor on mobile');
+            setVendor(newVendor);
+            
+            // Try to extract address from vendor if available
+            if (newVendor && newVendor.address) {
+              setAccount(newVendor.address);
+              console.log('Address found in vendor:', newVendor.address);
+              
+              toast({
+                title: "Mobile Wallet Connected",
+                description: `Connected with address: ${newVendor.address.substring(0, 6)}...${newVendor.address.substring(38)}`,
+              });
+              
+              return { 
+                connex: currentConnex, 
+                vendor: newVendor,
+                address: newVendor.address
+              };
+            } else {
+              console.log('No address in vendor, trying certificate method');
+            }
+          } catch (mobileError) {
+            console.error('Mobile connection approach failed:', mobileError);
+            // Continue to standard methods
+          }
+        }
         
         // If we don't have a vendor yet, create one
         if (!vendor) {
