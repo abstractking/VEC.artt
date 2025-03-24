@@ -11,7 +11,9 @@ import { queryClient } from "@/lib/queryClient";
 import { insertNftSchema } from "@shared/schema";
 import { mintNFT, generateMetadataURI } from "@/lib/nftUtils";
 import { AuthContext } from "@/contexts/AuthContext";
+import { useVeChain } from "@/contexts/VeChainContext";
 import TransactionConfirmDialog, { TransactionDetails } from "@/components/TransactionConfirmDialog";
+import BlockchainConnectionError from "@/components/BlockchainConnectionError";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -77,6 +79,7 @@ export default function Create() {
   const [, setLocation] = useLocation();
   const { user } = useAuth();
   const { walletAddress, isConnected, connectWallet } = useWallet();
+  const { error: blockchainError, isInitializing } = useVeChain();
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState<'details' | 'pricing' | 'review'>('details');

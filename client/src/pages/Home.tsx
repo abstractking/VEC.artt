@@ -9,12 +9,15 @@ import NFTShuffle from "@/components/NFTShuffle";
 import RandomArtGallery from "@/components/RandomArtGallery";
 import TransactionTest from "@/components/TransactionTest";
 import TestNetGuide from "@/components/TestNetGuide";
+import BlockchainConnectionError from "@/components/BlockchainConnectionError";
 import { useQuery } from "@tanstack/react-query";
 import type { Collection, NFT } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
+import { useVeChain } from "@/contexts/VeChainContext";
 
 export default function Home() {
   const { user } = useAuth();
+  const { error: blockchainError, isInitializing } = useVeChain();
   
   // Fetch collections for homepage
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
@@ -36,6 +39,13 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Hero />
+      
+      {/* Show blockchain connection error if there's an issue with Connex */}
+      {blockchainError && !isInitializing && (
+        <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <BlockchainConnectionError />
+        </section>
+      )}
       
       {/* TestNet Guide for Netlify deployments */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">

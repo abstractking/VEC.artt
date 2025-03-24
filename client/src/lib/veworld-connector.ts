@@ -409,7 +409,7 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
  * This function tries different connection strategies based on device type
  */
 export async function connectVeWorld(networkType: Network): Promise<VeWorldConnection> {
-  console.log("Connecting to VeWorld wallet (patched)...");
+  console.log("Connecting to VeWorld wallet (patched with enhanced error handling)...");
   
   // Diagnostic logging to identify available wallet objects
   console.log("Available window objects:", 
@@ -420,12 +420,16 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
     )
   );
   
-  // Log environment variables for debugging
-  console.log("Environment variables:", {
+  // Log environment variables and browser info for debugging
+  console.log("Environment and browser info:", {
     VITE_VECHAIN_TESTNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID,
     VITE_VECHAIN_MAINNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID,
     VITE_DEPLOYMENT_ENV: import.meta.env.VITE_DEPLOYMENT_ENV,
     isNetlify: import.meta.env.VITE_DEPLOYMENT_ENV === 'netlify',
+    userAgent: navigator.userAgent,
+    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
+    hasWebsocket: typeof WebSocket !== 'undefined',
+    hasCrypto: typeof window.crypto !== 'undefined',
   });
   
   // FIRST APPROACH: Try to use window.connex if available (highest priority)
