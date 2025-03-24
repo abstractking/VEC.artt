@@ -83,23 +83,12 @@ function isMobileDevice(): boolean {
 /**
  * Connect to VeWorld wallet with precise parameters
  * This function uses the exact format expected by VeWorld
- * Optimized for mobile devices with additional checks
- * 
- * Updated to use environment variables for genesis IDs and
- * completely avoid node URLs to prevent URL construction errors
+ * Optimized for all device types with consistent approach
  */
 export async function connectVeWorldWallet(networkType: Network): Promise<VeWorldConnection> {
   // Additional logging for debugging
   console.log(`Connecting to VeWorld with network type: ${networkType}`);
   
-  // Get proper network information based on network type
-  const genesisIdMainnet = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || GENESIS_ID_MAINNET;
-  const genesisIdTestnet = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || GENESIS_ID_TESTNET;
-  const genesisId = networkType === Network.MAIN ? genesisIdMainnet : genesisIdTestnet;
-  const networkName = networkType === Network.MAIN ? 'main' : 'test';
-  
-  console.log(`Network ID used: ${genesisId}`);
-  console.log(`Network name used: ${networkName}`);
   try {
     console.log("VeWorldConnector: Connecting to VeWorld wallet...");
     
@@ -126,22 +115,21 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
       };
     }
     
-    // Determine network parameters based on type using environment variables
+    // Determine network parameters - simplified to use only one approach
     const isMainNet = networkType === Network.MAIN;
-    
-    // Use environment variables if available, with hardcoded values as fallback
-    const genesisIdMainnet = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || GENESIS_ID_MAINNET;
-    const genesisIdTestnet = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || GENESIS_ID_TESTNET;
-    
-    const genesisId = isMainNet ? genesisIdMainnet : genesisIdTestnet;
     const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
     
-    console.log("VeWorldConnector: Using genesisId:", genesisId, "for network:", networkName);
-    console.log("VeWorldConnector: Connection params:", { genesisId, networkName });
+    // Log environment variables for debugging
+    console.log("VeWorldConnector: Environment variables:", {
+      VITE_VECHAIN_TESTNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID,
+      VITE_VECHAIN_MAINNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID,
+      networkType,
+      networkName
+    });
     
-    // FIRST APPROACH: Try creating vendor with network parameter only (more reliable)
+    // PRIMARY APPROACH: Use only the network parameter which VeWorld handles most reliably
     try {
-      console.log("Approach 1: Creating vendor with network parameter");
+      console.log("Creating vendor with network parameter:", networkName);
       
       // Create vendor with network name only - VeWorld expects this format
       const vendor = await vechain.newConnexVendor({
@@ -156,26 +144,30 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
         network: networkName
       });
       
-      console.log("Successfully created connex with minimal parameters");
+      console.log("Successfully created connex with network parameter");
       return { connex, vendor };
     } catch (error) {
-      console.error("Minimal approach failed:", error);
+      console.error("Primary approach failed:", error);
       
-      // FALLBACK APPROACH: Try with simple name and genesis format
+      // FALLBACK APPROACH: Try with genesis ID if network parameter fails
       try {
-        console.log("Approach 2: Using simple name and genesis format");
+        console.log("Fallback: Using genesis ID approach");
+        
+        // Get network descriptor with genesis ID
+        const network = getNetwork(networkType);
+        const genesisId = network.id;
+        
+        console.log("Using network descriptor:", network);
         
         const vendor = await vechain.newConnexVendor({
-          genesis: genesisId,
-          name: networkName
+          genesis: genesisId
         });
         
         const connex = await vechain.newConnex({
-          genesis: genesisId,
-          name: networkName
+          genesis: genesisId
         });
         
-        console.log("Name and genesis format successful");
+        console.log("Genesis ID approach successful");
         return { connex, vendor };
       } catch (error2) {
         console.error("All approaches failed:", error2);
