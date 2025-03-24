@@ -393,6 +393,13 @@ export default function Create() {
         />
       )}
       
+      {/* Show blockchain connection error if there's an issue with Connex */}
+      {blockchainError && !isInitializing && (
+        <div className="container mx-auto px-4 mb-8">
+          <BlockchainConnectionError onRetry={() => window.location.reload()} />
+        </div>
+      )}
+      
       <div className="container mx-auto px-4">
         <div className="flex flex-col mb-10">
           <h1 className="text-3xl font-bold font-poppins text-secondary dark:text-white mb-2">
@@ -479,7 +486,16 @@ export default function Create() {
                 <CardDescription>Fill in the details to mint your new NFT</CardDescription>
               </CardHeader>
               <CardContent>
-                {!isConnected ? (
+                {blockchainError ? (
+                  <div className="text-center py-6">
+                    <h3 className="text-lg font-bold text-secondary dark:text-white mb-2">
+                      Blockchain Connection Issue
+                    </h3>
+                    <p className="text-gray-500 dark:text-gray-400 mb-4">
+                      Please check the error message at the top of the page
+                    </p>
+                  </div>
+                ) : !isConnected ? (
                   <div className="text-center py-6">
                     <Info className="h-12 w-12 text-primary mx-auto mb-4" />
                     <h3 className="text-lg font-bold text-secondary dark:text-white mb-2">

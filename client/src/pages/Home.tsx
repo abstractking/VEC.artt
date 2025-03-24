@@ -43,7 +43,7 @@ export default function Home() {
       {/* Show blockchain connection error if there's an issue with Connex */}
       {blockchainError && !isInitializing && (
         <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <BlockchainConnectionError />
+          <BlockchainConnectionError onRetry={() => window.location.reload()} />
         </section>
       )}
       
