@@ -12,10 +12,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { InfoIcon, AlertTriangleIcon, CheckCircleIcon, XCircleIcon, RefreshCwIcon } from 'lucide-react';
+import { InfoIcon, AlertTriangleIcon, CheckCircleIcon, XCircleIcon, RefreshCwIcon, SmartphoneIcon } from 'lucide-react';
 import { Network } from '@/lib/Network';
 import { connectVeWorld } from '@/lib/veworld-connector';
 import { connectSmartWallet, isMobileDevice } from '@/lib/mobile-wallet-connector';
+import VeWorldMobileConnector from '@/components/VeWorldMobileConnector';
 
 export default function WalletTestAdvanced() {
   const { walletAddress, isConnected, error, walletType, connectWallet, disconnectWallet } = useWallet();
@@ -427,9 +428,28 @@ export default function WalletTestAdvanced() {
                     </Alert>
                   )}
                   
-                  <Button onClick={runMobileTest} disabled={testRunning}>
-                    {testRunning ? 'Testing...' : 'Test Mobile Connection'}
-                  </Button>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Button onClick={runMobileTest} disabled={testRunning} className="flex items-center justify-center gap-2">
+                      <SmartphoneIcon className="h-4 w-4" />
+                      {testRunning ? 'Testing...' : 'Test Smart Connector'}
+                    </Button>
+                    
+                    {/* VeWorld Mobile Connector Component */}
+                    <VeWorldMobileConnector 
+                      onSuccess={handleMobileConnectorSuccess}
+                      onError={handleMobileConnectorError}
+                    />
+                  </div>
+                  
+                  <div className="bg-muted p-4 rounded-md mt-4">
+                    <h4 className="text-sm font-medium mb-2">Mobile Connection Tips</h4>
+                    <ul className="text-sm space-y-2">
+                      <li>• Make sure VeWorld app is installed and logged in</li>
+                      <li>• Try opening this page directly in your mobile browser</li>
+                      <li>• For iOS, use Safari browser for best compatibility</li>
+                      <li>• For Android, Chrome or the VeWorld in-app browser works best</li>
+                    </ul>
+                  </div>
                 </div>
               </TabsContent>
               
