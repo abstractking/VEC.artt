@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useVeChain } from './VeChainContext';
 import { getWalletBalance } from '@/lib/vechain';
 import { VeChainWalletType, detectBestWalletOption, verifyWalletAvailability, getWalletDisplayName } from '@/lib/wallet-detection';
+import { connectSmartWallet, isMobileDevice } from '@/lib/mobile-wallet-connector';
+import { Network } from '@/lib/Network';
 import { useToast } from '@/hooks/use-toast';
 
 interface WalletContextType {
@@ -96,8 +98,53 @@ export function WalletProvider({ children }: WalletProviderProps) {
       if (!walletStatus.available) {
         throw new Error(walletStatus.message);
       }
+
+      // Detect if we're on mobile and should use the mobile-optimized connector
+      const mobile = isMobileDevice();
       
-      // Connect via VeChain context
+      if (mobile) {
+        console.log(`Using mobile-optimized wallet connector for ${getWalletDisplayName(walletTypeToUse)}...`);
+        
+        // Use the smart mobile connector for better mobile experience
+        const networkType = import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK === 'main' ? Network.MAIN : Network.TEST;
+        const result = await connectSmartWallet(networkType);
+        
+        if (result.error) {
+          throw new Error(result.error);
+        }
+        
+        if (result.connex && result.address) {
+          // Pass the connex instance to our VeChain context
+          await vechain.connect({
+            connex: result.connex,
+            vendor: result.vendor,
+            account: result.address
+          });
+          
+          console.log('Connected successfully to wallet via mobile connector:', result.address);
+          setWalletAddress(result.address);
+          setWalletType(walletTypeToUse);
+          setIsConnected(true);
+          setIsModalOpen(false);
+          
+          // Save to local storage
+          localStorage.setItem('walletType', walletTypeToUse);
+          localStorage.setItem('walletAddress', result.address);
+          localStorage.setItem('walletConnected', 'true');
+          
+          // Get wallet balance
+          refreshWalletBalance();
+          
+          toast({
+            title: "Wallet Connected",
+            description: `Connected to ${getWalletDisplayName(walletTypeToUse)}`,
+          });
+          
+          return;
+        }
+      }
+      
+      // Standard connection method for non-mobile devices
       console.log(`Connecting to ${getWalletDisplayName(walletTypeToUse)} wallet...`);
       const result = await vechain.connect();
       
