@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useVeChain } from './VeChainContext';
 import { getWalletBalance } from '@/lib/vechain';
 import { VeChainWalletType, detectBestWalletOption, verifyWalletAvailability, getWalletDisplayName } from '@/lib/wallet-detection';
 import { connectSmartWallet, isMobileDevice } from '@/lib/mobile-wallet-connector';
 import { Network } from '@/lib/Network';
 import { useToast } from '@/hooks/use-toast';
+import WalletSelectionDialog from '@/components/WalletSelectionDialog';
 
 interface WalletContextType {
   walletAddress: string | null;

@@ -1,0 +1,927 @@
+INFO] (#Ext) -  Starting ContentScriptController listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+(index):136 Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+index-BPFW2pQT.js:105 Browser environment polyfills initialized
+index-BPFW2pQT.js:550 Setting up crypto environment with cryptoPolyfill
+index-BPFW2pQT.js:634 Application initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:611 Available wallets: Array(4)
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+connex-wallet-buddy@0.1:1 [@vechain/connex-wallet-buddy] v0.1.9 loaded
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: Object
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: Object
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Using @vechain.energy/connex-utils getConnex with options: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Connex initialized successfully
+index-BPFW2pQT.js:620 NFTShuffle mounted, setting up rotation with interval: 20000
+index-BPFW2pQT.js:541 Initializing Connex with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
+index-BPFW2pQT.js:541 Attempting to create Connex instance with config: {node: 'https://testnet.veblocks.net', network: 'test', genesis: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'}
