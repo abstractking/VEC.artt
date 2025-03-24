@@ -24,24 +24,27 @@ export default function NFTCard({ nft }: NFTCardProps) {
   const { data: creator } = useQuery({
     queryKey: [`/api/users/${nft.creatorId}`],
     enabled: !!nft.creatorId,
-  });
+  }) as { data: Record<string, any> | undefined };
 
   // Check if NFT is in user's favorites when user changes
   useEffect(() => {
     if (user && nft) {
       // Check if this NFT is in user's favorites
       const favorites = user.favorites || [];
-      setIsFavorite(favorites.includes(nft.id));
+      setIsFavorite(Array.isArray(favorites) && favorites.includes(nft.id));
     }
   }, [user, nft]);
 
   // Calculate auction time remaining
   useEffect(() => {
-    if (!nft?.isBiddable || !nft?.metadata?.auctionEndDate) return;
+    // Safe type checking for metadata
+    const metadata = nft?.metadata as Record<string, any> || {};
+    
+    if (!nft?.isBiddable || !metadata.auctionEndDate) return;
     
     // Function to update the time remaining display
     const updateTimeRemaining = () => {
-      const endDate = new Date(nft.metadata.auctionEndDate);
+      const endDate = new Date(metadata.auctionEndDate);
       const now = new Date();
       const diff = endDate.getTime() - now.getTime();
       
@@ -94,9 +97,10 @@ export default function NFTCard({ nft }: NFTCardProps) {
     setIsTogglingFavorite(true);
     
     try {
-      const currentFavorites = user.favorites || [];
+      // Ensure favorites is always an array
+      const currentFavorites = Array.isArray(user.favorites) ? user.favorites : [];
       const newFavorites = isFavorite 
-        ? currentFavorites.filter(id => id !== nft.id)
+        ? currentFavorites.filter((id: number) => id !== nft.id)
         : [...currentFavorites, nft.id];
       
       // Update user favorites
@@ -175,7 +179,7 @@ export default function NFTCard({ nft }: NFTCardProps) {
           </button>
 
           {/* Auction timer */}
-          {nft.isForSale && nft.isBiddable && nft.metadata?.auctionEndDate && (
+          {nft.isForSale && nft.isBiddable && (nft.metadata as Record<string, any>)?.auctionEndDate && (
             <div className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm rounded-full py-1 px-3 text-xs font-semibold text-card-foreground z-10">
               <Clock className="inline mr-1 h-3 w-3" />
               {timeLeft === "Ended" ? "Auction ended" : `Ending in ${timeLeft}`}

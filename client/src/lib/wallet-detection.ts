@@ -36,10 +36,30 @@ export function isThorWalletAvailable(): boolean {
 
 /**
  * Checks if the VeWorld wallet extension is available
+ * with improved detection for different VeWorld versions
  */
 export function isVeWorldWalletAvailable(): boolean {
   if (!isBrowser) return false;
-  return typeof (window as any).vechain !== 'undefined';
+  
+  // First check for the standard vechain object
+  const hasVeChain = typeof (window as any).vechain !== 'undefined';
+  
+  if (hasVeChain) {
+    // Check if it's actually VeWorld by testing for isVeWorld property
+    const vechain = (window as any).vechain;
+    if (vechain && vechain.isVeWorld === true) {
+      return true;
+    }
+  }
+  
+  // Also check for window.connex which might be injected by VeWorld
+  const hasConnex = typeof (window as any).connex !== 'undefined';
+  
+  // Log for debugging
+  console.log("Wallet detection:", { hasVeChain, hasConnex });
+  
+  // Return true if either detection method works
+  return hasVeChain || hasConnex;
 }
 
 /**
@@ -119,7 +139,7 @@ export function verifyWalletAvailability(walletType: VeChainWalletType): WalletD
         walletType: 'veworld',
         message: veWorldAvailable 
           ? "VeWorld wallet detected"
-          : "VeWorld wallet extension not detected. Please install the VeWorld extension for your browser, configure it for TestNet, and try again."
+          : "VeWorld wallet extension not detected. Please install the VeWorld extension for your browser, open it and select 'Test' network in the network dropdown, then try again."
       };
       
     case 'thor':
@@ -148,7 +168,7 @@ export function verifyWalletAvailability(walletType: VeChainWalletType): WalletD
         available: true, // Always allow attempts to connect
         installed: false, // We don't know if it's installed
         walletType: 'sync2',
-        message: "Please ensure Sync2 desktop application is installed and running."
+        message: "Please ensure Sync2 desktop application is installed, running, and configured for TestNet. When prompted, approve the connection request in the Sync2 application."
       };
       
     case 'environment':
