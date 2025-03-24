@@ -12,13 +12,13 @@ import { Network, getNetwork, getNodeUrl } from './Network';
 const mainnetNetwork = getNetwork(Network.MAIN);
 const testnetNetwork = getNetwork(Network.TEST);
 
-// The exact genesis ID values VeWorld expects
-const GENESIS_ID_MAINNET = mainnetNetwork.id;
-const GENESIS_ID_TESTNET = testnetNetwork.id;
+// The exact genesis ID values VeWorld expects - directly from environment variables first
+const GENESIS_ID_MAINNET = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || mainnetNetwork.id;
+const GENESIS_ID_TESTNET = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || testnetNetwork.id;
 
 // The exact network names VeWorld expects
-const NETWORK_NAME_MAIN = mainnetNetwork.name;
-const NETWORK_NAME_TEST = testnetNetwork.name;
+const NETWORK_NAME_MAIN = 'main'; // Must be lowercase 'main'
+const NETWORK_NAME_TEST = 'test'; // Must be lowercase 'test'
 
 // Node URLs from environment variables
 const NODE_URL_MAINNET = getNodeUrl(Network.MAIN);
@@ -409,7 +409,8 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
  * This function tries different connection strategies based on device type
  */
 export async function connectVeWorld(networkType: Network): Promise<VeWorldConnection> {
-  console.log("Connecting to VeWorld wallet (patched with enhanced error handling)...");
+  const isMobile = isMobileDevice();
+  console.log(`Connecting to VeWorld wallet (${isMobile ? 'MOBILE' : 'DESKTOP'} mode)...`);
   
   // Diagnostic logging to identify available wallet objects
   console.log("Available window objects:", 
@@ -420,16 +421,21 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
     )
   );
   
-  // Log environment variables and browser info for debugging
-  console.log("Environment and browser info:", {
+  // Get network parameters directly from environment variables for consistency
+  const genesisIdMainnet = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || GENESIS_ID_MAINNET;
+  const genesisIdTestnet = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || GENESIS_ID_TESTNET;
+  const genesisId = networkType === Network.MAIN ? genesisIdMainnet : genesisIdTestnet;
+  const networkName = networkType === Network.MAIN ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
+  
+  // Log environment variables and browser info for detailed debugging
+  console.log("Connection parameters:", {
+    networkType,
+    genesisId,
+    networkName,
     VITE_VECHAIN_TESTNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID,
     VITE_VECHAIN_MAINNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID,
-    VITE_DEPLOYMENT_ENV: import.meta.env.VITE_DEPLOYMENT_ENV,
-    isNetlify: import.meta.env.VITE_DEPLOYMENT_ENV === 'netlify',
+    isMobile,
     userAgent: navigator.userAgent,
-    isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent),
-    hasWebsocket: typeof WebSocket !== 'undefined',
-    hasCrypto: typeof window.crypto !== 'undefined',
   });
   
   // FIRST APPROACH: Try to use window.connex if available (highest priority)

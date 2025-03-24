@@ -18,21 +18,39 @@ interface WalletConnectionResult {
 
 /**
  * Detect if running on a mobile device
+ * This improved detection combines user agent, touch support, and screen size
  */
 export function isMobileDevice(): boolean {
-  if (typeof navigator === 'undefined') return false;
+  if (typeof navigator === 'undefined' || typeof window === 'undefined') return false;
   
   const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
   
-  // Check for mobile device indicators in user agent
-  const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+  // Primary check: mobile device indicators in user agent
+  const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|Tablet|tablet/i;
+  const isMobileUserAgent = mobileRegex.test(userAgent);
   
-  // Check for touch capabilities as a secondary indicator
+  // Secondary check: touch capabilities
   const hasTouchCapability = 'ontouchstart' in window || 
-                             navigator.maxTouchPoints > 0 || 
-                             (navigator as any).msMaxTouchPoints > 0;
-                             
-  return mobileRegex.test(userAgent) || hasTouchCapability;
+                            navigator.maxTouchPoints > 0 || 
+                            (navigator as any).msMaxTouchPoints > 0;
+  
+  // Tertiary check: screen dimension analysis (most phones are < 1024px wide)
+  const smallScreen = window.innerWidth < 1024;
+  
+  // For debugging
+  console.log('Mobile detection:', {
+    userAgent,
+    isMobileUserAgent,
+    hasTouchCapability,
+    screenWidth: window.innerWidth,
+    smallScreen,
+  });
+  
+  // Consider mobile if ANY TWO of the three checks pass
+  const mobileChecks = [isMobileUserAgent, hasTouchCapability, smallScreen];
+  const mobileTrueCount = mobileChecks.filter(Boolean).length;
+  
+  return mobileTrueCount >= 2; // Device is mobile if at least 2 checks pass
 }
 
 /**
@@ -122,10 +140,10 @@ export async function connectMobileWallet(networkType: Network = Network.TEST): 
             };
             
             // Handle the type checking issue with the sign method
-            // @ts-ignore - VeChain's Connex types are sometimes inconsistent
-            const result = await connex.vendor.sign('cert', certificate).request();
+            // We need to use any because the Connex types don't align with the actual response
+            const result: any = await connex.vendor.sign('cert', certificate).request();
             
-            if (result.annex && result.annex.signer) {
+            if (result && result.annex && result.annex.signer) {
               return { 
                 connex, 
                 vendor: connex.vendor,
@@ -209,10 +227,10 @@ export async function connectSmartWallet(networkType: Network = Network.TEST): P
         };
         
         // Handle the type checking issue with the sign method
-        // @ts-ignore - VeChain's Connex types are sometimes inconsistent
-        const result = await connex.vendor.sign('cert', certificate).request();
+        // We need to use any because the Connex types don't align with the actual response
+        const result: any = await connex.vendor.sign('cert', certificate).request();
         
-        if (result.annex && result.annex.signer) {
+        if (result && result.annex && result.annex.signer) {
           return { 
             connex, 
             vendor: connex.vendor,
