@@ -139,21 +139,21 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
     console.log("VeWorldConnector: Using genesisId:", genesisId, "for network:", networkName);
     console.log("VeWorldConnector: Connection params:", { genesisId, networkName });
     
-    // FIRST APPROACH: Try creating vendor with minimal parameters (no URL at all)
+    // FIRST APPROACH: Try creating vendor with network parameter only (more reliable)
     try {
-      console.log("Approach 1: Creating vendor with genesis-only parameter");
+      console.log("Approach 1: Creating vendor with network parameter");
       
-      // Create vendor with only genesis - NO network object or URL
+      // Create vendor with network name only - VeWorld expects this format
       const vendor = await vechain.newConnexVendor({
-        genesis: genesisId
+        network: networkName
       });
       
-      console.log("Successfully created vendor with minimal parameters");
+      console.log("Successfully created vendor with network parameter");
       
-      // Create Connex with only the required minimal parameters - NO node URL
-      console.log("Creating connex with minimal parameters");
+      // Create Connex with network name parameter - more reliable for VeWorld
+      console.log("Creating connex with network parameter");
       const connex = await vechain.newConnex({
-        genesis: genesisId
+        network: networkName
       });
       
       console.log("Successfully created connex with minimal parameters");
@@ -240,14 +240,15 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
       console.log("Mobile device detected in alt connection, using minimal parameters");
       
       try {
-        // For mobile, create vendor first with minimal parameters
+        // For mobile, create vendor with network name parameter (more reliable)
+        const networkName = isMainNet ? 'main' : 'test';
         const vendor = await vechain.newConnexVendor({
-          genesis: genesisId
+          network: networkName
         });
         
-        // Create a simple connex instance with minimal parameters
+        // Create a simple connex instance with network parameter
         const connex = await vechain.newConnex({
-          genesis: genesisId
+          network: networkName
         });
         
         console.log("VeWorldConnector (Alt): Mobile minimal connection successful");
@@ -258,18 +259,19 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
       }
     }
     
-    // Standard alternative approach without node URL
+    // Standard alternative approach with network name parameter
     try {
-      // Create Connex instance with just genesis parameter - avoid node URLs
+      // Use network parameter which is more reliable with VeWorld
+      const networkName = isMainNet ? 'main' : 'test';
       const connex = await vechain.newConnex({
-        genesis: genesisId
+        network: networkName
       });
       
       console.log("VeWorldConnector (Alt): Connex created successfully");
       
-      // Create vendor with direct genesis parameter
+      // Create vendor with network parameter
       const vendor = await vechain.newConnexVendor({
-        genesis: genesisId
+        network: networkName
       });
       
       console.log("VeWorldConnector (Alt): Vendor created successfully");
@@ -378,16 +380,17 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
     try {
       console.log("Trying genesis-only connection method");
       
-      // Create vendor first with only genesis
+      // Create vendor with network name parameter (more reliable with VeWorld)
+      const networkName = isMainNet ? 'main' : 'test';
       const vendor = await vechain.newConnexVendor({
-        genesis: genesisId
+        network: networkName
       });
       
-      console.log("Minimal vendor created");
+      console.log("Minimal vendor created with network parameter");
       
-      // Then create connex with only genesis - no node URL
+      // Create connex with network name parameter
       const connex = await vechain.newConnex({
-        genesis: genesisId
+        network: networkName
       });
       
       console.log("Minimal connex created without node URL");
