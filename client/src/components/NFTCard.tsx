@@ -176,7 +176,7 @@ export default function NFTCard({ nft }: NFTCardProps) {
 
           {/* Auction timer */}
           {nft.isForSale && nft.isBiddable && nft.metadata?.auctionEndDate && (
-            <div className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm rounded-full py-1 px-3 text-xs font-semibold text-foreground z-10">
+            <div className="absolute top-3 left-3 bg-background/90 backdrop-blur-sm rounded-full py-1 px-3 text-xs font-semibold text-card-foreground z-10">
               <Clock className="inline mr-1 h-3 w-3" />
               {timeLeft === "Ended" ? "Auction ended" : `Ending in ${timeLeft}`}
             </div>
@@ -206,16 +206,16 @@ export default function NFTCard({ nft }: NFTCardProps) {
               )}
             </div>
             <div className="ml-2">
-              <p className="text-xs text-muted-foreground">Creator</p>
-              <p className="text-sm font-semibold text-foreground">
+              <p className="text-xs text-card-foreground/60">Creator</p>
+              <p className="text-sm font-semibold text-card-foreground">
                 {creator?.username ? `@${creator.username}` : `@user${nft.creatorId}`}
               </p>
             </div>
           </div>
-          <h3 className="font-bold text-foreground text-lg mb-2">{nft.name}</h3>
+          <h3 className="font-bold text-card-foreground text-lg mb-2">{nft.name}</h3>
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-card-foreground/70">
                 {nft.isForSale 
                   ? (nft.isBiddable ? "Current Bid" : "Price") 
                   : "Not for sale"}

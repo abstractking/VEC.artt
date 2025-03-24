@@ -298,6 +298,161 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
       // If specific wallet type is specified, prioritize that
       if (specificWalletType === 'veworld' && window.vechain && window.vechain.isVeWorld) {
         console.log('Specifically connecting to VeWorld wallet...');
+        
+        // Log VeWorld wallet object for diagnostic
+        console.log('VeWorld wallet detected:',
+          {
+            isVeWorld: window.vechain.isVeWorld,
+            methods: Object.keys(window.vechain),
+            hasMethods: {
+              newConnex: typeof window.vechain.newConnex === 'function',
+              newConnexVendor: typeof window.vechain.newConnexVendor === 'function',
+              getVendor: typeof window.vechain.getVendor === 'function'
+            }
+          });
+        
+        // Special handling for mobile VeWorld
+        if (isMobile) {
+          console.log('Mobile VeWorld connection path activated');
+          
+          // Get network parameters from environment variables
+          const isMainNet = config.network === 'main';
+          
+          const genesisIdMainnet = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || 
+            '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a';
+          const genesisIdTestnet = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || 
+            '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127';
+            
+          const genesisId = isMainNet ? genesisIdMainnet : genesisIdTestnet;
+          const networkName = isMainNet ? 'main' : 'test';
+          
+          console.log('Mobile connection parameters:', { genesisId, networkName });
+          
+          try {
+            // Direct minimal approach for mobile - use only genesis parameter
+            const newVendor = await window.vechain.newConnexVendor({
+              genesis: genesisId
+            });
+            
+            console.log('Successfully created vendor on mobile');
+            setVendor(newVendor);
+            
+            // Try to extract address from vendor if available
+            // Some wallet implementations add custom properties to the vendor
+            if (newVendor && (newVendor as any).address) {
+              const address = (newVendor as any).address;
+              setAccount(address);
+              console.log('Address found in vendor:', address);
+              
+              toast({
+                title: "Mobile Wallet Connected",
+                description: `Connected with address: ${address.substring(0, 6)}...${address.substring(38)}`,
+              });
+              
+              return { 
+                connex: currentConnex, 
+                vendor: newVendor,
+                address: address
+              };
+            } else {
+              console.log('No address in vendor, trying certificate method');
+            }
+          } catch (mobileError) {
+            console.error('Mobile connection approach failed:', mobileError);
+            // Continue to standard methods
+          }
+        }
+        
+        // If we don't have a vendor yet, create one
+        if (!vendor) {
+          try {
+            // Try to get vendor directly first
+            if (typeof window.vechain.getVendor === 'function') {
+              const walletVendor = await window.vechain.getVendor();
+              if (walletVendor) {
+                console.log('Retrieved vendor from wallet');
+                setVendor(walletVendor);
+                
+                // Some wallet implementations add address to vendor
+                if ((walletVendor as any).address) {
+                  setAccount((walletVendor as any).address);
+                  return { 
+                    connex: currentConnex, 
+                    vendor: walletVendor,
+                    address: (walletVendor as any).address
+                  };
+                }
+              }
+            }
+            
+            // If getting vendor directly failed, create one
+            console.log('Creating vendor with minimal parameters...');
+            
+            // Try simplified parameter set first - some versions only need genesis
+            try {
+              const newVendor = await window.vechain.newConnexVendor({
+                genesis: config.genesis
+              });
+              console.log('Created vendor with genesis only');
+              setVendor(newVendor);
+            } catch (vendorError) {
+              console.log('Simplified vendor creation failed, trying full parameters');
+              // Full parameter set
+              const newVendor = await window.vechain.newConnexVendor({
+                genesis: config.genesis,
+                node: config.node,
+                network: config.network
+              });
+              console.log('Created vendor with full parameters');
+              setVendor(newVendor);
+            }
+          } catch (vendorError) {
+            console.error('Failed to create/get vendor:', vendorError);
+            throw new Error('Failed to connect to VeWorld wallet: ' + 
+              (vendorError instanceof Error ? vendorError.message : String(vendorError)));
+          }
+        }
+        
+        // Create and sign certificate for authentication
+        try {
+          if (!window.connex) {
+            console.log('No window.connex, using currentConnex');
+          }
+          
+          const connexToUse = window.connex || currentConnex;
+          
+          // Check if either connex or vendor is missing
+          if (!connexToUse || !connexToUse.vendor) {
+            throw new Error('Connex or vendor not available');
+          }
+          
+          const cert = {
+            purpose: "identification" as const,
+            payload: {
+              type: "text" as const,
+              content: `Login to VeCollab at ${new Date().toISOString()}`
+            }
+          };
+          
+          console.log('Requesting certificate signing...');
+          const result = await connexToUse.vendor.sign('cert', cert).request();
+          
+          if (result.annex && result.annex.signer) {
+            console.log('Certificate signed successfully:', result);
+            setAccount(result.annex.signer);
+            return { 
+              connex: connexToUse, 
+              vendor: connexToUse.vendor,
+              address: result.annex.signer
+            };
+          } else {
+            throw new Error('No signer address returned from certificate');
+          }
+        } catch (certError) {
+          console.error('Certificate error:', certError);
+          throw new Error('Failed to authenticate with VeWorld wallet: ' + 
+            (certError instanceof Error ? certError.message : String(certError)));
+        }
       } else if (specificWalletType === 'sync2') {
         console.log('Specifically connecting to Sync2 wallet...');
         // For Sync2, we'll rely on window.connex being set by the wallet
