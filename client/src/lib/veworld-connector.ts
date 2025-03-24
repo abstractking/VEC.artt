@@ -149,25 +149,27 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
     } catch (error) {
       console.error("Primary approach failed:", error);
       
-      // FALLBACK APPROACH: Try with genesis ID if network parameter fails
+      // FALLBACK APPROACH: Try with network parameter plus node URL
       try {
-        console.log("Fallback: Using genesis ID approach");
+        console.log("Fallback: Using network parameter with node URL");
         
-        // Get network descriptor with genesis ID
+        // Get network descriptor and node URL
         const network = getNetwork(networkType);
-        const genesisId = network.id;
+        const nodeUrl = isMainNet ? NODE_URL_MAINNET : NODE_URL_TESTNET;
         
-        console.log("Using network descriptor:", network);
+        console.log("Using network descriptor with node URL:", { network, nodeUrl });
         
         const vendor = await vechain.newConnexVendor({
-          genesis: genesisId
+          network: networkName,
+          node: nodeUrl
         });
         
         const connex = await vechain.newConnex({
-          genesis: genesisId
+          network: networkName,
+          node: nodeUrl
         });
         
-        console.log("Genesis ID approach successful");
+        console.log("Network parameter with node URL approach successful");
         return { connex, vendor };
       } catch (error2) {
         console.error("All approaches failed:", error2);
@@ -392,24 +394,26 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
     } catch (firstError) {
       console.error("Genesis-only connection failed:", firstError);
       
-      // FOURTH APPROACH: Try with special format
+      // FOURTH APPROACH: Try with comprehensive format including node URL
       try {
-        console.log("Trying special request format...");
+        console.log("Trying comprehensive format with node URL...");
         
-        // Request format with network parameter as primary and genesis as fallback
+        // Comprehensive format with all possible parameters
         const networkName = isMainNet ? "main" : "test";
+        const nodeUrl = isMainNet ? NODE_URL_MAINNET : NODE_URL_TESTNET;
+        
         const vendor = await vechain.newConnexVendor({
           network: networkName,
-          // Include genesis as fallback for older versions
-          genesis: genesisId 
+          node: nodeUrl
+          // Removed genesis parameter to avoid conflicts
         });
         
         const connex = await vechain.request({
           method: "newConnex", 
           params: [{
             network: networkName,
-            // Include genesis as fallback for older versions
-            genesis: genesisId
+            node: nodeUrl
+            // Removed genesis parameter to avoid conflicts
           }]
         });
         

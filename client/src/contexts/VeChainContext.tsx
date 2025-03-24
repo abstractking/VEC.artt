@@ -331,10 +331,10 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
           try {
             // Mobile approach - use network parameter which is more reliable
             const newVendor = await window.vechain.newConnexVendor({
-              genesis: genesisId
+              network: networkName
             });
             
-            console.log('Successfully created vendor on mobile');
+            console.log('Successfully created vendor on mobile using network parameter');
             setVendor(newVendor);
             
             // Try to extract address from vendor if available
