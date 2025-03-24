@@ -56,7 +56,7 @@ export function isIosDevice(): boolean {
   
   const userAgent = navigator.userAgent.toLowerCase();
   return /iphone|ipad|ipod/.test(userAgent) && 
-         !window.MSStream; // Exclude Windows Phone
+         !(navigator.userAgent.includes('Windows Phone')); // Exclude Windows Phone
 }
 
 /**

@@ -7,6 +7,12 @@
  */
 
 import { Network, getNetwork, getNodeUrl } from './Network';
+import { 
+  isVeWorldMobileApp, 
+  isIosDevice, 
+  isAndroidDevice, 
+  getVeWorldMobileInfo 
+} from './veworld-mobile-detect';
 
 // Get network definitions
 const mainnetNetwork = getNetwork(Network.MAIN);
@@ -45,12 +51,33 @@ interface VeWorldConnection {
 
 /**
  * Detect if running on a mobile device
- * This is used to adapt the connection approach for mobile
+ * Enhanced version that uses our specialized detection logic
  */
 function isMobileDevice(): boolean {
+  // First check our enhanced VeWorld-specific mobile detection
+  const isVeWorldMobile = isVeWorldMobileApp();
+  
+  // If we've identified this as a VeWorld mobile app, prioritize that
+  if (isVeWorldMobile) {
+    console.log("VeWorldConnector: VeWorld mobile app environment detected");
+    return true;
+  }
+  
+  // Otherwise fall back to standard mobile detection
   if (typeof navigator === 'undefined') return false;
   
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
+  // Log detailed detection info for debugging
+  console.log("VeWorldConnector: Mobile detection:", {
+    isVeWorldMobile,
+    isMobileUA,
+    isIOS: isIosDevice(),
+    isAndroid: isAndroidDevice(),
+    userAgent: navigator.userAgent
+  });
+  
+  return isMobileUA;
 }
 
 /**

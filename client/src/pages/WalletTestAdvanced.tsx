@@ -214,6 +214,28 @@ export default function WalletTestAdvanced() {
     }
   };
   
+  // Handle successful connection from VeWorldMobileConnector
+  const handleMobileConnectorSuccess = (address: string) => {
+    setTestResults({
+      ...testResults,
+      mobile: { 
+        success: true, 
+        message: `Successfully connected via VeWorld Mobile Connector. Address: ${address.substring(0, 10)}...` 
+      }
+    });
+  };
+  
+  // Handle errors from VeWorldMobileConnector
+  const handleMobileConnectorError = (error: Error) => {
+    setTestResults({
+      ...testResults,
+      mobile: { 
+        success: false, 
+        message: `VeWorld Mobile connection failed: ${error.message}` 
+      }
+    });
+  };
+  
   // Run WalletContext connection test
   const runContextTest = async () => {
     setTestRunning(true);
