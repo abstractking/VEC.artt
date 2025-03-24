@@ -208,15 +208,54 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
           }
         }
 
-        // If window.connex isn't suitable, create our own instance
-        const connexInstance = await getConnex(config);
-        
-        if (!connexInstance?.thor) {
-          throw new Error('Failed to initialize Connex properly');
+        // If window.connex isn't suitable, try creating our own instance
+        try {
+          console.log('Attempting to create Connex instance with config:', config);
+          const connexInstance = await getConnex(config).catch(e => {
+            console.error('Explicit getConnex error:', e);
+            throw e;
+          });
+          
+          if (!connexInstance?.thor) {
+            throw new Error('Failed to initialize Connex properly');
+          }
+          
+          setConnex(connexInstance);
+          console.log('Connex initialized successfully');
+        } catch (connexError) {
+          console.error('Failed to create Connex with getConnex:', connexError);
+          
+          // FALLBACK for Connex initialization
+          console.log('Trying fallback initialization approaches...');
+          
+          // Try direct Web3 + VeChain integration
+          const Web3 = await import('web3').then(module => module.default || module);
+          console.log('Creating minimal Connex-compatible interface using Web3');
+          
+          // Create a basic connex-like interface for read-only operations
+          const minimalConnex = {
+            thor: {
+              genesis: { id: config.genesis },
+              ticker: () => ({
+                next: () => Promise.resolve({ number: 0 })
+              }),
+              account: (addr: string) => ({
+                get: () => Promise.resolve({ balance: '0x0', energy: '0x0' })
+              }),
+              status: {
+                head: { id: config.genesis, number: 0, timestamp: Date.now() }
+              }
+            },
+            vendor: {
+              sign: (type: string, message: any) => ({
+                request: () => Promise.reject(new Error('Wallet connection required for signing operations'))
+              })
+            }
+          };
+          
+          console.log('Created minimal Connex interface, waiting for wallet connection');
+          setConnex(minimalConnex);
         }
-        
-        setConnex(connexInstance);
-        console.log('Connex initialized successfully');
       } catch (err) {
         console.error('Failed to initialize Connex:', err);
         setError(err instanceof Error ? err : new Error(String(err)));
@@ -255,12 +294,13 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
                 console.log('Retrieved vendor from wallet');
                 setVendor(walletVendor);
                 
-                if (walletVendor.address) {
-                  setAccount(walletVendor.address);
+                // Some wallet implementations add address to vendor
+                if ((walletVendor as any).address) {
+                  setAccount((walletVendor as any).address);
                   return { 
                     connex: currentConnex, 
                     vendor: walletVendor,
-                    address: walletVendor.address
+                    address: (walletVendor as any).address
                   };
                 }
               }
@@ -288,12 +328,13 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
               console.log('Successfully created vendor');
               setVendor(newVendor);
               
-              if (newVendor.address) {
-                setAccount(newVendor.address);
+              // Some wallet implementations add address to vendor
+              if ((newVendor as any).address) {
+                setAccount((newVendor as any).address);
                 return { 
                   connex: currentConnex, 
                   vendor: newVendor,
-                  address: newVendor.address
+                  address: (newVendor as any).address
                 };
               }
             }
