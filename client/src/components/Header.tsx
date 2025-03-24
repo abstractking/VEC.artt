@@ -9,6 +9,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import NotificationCenter from "@/components/NotificationCenter";
 import NetworkIndicator from "@/components/NetworkIndicator";
 import FaucetLink from "@/components/FaucetLink";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -20,7 +21,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Header() {
   const [, navigate] = useLocation();
-  const { isConnected, connectWallet, disconnectWallet, walletAddress, walletBalance } = useWallet();
+  const { 
+    isConnected, 
+    connectWallet, 
+    disconnectWallet, 
+    walletAddress, 
+    walletBalance,
+    setWalletSelectionOpen,
+    isConnecting
+  } = useWallet();
   const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -39,6 +48,13 @@ export default function Header() {
     }
   };
 
+  // Open wallet selection dialog (new method)
+  const handleOpenWalletSelection = () => {
+    setWalletSelectionOpen(true);
+    setIsMenuOpen(false);
+  };
+  
+  // Legacy direct connect method (as fallback for mobile)
   const handleConnectWallet = async () => {
     await connectWallet();
     setIsMenuOpen(false);
@@ -204,12 +220,30 @@ export default function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button
-                onClick={handleConnectWallet}
-                className="hidden md:block bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              >
-                Connect Wallet
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={handleOpenWalletSelection}
+                      className="hidden md:flex items-center bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                      disabled={isConnecting}
+                    >
+                      <Wallet className="mr-2 h-4 w-4" />
+                      {isConnecting ? (
+                        <>
+                          <span className="mr-2">Connecting</span>
+                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                        </>
+                      ) : (
+                        "Connect Wallet"
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Connect to VeChain with your preferred wallet</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             )}
             
             <button
@@ -335,10 +369,19 @@ export default function Header() {
               </div>
             ) : (
               <Button
-                onClick={handleConnectWallet}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                onClick={handleOpenWalletSelection}
+                className="flex items-center bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                disabled={isConnecting}
               >
-                Connect Wallet
+                <Wallet className="mr-2 h-4 w-4" />
+                {isConnecting ? (
+                  <>
+                    <span className="mr-2">Connecting</span>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  </>
+                ) : (
+                  "Connect Wallet"
+                )}
               </Button>
             )}
             
