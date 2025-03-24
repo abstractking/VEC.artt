@@ -350,9 +350,10 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
         }
         
         // If we can't get vendor but have connex, try creating just the vendor
-        console.log("Creating vendor with minimal parameters");
+        console.log("Creating vendor with network parameter");
+        const networkName = isMainNet ? 'main' : 'test';
         const vendor = await vechain.newConnexVendor({
-          genesis: genesisId
+          network: networkName
         });
         
         return { connex, vendor };
@@ -403,17 +404,20 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
       try {
         console.log("Trying special request format...");
         
-        // Request format that doesn't use URL constructor internally
+        // Request format with network parameter as primary and genesis as fallback
+        const networkName = isMainNet ? "main" : "test";
         const vendor = await vechain.newConnexVendor({
-          genesis: genesisId,
-          name: isMainNet ? "main" : "test"
+          network: networkName,
+          // Include genesis as fallback for older versions
+          genesis: genesisId 
         });
         
         const connex = await vechain.request({
           method: "newConnex", 
           params: [{
-            genesis: genesisId,
-            name: isMainNet ? "main" : "test" 
+            network: networkName,
+            // Include genesis as fallback for older versions
+            genesis: genesisId
           }]
         });
         
@@ -495,9 +499,11 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
           const isMainNet = networkType === Network.MAIN;
           const genesisId = isMainNet ? import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID : import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID;
           
-          console.log("Creating vendor with genesis only:", genesisId);
+          // Use network parameter which is more reliable with VeWorld
+          const networkName = isMainNet ? 'main' : 'test';
+          console.log("Creating vendor with network parameter:", networkName);
           const vendor = await vechain.newConnexVendor({
-            genesis: genesisId
+            network: networkName
           });
           
           console.log("Successfully created vendor to pair with existing connex");
