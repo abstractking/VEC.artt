@@ -171,7 +171,8 @@ export function WalletProvider({ children }: WalletProviderProps) {
       
       // Standard connection method for non-mobile devices
       console.log(`Connecting to ${getWalletDisplayName(walletTypeToUse)} wallet...`);
-      const result = await vechain.connect();
+      // Pass wallet type to VeChain connect method for prioritization
+      const result = await vechain.connect(walletTypeToUse as string);
       
       if (result && vechain.account) {
         console.log('Connected successfully to wallet:', vechain.account);
@@ -267,6 +268,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
     isConnected,
     isConnecting,
     isModalOpen,
+    isWalletSelectionOpen,
     error,
     useRealWallet,
     walletType,
@@ -274,6 +276,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
     connectWallet,
     disconnectWallet,
     setModalOpen: setIsModalOpen,
+    setWalletSelectionOpen: setIsWalletSelectionOpen,
     toggleRealWallet,
     refreshWalletBalance
   };

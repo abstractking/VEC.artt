@@ -121,7 +121,7 @@ interface VeChainContextType {
   isInitializing: boolean;
   error: Error | null;
   networkType: Network;
-  connect: () => Promise<any>;
+  connect: (walletType?: string) => Promise<any>;
   disconnect: () => void;
   submitTransaction: (clauses: any[], options?: any) => Promise<string>;
   waitForTransactionId: (id: string) => Promise<any>;
