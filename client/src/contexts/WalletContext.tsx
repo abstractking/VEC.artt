@@ -115,11 +115,11 @@ export function WalletProvider({ children }: WalletProviderProps) {
         
         if (result.connex && result.address) {
           // Pass the connex instance to our VeChain context
-          await vechain.connect({
-            connex: result.connex,
-            vendor: result.vendor,
-            account: result.address
-          });
+          // Since the context's connect method doesn't accept parameters, we need to set them directly
+          // This is a workaround for the type checking issue
+          (vechain as any).connex = result.connex;
+          (vechain as any).vendor = result.vendor;
+          await vechain.connect();
           
           console.log('Connected successfully to wallet via mobile connector:', result.address);
           setWalletAddress(result.address);

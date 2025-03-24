@@ -62,6 +62,17 @@ function isMobileDevice(): boolean {
  * completely avoid node URLs to prevent URL construction errors
  */
 export async function connectVeWorldWallet(networkType: Network): Promise<VeWorldConnection> {
+  // Additional logging for debugging
+  console.log(`Connecting to VeWorld with network type: ${networkType}`);
+  
+  // Get proper network information based on network type
+  const genesisIdMainnet = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || GENESIS_ID_MAINNET;
+  const genesisIdTestnet = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || GENESIS_ID_TESTNET;
+  const genesisId = networkType === Network.MAIN ? genesisIdMainnet : genesisIdTestnet;
+  const networkName = networkType === Network.MAIN ? 'main' : 'test';
+  
+  console.log(`Network ID used: ${genesisId}`);
+  console.log(`Network name used: ${networkName}`);
   try {
     console.log("VeWorldConnector: Connecting to VeWorld wallet...");
     
