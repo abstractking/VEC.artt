@@ -329,7 +329,7 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
           console.log('Mobile connection parameters:', { genesisId, networkName });
           
           try {
-            // Direct minimal approach for mobile - use only genesis parameter
+            // Mobile approach - use network parameter which is more reliable
             const newVendor = await window.vechain.newConnexVendor({
               genesis: genesisId
             });
