@@ -12,6 +12,7 @@ interface WalletContextType {
   isConnected: boolean;
   isConnecting: boolean;
   isModalOpen: boolean;
+  isWalletSelectionOpen: boolean;
   error: string | null;
   useRealWallet: boolean;
   walletType: VeChainWalletType | null;
@@ -22,6 +23,7 @@ interface WalletContextType {
   connectWallet: (walletType?: VeChainWalletType) => Promise<void>;
   disconnectWallet: () => void;
   setModalOpen: (isOpen: boolean) => void;
+  setWalletSelectionOpen: (isOpen: boolean) => void;
   toggleRealWallet: () => void;
   refreshWalletBalance: () => Promise<void>;
 }
@@ -41,6 +43,12 @@ export function WalletProvider({ children }: WalletProviderProps) {
   const [useRealWallet, setUseRealWallet] = useState(true);
   const [walletType, setWalletType] = useState<VeChainWalletType | null>(null);
   const [walletBalance, setWalletBalance] = useState({ vet: '0', vtho: '0' });
+  
+  // State for wallet selection dialog
+  const [isWalletSelectionOpen, setIsWalletSelectionOpen] = useState(false);
+  
+  // Track connection in progress to prevent multiple attempts
+  const connectionInProgress = useRef(false);
 
   const { toast } = useToast();
   
@@ -87,12 +95,28 @@ export function WalletProvider({ children }: WalletProviderProps) {
 
   // Connect to wallet
   const connectWallet = useCallback(async (preferredWalletType?: VeChainWalletType) => {
+    // Prevent multiple connection attempts
+    if (connectionInProgress.current) {
+      console.log('Connection already in progress, ignoring this request');
+      return;
+    }
+    
+    // If no wallet type is specified and we're not on mobile, show the wallet selection dialog
+    if (!preferredWalletType && !isMobileDevice()) {
+      setIsWalletSelectionOpen(true);
+      return; // Exit early, actual connection will happen after user selects a wallet
+    }
+    
+    // Set connection in progress to prevent multiple attempts
+    connectionInProgress.current = true;
     setIsConnecting(true);
     setError(null);
     
     try {
       // Determine which wallet to use
       const walletTypeToUse = preferredWalletType || detectBestWalletOption();
+      
+      console.log(`Initiating connection to wallet type: ${walletTypeToUse}`);
       
       // Verify wallet is available
       const walletStatus = verifyWalletAvailability(walletTypeToUse);
@@ -180,7 +204,12 @@ export function WalletProvider({ children }: WalletProviderProps) {
         variant: "destructive"
       });
     } finally {
+      // Reset connecting state and allow new connection attempts
       setIsConnecting(false);
+      // Add a small delay before resetting the connectionInProgress flag to prevent rapid clicking
+      setTimeout(() => {
+        connectionInProgress.current = false;
+      }, 1000); // 1 second cooldown before allowing another connection attempt
     }
   }, [vechain, toast]);
 
@@ -249,9 +278,27 @@ export function WalletProvider({ children }: WalletProviderProps) {
     refreshWalletBalance
   };
 
+  // Handle wallet selection from dialog
+  const handleWalletSelection = useCallback((selectedWalletType: VeChainWalletType) => {
+    // Close the dialog and connect to the selected wallet
+    setIsWalletSelectionOpen(false);
+    
+    // Use a small delay to allow the dialog to close
+    setTimeout(() => {
+      connectWallet(selectedWalletType);
+    }, 300);
+  }, [connectWallet]);
+
   return (
     <WalletContext.Provider value={value}>
       {children}
+      
+      {/* Wallet Selection Dialog */}
+      <WalletSelectionDialog 
+        isOpen={isWalletSelectionOpen}
+        onClose={() => setIsWalletSelectionOpen(false)}
+        onSelectWallet={handleWalletSelection}
+      />
     </WalletContext.Provider>
   );
 }

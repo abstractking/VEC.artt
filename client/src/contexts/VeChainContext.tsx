@@ -272,8 +272,8 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
     initConnex();
   }, [config, toast]);
 
-  // Connect to wallet
-  const connect = useCallback(async () => {
+  // Connect to wallet - with specific wallet type support
+  const connect = useCallback(async (specificWalletType?: string) => {
     const currentConnex = getGlobalConnexIfNetworkMatches();
     if (!currentConnex) {
       throw new Error('Connex is not initialized. Please try again in a few seconds.');
@@ -293,8 +293,71 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
         VITE_VECHAIN_NODE_URL_MAINNET: import.meta.env.VITE_VECHAIN_NODE_URL_MAINNET
       });
       
-      // First try VeWorld if available
-      if (window.vechain && window.vechain.isVeWorld) {
+      console.log('Attempting to connect with specific wallet type:', specificWalletType || 'default');
+      
+      // If specific wallet type is specified, prioritize that
+      if (specificWalletType === 'veworld' && window.vechain && window.vechain.isVeWorld) {
+        console.log('Specifically connecting to VeWorld wallet...');
+      } else if (specificWalletType === 'sync2') {
+        console.log('Specifically connecting to Sync2 wallet...');
+        // For Sync2, we'll rely on window.connex being set by the wallet
+        // But we won't try VeWorld first
+        
+        // Wait for window.connex to be populated by Sync2
+        const waitForSync2 = () => {
+          return new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              reject(new Error('Timed out waiting for Sync2 wallet connection'));
+            }, 30000); // 30 second timeout
+            
+            const checkInterval = setInterval(() => {
+              if (window.connex && window.connex.thor) {
+                clearInterval(checkInterval);
+                clearTimeout(timeout);
+                resolve();
+              }
+            }, 500);
+          });
+        };
+        
+        try {
+          await waitForSync2();
+          // Once Sync2 is connected, we can proceed to the certificate
+          // We'll skip the VeWorld specific logic below
+          
+          // Skip to certificate creation
+          // Make sure window.connex exists
+          if (window.connex && window.connex.vendor) {
+            const cert = {
+              purpose: "identification" as const, // Specify literal type to satisfy TS
+              payload: {
+                type: "text" as const,  // Specify literal type to satisfy TS
+                content: `Login to VeCollab at ${new Date().toISOString()}`
+              }
+            };
+            
+            try {
+              const result = await window.connex.vendor.sign('cert', cert).request();
+              if (result.annex && result.annex.signer) {
+                setAccount(result.annex.signer);
+                return { connex: window.connex, vendor: window.connex.vendor };
+              } else {
+                throw new Error('No signer address returned from certificate');
+              }
+            } catch (certError) {
+              console.error('Sync2 certificate error:', certError);
+              throw new Error('Failed to authenticate with Sync2 wallet.');
+            }
+          } else {
+            throw new Error('Sync2 wallet not detected or not properly initialized');
+          }
+        } catch (syncError) {
+          console.error('Error connecting to Sync2:', syncError);
+          throw new Error('Failed to connect to Sync2 wallet. Please ensure it is installed and running.');
+        }
+      }
+      // Default to VeWorld if available and not specifically requesting another wallet
+      else if (window.vechain && window.vechain.isVeWorld) {
         console.log('Attempting to connect via VeWorld wallet...');
         
         // Log VeWorld wallet object for diagnostic
@@ -336,19 +399,21 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
             setVendor(newVendor);
             
             // Try to extract address from vendor if available
-            if (newVendor && newVendor.address) {
-              setAccount(newVendor.address);
-              console.log('Address found in vendor:', newVendor.address);
+            // Some wallet implementations add custom properties to the vendor
+            if (newVendor && (newVendor as any).address) {
+              const address = (newVendor as any).address;
+              setAccount(address);
+              console.log('Address found in vendor:', address);
               
               toast({
                 title: "Mobile Wallet Connected",
-                description: `Connected with address: ${newVendor.address.substring(0, 6)}...${newVendor.address.substring(38)}`,
+                description: `Connected with address: ${address.substring(0, 6)}...${address.substring(38)}`,
               });
               
               return { 
                 connex: currentConnex, 
                 vendor: newVendor,
-                address: newVendor.address
+                address: address
               };
             } else {
               console.log('No address in vendor, trying certificate method');
@@ -424,8 +489,8 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
       console.log('Using certificate method for wallet connection');
       
       const certificate = { 
-        purpose: 'identification', 
-        payload: { type: 'text', content: 'Connect to VeCollab Marketplace' } 
+        purpose: 'identification' as const, 
+        payload: { type: 'text' as const, content: 'Connect to VeCollab Marketplace' } 
       };
 
       const result = await currentConnex.vendor.sign('cert', certificate).request();
