@@ -9,6 +9,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import NotificationCenter from "@/components/NotificationCenter";
 import NetworkIndicator from "@/components/NetworkIndicator";
 import FaucetLink from "@/components/FaucetLink";
+import WalletPopoverMenu from "@/components/WalletPopoverMenu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   DropdownMenu,
@@ -220,30 +221,12 @@ export default function Header() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      onClick={handleOpenWalletSelection}
-                      className="hidden md:flex items-center bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                      disabled={isConnecting}
-                    >
-                      <Wallet className="mr-2 h-4 w-4" />
-                      {isConnecting ? (
-                        <>
-                          <span className="mr-2">Connecting</span>
-                          <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                        </>
-                      ) : (
-                        "Connect Wallet"
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Connect to VeChain with your preferred wallet</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div className="hidden md:block">
+                <WalletPopoverMenu 
+                  onSelectWallet={connectWallet}
+                  isConnecting={isConnecting}
+                />
+              </div>
             )}
             
             <button
@@ -368,21 +351,10 @@ export default function Header() {
                 Disconnect Wallet
               </div>
             ) : (
-              <Button
-                onClick={handleOpenWalletSelection}
-                className="flex items-center bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                disabled={isConnecting}
-              >
-                <Wallet className="mr-2 h-4 w-4" />
-                {isConnecting ? (
-                  <>
-                    <span className="mr-2">Connecting</span>
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                  </>
-                ) : (
-                  "Connect Wallet"
-                )}
-              </Button>
+              <WalletPopoverMenu 
+                onSelectWallet={connectWallet}
+                isConnecting={isConnecting}
+              />
             )}
             
             <div className="flex justify-center py-2">
