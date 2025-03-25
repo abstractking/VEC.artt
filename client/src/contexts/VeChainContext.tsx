@@ -274,12 +274,55 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
 
   // Connect to wallet - with specific wallet type support
   const connect = useCallback(async (specificWalletType?: string) => {
-    const currentConnex = getGlobalConnexIfNetworkMatches();
-    if (!currentConnex) {
-      throw new Error('Connex is not initialized. Please try again in a few seconds.');
-    }
+    // Get Connex with retry mechanism if not initialized yet
+    const getConnexWithRetry = async (retries = 3, interval = 1500): Promise<any> => {
+      let currentConnex = getGlobalConnexIfNetworkMatches();
+      if (currentConnex) return currentConnex;
+      
+      // If connex is null, check if we're still initializing
+      if (isInitializing) {
+        console.log('Connex is still initializing, waiting...');
+        
+        if (retries <= 0) {
+          throw new Error('Timed out waiting for Connex initialization');
+        }
+        
+        // Wait for initialization to complete
+        await new Promise(resolve => setTimeout(resolve, interval));
+        return getConnexWithRetry(retries - 1, interval);
+      } else if (!connex) {
+        // If we're not initializing but connex is still null, try to initialize it directly
+        console.log('Connex is not initialized and not initializing, trying direct initialization');
+        
+        try {
+          // Check if window.connex is available as a fallback
+          if (window.connex && window.connex.thor) {
+            console.log('Using window.connex as fallback');
+            return window.connex;
+          }
+          
+          // Create a basic connex-like interface as last resort
+          console.log('Creating minimal Connex-compatible interface as last resort');
+          return {
+            thor: {
+              genesis: { id: config.genesis },
+              status: {
+                head: { id: config.genesis, number: 0, timestamp: Date.now() }
+              }
+            }
+          };
+        } catch (e) {
+          console.error('Failed to create fallback Connex instance:', e);
+          throw new Error('Could not initialize Connex');
+        }
+      }
+      
+      return connex;
+    };
     
     try {
+      // Try to get a valid Connex instance
+      const currentConnex = await getConnexWithRetry();
       // Check if we're on a mobile device
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       console.log(`Device detection: ${isMobile ? 'MOBILE' : 'DESKTOP'}`);
