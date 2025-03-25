@@ -739,7 +739,7 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
       });
       throw err;
     }
-  }, [getGlobalConnexIfNetworkMatches, vendor, toast]);
+  }, [getGlobalConnexIfNetworkMatches, vendor, toast, connex, isInitializing, config]);
 
   // Disconnect from wallet
   const disconnect = useCallback(() => {
@@ -838,7 +838,7 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
       });
       throw err;
     }
-  }, [getGlobalConnexIfNetworkMatches, vendor, toast]);
+  }, [getGlobalConnexIfNetworkMatches, vendor, toast, connex]);
 
   return (
     <VeChainContext.Provider value={{ 
