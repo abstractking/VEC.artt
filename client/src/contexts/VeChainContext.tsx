@@ -172,8 +172,13 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
         try {
           console.log('Attempting to create Connex instance with config:', config);
           const connexInstance = await getConnex(config).catch(e => {
-            console.error('Explicit getConnex error:', e);
-            throw e;
+            // Log error but don't spam the console with full details when expected
+          console.log('Connex initialization deferred: wallet not connected');
+          // Only log full error details in development mode
+          if (import.meta.env.DEV) {
+            console.debug('Detailed connection error:', e);
+          }
+          throw e;
           });
           
           if (!connexInstance?.thor) {
@@ -183,16 +188,14 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
           setConnex(connexInstance);
           console.log('Connex initialized successfully');
         } catch (connexError) {
-          console.error('Failed to create Connex with getConnex:', connexError);
+          // Don't log full error details as this is expected when no wallet is connected
+          console.log('Using fallback Connex implementation');
           
-          // FALLBACK for Connex initialization
-          console.log('Trying fallback initialization approaches...');
+          // FALLBACK for Connex initialization - with improved error handling
+          console.log('Creating lightweight placeholder Connex interface');
           
-          // Try direct Web3 + VeChain integration
-          const Web3 = await import('web3').then(module => module.default || module);
-          console.log('Creating minimal Connex-compatible interface using Web3');
-          
-          // Create a basic connex-like interface for read-only operations
+          // Create a basic connex-like interface that will be replaced when a real wallet connects
+          // This avoids the need for complex Web3 initialization that might cause errors
           const minimalConnex = {
             thor: {
               genesis: { id: config.genesis },
@@ -213,7 +216,7 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
             }
           };
           
-          console.log('Created minimal Connex interface, waiting for wallet connection');
+          console.log('Created lightweight Connex interface, waiting for wallet connection');
           setConnex(minimalConnex);
         }
       } catch (err) {
