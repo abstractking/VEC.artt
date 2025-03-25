@@ -43,23 +43,52 @@ export function isVeWorldWalletAvailable(): boolean {
   
   // First check for the standard vechain object
   const hasVeChain = typeof (window as any).vechain !== 'undefined';
+  const hasConnex = typeof (window as any).connex !== 'undefined';
   
+  // IMPROVED DETECTION: Try different checking methods
+  let isVeWorldDetected = false;
+  
+  // Method 1: Check for vechain object with isVeWorld property
   if (hasVeChain) {
-    // Check if it's actually VeWorld by testing for isVeWorld property
     const vechain = (window as any).vechain;
     if (vechain && vechain.isVeWorld === true) {
-      return true;
+      isVeWorldDetected = true;
     }
   }
   
-  // Also check for window.connex which might be injected by VeWorld
-  const hasConnex = typeof (window as any).connex !== 'undefined';
+  // Method 2: Check for Vechain/VeWorld methods in the injected objects
+  try {
+    const vechain = (window as any).vechain;
+    if (vechain && (
+      typeof vechain.newConnex === 'function' ||
+      typeof vechain.newConnexVendor === 'function' ||
+      typeof vechain.getVendor === 'function'
+    )) {
+      isVeWorldDetected = true;
+    }
+  } catch (e) {
+    // Ignore errors in detection
+  }
   
-  // Log for debugging
-  console.log("Wallet detection:", { hasVeChain, hasConnex });
+  // Method 3: For older VeWorld versions, check for specialized connex properties
+  if (hasConnex) {
+    const connex = (window as any).connex;
+    if (connex && connex.thor && connex.vendor) {
+      // This could be VeWorld or Sync2 - we'll still show it as an option
+      isVeWorldDetected = true;
+    }
+  }
   
-  // Return true if either detection method works
-  return hasVeChain || hasConnex;
+  // Enhanced logging for easier debugging
+  console.log("Wallet detection:", { 
+    hasVeChain, 
+    hasConnex, 
+    isVeWorldDetected,
+    vechainObject: hasVeChain ? Object.keys((window as any).vechain || {}) : null,
+    connexObject: hasConnex ? Boolean((window as any).connex?.thor) : null
+  });
+  
+  return isVeWorldDetected;
 }
 
 /**

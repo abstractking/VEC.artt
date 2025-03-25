@@ -127,54 +127,48 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
       networkName
     });
     
-    // PRIMARY APPROACH: Use only the network parameter which VeWorld handles most reliably
+    // SIMPLIFIED APPROACH: Use the exact format that worked previously
     try {
-      console.log("Creating vendor with network parameter:", networkName);
+      console.log("Creating vendor with minimal parameters (network only)");
       
-      // Create vendor with network name only - VeWorld expects this format
+      // Just use the simplest parameters that VeWorld expects - this has worked reliably
       const vendor = await vechain.newConnexVendor({
         network: networkName
       });
       
-      console.log("Successfully created vendor with network parameter");
+      console.log("Successfully created vendor with minimal parameters");
       
-      // Create Connex with network name parameter - more reliable for VeWorld
-      console.log("Creating connex with network parameter");
-      const connex = await vechain.newConnex({
-        network: networkName
-      });
-      
-      console.log("Successfully created connex with network parameter");
-      return { connex, vendor };
-    } catch (error) {
-      console.error("Primary approach failed:", error);
-      
-      // FALLBACK APPROACH: Try with network parameter plus node URL
-      try {
-        console.log("Fallback: Using network parameter with node URL");
-        
-        // Get network descriptor and node URL
-        const network = getNetwork(networkType);
-        const nodeUrl = isMainNet ? NODE_URL_MAINNET : NODE_URL_TESTNET;
-        
-        console.log("Using network descriptor with node URL:", { network, nodeUrl });
-        
-        const vendor = await vechain.newConnexVendor({
-          network: networkName,
-          node: nodeUrl
-        });
-        
-        const connex = await vechain.newConnex({
-          network: networkName,
-          node: nodeUrl
-        });
-        
-        console.log("Network parameter with node URL approach successful");
-        return { connex, vendor };
-      } catch (error2) {
-        console.error("All approaches failed:", error2);
-        throw error2;
+      // Attempt to create Connex only if we successfully got a vendor
+      if (vendor) {
+        console.log("Creating Connex with same minimal parameters");
+        try {
+          const connex = await vechain.newConnex({
+            network: networkName
+          });
+          console.log("Successfully created Connex with minimal parameters");
+          return { connex, vendor };
+        } catch (connexError) {
+          console.log("Could not create Connex, but vendor is available. Continuing with vendor only.");
+          // If we can't create Connex but have vendor, that's still usable
+          return { connex: null, vendor };
+        }
+      } else {
+        throw new Error("Vendor creation returned null or undefined");
       }
+    } catch (error) {
+      console.error("VeWorld connection failed with minimal parameters:", error);
+      
+      // Provide more detailed error information
+      let errorMessage = "Failed to connect to VeWorld wallet";
+      if (error instanceof Error) {
+        errorMessage += `: ${error.message}`;
+      } else if (typeof error === 'string') {
+        errorMessage += `: ${error}`;
+      } else if (error && typeof error === 'object') {
+        errorMessage += `: ${JSON.stringify(error)}`;
+      }
+      
+      throw new Error(errorMessage);
     }
   } catch (error) {
     console.error("VeWorldConnector error:", error);
