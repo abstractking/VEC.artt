@@ -36,79 +36,10 @@ export function isThorWalletAvailable(): boolean {
 
 /**
  * Checks if the VeWorld wallet extension is available
- * with improved detection for different VeWorld versions and mobile environments
  */
 export function isVeWorldWalletAvailable(): boolean {
   if (!isBrowser) return false;
-  
-  // First check for the standard vechain object
-  const hasVeChain = typeof (window as any).vechain !== 'undefined';
-  const hasConnex = typeof (window as any).connex !== 'undefined';
-  
-  // IMPROVED DETECTION: Try different checking methods
-  let isVeWorldDetected = false;
-  
-  // Method 1: Check for vechain object with isVeWorld property
-  if (hasVeChain) {
-    const vechain = (window as any).vechain;
-    if (vechain && vechain.isVeWorld === true) {
-      isVeWorldDetected = true;
-    }
-  }
-  
-  // Method 2: Check for Vechain/VeWorld methods in the injected objects
-  try {
-    const vechain = (window as any).vechain;
-    if (vechain && (
-      typeof vechain.newConnex === 'function' ||
-      typeof vechain.newConnexVendor === 'function' ||
-      typeof vechain.getVendor === 'function' ||
-      typeof vechain.request === 'function' // Added checking for request method
-    )) {
-      isVeWorldDetected = true;
-    }
-  } catch (e) {
-    // Ignore errors in detection
-  }
-  
-  // Method 3: For older VeWorld versions, check for specialized connex properties
-  if (hasConnex) {
-    const connex = (window as any).connex;
-    if (connex && connex.thor && connex.vendor) {
-      // This could be VeWorld or Sync2 - we'll still show it as an option
-      // Further differentiation happens in the wallet connection code
-      isVeWorldDetected = true;
-    }
-  }
-  
-  // Method 4: Check for mobile-specific pattern using navigator and user agent
-  // Mobile detection is important for VeWorld which behaves differently on mobile
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    navigator.userAgent
-  );
-  
-  const isMobileApp = isMobile && (
-    // Try to detect if we're inside a VeWorld mobile app webview
-    navigator.userAgent.includes('VeWorld') || 
-    // Some VeWorld mobile versions have a specific webview identifier
-    navigator.userAgent.includes('Capacitor') ||
-    // WKWebView is common on iOS applications
-    navigator.userAgent.includes('WKWebView')
-  );
-  
-  // Enhanced logging for easier debugging
-  console.log("VeWorld wallet detection:", { 
-    hasVeChain, 
-    hasConnex, 
-    isVeWorldDetected,
-    isMobile,
-    isMobileApp,
-    vechainObject: hasVeChain ? Object.keys((window as any).vechain || {}) : null,
-    connexObject: hasConnex ? Boolean((window as any).connex?.thor) : null,
-    userAgent: navigator.userAgent
-  });
-  
-  return isVeWorldDetected;
+  return typeof (window as any).vechain !== 'undefined';
 }
 
 /**
@@ -188,7 +119,7 @@ export function verifyWalletAvailability(walletType: VeChainWalletType): WalletD
         walletType: 'veworld',
         message: veWorldAvailable 
           ? "VeWorld wallet detected"
-          : "VeWorld wallet extension not detected. Please install the VeWorld extension for your browser, open it and select 'Test' network in the network dropdown, then try again."
+          : "VeWorld wallet extension not detected. Please install the VeWorld extension for your browser, configure it for TestNet, and try again."
       };
       
     case 'thor':
@@ -217,7 +148,7 @@ export function verifyWalletAvailability(walletType: VeChainWalletType): WalletD
         available: true, // Always allow attempts to connect
         installed: false, // We don't know if it's installed
         walletType: 'sync2',
-        message: "Please ensure Sync2 desktop application is installed, running, and configured for TestNet. When prompted, approve the connection request in the Sync2 application."
+        message: "Please ensure Sync2 desktop application is installed and running."
       };
       
     case 'environment':

@@ -2,8 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { useVeChain } from './VeChainContext';
 import { getWalletBalance } from '@/lib/vechain';
 import { VeChainWalletType, detectBestWalletOption, verifyWalletAvailability, getWalletDisplayName } from '@/lib/wallet-detection';
-import { connectSmartWallet } from '@/lib/mobile-wallet-connector';
-import { connectVeWorld, isMobileDevice } from '@/lib/veworld-connector-new';
+import { connectSmartWallet, isMobileDevice } from '@/lib/mobile-wallet-connector';
 import { Network } from '@/lib/Network';
 import { useToast } from '@/hooks/use-toast';
 import WalletSelectionDialog from '@/components/WalletSelectionDialog';
@@ -94,18 +93,6 @@ export function WalletProvider({ children }: WalletProviderProps) {
     }
   }, [walletAddress, isConnected]);
 
-  // Refresh wallet balance
-  const refreshWalletBalance = useCallback(async () => {
-    if (!walletAddress || !isConnected) return;
-    
-    try {
-      const balance = await getWalletBalance(walletAddress);
-      setWalletBalance(balance);
-    } catch (err) {
-      console.error('Error fetching wallet balance:', err);
-    }
-  }, [walletAddress, isConnected]);
-
   // Connect to wallet
   const connectWallet = useCallback(async (preferredWalletType?: VeChainWalletType) => {
     // Prevent multiple connection attempts
@@ -137,92 +124,14 @@ export function WalletProvider({ children }: WalletProviderProps) {
         throw new Error(walletStatus.message);
       }
 
-      // Choose appropriate connector based on wallet type
-      const networkType = import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK === 'main' ? Network.MAIN : Network.TEST;
+      // Detect if we're on mobile and should use the mobile-optimized connector
+      const mobile = isMobileDevice();
       
-      // If this is VeWorld wallet, use our dedicated connector
-      if (walletTypeToUse === 'veworld') {
-        console.log('Using improved VeWorld connector...');
-        
-        const veWorldResult = await connectVeWorld(networkType);
-        
-        if (veWorldResult.error) {
-          throw new Error(veWorldResult.error);
-        }
-        
-        // Note: The vendor produced might not have address information directly
-        // We need to get address from Connex or from signing a certificate
-        if (veWorldResult.connex) {
-          // Pass the connex instance to our VeChain context
-          (vechain as any).connex = veWorldResult.connex;
-          (vechain as any).vendor = veWorldResult.vendor;
-          
-          // Ask VeChain context to initialize with these objects
-          await vechain.connect();
-          
-          if (vechain.account) {
-            console.log('Connected successfully to VeWorld wallet:', vechain.account);
-            setWalletAddress(vechain.account);
-            setWalletType(walletTypeToUse);
-            setIsConnected(true);
-            setIsModalOpen(false);
-            
-            // Save to local storage
-            localStorage.setItem('walletType', walletTypeToUse);
-            localStorage.setItem('walletAddress', vechain.account);
-            localStorage.setItem('walletConnected', 'true');
-            
-            // Get wallet balance
-            refreshWalletBalance();
-            
-            toast({
-              title: "Wallet Connected",
-              description: `Connected to ${getWalletDisplayName(walletTypeToUse)}`,
-            });
-            
-            return;
-          } else {
-            throw new Error('Connected to VeWorld but could not retrieve account');
-          }
-        } else if (veWorldResult.vendor) {
-          // We have vendor but no connex, try to get address via VeChain context
-          (vechain as any).vendor = veWorldResult.vendor;
-          await vechain.connect();
-          
-          if (vechain.account) {
-            // Update our state with the account
-            setWalletAddress(vechain.account);
-            setWalletType(walletTypeToUse);
-            setIsConnected(true);
-            setIsModalOpen(false);
-            
-            // Save to local storage
-            localStorage.setItem('walletType', walletTypeToUse);
-            localStorage.setItem('walletAddress', vechain.account);
-            localStorage.setItem('walletConnected', 'true');
-            
-            // Get wallet balance
-            refreshWalletBalance();
-            
-            toast({
-              title: "Wallet Connected",
-              description: `Connected to ${getWalletDisplayName(walletTypeToUse)}`,
-            });
-            
-            return;
-          } else {
-            throw new Error('Connected to VeWorld but could not retrieve account');
-          }
-        } else {
-          throw new Error('Could not connect to VeWorld wallet');
-        }
-      }
-      
-      // For mobile devices with other wallet types, use the mobile connector
-      if (isMobileDevice()) {
+      if (mobile) {
         console.log(`Using mobile-optimized wallet connector for ${getWalletDisplayName(walletTypeToUse)}...`);
         
         // Use the smart mobile connector for better mobile experience
+        const networkType = import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK === 'main' ? Network.MAIN : Network.TEST;
         const result = await connectSmartWallet(networkType);
         
         if (result.error) {
@@ -231,6 +140,8 @@ export function WalletProvider({ children }: WalletProviderProps) {
         
         if (result.connex && result.address) {
           // Pass the connex instance to our VeChain context
+          // Since the context's connect method doesn't accept parameters, we need to set them directly
+          // This is a workaround for the type checking issue
           (vechain as any).connex = result.connex;
           (vechain as any).vendor = result.vendor;
           await vechain.connect();
@@ -258,7 +169,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
         }
       }
       
-      // Standard connection method for other wallet types
+      // Standard connection method for non-mobile devices
       console.log(`Connecting to ${getWalletDisplayName(walletTypeToUse)} wallet...`);
       // Pass wallet type to VeChain connect method for prioritization
       const result = await vechain.connect(walletTypeToUse as string);
@@ -301,7 +212,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
         connectionInProgress.current = false;
       }, 1000); // 1 second cooldown before allowing another connection attempt
     }
-  }, [vechain, toast, refreshWalletBalance]);
+  }, [vechain, toast]);
 
   // Disconnect wallet
   const disconnectWallet = useCallback(() => {
@@ -338,6 +249,18 @@ export function WalletProvider({ children }: WalletProviderProps) {
       return newValue;
     });
   }, [isConnected, disconnectWallet]);
+
+  // Refresh wallet balance
+  const refreshWalletBalance = useCallback(async () => {
+    if (!walletAddress || !isConnected) return;
+    
+    try {
+      const balance = await getWalletBalance(walletAddress);
+      setWalletBalance(balance);
+    } catch (err) {
+      console.error('Error fetching wallet balance:', err);
+    }
+  }, [walletAddress, isConnected]);
 
   // Context value
   const value: WalletContextType = {
