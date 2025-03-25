@@ -191,9 +191,8 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
           // Don't log full error details as this is expected when no wallet is connected
           console.log('Using fallback Connex implementation');
           
-          // FALLBACK for Connex initialization - with improved error handling
-          // No need for error logs for this expected initialization fallback
-          // Create a basic connex-like interface that will be replaced when a real wallet connects
+          // Quietly create a placeholder Connex interface
+          // This is normal when no wallet is connected yet
           const minimalConnex = {
             thor: {
               genesis: { id: config.genesis },

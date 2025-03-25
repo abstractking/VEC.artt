@@ -63,21 +63,33 @@ function isMobileDevice(): boolean {
     return true;
   }
   
-  // Otherwise fall back to standard mobile detection
+  // Otherwise use multi-factor mobile detection
   if (typeof navigator === 'undefined') return false;
   
+  // 1. Check user agent (traditional method)
   const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   
+  // 2. Check screen size (more reliable in some cases)
+  const hasSmallScreen = typeof window !== 'undefined' && window.innerWidth < 768;
+  
+  // 3. Check touch capability (most mobile devices have touch)
+  const hasTouch = typeof navigator !== 'undefined' && 
+                  ('maxTouchPoints' in navigator && navigator.maxTouchPoints > 0);
+  
   // Log detailed detection info for debugging
-  console.log("VeWorldConnector: Mobile detection:", {
+  console.log("VeWorldConnector: Enhanced mobile detection:", {
     isVeWorldMobile,
     isMobileUA,
+    hasSmallScreen,
+    hasTouch,
     isIOS: isIosDevice(),
     isAndroid: isAndroidDevice(),
     userAgent: navigator.userAgent
   });
   
-  return isMobileUA;
+  // Consider a device mobile if it meets at least 2 of the 3 criteria
+  const mobileFactorsCount = [isMobileUA, hasSmallScreen, hasTouch].filter(Boolean).length;
+  return mobileFactorsCount >= 2;
 }
 
 /**
@@ -124,9 +136,9 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
     
     // SUPER SIMPLE APPROACH: Use the most reliable parameters for VeWorld
     // We've found that 'network' parameter alone is the most consistently supported
-    // across all VeWorld versions and platforms
+    // across all VeWorld versions and platforms including mobile
     
-    console.log("Using streamlined VeWorld connection approach");
+    console.log("Using streamlined VeWorld connection approach with minimal parameters");
     try {
       // 1. Try to create vendor with network parameter only
       console.log("Creating vendor with network parameter only");
@@ -179,21 +191,56 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
       if (isMobile) {
         console.log("Mobile device detected, trying specialized mobile approach");
         try {
-          // Some mobile VeWorld versions respond differently - try again with just network
-          const vendor = await vechain.newConnexVendor({
-            network: networkName
-          });
+          // Mobile VeWorld has been observed to work with different parameter combinations
+          // Try multiple approaches specifically for mobile
           
-          // Try using window.connex if available
-          if (window.connex) {
-            console.log("Using existing window.connex for mobile");
-            return { connex: window.connex, vendor };
+          // Approach 1: Minimal - just network parameter
+          try {
+            console.log("Mobile attempt 1: network only");
+            const vendor = await vechain.newConnexVendor({
+              network: networkName
+            });
+            
+            // Try using window.connex if available
+            if (window.connex) {
+              console.log("Using existing window.connex for mobile");
+              return { connex: window.connex, vendor };
+            }
+            
+            console.log("Mobile vendor created but no connex available");
+            return { connex: null, vendor };
+          } catch (mobileError1) {
+            console.log("Mobile attempt 1 failed, trying next approach");
           }
           
-          console.log("Mobile vendor created but no connex available");
-          return { connex: null, vendor };
+          // Approach 2: Add genesis parameter
+          try {
+            console.log("Mobile attempt 2: network + genesis");
+            const genesisId = networkType === Network.MAIN ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
+            const vendor = await vechain.newConnexVendor({
+              network: networkName,
+              genesis: genesisId
+            });
+            
+            if (window.connex) {
+              console.log("Using existing window.connex for mobile with approach 2");
+              return { connex: window.connex, vendor };
+            }
+            
+            return { connex: null, vendor };
+          } catch (mobileError2) {
+            console.log("Mobile attempt 2 failed, trying next approach");
+          }
+          
+          // Approach 3: Try directly with window.connex if available
+          if (window.connex && window.connex.vendor) {
+            console.log("Mobile attempt 3: using window.connex directly");
+            return { connex: window.connex, vendor: window.connex.vendor };
+          }
+          
+          throw new Error("All mobile connection attempts failed");
         } catch (mobileError) {
-          console.error("Mobile approach also failed:", mobileError);
+          console.error("All mobile approaches failed:", mobileError);
         }
       }
       
