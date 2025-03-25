@@ -284,13 +284,25 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       console.log(`Device detection: ${isMobile ? 'MOBILE' : 'DESKTOP'}`);
       
-      // Log environment variables
-      console.log('Environment variables:', {
+      // Log environment variables with detailed information to help with debugging
+      console.log('Environment variables for wallet connection:', {
+        // Network configuration
         VITE_REACT_APP_VECHAIN_NETWORK: import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK,
+        currentNetwork: networkType,
+        // Genesis IDs
         VITE_VECHAIN_TESTNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID,
         VITE_VECHAIN_MAINNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID,
+        // Node URLs
         VITE_VECHAIN_NODE_URL_TESTNET: import.meta.env.VITE_VECHAIN_NODE_URL_TESTNET,
-        VITE_VECHAIN_NODE_URL_MAINNET: import.meta.env.VITE_VECHAIN_NODE_URL_MAINNET
+        VITE_VECHAIN_NODE_URL_MAINNET: import.meta.env.VITE_VECHAIN_NODE_URL_MAINNET,
+        // Connection configuration
+        activeGenesisId: config.genesis,
+        activeNodeUrl: config.node,
+        // Environment detection
+        isNetlify: typeof window !== 'undefined' && window.location.hostname.includes('netlify.app'),
+        isDevelopment: import.meta.env.MODE === 'development',
+        isProduction: import.meta.env.MODE === 'production',
+        buildTime: new Date().toISOString()
       });
       
       console.log('Attempting to connect with specific wallet type:', specificWalletType || 'default');
