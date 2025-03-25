@@ -295,8 +295,17 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
       
       console.log('Attempting to connect with specific wallet type:', specificWalletType || 'default');
       
-      // If specific wallet type is specified, prioritize that
-      if (specificWalletType === 'veworld' && window.vechain && window.vechain.isVeWorld) {
+      // Prepare network parameters - used in all connection methods
+      const isMainNet = config.network === 'main';
+      const networkName = isMainNet ? 'main' : 'test';
+      
+      // If specific wallet type is specified, ONLY try that wallet type
+      // This prevents multiple popups from appearing
+      if (specificWalletType === 'veworld') {
+        // First, check if VeWorld is available
+        if (!window.vechain || !window.vechain.isVeWorld) {
+          throw new Error('VeWorld wallet not detected. Please install the VeWorld extension or app.');
+        }
         console.log('Specifically connecting to VeWorld wallet...');
         
         // Log VeWorld wallet object for diagnostic
@@ -454,6 +463,10 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
             (certError instanceof Error ? certError.message : String(certError)));
         }
       } else if (specificWalletType === 'sync2') {
+        // First, check if Sync2 wallet is even present in the browser
+        if (!window.connex) {
+          throw new Error('Sync2 wallet not detected. Please install the Sync2 extension.');
+        }
         console.log('Specifically connecting to Sync2 wallet...');
         // For Sync2, we'll rely on window.connex being set by the wallet
         // But we won't try VeWorld first
