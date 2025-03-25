@@ -97,10 +97,17 @@ export function detectAvailableWallets(): VeChainWalletType[] {
     availableWallets.push('thor');
   }
   
+  // Check for window.connex - could be from Sync or Sync2
+  const hasConnex = typeof window !== 'undefined' && window.connex !== undefined;
+  
   // Only include desktop apps if we're not on a mobile device
   if (!isMobile) {
-    availableWallets.push('sync');
-    availableWallets.push('sync2');
+    // Only add Sync and Sync2 if window.connex is available
+    // This way, users will only see options that might actually work
+    if (hasConnex) {
+      availableWallets.push('sync2');
+      availableWallets.push('sync');
+    }
   }
   
   // In development, also include environment key option
@@ -239,32 +246,40 @@ export function verifyWalletAvailability(walletType: VeChainWalletType): WalletD
     }
       
     case 'sync': {
-      // For desktop apps, we can't detect if they are installed
+      // For desktop apps like Sync, we can check for window.connex
+      // as an indicator that it's connected/running
+      const syncConnexAvailable = typeof window !== 'undefined' && window.connex !== undefined;
       // But we should discourage mobile users from trying to use desktop apps
-      const available = !isMobile;
+      const available = !isMobile && syncConnexAvailable;
       
       return {
         available, // Not available on mobile
-        installed: false, // We don't know if it's installed
+        installed: syncConnexAvailable, // If connex exists, it might be from Sync
         walletType: 'sync',
         message: isMobile
           ? "Sync is a desktop application and not compatible with mobile devices. Please use VeWorld mobile app instead."
-          : "Please ensure Sync desktop application is installed and running."
+          : syncConnexAvailable 
+            ? "Sync wallet detected and available for connection."
+            : "Please ensure Sync desktop application is installed, running, and your browser tab is open in the Sync application."
       };
     }
       
     case 'sync2': {
-      // For desktop apps, we can't detect if they are installed
+      // For Sync2, we can check for window.connex as an indicator
+      // that it's connected/running
+      const sync2ConnexAvailable = typeof window !== 'undefined' && window.connex !== undefined;
       // But we should discourage mobile users from trying to use desktop apps
-      const available = !isMobile;
+      const available = !isMobile && sync2ConnexAvailable;
       
       return {
-        available, // Not available on mobile
-        installed: false, // We don't know if it's installed
+        available, // Only available if we detect window.connex and not on mobile
+        installed: sync2ConnexAvailable, // If connex exists, it might be from Sync2
         walletType: 'sync2',
         message: isMobile
           ? "Sync2 is a desktop application and not compatible with mobile devices. Please use VeWorld mobile app instead."
-          : "Please ensure Sync2 desktop application is installed and running."
+          : sync2ConnexAvailable 
+            ? "Sync2 wallet detected and available for connection."
+            : "Please ensure Sync2 desktop application is installed and running. To connect, open this page in Sync2's built-in browser."
       };
     }
       
