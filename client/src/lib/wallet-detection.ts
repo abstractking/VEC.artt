@@ -36,7 +36,7 @@ export function isThorWalletAvailable(): boolean {
 
 /**
  * Checks if the VeWorld wallet extension is available
- * with improved detection for different VeWorld versions
+ * with improved detection for different VeWorld versions and mobile environments
  */
 export function isVeWorldWalletAvailable(): boolean {
   if (!isBrowser) return false;
@@ -62,7 +62,8 @@ export function isVeWorldWalletAvailable(): boolean {
     if (vechain && (
       typeof vechain.newConnex === 'function' ||
       typeof vechain.newConnexVendor === 'function' ||
-      typeof vechain.getVendor === 'function'
+      typeof vechain.getVendor === 'function' ||
+      typeof vechain.request === 'function' // Added checking for request method
     )) {
       isVeWorldDetected = true;
     }
@@ -75,17 +76,36 @@ export function isVeWorldWalletAvailable(): boolean {
     const connex = (window as any).connex;
     if (connex && connex.thor && connex.vendor) {
       // This could be VeWorld or Sync2 - we'll still show it as an option
+      // Further differentiation happens in the wallet connection code
       isVeWorldDetected = true;
     }
   }
   
+  // Method 4: Check for mobile-specific pattern using navigator and user agent
+  // Mobile detection is important for VeWorld which behaves differently on mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+  
+  const isMobileApp = isMobile && (
+    // Try to detect if we're inside a VeWorld mobile app webview
+    navigator.userAgent.includes('VeWorld') || 
+    // Some VeWorld mobile versions have a specific webview identifier
+    navigator.userAgent.includes('Capacitor') ||
+    // WKWebView is common on iOS applications
+    navigator.userAgent.includes('WKWebView')
+  );
+  
   // Enhanced logging for easier debugging
-  console.log("Wallet detection:", { 
+  console.log("VeWorld wallet detection:", { 
     hasVeChain, 
     hasConnex, 
     isVeWorldDetected,
+    isMobile,
+    isMobileApp,
     vechainObject: hasVeChain ? Object.keys((window as any).vechain || {}) : null,
-    connexObject: hasConnex ? Boolean((window as any).connex?.thor) : null
+    connexObject: hasConnex ? Boolean((window as any).connex?.thor) : null,
+    userAgent: navigator.userAgent
   });
   
   return isVeWorldDetected;
