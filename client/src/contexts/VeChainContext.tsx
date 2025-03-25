@@ -288,7 +288,7 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
       console.log('Environment variables for wallet connection:', {
         // Network configuration
         VITE_REACT_APP_VECHAIN_NETWORK: import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK,
-        currentNetwork: networkType,
+        currentNetwork: config.network,
         // Genesis IDs
         VITE_VECHAIN_TESTNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID,
         VITE_VECHAIN_MAINNET_GENESIS_ID: import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID,
