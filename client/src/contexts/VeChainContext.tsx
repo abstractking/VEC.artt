@@ -170,7 +170,7 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
 
         // If window.connex isn't suitable, try creating our own instance
         try {
-          console.log('Attempting to create Connex instance with config:', config);
+          // Skip detailed logging when no wallet is connected yet
           const connexInstance = await getConnex(config).catch(e => {
             // Log error but don't spam the console with full details when expected
           console.log('Connex initialization deferred: wallet not connected');
@@ -192,10 +192,8 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
           console.log('Using fallback Connex implementation');
           
           // FALLBACK for Connex initialization - with improved error handling
-          console.log('Creating lightweight placeholder Connex interface');
-          
+          // No need for error logs for this expected initialization fallback
           // Create a basic connex-like interface that will be replaced when a real wallet connects
-          // This avoids the need for complex Web3 initialization that might cause errors
           const minimalConnex = {
             thor: {
               genesis: { id: config.genesis },
