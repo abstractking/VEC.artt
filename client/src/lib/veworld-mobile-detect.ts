@@ -16,57 +16,47 @@
 export function isVeWorldMobileApp(): boolean {
   if (typeof window === 'undefined') return false;
   
-  // First check: vechain object with isVeWorld property exists
-  const hasVeWorldObj = !!(window.vechain && window.vechain.isVeWorld);
+  // Check for the vechain object with isVeWorld property
+  const hasVeWorldObject = !!(window as any).vechain && (window as any).vechain.isVeWorld;
   
-  // Second check: user agent shows mobile and/or tablet device
+  // Check user agent for mobile app indicators
   const userAgent = navigator.userAgent.toLowerCase();
-  const isMobileDevice = /android|iphone|ipad|ipod|mobile|tablet/.test(userAgent);
+  const hasMobileAppIndicators = 
+    userAgent.includes('veworld') || 
+    userAgent.includes('wkwebview') || 
+    userAgent.includes('capacitor') || 
+    userAgent.includes('ionic');
   
-  // Third check: Check for capacitor/webview indicators (used by VeWorld mobile)
-  const isCapacitorWebView = userAgent.includes('capacitor') || 
-                             userAgent.includes('ionic') || 
-                             (window as any).Capacitor || 
-                             (window as any).Ionic;
+  // Check for capacitor/ionic specific globals that might be present in the VeWorld mobile app
+  const hasCapacitorGlobals = typeof (window as any).Capacitor !== 'undefined';
   
-  // Fourth check: Specific VeWorld app indicators
-  const hasVeWorldIndicators = userAgent.includes('veworld') || 
-                               userAgent.includes('vechaindapp') ||
-                               (window as any)._veworld;
-  
-  // Log detection details for debugging
-  console.log('VeWorld mobile detection:', {
-    hasVeWorldObj,
-    isMobileDevice,
-    isCapacitorWebView,
-    hasVeWorldIndicators,
-    userAgent
-  });
-  
-  // Consider running in VeWorld if the main identifier is present (vechain object)
-  // plus at least one other indicator
-  return hasVeWorldObj && (isMobileDevice || isCapacitorWebView || hasVeWorldIndicators);
+  return hasVeWorldObject && (hasMobileAppIndicators || hasCapacitorGlobals);
 }
 
 /**
  * Determine if the device is specifically an iOS mobile device
  */
 export function isIosDevice(): boolean {
-  if (typeof navigator === 'undefined') return false;
+  if (typeof window === 'undefined') return false;
   
   const userAgent = navigator.userAgent.toLowerCase();
-  return /iphone|ipad|ipod/.test(userAgent) && 
-         !(navigator.userAgent.includes('Windows Phone')); // Exclude Windows Phone
+  return (
+    userAgent.includes('iphone') || 
+    userAgent.includes('ipad') || 
+    userAgent.includes('ipod') ||
+    // iOS 13+ on iPad shows as Macintosh in user agent
+    (userAgent.includes('macintosh') && navigator.maxTouchPoints > 1)
+  );
 }
 
 /**
  * Determine if the device is specifically an Android mobile device
  */
 export function isAndroidDevice(): boolean {
-  if (typeof navigator === 'undefined') return false;
+  if (typeof window === 'undefined') return false;
   
   const userAgent = navigator.userAgent.toLowerCase();
-  return /android/.test(userAgent);
+  return userAgent.includes('android');
 }
 
 /**
@@ -74,45 +64,33 @@ export function isAndroidDevice(): boolean {
  * This can be useful for diagnostics and specific platform handling
  */
 export function getVeWorldMobileInfo() {
-  if (typeof window === 'undefined') return null;
-  
-  const userAgent = navigator.userAgent;
-  const isVeWorld = !!(window.vechain && window.vechain.isVeWorld);
-  const isIos = isIosDevice();
-  const isAndroid = isAndroidDevice();
-  
-  // Try to determine VeWorld version from user agent or through API
-  let version = 'unknown';
-  try {
-    if (window.vechain && (window.vechain as any).version) {
-      version = (window.vechain as any).version;
-    } else if ((window as any).veWorld && (window as any).veWorld.version) {
-      version = (window as any).veWorld.version;
-    }
-    // Otherwise, try to extract from user agent
-    else if (userAgent.includes('veworld/')) {
-      const match = userAgent.match(/veworld\/(\d+(\.\d+)*)/i);
-      if (match && match[1]) {
-        version = match[1];
-      }
-    }
-  } catch (e) {
-    console.error('Error determining VeWorld version:', e);
+  if (typeof window === 'undefined') {
+    return {
+      isVeWorldMobile: false,
+      platform: 'unknown',
+      userAgent: '',
+      hasVeWorldObject: false,
+      hasConnexObject: false
+    };
   }
   
-  // Get available methods to help with debugging
-  const methods = window.vechain ? Object.keys(window.vechain) : [];
+  const userAgent = navigator.userAgent;
+  const hasVeWorldObject = !!(window as any).vechain && (window as any).vechain.isVeWorld;
+  const hasConnexObject = !!(window as any).connex;
+  
+  let platform = 'unknown';
+  if (isIosDevice()) {
+    platform = 'ios';
+  } else if (isAndroidDevice()) {
+    platform = 'android';
+  }
   
   return {
-    isVeWorld,
     isVeWorldMobile: isVeWorldMobileApp(),
-    platform: isIos ? 'iOS' : isAndroid ? 'Android' : 'unknown',
+    platform,
     userAgent,
-    version,
-    methods,
-    supportsNewConnex: !!(window.vechain && typeof window.vechain.newConnex === 'function'),
-    supportsVendor: !!(window.vechain && typeof window.vechain.newConnexVendor === 'function'),
-    hasConnex: !!window.connex
+    hasVeWorldObject,
+    hasConnexObject
   };
 }
 
@@ -122,5 +100,6 @@ export function getVeWorldMobileInfo() {
 export function isVeWorldAvailable(): boolean {
   if (typeof window === 'undefined') return false;
   
-  return !!(window.vechain && window.vechain.isVeWorld);
+  // Check for the VeWorld browser extension or mobile app
+  return !!(window as any).vechain && (window as any).vechain.isVeWorld;
 }

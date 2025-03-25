@@ -301,7 +301,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
         connectionInProgress.current = false;
       }, 1000); // 1 second cooldown before allowing another connection attempt
     }
-  }, [vechain, toast, refreshWalletBalance]);
+  }, [vechain, toast]);
 
   // Disconnect wallet
   const disconnectWallet = useCallback(() => {
