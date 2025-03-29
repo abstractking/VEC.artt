@@ -51,7 +51,8 @@ export function isInVeWorldMobileApp(): boolean {
 /**
  * Available VeChain wallet types
  */
-export type VeChainWalletType = 'veworld' | 'thor' | 'sync' | 'sync2' | 'environment' | 'walletconnect';
+// DApp Kit uses 'wallet-connect', but our internal API uses 'walletconnect'
+export type VeChainWalletType = 'veworld' | 'thor' | 'sync' | 'sync2' | 'environment' | 'walletconnect' | 'wallet-connect';
 
 /**
  * Result from wallet detection
@@ -115,8 +116,8 @@ export function detectAvailableWallets(): VeChainWalletType[] {
   
   // Consider mobile-specific options
   if (isMobile) {
-    // WalletConnect would be perfect for mobile, but it's not yet implemented
-    // availableWallets.push('walletconnect');
+    // WalletConnect is now implemented and perfect for mobile
+    availableWallets.push('walletconnect');
     
     // If in VeWorld mobile app, prioritize it
     if (isInVeWorldMobileApp()) {
@@ -125,6 +126,9 @@ export function detectAvailableWallets(): VeChainWalletType[] {
         availableWallets.unshift('veworld');
       }
     }
+  } else {
+    // Desktop users can also use WalletConnect to connect to their mobile wallets
+    availableWallets.push('walletconnect');
   }
   
   return availableWallets;
@@ -150,10 +154,10 @@ export function detectBestWalletOption(): VeChainWalletType {
       return 'veworld';
     }
     
-    // WalletConnect would be good for mobile but it's not implemented yet
-    // if (available.includes('walletconnect')) {
-    //   return 'walletconnect';
-    // }
+    // WalletConnect is now implemented and works well for mobile
+    if (available.includes('walletconnect')) {
+      return 'walletconnect';
+    }
     
     // Thor can sometimes work on mobile
     if (available.includes('thor')) {
@@ -176,6 +180,11 @@ export function detectBestWalletOption(): VeChainWalletType {
     
     if (available.includes('sync')) {
       return 'sync';
+    }
+    
+    // WalletConnect is also available for desktop users
+    if (available.includes('walletconnect')) {
+      return 'walletconnect';
     }
   }
   
@@ -297,15 +306,16 @@ export function verifyWalletAvailability(walletType: VeChainWalletType): WalletD
       };
     }
       
-    case 'walletconnect': {
-      // WalletConnect is not yet fully implemented
+    case 'walletconnect':
+    case 'wallet-connect': {
+      // WalletConnect is now fully implemented
       return {
-        available: false, // Set to false until fully implemented
-        installed: false,
+        available: true, // Always available
+        installed: true, // No installation needed
         walletType: 'walletconnect',
         message: isMobile
-          ? "WalletConnect integration is coming soon. This will provide an easy way to connect your mobile wallet."
-          : "WalletConnect integration is coming soon."
+          ? "WalletConnect allows you to connect your mobile wallet by scanning a QR code."
+          : "WalletConnect allows you to connect via a QR code scanned with your mobile wallet."
       };
     }
       
@@ -348,7 +358,8 @@ export function getWalletDisplayName(walletType: VeChainWalletType): string {
     case 'sync': return 'Sync';
     case 'sync2': return 'Sync2';
     case 'environment': return 'Development Key';
-    case 'walletconnect': return 'WalletConnect';
+    case 'walletconnect': 
+    case 'wallet-connect': return 'WalletConnect';
     default: return 'Unknown Wallet';
   }
 }
