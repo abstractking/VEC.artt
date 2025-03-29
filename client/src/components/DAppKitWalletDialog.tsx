@@ -102,6 +102,23 @@ export default function DAppKitWalletDialog({
     web3Modal.open();
     onClose();
   };
+
+  // Special handler for directly opening specific wallet types
+  const handleOpenWallet = (walletType: VeChainWalletType) => {
+    console.log(`Opening wallet: ${walletType}`);
+    
+    // Call the provided callback with the wallet type
+    onSelectWallet(walletType);
+    onClose();
+    
+    // For Sync wallets, we should also show an alert to inform the user
+    if (walletType === 'sync' || walletType === 'sync2') {
+      const walletName = walletType === 'sync' ? 'Sync' : 'Sync2';
+      setTimeout(() => {
+        alert(`Please open your ${walletName} application to connect.\n\nIf you don't have it installed, please download it from the VeChain website.`);
+      }, 100);
+    }
+  };
   
   const filteredWallets = activeTab === 'all' 
     ? walletOptions 
@@ -151,8 +168,7 @@ export default function DAppKitWalletDialog({
                     if (wallet.type === 'walletconnect' || wallet.type === 'wallet-connect') {
                       handleSelectWalletConnect();
                     } else {
-                      onSelectWallet(wallet.type);
-                      onClose();
+                      handleOpenWallet(wallet.type);
                     }
                   }}
                 >

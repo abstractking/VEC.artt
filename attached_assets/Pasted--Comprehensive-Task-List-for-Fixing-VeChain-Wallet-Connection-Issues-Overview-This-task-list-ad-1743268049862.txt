@@ -1,0 +1,133 @@
+# Comprehensive Task List for Fixing VeChain Wallet Connection Issues
+
+## Overview
+This task list addresses the recurring error "Failed to create Connex with getConnex: Error: getConnex(): no available node found" while optimizing the wallet connection logic in the VeChain marketplace DApp.
+
+## Background
+- The application currently has two parallel wallet connection systems:
+  - New: DAppKit with WalletConnect integration
+  - Old: Connex-based implementation
+- Research confirms that DAppKit is built as a layer on top of Connex, not a replacement
+- The error occurs when the application fails to connect to a VeChain node during Connex initialization
+
+## Task 1: Fix Node Connection Issues
+1. Identify and fix node URL configuration
+   - [ ] Review environment variables for node URLs (VITE_VECHAIN_NODE_URL_MAINNET, VITE_VECHAIN_NODE_URL_TESTNET)
+   - [ ] Verify that node URLs are correctly formatted and accessible
+   - [ ] Add fallback node URLs in the configuration
+   - [ ] Implement node health check before attempting connection
+
+2. Improve error handling and retry logic
+   - [ ] Add exponential backoff retry mechanism for node connections
+   - [ ] Implement circuit breaker pattern to prevent repeated failed attempts
+   - [ ] Add more descriptive error messages for debugging
+   - [ ] Create a centralized logging system for connection errors
+
+## Task 2: Optimize DAppKit Integration
+1. Update DAppKit configuration
+   - [ ] Ensure WalletConnect project ID is valid and properly configured
+   - [ ] Verify network configuration matches the intended environment (test/main)
+   - [ ] Configure proper fallback mechanisms in DAppKit initialization
+
+2. Consolidate wallet connection logic
+   - [ ] Create a unified wallet service that manages both connection systems
+   - [ ] Implement adapter pattern to provide Connex-compatible interface using DAppKit
+   - [ ] Update VeChainContext to use DAppKit internally while maintaining Connex interface
+
+## Task 3: Refactor Connex Initialization
+1. Improve Connex initialization process
+   - [ ] Refactor getConnex function to handle node unavailability gracefully
+   - [ ] Implement proper caching of Connex instances
+   - [ ] Add timeout handling for node connections
+   - [ ] Create a dedicated service for managing Connex lifecycle
+
+2. Optimize node selection logic
+   - [ ] Implement smart node selection based on response time and reliability
+   - [ ] Add automatic switching between nodes when one becomes unavailable
+   - [ ] Create a node health monitoring system
+   - [ ] Store and use previously successful node connections
+
+## Task 4: Clean Up Redundant Code
+1. Identify and remove duplicate wallet connection logic
+   - [ ] Audit all wallet connection implementations
+   - [ ] Remove redundant connection attempts in VeChainContext
+   - [ ] Consolidate wallet detection logic into a single service
+   - [ ] Eliminate duplicate node URL definitions
+
+2. Standardize error handling
+   - [ ] Create consistent error types for wallet connection issues
+   - [ ] Implement proper error propagation through the application
+   - [ ] Add user-friendly error messages for common connection problems
+   - [ ] Create a recovery mechanism for failed connections
+
+## Task 5: Improve User Experience
+1. Enhance wallet connection UI
+   - [ ] Add clear loading states during connection attempts
+   - [ ] Provide helpful error messages when connections fail
+   - [ ] Implement automatic reconnection when possible
+   - [ ] Add network status indicator
+
+2. Implement progressive enhancement
+   - [ ] Prioritize WalletConnect for mobile users
+   - [ ] Fallback to other connection methods when preferred method fails
+   - [ ] Save user's preferred wallet connection method
+   - [ ] Provide guidance for users when connection fails
+
+## Task 6: Testing and Validation
+1. Create comprehensive tests
+   - [ ] Unit tests for wallet connection services
+   - [ ] Integration tests for DAppKit and Connex interaction
+   - [ ] End-to-end tests for wallet connection flows
+   - [ ] Stress tests for node connection handling
+
+2. Implement monitoring and analytics
+   - [ ] Add telemetry for wallet connection success/failure rates
+   - [ ] Monitor node response times and availability
+   - [ ] Track user wallet preferences and connection patterns
+   - [ ] Create alerts for recurring connection issues
+
+## Implementation Plan for Removing Unnecessary Wallet Logic
+
+While research confirms that Connex is still necessary as the foundation for DAppKit, there are opportunities to streamline the wallet connection logic:
+
+### Phase 1: Consolidation (Immediate)
+1. Create a unified wallet service
+   - [ ] Implement a single entry point for all wallet connections
+   - [ ] Use DAppKit as the primary connection method
+   - [ ] Maintain Connex compatibility through the adapter pattern
+   - [ ] Remove direct Connex initialization from components
+
+2. Centralize configuration
+   - [ ] Create a single source of truth for network configuration
+   - [ ] Consolidate node URLs and fallback mechanisms
+   - [ ] Standardize wallet type definitions
+   - [ ] Create a configuration validation system
+
+### Phase 2: Optimization (Short-term)
+1. Streamline wallet detection
+   - [ ] Remove duplicate wallet detection logic
+   - [ ] Use DAppKit's built-in wallet detection
+   - [ ] Simplify wallet selection UI
+   - [ ] Remove legacy wallet connection methods that are now handled by DAppKit
+
+2. Improve error handling
+   - [ ] Create a centralized error handling system
+   - [ ] Implement proper fallbacks when primary connection methods fail
+   - [ ] Add user guidance for common connection issues
+   - [ ] Implement automatic recovery from temporary connection failures
+
+### Phase 3: Modernization (Long-term)
+1. Fully embrace DAppKit architecture
+   - [ ] Refactor all components to use DAppKit hooks and utilities
+   - [ ] Remove direct dependencies on Connex where possible
+   - [ ] Use the adapter pattern for legacy code that requires Connex
+   - [ ] Create a migration path for custom Connex implementations
+
+2. Implement progressive enhancement
+   - [ ] Optimize for mobile-first experience
+   - [ ] Prioritize WalletConnect for new users
+   - [ ] Maintain backward compatibility for existing users
+   - [ ] Create a seamless upgrade path for future wallet technologies
+
+## Conclusion
+This task list provides a comprehensive approach to fixing the current wallet connection issues while optimizing the codebase for future development. By addressing both immediate errors and long-term architecture concerns, the application will have a more robust and maintainable wallet connection system.

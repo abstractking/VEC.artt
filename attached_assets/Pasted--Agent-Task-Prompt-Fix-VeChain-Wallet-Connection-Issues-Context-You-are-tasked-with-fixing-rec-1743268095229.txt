@@ -1,0 +1,76 @@
+# Agent Task Prompt: Fix VeChain Wallet Connection Issues
+
+## Context
+You are tasked with fixing recurring wallet connection errors in a VeChain marketplace DApp. The application currently has two parallel wallet connection systems:
+1. New: DAppKit with WalletConnect integration
+2. Old: Connex-based implementation
+
+The main error is: "Failed to create Connex with getConnex: Error: getConnex(): no available node found"
+
+## Key Findings
+- DAppKit is built as a layer on top of Connex, not a replacement
+- Connex remains necessary for VeChain blockchain interaction
+- The error occurs when the application fails to connect to a VeChain node during Connex initialization
+- The codebase contains redundant wallet connection logic that can be streamlined
+
+## Primary Tasks
+
+### 1. Fix Node Connection Issues
+- Review and fix node URL configuration in environment variables
+- Add fallback node URLs and implement health checks
+- Implement retry logic with exponential backoff
+- Add better error handling and logging
+
+### 2. Optimize DAppKit Integration
+- Verify WalletConnect project ID and network configuration
+- Create a unified wallet service using the adapter pattern
+- Update VeChainContext to use DAppKit internally while maintaining Connex interface
+
+### 3. Refactor Connex Initialization
+- Improve the getConnex function to handle node unavailability
+- Implement proper caching and timeout handling
+- Create a smart node selection system with automatic failover
+
+### 4. Clean Up Redundant Code
+- Remove duplicate wallet connection implementations
+- Consolidate wallet detection logic
+- Standardize error handling across the application
+
+### 5. Improve User Experience
+- Enhance wallet connection UI with clear loading states and error messages
+- Implement automatic reconnection when possible
+- Prioritize WalletConnect for mobile users with appropriate fallbacks
+
+### 6. Testing and Validation
+- Create comprehensive tests for wallet connection
+- Implement monitoring for connection success/failure rates
+
+## Implementation Plan
+
+### Phase 1: Consolidation (Immediate)
+- Create a unified wallet service as a single entry point
+- Centralize configuration for network settings and node URLs
+
+### Phase 2: Optimization (Short-term)
+- Streamline wallet detection using DAppKit's built-in functionality
+- Improve error handling with proper fallbacks and user guidance
+
+### Phase 3: Modernization (Long-term)
+- Fully embrace DAppKit architecture while maintaining Connex compatibility
+- Implement progressive enhancement prioritizing mobile-first experience
+
+## Technical Approach
+1. Start by fixing the immediate node connection issues to resolve the error
+2. Implement the adapter pattern to provide Connex compatibility through DAppKit
+3. Gradually refactor components to use the unified wallet service
+4. Add comprehensive error handling and user feedback
+5. Implement thorough testing to ensure reliability
+
+## Deliverables
+1. Fixed node connection implementation
+2. Unified wallet service with adapter pattern
+3. Streamlined configuration system
+4. Enhanced error handling and user experience
+5. Comprehensive tests for wallet connection
+
+Please provide regular updates on your progress and any challenges encountered during implementation.

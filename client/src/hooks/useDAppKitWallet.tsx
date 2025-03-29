@@ -31,14 +31,45 @@ export function useDAppKitWallet(): UseDAppKitWalletReturn {
       setIsConnecting(true);
       setError(null);
 
+      console.log(`Attempting to connect to wallet type: ${walletType}`);
+
       // Different connection strategies based on wallet type
       if (walletType === 'walletconnect' || walletType === 'wallet-connect') {
         // Open WalletConnect modal
         web3Modal.open();
-      } else if (walletType === 'veworld' || walletType === 'sync2' || walletType === 'sync') {
-        // Set the source in DAppKit and trigger connection
-        walletContext.setSource(walletType);
-        await walletContext.connect();
+      } else if (walletType === 'veworld') {
+        console.log('Connecting to VeWorld wallet...');
+        
+        // VeWorld needs special handling to ensure it opens the wallet application
+        // Import the vechain.ts module dynamically to avoid circular dependencies
+        try {
+          const vechainModule = await import('@/lib/vechain');
+          await vechainModule.connectWallet('veworld');
+          
+          // After successful connection with the native module,
+          // also update the DAppKit state for consistency
+          walletContext.setSource(walletType);
+          await walletContext.connect();
+        } catch (error) {
+          console.error('Error connecting to VeWorld:', error);
+          throw error;
+        }
+      } else if (walletType === 'sync' || walletType === 'sync2') {
+        console.log(`Connecting to ${walletType} wallet...`);
+        
+        // Sync wallets need special handling too
+        try {
+          const vechainModule = await import('@/lib/vechain');
+          await vechainModule.connectWallet(walletType);
+          
+          // After successful connection with the native module,
+          // also update the DAppKit state for consistency
+          walletContext.setSource(walletType);
+          await walletContext.connect();
+        } catch (error) {
+          console.error(`Error connecting to ${walletType}:`, error);
+          throw error;
+        }
       } else {
         // If no wallet type specified, open the wallet selection modal
         walletModal.open();
