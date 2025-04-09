@@ -32,6 +32,12 @@ export function useDAppKitWallet(): UseDAppKitWalletReturn {
       setError(null);
 
       console.log(`Attempting to connect to wallet type: ${walletType}`);
+      
+      // Check if on mobile for specialized mobile handling
+      const mobileDetection = await import('@/lib/mobile-wallet-connector');
+      const isMobile = mobileDetection.isMobileDevice();
+      
+      console.log(`Device detection: ${isMobile ? 'Mobile' : 'Desktop'} device`);
 
       // Different connection strategies based on wallet type
       if (walletType === 'walletconnect' || walletType === 'wallet-connect') {
@@ -40,30 +46,66 @@ export function useDAppKitWallet(): UseDAppKitWalletReturn {
       } else if (walletType === 'veworld') {
         console.log('Connecting to VeWorld wallet...');
         
-        // VeWorld needs special handling to ensure it opens the wallet application
-        // Import the vechain.ts module dynamically to avoid circular dependencies
-        try {
-          const vechainModule = await import('@/lib/vechain');
-          await vechainModule.connectWallet('veworld');
-          
-          // After successful connection with the native module,
-          // also update the DAppKit state for consistency
-          walletContext.setSource(walletType);
-          await walletContext.connect();
-        } catch (error) {
-          console.error('Error connecting to VeWorld:', error);
-          throw error;
+        // Use mobile-optimized connector for mobile devices
+        if (isMobile) {
+          try {
+            console.log('Using mobile-optimized VeWorld connector');
+            const result = await mobileDetection.connectMobileWallet();
+            
+            if (result.error) {
+              console.error('Mobile VeWorld connection error:', result.error);
+              throw new Error(result.error);
+            }
+            
+            // If successfully connected with the mobile connector,
+            // also update the DAppKit state for consistency
+            if (result.address) {
+              // Can't directly set account in walletContext, so we need to use connect
+              walletContext.setSource('veworld');
+              await walletContext.connect(); // This should update the account
+              console.log('Successfully connected to VeWorld on mobile:', result.address);
+            } else {
+              throw new Error('No wallet address returned from VeWorld mobile connection');
+            }
+          } catch (mobileError) {
+            console.error('Error with mobile VeWorld connection:', mobileError);
+            
+            // Fallback to standard vechain connector
+            const vechainModule = await import('@/lib/vechain');
+            await vechainModule.connectWallet('veworld');
+            
+            // Update DAppKit state
+            walletContext.setSource(walletType);
+            await walletContext.connect();
+          }
+        } else {
+          // Desktop VeWorld connection
+          try {
+            const vechainModule = await import('@/lib/vechain');
+            await vechainModule.connectWallet('veworld');
+            
+            // Update DAppKit state
+            walletContext.setSource(walletType);
+            await walletContext.connect();
+          } catch (error) {
+            console.error('Error connecting to VeWorld on desktop:', error);
+            throw error;
+          }
         }
       } else if (walletType === 'sync' || walletType === 'sync2') {
         console.log(`Connecting to ${walletType} wallet...`);
         
-        // Sync wallets need special handling too
+        // Verify we're not on mobile before trying to connect to desktop apps
+        if (isMobile) {
+          throw new Error(`${walletType === 'sync' ? 'Sync' : 'Sync2'} is a desktop application and not compatible with mobile devices. Please use VeWorld mobile app instead.`);
+        }
+        
+        // Sync wallets need special handling
         try {
           const vechainModule = await import('@/lib/vechain');
           await vechainModule.connectWallet(walletType);
           
-          // After successful connection with the native module,
-          // also update the DAppKit state for consistency
+          // Update DAppKit state
           walletContext.setSource(walletType);
           await walletContext.connect();
         } catch (error) {

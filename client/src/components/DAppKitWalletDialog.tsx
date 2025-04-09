@@ -13,9 +13,9 @@ import {
   VeChainWalletType, 
   getWalletDisplayName, 
   verifyWalletAvailability, 
-  detectAvailableWallets,
-  isMobileDevice
+  detectAvailableWallets
 } from '@/lib/wallet-detection';
+import { isMobileDevice } from '@/lib/mobile-wallet-connector';
 import { Check, Wallet, XCircle, AlertTriangle, Smartphone, Laptop, ExternalLink } from 'lucide-react';
 import { useDAppKit } from '@/contexts/DAppKitProvider';
 
@@ -50,19 +50,23 @@ export default function DAppKitWalletDialog({
     setActiveTab(isMobile ? 'mobile' : 'all');
   }, [isMobile]);
   
-  // Generate wallet options based on available wallets
-  const availableWallets = detectAvailableWallets();
+  // Function to check wallet availability more precisely
+  function checkWalletAvailability(walletType: VeChainWalletType): boolean {
+    const walletInfo = verifyWalletAvailability(walletType);
+    return walletInfo.available;
+  }
   
+  // Generate wallet options with more precise availability checks
   const walletOptions: WalletOption[] = [
     {
       type: 'veworld',
       name: 'VeWorld',
       description: 'Connect using VeWorld browser extension or mobile app',
       icon: <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">V</div>,
-      available: availableWallets.includes('veworld'),
+      available: checkWalletAvailability('veworld'),
       recommended: true,
       deviceType: 'both',
-      detailMessage: availableWallets.includes('veworld') 
+      detailMessage: checkWalletAvailability('veworld') 
         ? 'Available and recommended' 
         : 'Install VeWorld for the best experience'
     },
@@ -71,20 +75,24 @@ export default function DAppKitWalletDialog({
       name: 'Sync2',
       description: 'Connect using the Sync2 desktop application',
       icon: <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">S2</div>,
-      available: availableWallets.includes('sync2'),
+      available: checkWalletAvailability('sync2'),
       recommended: false,
       deviceType: 'desktop',
-      detailMessage: 'Best for desktop users'
+      detailMessage: checkWalletAvailability('sync2')
+        ? 'Sync2 wallet detected and ready to connect'
+        : 'Sync2 wallet not detected. Please install and run Sync2.'
     },
     {
       type: 'sync',
       name: 'Sync',
       description: 'Connect using the Sync desktop application',
       icon: <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">S</div>,
-      available: availableWallets.includes('sync'),
+      available: checkWalletAvailability('sync'),
       recommended: false,
       deviceType: 'desktop',
-      detailMessage: 'Original desktop wallet'
+      detailMessage: checkWalletAvailability('sync')
+        ? 'Sync wallet detected and ready to connect'
+        : 'Sync wallet not detected. Please install and run Sync.'
     },
     {
       type: 'walletconnect',
@@ -92,7 +100,7 @@ export default function DAppKitWalletDialog({
       description: 'Scan with your mobile wallet using WalletConnect',
       icon: <div className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold">WC</div>,
       available: true, // WalletConnect is always available
-      recommended: isMobile && !availableWallets.includes('veworld'),
+      recommended: isMobile && !checkWalletAvailability('veworld'),
       deviceType: 'both',
       detailMessage: 'Connect with any WalletConnect-compatible wallet'
     },
@@ -106,6 +114,21 @@ export default function DAppKitWalletDialog({
   // Special handler for directly opening specific wallet types
   const handleOpenWallet = (walletType: VeChainWalletType) => {
     console.log(`Opening wallet: ${walletType}`);
+    
+    // Additional verification before proceeding
+    const walletInfo = verifyWalletAvailability(walletType);
+    
+    if (!walletInfo.available) {
+      // Show appropriate message based on wallet type
+      if (walletType === 'veworld') {
+        alert("VeWorld wallet is not installed. Please install the VeWorld browser extension or mobile app and refresh the page.");
+        return;
+      } else if (walletType === 'sync' || walletType === 'sync2') {
+        const walletName = walletType === 'sync' ? 'Sync' : 'Sync2';
+        alert(`${walletName} wallet is not detected. Please ensure ${walletName} is installed and running, then try again.`);
+        return;
+      }
+    }
     
     // Call the provided callback with the wallet type
     onSelectWallet(walletType);
