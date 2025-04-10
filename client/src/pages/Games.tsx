@@ -1,11 +1,20 @@
-import { useEffect } from 'react';
+
+import { useEffect, useRef } from 'react';
 
 export default function Games() {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    if (iframeRef.current && !iframeRef.current.src) {
+      iframeRef.current.src = "/games/index.html";
+    }
+  }, []);
+
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-[calc(100vh-4rem)]">
       <iframe 
-        src="/games/index.html"
-        className="w-full h-full border-0" 
+        ref={iframeRef}
+        className="w-full h-full border-0"
         title="Games Marketplace"
       />
     </div>
