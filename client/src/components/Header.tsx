@@ -38,6 +38,8 @@ export default function Header() {
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+    // Prevent body scroll when menu is open
+    document.body.style.overflow = !isMenuOpen ? 'hidden' : 'auto';
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -248,9 +250,9 @@ export default function Header() {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`md:hidden bg-background ${isMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="container mx-auto px-4 py-3">
-          <div className="flex flex-col space-y-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
+      <div className={`md:hidden fixed inset-0 bg-background/95 backdrop-blur-sm z-50 ${isMenuOpen ? 'block' : 'hidden'}`}>
+        <div className="container mx-auto px-4 py-3 h-full overflow-y-auto">
+          <div className="flex flex-col space-y-4">
             <div className="flex items-center space-x-2 pb-3">
               {isConnected && <NotificationCenter />}
               <form onSubmit={handleSearch} className="relative flex-1">
@@ -341,6 +343,15 @@ export default function Header() {
             >
               <ScrollText className="h-5 w-5 mr-2 text-purple-500" />
               Create
+            </Link>
+
+            <Link 
+              href="/games" 
+              className="font-medium text-foreground hover:text-primary transition-colors py-2 flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <span role="img" aria-label="games" className="mr-2">👾</span>
+              Games
             </Link>
             
             <div className="h-px w-full bg-border my-2"></div>
