@@ -1,11 +1,15 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Games() {
+  const [redirecting, setRedirecting] = useState(false);
+
   useEffect(() => {
-    // Directly set the window location to the games page
-    window.location.href = "/games/index.html";
-  }, []);
+    if (!redirecting) {
+      setRedirecting(true);
+      window.location.replace("/games/index.html");
+    }
+  }, [redirecting]);
 
   // Return a loading state while redirecting
   return (
