@@ -1,32 +1,25 @@
 
 import { useEffect } from 'react';
+import { Link } from 'wouter';
 
 export default function Games() {
   useEffect(() => {
-    // Load game script after component mounts
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/tone@14.7.77/build/Tone.min.js';
-    script.async = true;
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
+    // Redirect to our HTML games marketplace
+    window.location.href = "/games/index.html";
   }, []);
 
+  // This component will render briefly before the redirect happens
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8">Games 👾</h1>
-      <div className="grid grid-cols-1 gap-8">
-        <div className="bg-card rounded-lg p-6">
-          <h2 className="text-2xl font-bold mb-4">2D Platformer</h2>
-          <iframe 
-            src="/platformer.html"
-            className="w-full aspect-[4/3] border-0 rounded-lg"
-            title="2D Platformer Game"
-          />
-        </div>
-      </div>
+      <h1 className="text-4xl font-bold mb-8">Games Marketplace 👾</h1>
+      <p className="text-lg mb-4">Redirecting to games marketplace...</p>
+      <div className="animate-pulse">Loading...</div>
+      <p className="mt-4">
+        If you are not redirected automatically, please{' '}
+        <a href="/games/index.html" className="text-primary hover:underline">
+          click here
+        </a>.
+      </p>
     </div>
   );
 }
