@@ -32,22 +32,25 @@ const NODE_URL_TESTNET = getNodeUrl(Network.TEST);
 
 // Interface for VeWorld wallet API
 interface VeWorldWallet {
-  isVeWorld: boolean;
-  newConnex: (options: any) => Promise<any>;
-  newConnexVendor: (options: any) => Promise<any>;
-  newConnexSigner: (options: any) => Promise<any>;
-  getVendor?: () => Promise<any>; // Method to get vendor directly (may not be available in all versions)
-  request: (options: any) => Promise<any>;
-  on: (event: string, callback: Function) => void;
-  removeListener: (event: string, callback: Function) => void;
+  readonly isVeWorld: boolean;
+  readonly newConnex: (options: any) => Promise<any>;
+  readonly newConnexVendor: (options: any) => Promise<any>;
+  readonly newConnexSigner: (options: any) => Promise<any>;
+  readonly getVendor?: () => Promise<any>;
+  readonly request: (options: any) => Promise<any>;
+  readonly on: (event: string, callback: Function) => void;
+  readonly removeListener: (event: string, callback: Function) => void;
 }
 
 // Interface for connection result
 interface VeWorldConnection {
-  connex: any;
-  vendor: any;
-  error?: string;
+  readonly connex: any;
+  readonly vendor: any;
+  readonly error?: string;
 }
+
+// Improved mobile detection
+const MOBILE_USER_AGENT_REGEX = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
 
 /**
  * Detect if running on a mobile device
@@ -56,18 +59,18 @@ interface VeWorldConnection {
 function isMobileDevice(): boolean {
   // First check our enhanced VeWorld-specific mobile detection
   const isVeWorldMobile = isVeWorldMobileApp();
-  
+
   // If we've identified this as a VeWorld mobile app, prioritize that
   if (isVeWorldMobile) {
     console.log("VeWorldConnector: VeWorld mobile app environment detected");
     return true;
   }
-  
+
   // Otherwise fall back to standard mobile detection
   if (typeof navigator === 'undefined') return false;
-  
-  const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
+
+  const isMobileUA = MOBILE_USER_AGENT_REGEX.test(navigator.userAgent);
+
   // Log detailed detection info for debugging
   console.log("VeWorldConnector: Mobile detection:", {
     isVeWorldMobile,
@@ -76,7 +79,7 @@ function isMobileDevice(): boolean {
     isAndroid: isAndroidDevice(),
     userAgent: navigator.userAgent
   });
-  
+
   return isMobileUA;
 }
 
@@ -91,18 +94,18 @@ function isMobileDevice(): boolean {
 export async function connectVeWorldWallet(networkType: Network): Promise<VeWorldConnection> {
   // Additional logging for debugging
   console.log(`Connecting to VeWorld with network type: ${networkType}`);
-  
+
   // Get proper network information based on network type
   const genesisIdMainnet = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || GENESIS_ID_MAINNET;
   const genesisIdTestnet = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || GENESIS_ID_TESTNET;
   const genesisId = networkType === Network.MAIN ? genesisIdMainnet : genesisIdTestnet;
   const networkName = networkType === Network.MAIN ? 'main' : 'test';
-  
+
   console.log(`Network ID used: ${genesisId}`);
   console.log(`Network name used: ${networkName}`);
   try {
     console.log("VeWorldConnector: Connecting to VeWorld wallet...");
-    
+
     // Check if VeWorld is available
     if (typeof window === 'undefined' || !(window as any).vechain) {
       console.error("vechain object not found in window");
@@ -112,11 +115,11 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
         error: "VeWorld wallet extension not detected"
       };
     }
-    
+
     const vechain = (window as any).vechain as VeWorldWallet;
-    
+
     console.log("VeWorldConnector: API methods available:", Object.keys(vechain));
-    
+
     if (!vechain.isVeWorld) {
       console.error("vechain object is not a VeWorld wallet");
       return { 
@@ -125,56 +128,56 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
         error: "Not a valid VeWorld wallet extension"
       };
     }
-    
+
     // Determine network parameters based on type using environment variables
     const isMainNet = networkType === Network.MAIN;
-    
+
     // Use environment variables if available, with hardcoded values as fallback
     const genesisIdMainnet = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || GENESIS_ID_MAINNET;
     const genesisIdTestnet = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || GENESIS_ID_TESTNET;
-    
+
     const genesisId = isMainNet ? genesisIdMainnet : genesisIdTestnet;
     const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
-    
+
     console.log("VeWorldConnector: Using genesisId:", genesisId, "for network:", networkName);
     console.log("VeWorldConnector: Connection params:", { genesisId, networkName });
-    
+
     // FIRST APPROACH: Try creating vendor with minimal parameters (no URL at all)
     try {
       console.log("Approach 1: Creating vendor with genesis-only parameter");
-      
+
       // Create vendor with only genesis - NO network object or URL
       const vendor = await vechain.newConnexVendor({
         genesis: genesisId
       });
-      
+
       console.log("Successfully created vendor with minimal parameters");
-      
+
       // Create Connex with only the required minimal parameters - NO node URL
       console.log("Creating connex with minimal parameters");
       const connex = await vechain.newConnex({
         genesis: genesisId
       });
-      
+
       console.log("Successfully created connex with minimal parameters");
       return { connex, vendor };
     } catch (error) {
       console.error("Minimal approach failed:", error);
-      
+
       // FALLBACK APPROACH: Try with simple name and genesis format
       try {
         console.log("Approach 2: Using simple name and genesis format");
-        
+
         const vendor = await vechain.newConnexVendor({
           genesis: genesisId,
           name: networkName
         });
-        
+
         const connex = await vechain.newConnex({
           genesis: genesisId,
           name: networkName
         });
-        
+
         console.log("Name and genesis format successful");
         return { connex, vendor };
       } catch (error2) {
@@ -199,7 +202,7 @@ export async function connectVeWorldWallet(networkType: Network): Promise<VeWorl
 export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeWorldConnection> {
   try {
     console.log("VeWorldConnector (Alt): Connecting to VeWorld wallet...");
-    
+
     // Check if VeWorld is available
     if (typeof window === 'undefined' || !(window as any).vechain) {
       console.error("vechain object not found in window");
@@ -209,9 +212,9 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
         error: "VeWorld wallet extension not detected"
       };
     }
-    
+
     const vechain = (window as any).vechain as VeWorldWallet;
-    
+
     if (!vechain.isVeWorld) {
       return { 
         connex: null, 
@@ -219,37 +222,37 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
         error: "Not a valid VeWorld wallet extension"
       };
     }
-    
+
     // Determine network parameters based on type using environment variables
     const isMainNet = networkType === Network.MAIN;
-    
+
     // Use environment variables if available, with hardcoded values as fallback
     const genesisIdMainnet = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || GENESIS_ID_MAINNET;
     const genesisIdTestnet = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || GENESIS_ID_TESTNET;
-    
+
     // Get genesis ID for current network
     const genesisId = isMainNet ? genesisIdMainnet : genesisIdTestnet;
-    
+
     console.log("VeWorldConnector (Alt): Using direct genesis parameter:", { 
       networkType, 
       genesisId
     });
-    
+
     // Try simpler parameters for mobile devices
     if (isMobileDevice()) {
       console.log("Mobile device detected in alt connection, using minimal parameters");
-      
+
       try {
         // For mobile, create vendor first with minimal parameters
         const vendor = await vechain.newConnexVendor({
           genesis: genesisId
         });
-        
+
         // Create a simple connex instance with minimal parameters
         const connex = await vechain.newConnex({
           genesis: genesisId
         });
-        
+
         console.log("VeWorldConnector (Alt): Mobile minimal connection successful");
         return { connex, vendor };
       } catch (minimalError) {
@@ -257,23 +260,23 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
         // Continue with standard alt approach
       }
     }
-    
+
     // Standard alternative approach without node URL
     try {
       // Create Connex instance with just genesis parameter - avoid node URLs
       const connex = await vechain.newConnex({
         genesis: genesisId
       });
-      
+
       console.log("VeWorldConnector (Alt): Connex created successfully");
-      
+
       // Create vendor with direct genesis parameter
       const vendor = await vechain.newConnexVendor({
         genesis: genesisId
       });
-      
+
       console.log("VeWorldConnector (Alt): Vendor created successfully");
-      
+
       return { connex, vendor };
     } catch (error) {
       console.error("Standard alt approach failed:", error);
@@ -299,7 +302,7 @@ export async function connectVeWorldWalletAlt(networkType: Network): Promise<VeW
 export async function connectVeWorldWalletMinimal(networkType: Network): Promise<VeWorldConnection> {
   try {
     console.log("VeWorldConnector (Minimal): Last resort connection attempt...");
-    
+
     // Check if VeWorld is available
     if (typeof window === 'undefined' || !(window as any).vechain) {
       console.error("vechain object not found in window");
@@ -309,9 +312,9 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
         error: "VeWorld wallet extension not detected"
       };
     }
-    
+
     const vechain = (window as any).vechain as VeWorldWallet;
-    
+
     if (!vechain.isVeWorld) {
       return { 
         connex: null, 
@@ -319,25 +322,25 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
         error: "Not a valid VeWorld wallet extension"
       };
     }
-    
+
     // Determine network parameters based on type using environment variables
     const isMainNet = networkType === Network.MAIN;
-    
+
     // Use environment variables if available, with hardcoded values as fallback
     const genesisIdMainnet = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || GENESIS_ID_MAINNET;
     const genesisIdTestnet = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || GENESIS_ID_TESTNET;
-    
+
     // Get genesis ID for current network
     const genesisId = isMainNet ? genesisIdMainnet : genesisIdTestnet;
-    
+
     console.log("VeWorldConnector (Minimal): Using absolute minimal configuration");
-    
+
     // FIRST APPROACH: Check if window.connex is available (injected by wallet)
     if (typeof window !== 'undefined' && (window as any).connex) {
       try {
         console.log("Using window.connex provided by wallet");
         const connex = (window as any).connex;
-        
+
         // Try to get vendor directly
         if (typeof vechain.getVendor === 'function') {
           const vendor = await vechain.getVendor();
@@ -346,20 +349,20 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
             return { connex, vendor };
           }
         }
-        
+
         // If we can't get vendor but have connex, try creating just the vendor
         console.log("Creating vendor with minimal parameters");
         const vendor = await vechain.newConnexVendor({
           genesis: genesisId
         });
-        
+
         return { connex, vendor };
       } catch (e) {
         console.log("Window.connex approach failed:", e);
         // Continue to next approach
       }
     }
-    
+
     // SECOND APPROACH: Try to get vendor directly without any parameters
     if (typeof vechain.getVendor === 'function') {
       try {
@@ -373,39 +376,39 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
         console.log("Direct vendor access failed:", e);
       }
     }
-    
+
     // THIRD APPROACH: No URL method - use only genesis ID
     try {
       console.log("Trying genesis-only connection method");
-      
+
       // Create vendor first with only genesis
       const vendor = await vechain.newConnexVendor({
         genesis: genesisId
       });
-      
+
       console.log("Minimal vendor created");
-      
+
       // Then create connex with only genesis - no node URL
       const connex = await vechain.newConnex({
         genesis: genesisId
       });
-      
+
       console.log("Minimal connex created without node URL");
-      
+
       return { connex, vendor };
     } catch (firstError) {
       console.error("Genesis-only connection failed:", firstError);
-      
+
       // FOURTH APPROACH: Try with special format
       try {
         console.log("Trying special request format...");
-        
+
         // Request format that doesn't use URL constructor internally
         const vendor = await vechain.newConnexVendor({
           genesis: genesisId,
           name: isMainNet ? "main" : "test"
         });
-        
+
         const connex = await vechain.request({
           method: "newConnex", 
           params: [{
@@ -413,7 +416,7 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
             name: isMainNet ? "main" : "test" 
           }]
         });
-        
+
         console.log("Special request format successful");
         return { connex, vendor };
       } catch (error) {
@@ -438,7 +441,7 @@ export async function connectVeWorldWalletMinimal(networkType: Network): Promise
 export async function connectVeWorld(networkType: Network): Promise<VeWorldConnection> {
   const isMobile = isMobileDevice();
   console.log(`Connecting to VeWorld wallet (${isMobile ? 'MOBILE' : 'DESKTOP'} mode)...`);
-  
+
   // Diagnostic logging to identify available wallet objects
   console.log("Available window objects:", 
     Object.keys(window).filter(key => 
@@ -447,13 +450,13 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
       key.toLowerCase() === 'connex'
     )
   );
-  
+
   // Get network parameters directly from environment variables for consistency
   const genesisIdMainnet = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || GENESIS_ID_MAINNET;
   const genesisIdTestnet = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || GENESIS_ID_TESTNET;
   const genesisId = networkType === Network.MAIN ? genesisIdMainnet : genesisIdTestnet;
   const networkName = networkType === Network.MAIN ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
-  
+
   // Log environment variables and browser info for detailed debugging
   console.log("Connection parameters:", {
     networkType,
@@ -464,14 +467,14 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
     isMobile,
     userAgent: navigator.userAgent,
   });
-  
+
   // FIRST APPROACH: Try to use window.connex if available (highest priority)
   if (typeof window !== 'undefined' && window.connex) {
     console.log("Found window.connex, attempting to use wallet-provided Connex instance");
     try {
       // If we have window.connex, we need to get a vendor to pair with it
       const vechain = (window as any).vechain as VeWorldWallet;
-      
+
       if (vechain && vechain.isVeWorld) {
         // Get vendor from VeWorld
         if (typeof vechain.getVendor === 'function') {
@@ -485,18 +488,18 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
             console.log("Got window.connex but failed to get vendor:", e);
           }
         }
-        
+
         // If we can't get vendor directly, try creating just the vendor
         try {
           // Determine the right genesis ID based on network
           const isMainNet = networkType === Network.MAIN;
           const genesisId = isMainNet ? import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID : import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID;
-          
+
           console.log("Creating vendor with genesis only:", genesisId);
           const vendor = await vechain.newConnexVendor({
             genesis: genesisId
           });
-          
+
           console.log("Successfully created vendor to pair with existing connex");
           return { connex: window.connex, vendor };
         } catch (e) {
@@ -511,13 +514,13 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
   } else {
     console.log("window.connex not found, will try other connection methods");
   }
-  
+
   // Check if running on mobile
   const mobile = isMobileDevice();
-  
+
   if (mobile) {
     console.log("Mobile device detected, using mobile-optimized connection sequence");
-    
+
     // For mobile, try minimal method first as it tends to work better on mobile
     try {
       const minimalResult = await connectVeWorldWalletMinimal(networkType);
@@ -528,7 +531,7 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
     } catch (e) {
       console.log("Minimal approach failed:", e);
     }
-    
+
     // Then try Alt method
     try {
       const altResult = await connectVeWorldWalletAlt(networkType);
@@ -539,7 +542,7 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
     } catch (e) {
       console.log("Alt approach failed:", e);
     }
-    
+
     // Fall back to standard method
     return connectVeWorldWallet(networkType);
   } else {
@@ -553,7 +556,7 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
     } catch (e) {
       console.log("Standard approach failed:", e);
     }
-    
+
     // Then try alternative method
     try {
       const altResult = await connectVeWorldWalletAlt(networkType);
@@ -564,7 +567,7 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
     } catch (e) {
       console.log("Alt approach failed:", e);
     }
-    
+
     // Finally try minimal as last resort
     console.log("All standard approaches failed, trying minimal connection...");
     return connectVeWorldWalletMinimal(networkType);
