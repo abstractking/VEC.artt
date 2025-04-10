@@ -101,6 +101,9 @@ export default function Header() {
             <Link href="/artists" className="font-medium text-foreground hover:text-primary transition-colors">
               Artists
             </Link>
+            <Link href="/games" className="font-medium text-foreground hover:text-primary transition-colors">
+              Games 👾
+            </Link>
           </nav>
 
           {/* Desktop Search and Notification */}

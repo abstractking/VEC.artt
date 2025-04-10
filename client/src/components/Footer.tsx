@@ -54,10 +54,10 @@ export default function Footer() {
             <h3 className="font-bold text-lg mb-4">Resources</h3>
             <ul className="space-y-2">
               <li><Link href="/help" className="text-muted-foreground hover:text-primary transition-colors">Help Center</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Platform Status</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Partners</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
-              <li><Link href="#" className="text-muted-foreground hover:text-primary transition-colors">Newsletter</Link></li>
+              <li><Link href="/status" className="text-muted-foreground hover:text-primary transition-colors">Platform Status</Link></li>
+              <li><Link href="/partners" className="text-muted-foreground hover:text-primary transition-colors">Partners</Link></li>
+              <li><Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">Blog</Link></li>
+              <li><Link href="/newsletter" className="text-muted-foreground hover:text-primary transition-colors">Newsletter</Link></li>
             </ul>
           </div>
         </div>
