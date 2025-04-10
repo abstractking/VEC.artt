@@ -39,6 +39,7 @@ export default function Header() {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
     // Prevent body scroll when menu is open
+    document.documentElement.style.overflow = !isMenuOpen ? 'hidden' : 'auto';
     document.body.style.overflow = !isMenuOpen ? 'hidden' : 'auto';
   };
 
@@ -250,8 +251,8 @@ export default function Header() {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`md:hidden fixed inset-0 bg-background/95 backdrop-blur-sm z-50 ${isMenuOpen ? 'block' : 'hidden'}`}>
-        <div className="container mx-auto px-4 py-3 h-full overflow-y-auto">
+      <div className={`md:hidden fixed inset-0 bg-background/95 backdrop-blur-sm z-50 overflow-y-auto ${isMenuOpen ? 'block' : 'hidden'}`}>
+        <div className="container mx-auto px-4 py-3 min-h-full">
           <div className="flex flex-col space-y-4">
             <div className="flex items-center space-x-2 pb-3">
               {isConnected && <NotificationCenter />}
