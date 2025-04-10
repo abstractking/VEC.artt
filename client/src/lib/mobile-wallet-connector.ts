@@ -50,21 +50,21 @@ interface WalletConnectionResult {
  */
 export function isMobileDevice(): boolean {
   if (typeof navigator === 'undefined' || typeof window === 'undefined') return false;
-  
+
   const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
-  
+
   // Primary check: mobile device indicators in user agent
   const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|Tablet|tablet/i;
   const isMobileUserAgent = mobileRegex.test(userAgent);
-  
+
   // Secondary check: touch capabilities
   const hasTouchCapability = 'ontouchstart' in window || 
                             navigator.maxTouchPoints > 0 || 
                             (navigator as any).msMaxTouchPoints > 0;
-  
+
   // Tertiary check: screen dimension analysis (most phones are < 1024px wide)
   const smallScreen = window.innerWidth < 1024;
-  
+
   // For debugging
   console.log('Mobile detection:', {
     userAgent,
@@ -73,13 +73,28 @@ export function isMobileDevice(): boolean {
     screenWidth: window.innerWidth,
     smallScreen,
   });
-  
+
   // Consider mobile if ANY TWO of the three checks pass
   const mobileChecks = [isMobileUserAgent, hasTouchCapability, smallScreen];
   const mobileTrueCount = mobileChecks.filter(Boolean).length;
-  
+
   return mobileTrueCount >= 2; // Device is mobile if at least 2 checks pass
 }
+
+function debugLog(message: any, ...optionalParams: any[]) {
+    console.log(message, ...optionalParams);
+}
+
+function getVeWorldMobileInfo() {
+    // Add your logic here to fetch relevant information about the VeWorld mobile environment.
+    // This might involve checking for specific APIs, environment variables, or device capabilities.
+    return {
+        platform: navigator.platform,
+        userAgent: navigator.userAgent,
+        // Add other relevant properties as needed
+    };
+}
+
 
 /**
  * Create a specialized mobile connection handler with automatic detection
@@ -88,19 +103,22 @@ export function isMobileDevice(): boolean {
 export async function connectMobileWallet(networkType: Network = Network.TEST): Promise<WalletConnectionResult> {
   try {
     console.log('Mobile wallet connector: Attempting to connect wallet on mobile device');
-    
+
     // On mobile, check if we're in a native wallet browser environment
     if ((window as any).ethereum || (window as any).thor || (window as any).vechain) {
       console.log('Native wallet browser environment detected!');
-      
+
       // VeWorld wallet
-      if (window.vechain && (window.vechain as any).isVeWorld) {
-        console.log('VeWorld mobile wallet detected');
-        
+      if (window.vechain && (window as any).isVeWorld) {
+        debugLog('VeWorld mobile wallet detected');
+
         try {
+          const mobileInfo = getVeWorldMobileInfo();
+          debugLog('Mobile environment info:', mobileInfo);
+
           // Use our specialized VeWorld connector with mobile optimizations
           const result = await connectVeWorld(networkType);
-          
+
           if (result.error) {
             console.error('VeWorld mobile connection error:', result.error);
             return {
@@ -110,10 +128,10 @@ export async function connectMobileWallet(networkType: Network = Network.TEST): 
               error: `VeWorld wallet connection failed: ${result.error}`
             };
           }
-          
+
           // Get the wallet address
           let address = null;
-          
+
           // Try different methods to get the wallet address
           try {
             // Method 1: Check vendor.address
@@ -126,7 +144,7 @@ export async function connectMobileWallet(networkType: Network = Network.TEST): 
                 purpose: 'identification', 
                 payload: { type: 'text', content: 'Connect to VeCollab Marketplace' } 
               };
-              
+
               const certResult = await result.connex.vendor.sign('cert', certificate).request();
               if (certResult.annex && certResult.annex.signer) {
                 address = certResult.annex.signer;
@@ -135,7 +153,7 @@ export async function connectMobileWallet(networkType: Network = Network.TEST): 
           } catch (addressError) {
             console.warn('Could not get wallet address:', addressError);
           }
-          
+
           return { 
             connex: result.connex, 
             vendor: result.vendor,
@@ -151,15 +169,15 @@ export async function connectMobileWallet(networkType: Network = Network.TEST): 
           };
         }
       }
-      
+
       // Sync2 wallet
       if (window.connex) {
         console.log('Sync2 mobile wallet detected');
-        
+
         try {
           // Try to use the existing connex instance
           const connex = window.connex;
-          
+
           // Get certificate to verify wallet connection
           try {
             // Create properly typed certificate
@@ -167,11 +185,11 @@ export async function connectMobileWallet(networkType: Network = Network.TEST): 
               purpose: 'identification' as "identification", 
               payload: { type: 'text' as "text", content: 'Connect to VeCollab Marketplace' } 
             };
-            
+
             // Handle the type checking issue with the sign method
             // Properly typed for Connex but using any for response due to inconsistencies
             const result: ConnexVendorSignResult = await connex.vendor.sign('cert', certificate).request();
-            
+
             if (result && result.annex && result.annex.signer) {
               return { 
                 connex, 
@@ -206,7 +224,7 @@ export async function connectMobileWallet(networkType: Network = Network.TEST): 
         }
       }
     }
-    
+
     // No recognized wallet found in mobile environment
     return {
       connex: null,
@@ -233,32 +251,32 @@ export async function connectSmartWallet(networkType: Network = Network.TEST): P
   // Check if we're on a mobile device
   const mobile = isMobileDevice();
   console.log(`Smart wallet connector: ${mobile ? 'Mobile' : 'Desktop'} device detected`);
-  
+
   // On mobile, use mobile-optimized connection methods
   if (mobile) {
     return connectMobileWallet(networkType);
   }
-  
+
   // On desktop, check for wallet extensions
   try {
     // Check for Sync2
     if (window.connex) {
       console.log('Desktop Sync2 wallet detected');
-      
+
       try {
         // Use the existing connex instance
         const connex = window.connex;
-        
+
         // Get certificate to verify wallet connection
         const certificate: ConnexSignCertificateOptions = { 
           purpose: 'identification' as "identification", 
           payload: { type: 'text' as "text", content: 'Connect to VeCollab Marketplace' } 
         };
-        
+
         // Handle the type checking issue with the sign method
         // Properly typed for Connex
         const result: ConnexVendorSignResult = await connex.vendor.sign('cert', certificate).request();
-        
+
         if (result && result.annex && result.annex.signer) {
           return { 
             connex, 
@@ -283,15 +301,15 @@ export async function connectSmartWallet(networkType: Network = Network.TEST): P
         };
       }
     }
-    
+
     // Check for VeWorld
-    if (window.vechain && (window.vechain as any).isVeWorld) {
+    if (window.vechain && (window as any).isVeWorld) {
       console.log('Desktop VeWorld wallet detected');
-      
+
       try {
         // Use our specialized VeWorld connector
         const result = await connectVeWorld(networkType);
-        
+
         if (result.error) {
           console.error('VeWorld connection error:', result.error);
           return {
@@ -301,10 +319,10 @@ export async function connectSmartWallet(networkType: Network = Network.TEST): P
             error: `VeWorld wallet connection failed: ${result.error}`
           };
         }
-        
+
         // Get the wallet address
         let address = null;
-        
+
         // Try different methods to get the wallet address
         try {
           // Method 1: Check vendor.address
@@ -317,7 +335,7 @@ export async function connectSmartWallet(networkType: Network = Network.TEST): P
               purpose: 'identification', 
               payload: { type: 'text', content: 'Connect to VeCollab Marketplace' } 
             };
-            
+
             const certResult = await result.connex.vendor.sign('cert', certificate).request();
             if (certResult.annex && certResult.annex.signer) {
               address = certResult.annex.signer;
@@ -326,7 +344,7 @@ export async function connectSmartWallet(networkType: Network = Network.TEST): P
         } catch (addressError) {
           console.warn('Could not get wallet address:', addressError);
         }
-        
+
         return { 
           connex: result.connex, 
           vendor: result.vendor,
@@ -342,7 +360,7 @@ export async function connectSmartWallet(networkType: Network = Network.TEST): P
         };
       }
     }
-    
+
     // No wallet found
     return {
       connex: null,
