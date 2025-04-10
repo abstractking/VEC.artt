@@ -5,14 +5,13 @@ export default function Games() {
   const [isIframe, setIsIframe] = useState(false);
 
   useEffect(() => {
-    // Check if we're inside an iframe
     setIsIframe(window.self !== window.top);
   }, []);
 
-  // If we're inside the iframe, render just the games content without header
+  // If we're inside an iframe, render just the game content
   if (isIframe) {
     return (
-      <div className="w-full h-screen bg-background">
+      <div className="w-full h-screen">
         <iframe
           id="game-iframe"
           className="w-full h-full border-0"
@@ -24,19 +23,21 @@ export default function Games() {
     );
   }
 
-  // Otherwise render with the normal layout height calculation
+  // Main layout for the games page
   return (
-    <div className="w-full h-[calc(100vh-4rem)] bg-background">
+    <main className="w-full min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6">
         <h1 className="text-3xl font-bold mb-6">Gaming Hub</h1>
-        <iframe
-          id="game-iframe"
-          className="w-full h-full border-0 rounded-lg shadow-lg"
-          title="Games Marketplace"
-          src="/games/index.html"
-          allow="fullscreen"
-        />
+        <div className="w-full h-[calc(100vh-12rem)] rounded-lg overflow-hidden shadow-lg">
+          <iframe
+            id="game-iframe"
+            className="w-full h-full border-0"
+            title="Games Marketplace"
+            src="/games/index.html"
+            allow="fullscreen"
+          />
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
