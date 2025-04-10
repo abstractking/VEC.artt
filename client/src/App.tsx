@@ -41,6 +41,7 @@ function Router() {
         <Route path="/wallet-test" component={WalletTest} />
         <Route path="/test-wallet" component={WalletTest} />
         <Route path="/wallet-test-advanced" component={WalletTestAdvanced} />
+        <Route path="/games" component={Games} />
         
         {/* Footer pages */}
         <Route path="/help" component={HelpCenter} />
