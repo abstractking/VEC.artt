@@ -56,6 +56,9 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
+  app.use(express.static('public'));
+  app.use('/games', express.static('public/games'));
+
   // ALWAYS serve the app on port 5000
   // this serves both the API and the client
   const port = 5000;
