@@ -19,33 +19,37 @@ export function isVeWorldMobileApp(): boolean {
   // First check: vechain object with isVeWorld property exists
   const hasVeWorldObj = !!(window.vechain && window.vechain.isVeWorld);
   
-  // Second check: user agent shows mobile and/or tablet device
+  // Second check: user agent and mobile indicators
   const userAgent = navigator.userAgent.toLowerCase();
   const isMobileDevice = /android|iphone|ipad|ipod|mobile|tablet/.test(userAgent);
   
-  // Third check: Check for capacitor/webview indicators (used by VeWorld mobile)
-  const isCapacitorWebView = userAgent.includes('capacitor') || 
-                             userAgent.includes('ionic') || 
-                             (window as any).Capacitor || 
-                             (window as any).Ionic;
+  // Third check: WebView indicators
+  const isWebView = /wv|webview/.test(userAgent) ||
+                   userAgent.includes('mobile') ||
+                   'standalone' in navigator ||
+                   (window as any).webkit?.messageHandlers;
   
-  // Fourth check: Specific VeWorld app indicators
+  // Fourth check: VeWorld specific indicators
   const hasVeWorldIndicators = userAgent.includes('veworld') || 
-                               userAgent.includes('vechaindapp') ||
-                               (window as any)._veworld;
+                              userAgent.includes('vechaindapp') ||
+                              (window as any)._veworld ||
+                              document.documentElement.classList.contains('veworld-app');
+  
+  // Check for InAppBrowser indicators
+  const isInAppBrowser = /inappbrowser|wkwebview|crios/.test(userAgent);
   
   // Log detection details for debugging
   console.log('VeWorld mobile detection:', {
     hasVeWorldObj,
     isMobileDevice,
-    isCapacitorWebView,
+    isWebView,
     hasVeWorldIndicators,
+    isInAppBrowser,
     userAgent
   });
   
-  // Consider running in VeWorld if the main identifier is present (vechain object)
-  // plus at least one other indicator
-  return hasVeWorldObj && (isMobileDevice || isCapacitorWebView || hasVeWorldIndicators);
+  // Consider running in VeWorld if we have the vechain object or we're in a mobile WebView
+  return (hasVeWorldObj || (isMobileDevice && (isWebView || isInAppBrowser))) && hasVeWorldIndicators;
 }
 
 /**
