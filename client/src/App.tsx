@@ -16,6 +16,7 @@ import NFTDetail from "./pages/NFTDetail";
 import EditNFT from "./pages/EditNFT";
 import Artists from "./pages/Artists";
 import Badges from "./pages/Badges";
+import Games from "./pages/Games"
 import WalletTest from "./pages/WalletTest"; // Add wallet testing page
 import WalletTestAdvanced from "./pages/WalletTestAdvanced"; // Add advanced wallet testing page
 import NotFound from "./pages/not-found";

@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galactic Hit - VeCollab Games</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* Game-specific styles */
+        body {
+            margin: 0;
+            font-family: 'Press Start 2P', cursive;
+            background-color: #0f172a;
+            color: #f3f4f6;
+        }
+
+        /* Page container */
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.2rem;
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            color: #f3f4f6;
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+            font-size: 0.7rem;
+        }
+        
+        nav a:hover {
+            color: #3b82f6;
+        }
+
+        /* Game section */
+        .game-section {
+            flex: 1;
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .game-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .game-header h1 {
+            font-size: 2rem;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-header p {
+            font-size: 0.8rem;
+            color: #9ca3af;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* Game container */
+        .game-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        /* Game canvas and controls */
+        #gameCanvas {
+          background: #000;
+          display: block;
+          width: 100%;
+          height: auto;
+          max-height: 600px;
+          aspect-ratio: 8 / 6;
+        }
+
+        .difficulty-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 4px;
+        }
+
+        .difficulty-button, #toggleSoundButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 0.7rem;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Press Start 2P', cursive;
+            transition: background-color 0.3s;
+            margin: 4px;
+        }
+
+        #toggleSoundButton {
+            background-color: #007bff;
+        }
+
+        .difficulty-button:hover, #toggleSoundButton:hover {
+            background-color: #367c39;
+        }
+
+        .difficulty-button.active {
+            background-color: #e65100;
+        }
+
+        #restartButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 0.7rem;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Press Start 2P', cursive;
+            transition: background-color 0.3s;
+        }
+
+        #restartButton:hover {
+            background-color: #367c39;
+        }
+
+        /* Game overlays */
+        .game-over-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            z-index: 10;
+            display: none;
+        }
+
+        .game-over-content {
+          border: 4px solid #f00;
+          padding: 16px;
+        }
+
+        #gameWonOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            z-index: 10;
+            display: none;
+        }
+
+        #gameWonOverlayContent {
+          border: 4px solid #0f0;
+          padding: 16px;
+        }
+
+        .instructions-box {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          background-color: rgba(0, 0, 0, 0.9);
+          border: 4px solid #3b82f6;
+          padding: 1rem;
+          color: #fff;
+          z-index: 11;
+          text-align: center;
+          border-radius: 8px;
+          max-width: 80%;
+        }
+
+        .instructions-box h2 {
+          font-size: 1.2rem;
+          margin-bottom: 0.5rem;
+          color: #ffdb58;
+        }
+
+        .instructions-box p {
+            font-size: 0.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .instructions-box ul {
+          list-style: none;
+          padding: 0;
+          margin-bottom: 1rem;
+          font-size: 0.6rem;
+        }
+
+        .instructions-box li {
+          margin-bottom: 0.25rem;
+          font-size: 0.6rem;
+        }
+
+        .instructions-box button {
+          padding: 0.5rem 1rem;
+          background-color: #3b82f6;
+          color: #fff;
+          font-family: 'Press Start 2P', cursive;
+          border-radius: 0.375rem;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+          font-size: 0.75rem;
+          border: none;
+        }
+
+        .instructions-box button:hover {
+          background-color: #2563eb;
+        }
+
+        /* Game info section */
+        .game-info-section {
+            margin-top: 2rem;
+            padding: 2rem;
+            background-color: #111827;
+            border-radius: 10px;
+            border: 1px solid #374151;
+        }
+
+        .game-info-section h2 {
+            font-size: 1.2rem;
+            color: #3b82f6;
+            margin-bottom: 1rem;
+        }
+
+        .game-info-section p {
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+        }
+
+        .game-features {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .game-features li {
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+            color: #9ca3af;
+        }
+
+        .game-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+        }
+
+        /* Related games */
+        .related-games {
+            margin-top: 3rem;
+        }
+
+        .related-games h2 {
+            font-size: 1.5rem;
+            color: #3b82f6;
+            margin-bottom: 1.5rem;
+        }
+
+        .related-games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .related-game-card {
+            background-color: #111827;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #374151;
+            transition: transform 0.3s;
+        }
+
+        .related-game-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .related-game-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+
+        .related-game-card-info {
+            padding: 1rem;
+        }
+
+        .related-game-card-info h3 {
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+            color: #f3f4f6;
+        }
+
+        .related-game-card-info p {
+            font-size: 0.7rem;
+            color: #9ca3af;
+        }
+
+        .back-to-games {
+            display: inline-block;
+            margin-top: 2rem;
+            padding: 0.7rem 1.2rem;
+            background-color: #1f2937;
+            color: #f3f4f6;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            transition: background-color 0.3s;
+        }
+
+        .back-to-games:hover {
+            background-color: #374151;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0f172a;
+            padding: 2rem 1rem;
+            margin-top: 3rem;
+            font-size: 0.8rem;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        @media (min-width: 640px) {
+            .instructions-box h2 {
+                font-size: 1.5rem;
+            }
+            .instructions-box ul {
+                font-size: 0.8rem;
+            }
+            .instructions-box p {
+                font-size: 0.8rem;
+            }
+            .instructions-box li {
+                margin-bottom: 0.25rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <header>
+            <div class="header-container">
+                <a href="/" class="logo">VeCollab Games</a>
+                <nav>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/games">Games</a></li>
+                        <li><a href="/marketplace">Marketplace</a></li>
+                        <li><a href="/about">About</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        
+        <section class="game-section">
+            <div class="game-header">
+                <h1>Galactic Hit</h1>
+                <p>Navigate through space challenges, defeat waves of enemies, and conquer the final boss in this action-packed platformer.</p>
+            </div>
+            
+            <div class="game-container">
+                <div class="difficulty-buttons">
+                    <button class="difficulty-button" data-difficulty="easy">Easy</button>
+                    <button class="difficulty-button" data-difficulty="medium">Medium</button>
+                    <button class="difficulty-button" data-difficulty="hard">Hard</button>
+                </div>
+                <button id="toggleSoundButton">Toggle Sound</button>
+
+                <canvas id="gameCanvas"></canvas>
+
+                <div class="game-over-overlay">
+                    <div class="game-over-content">
+                        <h2>Game Over</h2>
+                        <p>You were defeated by the waves.</p>
+                        <button id="restartButton">Restart</button>
+                    </div>
+                </div>
+                <div id="gameWonOverlay" style="display:none;">
+                    <div id="gameWonOverlayContent">
+                        <h2>Congratulations!</h2>
+                        <p>You have defeated the final boss and won the game!</p>
+                        <button id="restartButtonWin">Restart</button>
+                    </div>
+                </div>
+                <div class="instructions-box" id="instructions">
+                    <h2>How to Play</h2>
+                    <ul>
+                        <li>Use the left and right arrow keys to move your character.</li>
+                        <li>Press the up arrow key to jump.</li>
+                        <li>Defeat all enemies in a wave to advance to the next wave.</li>
+                        <li>Survive all waves and defeat the final boss to win!</li>
+                        <li>Select a difficulty level before starting.</li>
+                    </ul>
+                    <p>Good luck, Survivor!</p>
+                    <button id="close-instructions">Got it!</button>
+                </div>
+            </div>
+            
+            <div class="game-info-section">
+                <h2>About Galactic Hit</h2>
+                <p>Galactic Hit is an action-packed platformer set in a far future where you must survive waves of hostile alien forces. Navigate through challenging space environments, defeat incoming enemies, and face off against a powerful final boss.</p>
+                
+                <h2>Game Features</h2>
+                <ul class="game-features">
+                    <li>Dynamic difficulty settings to challenge players of all skill levels</li>
+                    <li>Wave-based combat system with increasingly difficult enemies</li>
+                    <li>Epic boss battle at the end of the game</li>
+                    <li>Immersive sound effects and music</li>
+                    <li>Simple controls that are easy to learn but challenging to master</li>
+                </ul>
+                
+                <p>Join the community of Galactic Hit players today and share your high scores and strategies!</p>
+                
+                <a href="/games" class="back-to-games">← Back to Games</a>
+            </div>
+            
+            <div class="related-games">
+                <h2>You Might Also Like</h2>
+                <div class="related-games-grid">
+                    <div class="related-game-card">
+                        <img src="/images/crypto-racer-thumb.jpg" alt="Crypto Racer">
+                        <div class="related-game-card-info">
+                            <h3>Crypto Racer</h3>
+                            <p>Racing game with NFT collectible cars</p>
+                        </div>
+                    </div>
+                    
+                    <div class="related-game-card">
+                        <img src="/images/nft-defender-thumb.jpg" alt="NFT Defender">
+                        <div class="related-game-card-info">
+                            <h3>NFT Defender</h3>
+                            <p>Strategic tower defense game</p>
+                        </div>
+                    </div>
+                    
+                    <div class="related-game-card">
+                        <img src="/images/token-quest-thumb.jpg" alt="Token Quest">
+                        <div class="related-game-card-info">
+                            <h3>Token Quest</h3>
+                            <p>Epic adventure RPG with collectible tokens</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <div class="footer-container">
+                <p>&copy; 2023 VeCollab Games. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/tone@14.7.77/build/Tone.min.js"></script>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const gameOverOverlay = document.querySelector('.game-over-overlay');
+        const restartButton = document.getElementById('restartButton');
+        const difficultyButtons = document.querySelectorAll('.difficulty-button');
+        const gameWonOverlay = document.getElementById('gameWonOverlay');
+        const restartButtonWin = document.getElementById('restartButtonWin');
+        const toggleSoundButton = document.getElementById('toggleSoundButton');
+        const instructionsBox = document.getElementById('instructions');
+        const closeInstructionsButton = document.getElementById('close-instructions');
+
+        let dimensions = { width: 800, height: 600 }; // Default dimensions
+        const updateDimensions = () => {
+              const containerElement = document.querySelector('.game-container');
+              const width = Math.min(containerElement.clientWidth, 800); // Max width of 800
+              const height = width * 0.75; // Maintain aspect ratio
+              dimensions = { width, height };
+
+              canvas.width = dimensions.width;
+              canvas.height = dimensions.height;
+            };
+
+        updateDimensions();
+        const resizeObserver = new ResizeObserver(updateDimensions);
+        resizeObserver.observe(document.querySelector('.game-container'));
+        window.addEventListener('resize', updateDimensions);
+
+
+        let player;
+        let enemies = [];
+        let platforms = [];
+        let gameRunning = false;
+        let animationId;
+        let difficulty = 'medium';  // Default difficulty
+        let wave = 1;
+        let score = 0;
+        let isSoundEnabled = false;
+        let bossFight = false; // Flag to indicate boss fight
+        let gameWon = false;
+        let bullets = []; // Array to hold player's bullets
+        let bulletSpeed = 7;
+        let bulletDamage = 20;
+        let enemySpawnInterval = 1000; // Initial enemy spawn interval in milliseconds
+
+
+        // --- Sound Effects (Tone.js) ---
+        const jumpSynth = new Tone.Synth().toDestination();
+        const attackSynth = new Tone.Synth().toDestination();
+        const hitSynth = new Tone.MembraneSynth().toDestination();
+        const deathSynth = new Tone.FMSynth().toDestination();
+        const waveClearSynth = new Tone.PluckSynth().toDestination();
+        const gameOverSynth = new Tone.AMSynth().toDestination();
+        const gameWonSynth = new Tone.PluckSynth().toDestination();
+
+        // --- Helper Functions ---
+
+        function random(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Check for collision between two rectangles
+        function checkCollision(rect1, rect2) {
+            return rect1.x < rect2.x + rect2.width &&
+                   rect1.x + rect1.width > rect2.x &&
+                   rect1.y < rect2.y + rect2.height &&
+                   rect1.y + rect1.height > rect2.y;
+        }
+
+        // --- Game Object Creation ---
+
+        function createPlayer() {
+            return {
+                x: 50,
+                y: dimensions.height - 100,
+                width: 30,
+                height: 30,
+                speed: 5,
+                velocityY: 0,
+                gravity: 0.5,
+                isJumping: false,
+                color: '#42a5f5', // Blue
+                attackDamage: 10, // Initial attack damage
+                health: 100
+            };
+        }
+
+        function createPlatform(x, y, width, height, color = '#8d6e63') { // Brown
+            return {
+                x,
+                y,
+                width,
+                height,
+                color,
+                isMoving: false, // New property for moving platforms
+                direction: 1,    // 1 for right/down, -1 for left/up
+                moveSpeed: 1,
+                originalX: x,  // Store original X for resetting
+                originalY: y
+            };
+        }
+
+        function createEnemy(x, y, width, height, color, speed, health, damage) {
+          return {
+            x,
+            y,
+            width,
+            height,
+            color,
+            speed,
+            health,
+            damage, // New property for enemy damage
+            isAlive: true,
+            type: 'basic', // Add a type property, default is basic.
+            attackDamage: damage
+          };
+        }
+
+        function createBoss(x, y, width, height, color, speed, health, damage, attackDamage, attackSpeed) {
+            return {
+                x,
+                y,
+                width,
+                height,
+                color,
+                speed,
+                health,
+                damage,
+                attackDamage, // Boss-specific attack damage
+                attackSpeed,     // Boss-specific attack speed (attacks per second)
+                isAlive: true,
+                type: 'boss',    // Type for boss
+                attackTimer: 0,     // Timer to track when the boss can attack
+                projectileColor: '#ff4500', // Boss projectile color
+                projectileWidth: 10,
+                projectileHeight: 10,
+                projectiles: [] // Array to hold boss projectiles
+            };
+        }
+
+        // --- Enemy Spawning ---
+        function spawnEnemy() {
+            let x = dimensions.width + 50;
+            let y = dimensions.height - 50;
+            let width = 20;
+            let height = 20;
+            let color = '#f44336'; // Red
+            let speed = random(1, 3);
+            let health = 20;
+            let damage = 10;
+
+             if (wave > 3) {
+                if (Math.random() < 0.2) {  // 20% chance
+                    width = 30;
+                    height = 30;
+                    speed = random(2, 4);
+                    health = 40;
+                    damage = 15;
+                    color = '#ff8f00'; // Darker Orange
+                }
+            }
+            if (wave > 5) {
+                 if (Math.random() < 0.3) {  // 30% chance
+                    width = 40;
+                    height = 40;
+                    speed = random(2, 5);
+                    health = 60;
+                    damage = 20;
+                    color = '#c62828'; // Darker Red
+                }
+            }
+           
+            enemies.push(createEnemy(x, y - height, width, height, color, speed, health, damage));
+        }
+
+        function spawnBoss() {
+            bossFight = true;
+            let x = dimensions.width - 100;
+            let y = dimensions.height - 100;
+            let width = 80;
+            let height = 80;
+            let color = '#6a1b9a'; // Purple
+            let speed = 2;
+            let health = 400;
+            let damage = 30;
+            let attackDamage = 25;
+            let attackSpeed = 1; // Attack once per second
+
+            // Create boss and add to enemies array
+            const boss = createBoss(x, y - height, width, height, color, speed, health, damage, attackDamage, attackSpeed);
+            enemies.push(boss);
+        }
+
+        function spawnPlatforms() {
+            platforms = [];
+            // Main ground platform
+            platforms.push(createPlatform(0, dimensions.height - 20, dimensions.width, 20));
+            
+            // Add more platforms based on difficulty
+            if (difficulty === 'easy') {
+                platforms.push(createPlatform(100, dimensions.height - 100, 100, 10));
+                platforms.push(createPlatform(300, dimensions.height - 150, 100, 10));
+                platforms.push(createPlatform(500, dimensions.height - 120, 100, 10));
+            } else if (difficulty === 'medium') {
+                platforms.push(createPlatform(100, dimensions.height - 120, 80, 10));
+                platforms.push(createPlatform(350, dimensions.height - 180, 80, 10));
+                platforms.push(createPlatform(600, dimensions.height - 150, 80, 10));
+                
+                // Add a moving platform on medium difficulty
+                const movingPlatform = createPlatform(250, dimensions.height - 150, 60, 10, '#ff9800');
+                movingPlatform.isMoving = true;
+                movingPlatform.moveSpeed = 2;
+                platforms.push(movingPlatform);
+            } else if (difficulty === 'hard') {
+                platforms.push(createPlatform(150, dimensions.height - 150, 60, 10));
+                platforms.push(createPlatform(400, dimensions.height - 200, 60, 10));
+                platforms.push(createPlatform(650, dimensions.height - 180, 60, 10));
+                
+                // Add multiple moving platforms on hard difficulty
+                const movingPlatform1 = createPlatform(250, dimensions.height - 170, 50, 10, '#ff9800');
+                movingPlatform1.isMoving = true;
+                movingPlatform1.moveSpeed = 3;
+                
+                const movingPlatform2 = createPlatform(500, dimensions.height - 230, 50, 10, '#ff9800');
+                movingPlatform2.isMoving = true;
+                movingPlatform2.moveSpeed = 3;
+                
+                platforms.push(movingPlatform1);
+                platforms.push(movingPlatform2);
+            }
+        }
+        
+        // --- Drawing Functions ---
+        
+        function drawPlayer() {
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            
+            // Draw health bar above player
+            const healthBarWidth = player.width;
+            const healthBarHeight = 5;
+            
+            // Background (empty health)
+            ctx.fillStyle = '#e53935'; // Red
+            ctx.fillRect(player.x, player.y - 10, healthBarWidth, healthBarHeight);
+            
+            // Foreground (current health)
+            ctx.fillStyle = '#43a047'; // Green
+            ctx.fillRect(player.x, player.y - 10, (player.health / 100) * healthBarWidth, healthBarHeight);
+        }
+        
+        function drawEnemies() {
+            enemies.forEach(enemy => {
+                if (enemy.isAlive) {
+                    // Draw enemy
+                    ctx.fillStyle = enemy.color;
+                    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                    
+                    // Draw health bar for larger enemies
+                    if (enemy.width >= 30) {
+                        // Health bar calculations
+                        const maxHealth = enemy.type === 'boss' ? 400 : (enemy.width === 40 ? 60 : 40);
+                        const healthPercentage = enemy.health / maxHealth;
+                        const healthBarWidth = enemy.width;
+                        const healthBarHeight = 5;
+                        
+                        // Background (empty health)
+                        ctx.fillStyle = '#e53935'; // Red
+                        ctx.fillRect(enemy.x, enemy.y - 10, healthBarWidth, healthBarHeight);
+                        
+                        // Foreground (current health)
+                        ctx.fillStyle = '#43a047'; // Green
+                        ctx.fillRect(enemy.x, enemy.y - 10, healthPercentage * healthBarWidth, healthBarHeight);
+                    }
+                    
+                    // Draw boss projectiles if this is a boss
+                    if (enemy.type === 'boss' && enemy.projectiles) {
+                        enemy.projectiles.forEach(projectile => {
+                            ctx.fillStyle = enemy.projectileColor;
+                            ctx.fillRect(projectile.x, projectile.y, enemy.projectileWidth, enemy.projectileHeight);
+                        });
+                    }
+                }
+            });
+        }
+        
+        function drawPlatforms() {
+            platforms.forEach(platform => {
+                ctx.fillStyle = platform.color;
+                ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+            });
+        }
+        
+        function drawBullets() {
+            ctx.fillStyle = '#ffeb3b'; // Yellow for bullets
+            bullets.forEach(bullet => {
+                ctx.fillRect(bullet.x, bullet.y, 10, 5);
+            });
+        }
+        
+        function drawGameInfo() {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '12px "Press Start 2P"';
+            ctx.fillText(`Wave: ${wave}`, 20, 30);
+            ctx.fillText(`Score: ${score}`, 20, 50);
+            
+            if (bossFight) {
+                ctx.fillStyle = '#ff4081';
+                ctx.fillText('BOSS FIGHT!', dimensions.width - 150, 30);
+            }
+        }
+        
+        // --- Game Logic ---
+        
+        function updatePlayer() {
+            // Apply gravity
+            player.velocityY += player.gravity;
+            player.y += player.velocityY;
+            
+            // Check for platform collisions
+            let onPlatform = false;
+            for (const platform of platforms) {
+                if (
+                    player.x < platform.x + platform.width &&
+                    player.x + player.width > platform.x &&
+                    player.y + player.height >= platform.y &&
+                    player.y + player.height <= platform.y + platform.height / 2
+                ) {
+                    onPlatform = true;
+                    player.y = platform.y - player.height;
+                    player.velocityY = 0;
+                    player.isJumping = false;
+                    break;
+                }
+            }
+            
+            // Prevent going through the bottom of the screen
+            if (player.y + player.height > dimensions.height) {
+                player.y = dimensions.height - player.height;
+                player.velocityY = 0;
+                player.isJumping = false;
+            }
+        }
+        
+        function updateEnemies() {
+            // Check if all enemies are defeated to spawn boss or next wave
+            const aliveEnemies = enemies.filter(enemy => enemy.isAlive).length;
+            
+            if (aliveEnemies === 0) {
+                // Check if we just completed the boss fight
+                if (bossFight) {
+                    gameWon = true;
+                    endGame(true);
+                    return;
+                }
+                
+                // Increment wave and spawn new enemies or boss
+                wave++;
+                
+                if (isSoundEnabled) {
+                    waveClearSynth.triggerAttackRelease('C5', '8n');
+                }
+                
+                // Boss appears on wave 10
+                if (wave === 10) {
+                    spawnBoss();
+                } else {
+                    // Spawn enemies for the new wave
+                    const enemyCount = getEnemyCountForWave(wave);
+                    for (let i = 0; i < enemyCount; i++) {
+                        setTimeout(() => {
+                            if (gameRunning) {
+                                spawnEnemy();
+                            }
+                        }, i * (enemySpawnInterval / enemyCount));
+                    }
+                }
+            }
+            
+            // Move enemies and check for collisions
+            enemies.forEach(enemy => {
+                if (!enemy.isAlive) return;
+                
+                // Move enemy towards player
+                if (enemy.x > player.x) {
+                    enemy.x -= enemy.speed;
+                } else {
+                    enemy.x += enemy.speed;
+                }
+                
+                // Boss-specific behavior
+                if (enemy.type === 'boss') {
+                    // Boss jumps occasionally
+                    if (Math.random() < 0.01) {
+                        enemy.y -= 100;
+                    }
+                    
+                    // Boss attacks with projectiles
+                    enemy.attackTimer++;
+                    if (enemy.attackTimer >= 60 / enemy.attackSpeed) { // 60 frames per second
+                        enemy.attackTimer = 0;
+                        
+                        // Create a new projectile aimed at the player
+                        const angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+                        const projectileSpeed = 5;
+                        
+                        enemy.projectiles.push({
+                            x: enemy.x,
+                            y: enemy.y + enemy.height / 2,
+                            velocityX: Math.cos(angle) * projectileSpeed,
+                            velocityY: Math.sin(angle) * projectileSpeed
+                        });
+                        
+                        if (isSoundEnabled) {
+                            attackSynth.triggerAttackRelease('E3', '16n');
+                        }
+                    }
+                    
+                    // Update boss projectiles
+                    if (enemy.projectiles) {
+                        enemy.projectiles.forEach((projectile, index) => {
+                            projectile.x += projectile.velocityX;
+                            projectile.y += projectile.velocityY;
+                            
+                            // Remove projectiles that go off screen
+                            if (
+                                projectile.x < 0 ||
+                                projectile.x > dimensions.width ||
+                                projectile.y < 0 ||
+                                projectile.y > dimensions.height
+                            ) {
+                                enemy.projectiles.splice(index, 1);
+                            }
+                            
+                            // Check for collision with player
+                            if (
+                                projectile.x < player.x + player.width &&
+                                projectile.x + enemy.projectileWidth > player.x &&
+                                projectile.y < player.y + player.height &&
+                                projectile.y + enemy.projectileHeight > player.y
+                            ) {
+                                // Player hit by projectile
+                                player.health -= enemy.attackDamage;
+                                enemy.projectiles.splice(index, 1);
+                                
+                                if (isSoundEnabled) {
+                                    hitSynth.triggerAttackRelease('G3', '8n');
+                                }
+                                
+                                if (player.health <= 0) {
+                                    endGame(false);
+                                }
+                            }
+                        });
+                    }
+                }
+                
+                // Check for collision with player
+                if (checkCollision(player, enemy)) {
+                    // Player takes damage
+                    player.health -= enemy.damage;
+                    
+                    if (isSoundEnabled) {
+                        hitSynth.triggerAttackRelease('C3', '8n');
+                    }
+                    
+                    // Knock back enemy
+                    if (player.x < enemy.x) {
+                        enemy.x += 50;
+                    } else {
+                        enemy.x -= 50;
+                    }
+                    
+                    if (player.health <= 0) {
+                        endGame(false);
+                    }
+                }
+                
+                // Check for collision with player bullets
+                bullets.forEach((bullet, bulletIndex) => {
+                    if (
+                        bullet.x < enemy.x + enemy.width &&
+                        bullet.x + 10 > enemy.x &&
+                        bullet.y < enemy.y + enemy.height &&
+                        bullet.y + 5 > enemy.y
+                    ) {
+                        // Enemy hit by bullet
+                        enemy.health -= bulletDamage;
+                        
+                        // Remove the bullet
+                        bullets.splice(bulletIndex, 1);
+                        
+                        if (isSoundEnabled) {
+                            hitSynth.triggerAttackRelease('E4', '16n');
+                        }
+                        
+                        // Check if enemy is defeated
+                        if (enemy.health <= 0) {
+                            enemy.isAlive = false;
+                            
+                            // Add score based on enemy size
+                            score += enemy.width * 5;
+                            
+                            if (isSoundEnabled) {
+                                deathSynth.triggerAttackRelease('A2', '8n');
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Remove defeated enemies
+            enemies = enemies.filter(enemy => enemy.isAlive);
+        }
+        
+        function updatePlatforms() {
+            platforms.forEach(platform => {
+                if (platform.isMoving) {
+                    // Update platform position
+                    platform.x += platform.moveSpeed * platform.direction;
+                    
+                    // Reverse direction if platform hits an edge or goes too far
+                    if (
+                        platform.x > platform.originalX + 150 ||
+                        platform.x < platform.originalX - 150
+                    ) {
+                        platform.direction *= -1;
+                    }
+                    
+                    // Move player with platform if standing on it
+                    if (
+                        player.y + player.height === platform.y &&
+                        player.x + player.width > platform.x &&
+                        player.x < platform.x + platform.width
+                    ) {
+                        player.x += platform.moveSpeed * platform.direction;
+                    }
+                }
+            });
+        }
+        
+        function updateBullets() {
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                bullets[i].x += bulletSpeed;
+                
+                // Remove bullets that go off screen
+                if (bullets[i].x > dimensions.width) {
+                    bullets.splice(i, 1);
+                }
+            }
+        }
+        
+        // --- Game Control Functions ---
+        
+        function getEnemyCountForWave(wave) {
+            // Increase enemy count based on wave number and difficulty
+            const difficultyMultiplier = {
+                easy: 0.7,
+                medium: 1,
+                hard: 1.5
+            };
+            
+            const baseCount = Math.floor(wave * 1.5);
+            return Math.floor(baseCount * difficultyMultiplier[difficulty]);
+        }
+        
+        function shootBullet() {
+            bullets.push({
+                x: player.x + player.width,
+                y: player.y + player.height / 2 - 2.5
+            });
+            
+            if (isSoundEnabled) {
+                attackSynth.triggerAttackRelease('G4', '32n');
+            }
+        }
+        
+        function endGame(won) {
+            gameRunning = false;
+            cancelAnimationFrame(animationId);
+            
+            if (won) {
+                gameWonOverlay.style.display = 'flex';
+                
+                if (isSoundEnabled) {
+                    gameWonSynth.triggerAttackRelease('C6', '8n', Tone.now());
+                    setTimeout(() => {
+                        gameWonSynth.triggerAttackRelease('E6', '8n', Tone.now());
+                    }, 200);
+                    setTimeout(() => {
+                        gameWonSynth.triggerAttackRelease('G6', '8n', Tone.now());
+                    }, 400);
+                    setTimeout(() => {
+                        gameWonSynth.triggerAttackRelease('C7', '4n', Tone.now());
+                    }, 600);
+                }
+                
+            } else {
+                gameOverOverlay.style.display = 'flex';
+                
+                if (isSoundEnabled) {
+                    gameOverSynth.triggerAttackRelease('C3', '8n', Tone.now());
+                    setTimeout(() => {
+                        gameOverSynth.triggerAttackRelease('G2', '8n', Tone.now());
+                    }, 200);
+                    setTimeout(() => {
+                        gameOverSynth.triggerAttackRelease('E2', '8n', Tone.now());
+                    }, 400);
+                    setTimeout(() => {
+                        gameOverSynth.triggerAttackRelease('C2', '4n', Tone.now());
+                    }, 600);
+                }
+            }
+        }
+        
+        function startGame() {
+            // Hide the instruction box
+            instructionsBox.style.display = 'none';
+            
+            // Reset game state
+            player = createPlayer();
+            enemies = [];
+            bullets = [];
+            gameRunning = true;
+            wave = 1;
+            score = 0;
+            bossFight = false;
+            gameWon = false;
+            
+            // Generate platforms
+            spawnPlatforms();
+            
+            // Spawn initial enemies
+            const enemyCount = getEnemyCountForWave(wave);
+            for (let i = 0; i < enemyCount; i++) {
+                setTimeout(() => {
+                    if (gameRunning) {
+                        spawnEnemy();
+                    }
+                }, i * (enemySpawnInterval / enemyCount));
+            }
+            
+            // Start the game loop
+            gameLoop();
+        }
+        
+        // --- Game Loop ---
+        
+        function gameLoop() {
+            // Clear canvas
+            ctx.clearRect(0, 0, dimensions.width, dimensions.height);
+            
+            // Update game objects
+            updatePlayer();
+            updateEnemies();
+            updatePlatforms();
+            updateBullets();
+            
+            // Draw everything
+            drawPlatforms();
+            drawPlayer();
+            drawEnemies();
+            drawBullets();
+            drawGameInfo();
+            
+            // Continue the game loop
+            if (gameRunning) {
+                animationId = requestAnimationFrame(gameLoop);
+            }
+        }
+        
+        // --- Event Listeners ---
+        
+        // Keyboard controls
+        const keys = {};
+        
+        window.addEventListener('keydown', (e) => {
+            keys[e.code] = true;
+            
+            // Jump with space or up arrow
+            if ((e.code === 'Space' || e.code === 'ArrowUp') && !player.isJumping && gameRunning) {
+                player.velocityY = -12;
+                player.isJumping = true;
+                
+                if (isSoundEnabled) {
+                    jumpSynth.triggerAttackRelease('C5', '16n');
+                }
+            }
+            
+            // Shoot with Z key
+            if (e.code === 'KeyZ' && gameRunning) {
+                shootBullet();
+            }
+        });
+        
+        window.addEventListener('keyup', (e) => {
+            keys[e.code] = false;
+        });
+        
+        // Update player position based on key states
+        function processPlayerMovement() {
+            if (gameRunning) {
+                // Left and right movement
+                if (keys['ArrowLeft'] || keys['KeyA']) {
+                    player.x -= player.speed;
+                    if (player.x < 0) player.x = 0;
+                }
+                if (keys['ArrowRight'] || keys['KeyD']) {
+                    player.x += player.speed;
+                    if (player.x + player.width > dimensions.width) {
+                        player.x = dimensions.width - player.width;
+                    }
+                }
+            }
+        }
+        
+        // Set up interval to process player movement
+        setInterval(processPlayerMovement, 16); // Approximately 60fps
+        
+        // Initialize difficulty buttons
+        difficultyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Set active state
+                difficultyButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Set difficulty
+                difficulty = button.dataset.difficulty;
+                console.log(`Difficulty set to: ${difficulty}`);
+                
+                // Regenerate platforms for the new difficulty
+                if (gameRunning) {
+                    spawnPlatforms();
+                }
+            });
+        });
+        
+        // Set default difficulty
+        document.querySelector(`.difficulty-button[data-difficulty="medium"]`).classList.add('active');
+        
+        // Sound toggle
+        toggleSoundButton.addEventListener('click', () => {
+            isSoundEnabled = !isSoundEnabled;
+            toggleSoundButton.textContent = isSoundEnabled ? 'Sound: On' : 'Sound: Off';
+        });
+        
+        // Restart button event listeners
+        restartButton.addEventListener('click', () => {
+            gameOverOverlay.style.display = 'none';
+            startGame();
+        });
+        
+        restartButtonWin.addEventListener('click', () => {
+            gameWonOverlay.style.display = 'none';
+            startGame();
+        });
+        
+        // Close instructions button
+        closeInstructionsButton.addEventListener('click', () => {
+            startGame();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeCollab Games Marketplace</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #f59e0b;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --card-bg: #111827;
+            --card-border: #374151;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+        }
+        
+        header {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+        
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-weight: 500;
+        }
+        
+        nav a:hover {
+            color: var(--primary);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/games-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            padding: 4rem 1rem;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+        
+        .games-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .section-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(to right, var(--primary), transparent);
+            margin-left: 1rem;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        
+        .game-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--card-border);
+            position: relative;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .game-thumb {
+            height: 180px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .game-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .game-card:hover .game-thumb img {
+            transform: scale(1.05);
+        }
+        
+        .game-info {
+            padding: 1.5rem;
+        }
+        
+        .game-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+        
+        .game-description {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--card-border);
+        }
+        
+        .game-genre {
+            background-color: var(--primary);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 50px;
+            display: inline-block;
+        }
+        
+        .game-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+        
+        .play-button {
+            display: block;
+            background-color: var(--primary);
+            color: white;
+            text-decoration: none;
+            text-align: center;
+            padding: 0.8rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        
+        .play-button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: var(--secondary);
+            color: black;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 0.3rem 0.6rem;
+            border-radius: 50px;
+            z-index: 2;
+        }
+        
+        .new-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #10b981;
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 0.3rem 0.6rem;
+            border-radius: 50px;
+            z-index: 2;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-button {
+            background-color: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--light);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-button:hover, .filter-button.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        footer {
+            background-color: #0f172a;
+            padding: 3rem 1rem;
+            margin-top: 3rem;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-column h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-column a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column a:hover {
+            color: var(--light);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <a href="/" class="logo">VeCollab Games</a>
+            <nav>
+                <ul>
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/games" class="active">Games</a></li>
+                    <li><a href="/marketplace">Marketplace</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <h1>Explore Games</h1>
+        <p>Discover and play amazing blockchain-powered games. Connect your wallet for the full experience or play selected games instantly.</p>
+    </section>
+    
+    <main class="games-container">
+        <div class="filters">
+            <button class="filter-button active">All Games</button>
+            <button class="filter-button">Action</button>
+            <button class="filter-button">Adventure</button>
+            <button class="filter-button">Platformer</button>
+            <button class="filter-button">Strategy</button>
+            <button class="filter-button">Puzzle</button>
+        </div>
+        
+        <h2 class="section-title">Featured Games</h2>
+        
+        <div class="games-grid">
+            <!-- Galactic Hit Game Card -->
+            <div class="game-card">
+                <span class="featured-badge">Featured</span>
+                <span class="new-badge">New</span>
+                <div class="game-thumb">
+                    <img src="/images/galactic-hit-thumb.jpg" alt="Galactic Hit">
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">Galactic Hit</h3>
+                    <p class="game-description">Navigate through space challenges, defeat waves of enemies, and conquer the final boss in this action-packed platformer.</p>
+                    <div class="game-meta">
+                        <span class="game-genre">Platformer</span>
+                        <div class="game-rating">
+                            <span>★★★★★</span>
+                            <span>5.0</span>
+                        </div>
+                    </div>
+                    <a href="/games/galactic-hit.html" class="play-button">Play Now</a>
+                </div>
+            </div>
+            
+            <!-- Coming Soon Game Card -->
+            <div class="game-card">
+                <div class="game-thumb">
+                    <img src="/images/crypto-racer-thumb.jpg" alt="Crypto Racer">
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">Crypto Racer</h3>
+                    <p class="game-description">Race on blockchain-powered tracks, upgrade your NFT cars, and compete against other players.</p>
+                    <div class="game-meta">
+                        <span class="game-genre">Racing</span>
+                        <div class="game-rating">
+                            <span>★★★★☆</span>
+                            <span>4.7</span>
+                        </div>
+                    </div>
+                    <a href="#" class="play-button" style="background-color: #6b7280;">Coming Soon</a>
+                </div>
+            </div>
+            
+            <!-- Coming Soon Game Card -->
+            <div class="game-card">
+                <div class="game-thumb">
+                    <img src="/images/nft-defender-thumb.jpg" alt="NFT Defender">
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">NFT Defender</h3>
+                    <p class="game-description">Protect your NFT collection from digital thieves in this strategic tower defense game.</p>
+                    <div class="game-meta">
+                        <span class="game-genre">Strategy</span>
+                        <div class="game-rating">
+                            <span>★★★★☆</span>
+                            <span>4.5</span>
+                        </div>
+                    </div>
+                    <a href="#" class="play-button" style="background-color: #6b7280;">Coming Soon</a>
+                </div>
+            </div>
+            
+            <!-- Coming Soon Game Card -->
+            <div class="game-card">
+                <div class="game-thumb">
+                    <img src="/images/token-quest-thumb.jpg" alt="Token Quest">
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">Token Quest</h3>
+                    <p class="game-description">Embark on an epic adventure, solve puzzles, and collect valuable tokens in this immersive RPG.</p>
+                    <div class="game-meta">
+                        <span class="game-genre">RPG</span>
+                        <div class="game-rating">
+                            <span>★★★★☆</span>
+                            <span>4.8</span>
+                        </div>
+                    </div>
+                    <a href="#" class="play-button" style="background-color: #6b7280;">Coming Soon</a>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title" style="margin-top: 3rem;">Coming Soon</h2>
+        
+        <div class="games-grid">
+            <!-- More Coming Soon Game Cards -->
+            <div class="game-card">
+                <div class="game-thumb">
+                    <img src="/images/chain-heroes-thumb.jpg" alt="Chain Heroes">
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">Chain Heroes</h3>
+                    <p class="game-description">Collect, trade, and battle with blockchain heroes in this exciting card game.</p>
+                    <div class="game-meta">
+                        <span class="game-genre">Card Game</span>
+                        <div class="game-rating">
+                            <span>⭐ Coming Soon</span>
+                        </div>
+                    </div>
+                    <a href="#" class="play-button" style="background-color: #6b7280;">Coming Soon</a>
+                </div>
+            </div>
+            
+            <div class="game-card">
+                <div class="game-thumb">
+                    <img src="/images/block-builder-thumb.jpg" alt="Block Builder">
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">Block Builder</h3>
+                    <p class="game-description">Build, create, and monetize your own blockchain worlds in this sandbox game.</p>
+                    <div class="game-meta">
+                        <span class="game-genre">Sandbox</span>
+                        <div class="game-rating">
+                            <span>⭐ Coming Soon</span>
+                        </div>
+                    </div>
+                    <a href="#" class="play-button" style="background-color: #6b7280;">Coming Soon</a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>VeCollab Games</h3>
+                <ul>
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/careers">Careers</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="/support">Help Center</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Community</h3>
+                <ul>
+                    <li><a href="/discord">Discord</a></li>
+                    <li><a href="/twitter">Twitter</a></li>
+                    <li><a href="/telegram">Telegram</a></li>
+                    <li><a href="/medium">Medium</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="/developers">Developers</a></li>
+                    <li><a href="/documentation">Documentation</a></li>
+                    <li><a href="/api">API</a></li>
+                    <li><a href="/status">Status</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2023 VeCollab Games. All rights reserved.
+        </div>
+    </footer>
+    
+    <script>
+        // Simple filter button functionality
+        const filterButtons = document.querySelectorAll('.filter-button');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // In a real implementation, this would filter the games
+                console.log(`Filter selected: ${button.textContent}`);
+            });
+        });
+    </script>
+</body>
+</html>
