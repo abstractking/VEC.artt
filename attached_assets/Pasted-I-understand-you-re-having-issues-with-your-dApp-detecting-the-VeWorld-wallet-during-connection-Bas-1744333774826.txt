@@ -1,0 +1,74 @@
+I understand you're having issues with your dApp detecting the VeWorld wallet during connection. Based on the knowledge sources, here are some potential solutions:
+
+## Check Your DApp Kit Configuration
+
+When initializing DApp Kit, make sure you have the correct configuration:
+
+```javascript
+const vechainWalletKitOptions = {
+    // Required - The URL of the node to connect to
+    node: 'https://testnet.vechain.org/', 
+    // Optional - "main" | "test" | Connex.Thor.Block
+    network: 'test', 
+    // Optional - Wallet connect options
+    walletConnectOptions, 
+    // Optional - Defaults to false. If true, the account and source will be persisted in local storage
+    usePersistence: true, 
+    // Optional - Defaults to the first available wallet. Default value is false
+    useFirstDetectedSource: true,
+    // Optional - Set a log level to debug the library
+    logLevel: 'DEBUG'
+};
+```
+
+## Ensure VeWorld is in Allowed Wallets
+
+If you're using the `allowedWallets` parameter, make sure 'veworld' is included:
+
+```javascript
+allowedWallets={['veworld', 'wallet-connect']}
+```
+
+## Check Node Polyfills
+
+DApp Kit requires certain Node.js polyfills to work correctly. If you're using Vite as your bundler, you might need to add these configurations:
+
+```javascript
+// vite.config.ts
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+
+export default defineConfig({
+    plugins: [nodePolyfills()],
+    build: {
+        commonjsOptions: {
+            transformMixedEsModules: true,
+        },
+    }
+})
+```
+
+You might also need to add polyfills for Buffer, process, and global variables:
+
+```javascript
+// src/polyfills.ts
+(window as any).global = window;
+global.Buffer = global.Buffer || require('buffer').Buffer;
+(window as any).process = {
+    env: { DEBUG: undefined },
+    version: '', // to avoid undefined.slice error
+};
+```
+
+## Enable Debug Mode
+
+Set the `logLevel` to 'DEBUG' to get more information about what might be going wrong:
+
+```javascript
+logLevel: 'DEBUG'
+```
+
+## Check WalletConnect Configuration
+
+If you're using WalletConnect, ensure you have a valid project ID from [WalletConnect Cloud](https://cloud.walletconnect.com/sign-up).
+
+If you're still having issues, you might want to check the [VeWorld Support Articles](https://support.veworld.com/support/solutions/103000254706) for more specific troubleshooting steps.
