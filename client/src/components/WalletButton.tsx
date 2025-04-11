@@ -1,21 +1,38 @@
 import React from 'react';
-import { useWallet } from '@vechain/dapp-kit-react';
 import { Button } from '@/components/ui/button';
+import { useWallet } from '../context/WalletContext';
 
 /**
- * Wallet connection button using VeChain DApp Kit
+ * VeChain wallet connection button using our custom wallet context
  */
 export function WalletButton() {
-  const { account, connect, disconnect } = useWallet();
-  
+  const { walletInfo, connectWallet, disconnectWallet, isVeWorldAvailable } = useWallet();
+
+  const handleWalletAction = async () => {
+    if (walletInfo.isConnected) {
+      disconnectWallet();
+    } else {
+      try {
+        if (!isVeWorldAvailable()) {
+          alert('Please install VeWorld wallet extension to connect');
+          window.open('https://www.veworld.net/');
+          return;
+        }
+        await connectWallet();
+      } catch (error) {
+        console.error('Error connecting to wallet:', error);
+      }
+    }
+  };
+
   return (
     <Button
-      onClick={() => (account ? disconnect() : connect())}
+      onClick={handleWalletAction}
       variant="default"
-      className="bg-primary hover:bg-primary-dark text-white"
+      className="bg-primary hover:bg-primary/90 text-white"
     >
-      {account
-        ? `${account.slice(0, 6)}...${account.slice(-4)}`
+      {walletInfo.isConnected && walletInfo.address
+        ? `${walletInfo.address.slice(0, 6)}...${walletInfo.address.slice(-4)}`
         : 'Connect Wallet'}
     </Button>
   );

@@ -70,6 +70,9 @@ export default function Hero() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 font-poppins text-foreground">
               Discover, Collect & Sell <span className="text-primary">NFTs</span> on VeChain
             </h1>
+            <h2 className="text-xl md:text-2xl font-semibold mb-3 text-foreground">
+              A decentralized collaboration platform on VeChain, Think Tank & Marketplace For 1of1 NFT Research
+            </h2>
             <p className="text-lg mb-8 text-muted-foreground">
               The premier decentralized marketplace for VeChain NFTs. Buy, sell, and collect unique digital assets powered by VeChain blockchain technology.
             </p>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation, useRoute } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { useWallet } from "@vechain/dapp-kit-react";
+import { useWallet } from "../context/WalletContext";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -40,7 +40,8 @@ export default function NFTDetail() {
   const { user } = useAuth();
   console.log("NFTDetail - User object:", user); // Debug log to check user structure
   
-  const { account, connect } = useWallet();
+  const { walletInfo, connectWallet } = useWallet();
+  const account = walletInfo.address;
   console.log("NFTDetail - Wallet info:", { account }); // Debug wallet info
   
   const { toast } = useToast();
@@ -156,7 +157,7 @@ export default function NFTDetail() {
   // Handle connect wallet
   const handleConnectWallet = async () => {
     try {
-      connect();
+      await connectWallet();
     } catch (error) {
       toast({
         title: "Wallet Connection Failed",
