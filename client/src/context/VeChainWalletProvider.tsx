@@ -41,19 +41,30 @@ export const VeChainWalletProvider: React.FC<{ children: ReactNode }> = ({ child
 
   // Check if VeWorld wallet is available, or if we're in development environment
   const isVeWorldAvailable = () => {
-    // If we're in development, always return true to enable demo mode
+    // If we're in development or Netlify, always return true to enable demo mode
     const isDevEnv = typeof window !== 'undefined' && (
       window.location.hostname.includes('replit') || 
       window.location.hostname === 'localhost' ||
-      import.meta.env.DEV
+      window.location.hostname === '127.0.0.1' ||
+      import.meta.env.DEV === true ||
+      window.location.href.includes('localhost') ||
+      window.location.href.includes('.app.github.dev') ||
+      window.location.href.includes('127.0.0.1')
     );
     
-    if (isDevEnv) {
+    const isNetlify = typeof window !== 'undefined' && (
+      window.location.hostname.includes('netlify.app')
+    );
+    
+    if (isDevEnv || isNetlify) {
+      console.log(`Using development wallet mode in environment: ${isDevEnv ? 'development' : 'netlify'}`);
       return true;
     }
     
     // Otherwise check for actual VeWorld wallet
-    return typeof window !== 'undefined' && window.vechain !== undefined;
+    const hasVeWorldWallet = typeof window !== 'undefined' && window.vechain !== undefined;
+    console.log(`Checking for real VeWorld wallet: ${hasVeWorldWallet ? 'Available' : 'Not available'}`);
+    return hasVeWorldWallet;
   };
 
   // Connect to VeWorld wallet
@@ -61,74 +72,124 @@ export const VeChainWalletProvider: React.FC<{ children: ReactNode }> = ({ child
     try {
       console.log("Connecting to wallet via vechain.ts connectWallet function");
       
-      // Check if we're in development environment
-      const isDevEnv = window.location.hostname.includes('replit') || 
-                        window.location.hostname === 'localhost' ||
-                        import.meta.env.DEV;
+      // Check if we're in development environment - this needs to match the same logic in vechain.ts
+      const isDevEnv = typeof window !== 'undefined' && (
+        window.location.hostname.includes('replit') || 
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        import.meta.env.DEV === true ||
+        window.location.href.includes('localhost') ||
+        window.location.href.includes('.app.github.dev') ||
+        window.location.href.includes('127.0.0.1')
+      );
       
-      // In development, we'll use environment wallet
-      const walletType = isDevEnv ? 'environment' : 'veworld';
-      console.log(`Using wallet type: ${walletType} based on environment: ${isDevEnv ? 'development' : 'production'}`);
+      // For Netlify specifically, check if we have NETLIFY environment variable
+      const isNetlify = typeof window !== 'undefined' && (
+        window.location.hostname.includes('netlify.app')
+      );
       
-      // Use the official connectWallet function from vechain.ts
-      const result = await connectWallet(walletType);
+      // Use appropriate wallet type based on environment
+      let walletType = 'veworld';
       
-      if (result && result.connex) {
-        if (isDevEnv) {
-          // In development, use a test address
-          const testAddress = '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed';
-          console.log(`Connected to test wallet with address: ${testAddress}`);
+      if (isDevEnv) {
+        walletType = 'environment';
+      } else if (isNetlify) {
+        // Use environment wallet on Netlify as well
+        walletType = 'environment';
+      }
+      
+      console.log(`Using wallet type: ${walletType} in environment: ${isDevEnv ? 'development' : (isNetlify ? 'netlify' : 'production')}`);
+      
+      try {
+        // Use the official connectWallet function from vechain.ts
+        const result = await connectWallet(walletType);
+        
+        if (result && result.connex) {
+          // Always use a test address in development or Netlify environments
+          if (isDevEnv || isNetlify) {
+            const testAddress = '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed';
+            console.log(`Connected to test wallet with address: ${testAddress}`);
+            
+            setWalletInfo({
+              name: 'Development Wallet',
+              address: testAddress,
+              isConnected: true
+            });
+            
+            // Store connection in local storage
+            localStorage.setItem('vechain_connected', 'true');
+            localStorage.setItem('vechain_address', testAddress);
+            return;
+          }
           
+          // For production, try to get the real address
+          try {
+            const provider = await detectVechainProvider().catch(() => null);
+            if (provider) {
+              const accounts = await provider.request({ method: 'eth_accounts' });
+              if (accounts && accounts.length > 0) {
+                console.log(`Connected to wallet with address: ${accounts[0]}`);
+                
+                setWalletInfo({
+                  name: 'VeWorld',
+                  address: accounts[0],
+                  isConnected: true
+                });
+                
+                // Store connection in local storage
+                localStorage.setItem('vechain_connected', 'true');
+                localStorage.setItem('vechain_address', accounts[0]);
+                return;
+              }
+            }
+          } catch (error) {
+            console.error("Error getting accounts:", error);
+          }
+          
+          // Fallback: use a dummy address if we can't get the real one
+          console.log("Falling back to test wallet address");
           setWalletInfo({
-            name: 'Development Wallet',
-            address: testAddress,
+            name: 'VeWorld',
+            address: '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed',
             isConnected: true
           });
           
           // Store connection in local storage
           localStorage.setItem('vechain_connected', 'true');
+          localStorage.setItem('vechain_address', '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed');
+        } else {
+          console.warn("Wallet connection failed: No connex object returned");
+          // Still connect with a test address for demo purposes
+          const testAddress = '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed';
+          setWalletInfo({
+            name: 'Demo Wallet',
+            address: testAddress,
+            isConnected: true
+          });
+          localStorage.setItem('vechain_connected', 'true');
           localStorage.setItem('vechain_address', testAddress);
-          return;
         }
+      } catch (error) {
+        console.error("Wallet connection error details:", error);
         
-        // For production, try to get the real address
-        const provider = await detectVechainProvider().catch(() => null);
-        if (provider) {
-          try {
-            const accounts = await provider.request({ method: 'eth_accounts' });
-            if (accounts && accounts.length > 0) {
-              console.log(`Connected to wallet with address: ${accounts[0]}`);
-              
-              setWalletInfo({
-                name: 'VeWorld',
-                address: accounts[0],
-                isConnected: true
-              });
-              
-              // Store connection in local storage
-              localStorage.setItem('vechain_connected', 'true');
-              localStorage.setItem('vechain_address', accounts[0]);
-              return;
-            }
-          } catch (error) {
-            console.error("Error getting accounts:", error);
-          }
+        // For development or demo environments, still allow the app to function
+        // by connecting with a test wallet address
+        if (isDevEnv || isNetlify) {
+          console.log("Error occurred but continuing with test wallet for development");
+          const testAddress = '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed';
+          setWalletInfo({
+            name: 'Demo Wallet (Error Recovery)',
+            address: testAddress,
+            isConnected: true
+          });
+          localStorage.setItem('vechain_connected', 'true');
+          localStorage.setItem('vechain_address', testAddress);
+        } else {
+          throw error;
         }
-        
-        // Fallback: use a dummy address if we can't get the real one
-        console.log("Falling back to test wallet address");
-        setWalletInfo({
-          name: 'VeWorld',
-          address: '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed',
-          isConnected: true
-        });
-        
-        // Store connection in local storage
-        localStorage.setItem('vechain_connected', 'true');
-        localStorage.setItem('vechain_address', '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed');
       }
     } catch (error) {
-      console.error("Error connecting to wallet:", error);
+      console.error("Error in connectToWallet:", error);
       throw error;
     }
   };
@@ -154,16 +215,27 @@ export const VeChainWalletProvider: React.FC<{ children: ReactNode }> = ({ child
       const storedAddress = localStorage.getItem('vechain_address');
       
       // Check if we're in development environment
-      const isDevEnv = window.location.hostname.includes('replit') || 
-                      window.location.hostname === 'localhost' ||
-                      import.meta.env.DEV;
+      const isDevEnv = typeof window !== 'undefined' && (
+        window.location.hostname.includes('replit') || 
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        import.meta.env.DEV === true ||
+        window.location.href.includes('localhost') ||
+        window.location.href.includes('.app.github.dev') ||
+        window.location.href.includes('127.0.0.1')
+      );
+      
+      // For Netlify specifically
+      const isNetlify = typeof window !== 'undefined' && (
+        window.location.hostname.includes('netlify.app')
+      );
       
       if (isConnected && storedAddress) {
-        // If in development mode, just restore the connection
-        if (isDevEnv) {
+        // If in development or Netlify mode, just restore the connection
+        if (isDevEnv || isNetlify) {
           console.log(`Restoring development wallet connection with address: ${storedAddress}`);
           setWalletInfo({
-            name: 'Development Wallet',
+            name: isNetlify ? 'Netlify Demo Wallet' : 'Development Wallet',
             address: storedAddress,
             isConnected: true
           });
@@ -188,6 +260,17 @@ export const VeChainWalletProvider: React.FC<{ children: ReactNode }> = ({ child
             }
           } catch (error) {
             console.error("Error checking wallet connection:", error);
+            
+            // For development or demo environments, still allow the app to function
+            // by restoring the connection anyway
+            if (isDevEnv || isNetlify) {
+              console.log("Error connecting to wallet provider, but continuing with stored address for development");
+              setWalletInfo({
+                name: 'Development Wallet (Error Recovery)',
+                address: storedAddress,
+                isConnected: true
+              });
+            }
           }
         }
       }
