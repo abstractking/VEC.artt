@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="225" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="225" fill="#0C0C20"/>
+  <radialGradient id="space-bg" cx="50%" cy="50%" r="70%" gradientUnits="userSpaceOnUse">
+    <stop offset="0%" stop-color="#1A1A40"/>
+    <stop offset="100%" stop-color="#0C0C20"/>
+  </radialGradient>
+  <rect width="400" height="225" fill="url(#space-bg)"/>
+  
+  <!-- Stars -->
+  <g fill="#FFFFFF">
+    <circle cx="30" cy="40" r="1" opacity="0.7"/>
+    <circle cx="70" cy="20" r="1.5" opacity="0.8"/>
+    <circle cx="120" cy="50" r="1" opacity="0.6"/>
+    <circle cx="180" cy="30" r="1.2" opacity="0.7"/>
+    <circle cx="230" cy="70" r="1" opacity="0.5"/>
+    <circle cx="280" cy="40" r="1.8" opacity="0.9"/>
+    <circle cx="330" cy="60" r="1" opacity="0.6"/>
+    <circle cx="370" cy="30" r="1.3" opacity="0.7"/>
+    
+    <circle cx="50" cy="90" r="1" opacity="0.6"/>
+    <circle cx="100" cy="110" r="1.5" opacity="0.8"/>
+    <circle cx="160" cy="95" r="1" opacity="0.5"/>
+    <circle cx="210" cy="120" r="1.2" opacity="0.7"/>
+    <circle cx="260" cy="100" r="1" opacity="0.6"/>
+    <circle cx="310" cy="115" r="1.8" opacity="0.9"/>
+    <circle cx="350" cy="90" r="1" opacity="0.5"/>
+    
+    <circle cx="30" cy="150" r="1.2" opacity="0.7"/>
+    <circle cx="80" cy="170" r="1" opacity="0.6"/>
+    <circle cx="140" cy="140" r="1.5" opacity="0.8"/>
+    <circle cx="190" cy="160" r="1" opacity="0.5"/>
+    <circle cx="240" cy="150" r="1.2" opacity="0.7"/>
+    <circle cx="290" cy="180" r="1" opacity="0.6"/>
+    <circle cx="340" cy="155" r="1.8" opacity="0.9"/>
+    <circle cx="380" cy="170" r="1" opacity="0.5"/>
+    
+    <circle cx="40" cy="200" r="1" opacity="0.6"/>
+    <circle cx="100" cy="190" r="1.5" opacity="0.8"/>
+    <circle cx="160" cy="210" r="1" opacity="0.5"/>
+    <circle cx="220" cy="195" r="1.2" opacity="0.7"/>
+    <circle cx="270" cy="205" r="1" opacity="0.6"/>
+    <circle cx="320" cy="200" r="1.8" opacity="0.9"/>
+    <circle cx="370" cy="210" r="1" opacity="0.5"/>
+  </g>
+  
+  <!-- Targets -->
+  <!-- Red Target -->
+  <circle cx="100" cy="80" r="15" fill="#ff0000" opacity="0.8"/>
+  <circle cx="100" cy="80" r="10.5" stroke="#ffffff" stroke-width="2" fill="none"/>
+  <circle cx="100" cy="80" r="6" stroke="#ffffff" stroke-width="1" fill="none"/>
+  
+  <!-- Green Target -->
+  <circle cx="300" cy="140" r="25" fill="#00ff00" opacity="0.8"/>
+  <circle cx="300" cy="140" r="17.5" stroke="#ffffff" stroke-width="2" fill="none"/>
+  <circle cx="300" cy="140" r="10" stroke="#ffffff" stroke-width="1" fill="none"/>
+  
+  <!-- Blue Target -->
+  <circle cx="200" cy="120" r="10" fill="#0000ff" opacity="0.8"/>
+  <circle cx="200" cy="120" r="7" stroke="#ffffff" stroke-width="2" fill="none"/>
+  <circle cx="200" cy="120" r="4" stroke="#ffffff" stroke-width="1" fill="none"/>
+  
+  <!-- Yellow Target -->
+  <circle cx="250" cy="70" r="20" fill="#ffff00" opacity="0.8"/>
+  <circle cx="250" cy="70" r="14" stroke="#ffffff" stroke-width="2" fill="none"/>
+  <circle cx="250" cy="70" r="8" stroke="#ffffff" stroke-width="1" fill="none"/>
+  
+  <!-- Hit Effect -->
+  <circle cx="150" cy="150" r="15" stroke="#ff0000" stroke-width="3" fill="none" opacity="0.7"/>
+  <circle cx="150" cy="150" r="25" stroke="#ff0000" stroke-width="2" fill="none" opacity="0.5"/>
+  <text x="150" y="130" font-family="Arial, sans-serif" font-size="16" fill="#FFFFFF" text-anchor="middle">+10</text>
+  
+  <!-- Crosshair -->
+  <g stroke="#FFFFFF" stroke-width="2">
+    <circle cx="200" cy="80" r="15" fill="none"/>
+    <circle cx="200" cy="80" r="3" fill="#FFFFFF"/>
+    <line x1="180" y1="80" x2="190" y2="80"/>
+    <line x1="210" y1="80" x2="220" y2="80"/>
+    <line x1="200" y1="60" x2="200" y2="70"/>
+    <line x1="200" y1="90" x2="200" y2="100"/>
+  </g>
+  
+  <!-- Game Title -->
+  <text x="200" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Galactic Hit</text>
+  
+  <!-- HUD Elements -->
+  <text x="30" y="220" font-family="Arial, sans-serif" font-size="14" fill="#FFFFFF" text-anchor="start">Score: 125</text>
+  <text x="370" y="220" font-family="Arial, sans-serif" font-size="14" fill="#FFFFFF" text-anchor="end">Time: 45s</text>
+</svg>

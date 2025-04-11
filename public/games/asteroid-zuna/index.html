@@ -1,60 +1,311 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AsteroidZUNA - VeCollab Games</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: #000;
-            font-family: 'Press Start 2P', cursive;
-        }
-        #root {
-            width: 100%;
-            height: 100%;
-        }
-        .game-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-        #hud {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: #0ff;
-            z-index: 10;
-            text-shadow: 0 0 10px #0ff;
-        }
-        .instructions {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #fff;
-            text-align: center;
-            font-size: 12px;
-            opacity: 0.7;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asteroid Zuna Game</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+    }
+    
+    #gameContainer {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    canvas {
+      border: 2px solid #333;
+      background-color: #000;
+      display: block;
+      margin: 0 auto;
+    }
+    
+    #score {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      color: #fff;
+    }
+    
+    #instructions {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+      color: #ccc;
+    }
+  </style>
 </head>
 <body>
-    <div id="root"></div>
-    <div class="instructions">
-        Arrow keys or WASD to move | SPACE to shoot
+  <div id="gameContainer">
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="score">Score: 0</div>
+    <div id="instructions">
+      Use arrow keys to move your ship. Space to shoot.
     </div>
-    <script type="module" src="/src/components/games/AsteroidZunaGame.tsx"></script>
+  </div>
+
+  <script>
+    // Game variables
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreElement = document.getElementById('score');
+    let score = 0;
+    let gameOver = false;
+    
+    // Ship properties
+    const ship = {
+      x: canvas.width / 2,
+      y: canvas.height - 50,
+      width: 30,
+      height: 40,
+      speed: 5,
+      moveLeft: false,
+      moveRight: false,
+      moveUp: false,
+      moveDown: false,
+      isShooting: false
+    };
+    
+    // Bullets array
+    const bullets = [];
+    const bulletSpeed = 7;
+    const bulletSize = 5;
+    
+    // Asteroids array
+    const asteroids = [];
+    const asteroidSpeed = 2;
+    const asteroidSpawnRate = 50; // Lower = more frequent
+    
+    // Keyboard event listeners
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') ship.moveLeft = true;
+      if (e.key === 'ArrowRight') ship.moveRight = true;
+      if (e.key === 'ArrowUp') ship.moveUp = true;
+      if (e.key === 'ArrowDown') ship.moveDown = true;
+      if (e.key === ' ' && !ship.isShooting) {
+        ship.isShooting = true;
+        bullets.push({
+          x: ship.x + ship.width / 2 - bulletSize / 2,
+          y: ship.y - bulletSize,
+          width: bulletSize,
+          height: bulletSize
+        });
+      }
+    });
+    
+    document.addEventListener('keyup', (e) => {
+      if (e.key === 'ArrowLeft') ship.moveLeft = false;
+      if (e.key === 'ArrowRight') ship.moveRight = false;
+      if (e.key === 'ArrowUp') ship.moveUp = false;
+      if (e.key === 'ArrowDown') ship.moveDown = false;
+      if (e.key === ' ') ship.isShooting = false;
+    });
+    
+    // Draw the ship
+    function drawShip() {
+      ctx.fillStyle = '#4466ff';
+      ctx.beginPath();
+      ctx.moveTo(ship.x + ship.width / 2, ship.y);
+      ctx.lineTo(ship.x, ship.y + ship.height);
+      ctx.lineTo(ship.x + ship.width, ship.y + ship.height);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Thruster
+      ctx.fillStyle = '#ff6600';
+      ctx.beginPath();
+      ctx.moveTo(ship.x + ship.width / 3, ship.y + ship.height);
+      ctx.lineTo(ship.x + ship.width / 2, ship.y + ship.height + 10);
+      ctx.lineTo(ship.x + (2 * ship.width) / 3, ship.y + ship.height);
+      ctx.closePath();
+      ctx.fill();
+    }
+    
+    // Draw bullets
+    function drawBullets() {
+      ctx.fillStyle = '#ff0';
+      bullets.forEach(bullet => {
+        ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+      });
+    }
+    
+    // Draw asteroids
+    function drawAsteroids() {
+      ctx.fillStyle = '#aaa';
+      asteroids.forEach(asteroid => {
+        ctx.beginPath();
+        ctx.arc(asteroid.x, asteroid.y, asteroid.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+    
+    // Update bullets
+    function updateBullets() {
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        bullets[i].y -= bulletSpeed;
+        
+        // Remove bullets that go off screen
+        if (bullets[i].y < 0) {
+          bullets.splice(i, 1);
+        }
+      }
+    }
+    
+    // Update asteroids
+    function updateAsteroids() {
+      // Spawn new asteroids randomly
+      if (Math.random() * asteroidSpawnRate < 1) {
+        const radius = Math.random() * 20 + 10; // Random size between 10 and 30
+        asteroids.push({
+          x: Math.random() * canvas.width,
+          y: -radius,
+          radius: radius,
+          speed: asteroidSpeed * (Math.random() + 0.5) // Random speed variation
+        });
+      }
+      
+      // Move asteroids and check for collisions
+      for (let i = asteroids.length - 1; i >= 0; i--) {
+        asteroids[i].y += asteroids[i].speed;
+        
+        // Check collision with ship
+        const dx = asteroids[i].x - (ship.x + ship.width / 2);
+        const dy = asteroids[i].y - (ship.y + ship.height / 2);
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance < asteroids[i].radius + ship.width / 2) {
+          gameOver = true;
+        }
+        
+        // Check collision with bullets
+        for (let j = bullets.length - 1; j >= 0; j--) {
+          const bulletX = bullets[j].x + bullets[j].width / 2;
+          const bulletY = bullets[j].y + bullets[j].height / 2;
+          const bx = asteroids[i].x - bulletX;
+          const by = asteroids[i].y - bulletY;
+          const distance = Math.sqrt(bx * bx + by * by);
+          
+          if (distance < asteroids[i].radius + bullets[j].width / 2) {
+            // Increase score based on asteroid size
+            score += Math.floor(asteroids[i].radius);
+            scoreElement.textContent = `Score: ${score}`;
+            
+            // Remove the bullet and asteroid
+            bullets.splice(j, 1);
+            asteroids.splice(i, 1);
+            
+            // Send game event to parent window
+            window.parent.postMessage({
+              type: 'GAME_EVENT',
+              action: 'ASTEROID_DESTROYED',
+              score: score
+            }, '*');
+            
+            break; // Break since we removed this asteroid
+          }
+        }
+        
+        // Remove asteroids that go off screen
+        if (i < asteroids.length && asteroids[i].y > canvas.height + asteroids[i].radius) {
+          asteroids.splice(i, 1);
+        }
+      }
+    }
+    
+    // Update ship position
+    function updateShip() {
+      if (ship.moveLeft) ship.x = Math.max(0, ship.x - ship.speed);
+      if (ship.moveRight) ship.x = Math.min(canvas.width - ship.width, ship.x + ship.speed);
+      if (ship.moveUp) ship.y = Math.max(0, ship.y - ship.speed);
+      if (ship.moveDown) ship.y = Math.min(canvas.height - ship.height, ship.y + ship.speed);
+    }
+    
+    // Game over screen
+    function showGameOver() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle = '#fff';
+      ctx.font = '48px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 50);
+      
+      ctx.font = '24px Arial';
+      ctx.fillText(`Final Score: ${score}`, canvas.width / 2, canvas.height / 2);
+      
+      ctx.font = '18px Arial';
+      ctx.fillText('Press Space to Play Again', canvas.width / 2, canvas.height / 2 + 50);
+      
+      // Listen for space to restart
+      document.addEventListener('keydown', (e) => {
+        if (e.key === ' ' && gameOver) {
+          resetGame();
+        }
+      });
+    }
+    
+    // Reset game state
+    function resetGame() {
+      ship.x = canvas.width / 2;
+      ship.y = canvas.height - 50;
+      bullets.length = 0;
+      asteroids.length = 0;
+      score = 0;
+      scoreElement.textContent = `Score: ${score}`;
+      gameOver = false;
+      
+      // Send reset event to parent
+      window.parent.postMessage({
+        type: 'GAME_EVENT',
+        action: 'GAME_RESET'
+      }, '*');
+      
+      // Start game loop again
+      gameLoop();
+    }
+    
+    // Main game loop
+    function gameLoop() {
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      if (!gameOver) {
+        // Update positions
+        updateShip();
+        updateBullets();
+        updateAsteroids();
+        
+        // Draw everything
+        drawShip();
+        drawBullets();
+        drawAsteroids();
+        
+        // Continue the game loop
+        requestAnimationFrame(gameLoop);
+      } else {
+        showGameOver();
+      }
+    }
+    
+    // Notify parent that game is loaded
+    window.parent.postMessage({
+      type: 'GAME_EVENT',
+      action: 'GAME_LOADED'
+    }, '*');
+    
+    // Start the game
+    gameLoop();
+  </script>
 </body>
 </html>

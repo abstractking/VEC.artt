@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="225" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="400" height="225" fill="#0A0E1A"/>
+  
+  <!-- Stars -->
+  <g fill="#FFFFFF">
+    <circle cx="30" cy="40" r="1" opacity="0.7"/>
+    <circle cx="70" cy="20" r="1.5" opacity="0.8"/>
+    <circle cx="120" cy="50" r="1" opacity="0.6"/>
+    <circle cx="180" cy="30" r="1.2" opacity="0.7"/>
+    <circle cx="230" cy="70" r="1" opacity="0.5"/>
+    <circle cx="280" cy="40" r="1.8" opacity="0.9"/>
+    <circle cx="330" cy="60" r="1" opacity="0.6"/>
+    <circle cx="370" cy="30" r="1.3" opacity="0.7"/>
+    
+    <circle cx="50" cy="90" r="1" opacity="0.6"/>
+    <circle cx="100" cy="110" r="1.5" opacity="0.8"/>
+    <circle cx="160" cy="95" r="1" opacity="0.5"/>
+    <circle cx="210" cy="120" r="1.2" opacity="0.7"/>
+    <circle cx="260" cy="100" r="1" opacity="0.6"/>
+    <circle cx="310" cy="115" r="1.8" opacity="0.9"/>
+    <circle cx="350" cy="90" r="1" opacity="0.5"/>
+    
+    <circle cx="30" cy="150" r="1.2" opacity="0.7"/>
+    <circle cx="80" cy="170" r="1" opacity="0.6"/>
+    <circle cx="140" cy="140" r="1.5" opacity="0.8"/>
+    <circle cx="190" cy="160" r="1" opacity="0.5"/>
+    <circle cx="240" cy="150" r="1.2" opacity="0.7"/>
+    <circle cx="290" cy="180" r="1" opacity="0.6"/>
+    <circle cx="340" cy="155" r="1.8" opacity="0.9"/>
+    <circle cx="380" cy="170" r="1" opacity="0.5"/>
+    
+    <circle cx="40" cy="200" r="1" opacity="0.6"/>
+    <circle cx="100" cy="190" r="1.5" opacity="0.8"/>
+    <circle cx="160" cy="210" r="1" opacity="0.5"/>
+    <circle cx="220" cy="195" r="1.2" opacity="0.7"/>
+    <circle cx="270" cy="205" r="1" opacity="0.6"/>
+    <circle cx="320" cy="200" r="1.8" opacity="0.9"/>
+    <circle cx="370" cy="210" r="1" opacity="0.5"/>
+  </g>
+  
+  <!-- Spaceship -->
+  <g transform="translate(200, 160)">
+    <!-- Ship Body -->
+    <path d="M0,-30 L-15,10 L15,10 Z" fill="#4D6CFA" stroke="#8BA3FC" stroke-width="2"/>
+    <!-- Thruster -->
+    <path d="M-8,10 L0,20 L8,10 Z" fill="#FF6B00" stroke="#FF9D4D" stroke-width="1"/>
+  </g>
+  
+  <!-- Asteroids -->
+  <g>
+    <!-- Large Asteroid -->
+    <path d="M80,70 L95,65 L105,75 L100,90 L85,95 L75,85 Z" fill="#888888" stroke="#AAAAAA" stroke-width="2"/>
+    
+    <!-- Medium Asteroid -->
+    <path d="M280,100 L290,95 L300,100 L295,110 L285,115 L275,105 Z" fill="#888888" stroke="#AAAAAA" stroke-width="2"/>
+    
+    <!-- Small Asteroid -->
+    <path d="M150,120 L155,118 L160,122 L158,128 L152,130 L148,125 Z" fill="#888888" stroke="#AAAAAA" stroke-width="2"/>
+    
+    <!-- Tiny Asteroid -->
+    <path d="M330,80 L333,78 L336,80 L334,84 L331,85 L328,82 Z" fill="#888888" stroke="#AAAAAA" stroke-width="2"/>
+  </g>
+  
+  <!-- Bullets -->
+  <g fill="#FFDD00">
+    <rect x="198" y="120" width="4" height="8" rx="2"/>
+    <rect x="198" y="100" width="4" height="8" rx="2"/>
+    <rect x="198" y="80" width="4" height="8" rx="2"/>
+  </g>
+  
+  <!-- Game Title -->
+  <text x="200" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FFFFFF" text-anchor="middle">AsteroidZUNA</text>
+</svg>

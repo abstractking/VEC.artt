@@ -20,19 +20,19 @@ const games: Game[] = [
     id: "galactic-hit",
     title: "Galactic Hit",
     thumbnail: "/images/galactic-hit-thumb.jpg",
-    url: "/games/galactic-hit.html"
+    url: "/games/galactic-hit"
   },
   {
     id: "crypto-racer",
     title: "Crypto Racer",
     thumbnail: "/images/crypto-racer-thumb.jpg",
-    url: "/games/index.html"
+    url: "/games/crypto-racer"
   },
   {
     id: "chain-heroes",
     title: "Chain Heroes",
     thumbnail: "/images/chain-heroes-thumb.jpg",
-    url: "/games/index.html"
+    url: "/games/chain-heroes"
   }
 ];
 
