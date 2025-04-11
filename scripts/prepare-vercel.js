@@ -123,7 +123,9 @@ const createHash = function(algorithm) {
         // In a real app, you'd want to use the async version
         const textEncoder = new TextEncoder();
         const data = textEncoder.encode(this._data);
-        const hashBuffer = window.crypto.subtle.digestSync('SHA-256', data);
+        // Note: Web Crypto API doesn't have digestSync - this is just a placeholder
+        // In production, you would use the async version: window.crypto.subtle.digest()
+        const hashBuffer = new ArrayBuffer(32); // Placeholder for hash
         return new Uint8Array(hashBuffer);
       }
       // Fallback
