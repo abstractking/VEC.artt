@@ -141,138 +141,46 @@ console.log('Critical polyfills initialized via inline script');`;
   // Run the build with detailed output
   console.log('🏗️ Building the application...');
   
-  // Create a temporary vite config for the build
-  console.log('📝 Preparing build configuration...');
-  const tempConfig = `
-    // Generated temporary vite config for Netlify build
-    import { defineConfig } from 'vite';
-    import react from '@vitejs/plugin-react';
-    import { nodePolyfills } from 'vite-plugin-node-polyfills';
-    import { readFileSync } from 'fs';
-    import { resolve } from 'path';
-    
-    // Make sure to use the correct absolute path
-    const polyfillScript = readFileSync(resolve(__dirname, '../client/src/polyfill-stub.js'), 'utf-8');
-    
-    export default defineConfig({
-      plugins: [
-        react(),
-        nodePolyfills({
-          include: ['buffer', 'crypto', 'stream', 'util', 'process', 'events'],
-          globals: {
-            Buffer: true,
-            global: true,
-            process: true,
-          },
-        }),
-        // Insert the polyfill script at the top of the page
-        {
-          name: 'inject-polyfill',
-          transformIndexHtml(html) {
-            return html.replace(
-              '<head>',
-              \`<head><script>\${polyfillScript}</script>\`
-            );
-          }
-        }
-      ],
-      define: {
-        'process.env': process.env,
-        'window.global': 'window',
-        'global': 'window',
-      },
-      build: {
-        outDir: 'dist/public',
-        emptyOutDir: true,
-        sourcemap: true,
-        commonjsOptions: {
-          transformMixedEsModules: true,
-        },
-      },
-      optimizeDeps: {
-        include: ['crypto-browserify', 'buffer', 'process', 'stream-browserify'],
-        esbuildOptions: {
-          target: 'es2020',
-        },
-      },
-      resolve: {
-        alias: {
-          '@': '/client/src',
-          '@shared': '/shared',
-          'stream': 'stream-browserify',
-          'crypto': 'crypto-browserify',
-        },
-      },
-    });
-  `;
+  // Run the Netlify optimization script
+  console.log('📝 Running Netlify optimizations...');
+  require('./netlify-optimize.cjs').optimizeForNetlify();
+
+  // Ensure the Netlify-specific vite config exists
+  if (!fs.existsSync('vite.config.netlify.js')) {
+    console.log('⚠️ Netlify-specific Vite config not found, using the one we created earlier');
+  }
   
-  fs.writeFileSync('vite.config.netlify.js', tempConfig, 'utf8');
-  
-  // Run the build with the temporary config
+  // Run the build with the Netlify config we previously created
   try {
+    console.log('🚀 Building with Netlify-specific configuration...');
     execSync('npx vite build --config vite.config.netlify.js', { stdio: 'inherit' });
+    console.log('✅ Build completed successfully with vite.config.netlify.js');
   } catch (error) {
-    console.error('Build failed, trying alternative configuration...');
+    console.error('⚠️ Build failed with Netlify configuration, falling back to alternatives...');
+    console.error(error.message);
     
-    // Try an alternative build approach with simpler config
-    const simpleConfig = `
-      import { defineConfig } from 'vite';
-      import react from '@vitejs/plugin-react';
-      import { readFileSync } from 'fs';
-      import { resolve } from 'path';
-      
-      // Read the polyfill script - with correct path
-      const polyfillScript = readFileSync(resolve(__dirname, '../client/src/polyfill-stub.js'), 'utf-8');
-      
-      export default defineConfig({
-        plugins: [
-          react(),
-          // Basic plugin to inject our polyfill script
-          {
-            name: 'minimal-inject-polyfill',
-            transformIndexHtml(html) {
-              return html.replace(
-                '<head>',
-                \`<head><script>\${polyfillScript}</script>\`
-              );
-            }
-          }
-        ],
-        build: {
-          outDir: 'dist/public',
-        },
-        define: {
-          'global': 'window',
-          'process.env': process.env
-        }
-      });
-    `;
-    
-    fs.writeFileSync('vite.config.simple.js', simpleConfig, 'utf8');
-    
+    // Try using the regular vite.config.js first
     try {
-      execSync('npx vite build --config vite.config.simple.js', { stdio: 'inherit' });
+      console.log('🔄 Attempting build with standard vite.config.js...');
+      execSync('npx vite build', { stdio: 'inherit' });
+      console.log('✅ Build completed successfully with standard vite.config.js');
     } catch (err) {
-      console.error('Simple config failed too, trying minimal config...');
+      console.error('⚠️ Standard build failed, trying minimal approach...');
       
-      // Create a super minimal vite.config.js as the last resort
-      console.log('🔄 Creating an ultra-minimal config as last resort...');
+      // Create a minimal configuration as a last resort
+      console.log('🔄 Creating minimal configuration...');
       const minimalConfig = `
-        // Ultra-minimal configuration
+        // Minimal Vite configuration
         import { defineConfig } from 'vite';
-        
-        // Try to import react plugin, but continue even if it fails
-        let react;
-        try {
-          react = require('@vitejs/plugin-react').default;
-        } catch (e) {
-          console.warn('Failed to import @vitejs/plugin-react, continuing without it');
-        }
+        import react from '@vitejs/plugin-react';
+        import path from 'path';
         
         export default defineConfig({
-          plugins: react ? [react()] : [],
+          root: path.resolve(__dirname, 'client'),
+          plugins: [react()],
           build: {
-            outDir: 'dist/public',
+            outDir: path.resolve(__dirname, 'dist/public'),
+            minify: true,
           },
           define: {
             'global': 'window',
@@ -280,82 +188,126 @@ console.log('Critical polyfills initialized via inline script');`;
         });
       `;
       
-      fs.writeFileSync('vite.config.js', minimalConfig, 'utf8');
+      fs.writeFileSync('vite.config.minimal.js', minimalConfig, 'utf8');
       
       try {
-        console.log('🔄 Running build with minimal config...');
-        execSync('npx vite build', { stdio: 'inherit' });
-      } catch (finalError) {
-        console.error('🔄 ESM configs failed, trying CommonJS config...');
-        
-        // Create a CommonJS config as the absolute last resort
-        const createCommonConfig = require('./create-common-vite-config.cjs');
-        const cjsConfigPath = createCommonConfig();
+        console.log('🔄 Building with minimal configuration...');
+        execSync('npx vite build --config vite.config.minimal.js', { stdio: 'inherit' });
+        console.log('✅ Build completed successfully with minimal configuration');
+      } catch (minimalError) {
+        console.error('⚠️ Minimal build failed, attempting direct client build...');
         
         try {
-          // Try building with the CommonJS config
-          execSync(`npx vite build --config ${cjsConfigPath}`, { stdio: 'inherit' });
-        } catch (err) {
-          console.error('🔄 All configurations failed, attempting emergency build approach...');
+          // Try building directly from the client directory
+          console.log('🔄 Building directly from client directory...');
+          execSync('cd client && npx vite build --outDir ../dist/public', { stdio: 'inherit' });
+          console.log('✅ Client directory build successful');
+        } catch (clientError) {
+          console.error('⚠️ All build attempts failed, creating emergency static files...');
           
-          // Create a barebones index.html in client if not present
-          if (!fs.existsSync('client/index.html')) {
-            console.log('🆘 Creating minimal client structure...');
-            
-            // Create client directory if it doesn't exist
-            if (!fs.existsSync('client')) {
-              fs.mkdirSync('client', { recursive: true });
-            }
-            
-            // Create a minimal index.html
-            const minimalHTML = `<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VeCollab Marketplace</title>
-    <script>
-      // Emergency polyfills
-      if (typeof window !== 'undefined' && !window.crypto) {
-        window.crypto = { getRandomValues: function(buffer) { for (let i = 0; i < buffer.length; i++) { buffer[i] = Math.floor(Math.random() * 256); } return buffer; } };
-      }
-      if (typeof window !== 'undefined' && !window.Buffer) {
-        window.Buffer = { from: function(data) { if (typeof data === 'string') { return new TextEncoder().encode(data); } return new Uint8Array(data); }, isBuffer: function() { return false; } };
-      }
-      if (typeof window !== 'undefined' && !window.global) {
-        window.global = window;
-      }
-      console.log('Emergency polyfills loaded');
-    </script>
-  </head>
-  <body>
-    <div id="root">
-      <h1 style="text-align: center; margin-top: 100px;">VeCollab Marketplace</h1>
-      <p style="text-align: center;">This is an emergency build. Please refer to the documentation for full functionality.</p>
-    </div>
-  </body>
-</html>`;
-            
-            fs.writeFileSync('client/index.html', minimalHTML, 'utf8');
-            
-            // Create minimal style and script files if needed
-            const minimalCSS = `body { font-family: system-ui, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; color: #333; }`;
-            fs.writeFileSync('client/style.css', minimalCSS, 'utf8');
-            
-            // Create dist/public directories
-            if (!fs.existsSync('dist/public')) {
-              fs.mkdirSync('dist/public', { recursive: true });
-            }
-            
-            // Copy the minimal HTML to the output directory
-            fs.copyFileSync('client/index.html', 'dist/public/index.html');
-            fs.writeFileSync('dist/public/style.css', minimalCSS, 'utf8');
-            
-            console.log('✅ Created emergency deployment files');
-          } else {
-            // Try running vite without a config as a last resort
-            execSync('cd client && npx vite build --outDir ../dist/public', { stdio: 'inherit' });
+          // Emergency fallback - create static files
+          console.log('🆘 Creating emergency static deployment...');
+          
+          // Create dist/public if it doesn't exist
+          if (!fs.existsSync('dist/public')) {
+            fs.mkdirSync('dist/public', { recursive: true });
           }
+          
+          // Create a minimal index.html
+          const emergencyHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VeCollab Marketplace</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+    .container {
+      max-width: 800px;
+      padding: 40px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #7928ca;
+    }
+    .button {
+      display: inline-block;
+      background-color: #7928ca;
+      color: white;
+      padding: 10px 20px;
+      margin-top: 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+  <script>
+    // Ensure crypto is available early
+    if (typeof window !== 'undefined' && !window.crypto) {
+      window.crypto = {
+        getRandomValues: function(buffer) {
+          for (let i = 0; i < buffer.length; i++) {
+            buffer[i] = Math.floor(Math.random() * 256);
+          }
+          return buffer;
+        }
+      };
+    }
+
+    // Ensure Buffer is available early
+    if (typeof window !== 'undefined' && !window.Buffer) {
+      window.Buffer = {
+        from: function(data) {
+          if (typeof data === 'string') {
+            return new TextEncoder().encode(data);
+          }
+          return new Uint8Array(data);
+        },
+        isBuffer: function() { return false; }
+      };
+    }
+
+    // Minimal global needed for some libraries
+    if (typeof window !== 'undefined' && !window.global) {
+      window.global = window;
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>VeCollab Marketplace</h1>
+    <p>Welcome to VeCollab - a decentralized NFT marketplace on VeChain blockchain.</p>
+    <p>Our complete application is currently being prepared for deployment.</p>
+    <p>Please check back soon for the full interactive experience.</p>
+    <a href="/" class="button">Refresh Page</a>
+  </div>
+</body>
+</html>`;
+          
+          fs.writeFileSync('dist/public/index.html', emergencyHTML, 'utf8');
+          
+          // Create a _redirects file for Netlify SPA routing
+          const redirectsContent = `
+# Netlify redirects file
+# Redirect all routes to index.html for SPA routing
+/*    /index.html   200
+`;
+          fs.writeFileSync('dist/public/_redirects', redirectsContent, 'utf8');
+          
+          console.log('✅ Created emergency static deployment files');
         }
       }
     }

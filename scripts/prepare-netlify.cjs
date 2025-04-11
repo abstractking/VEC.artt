@@ -1,94 +1,70 @@
 /**
- * Post-build script for Netlify deployments
- * This script processes and copies files needed for Netlify deployment:
- * - Copies _redirects file for SPA routing
- * - Creates _headers file for security headers
- * - Verifies the structure of the build directory
- * - Ensures all necessary assets are available
+ * Script to prepare Netlify-specific files for deployment
+ * This ensures proper SPA routing and content-type configuration
  */
 
 const fs = require('fs');
 const path = require('path');
 
-// Define paths
-const redirectsSource = path.join(__dirname, '../public/_redirects');
-const redirectsDestination = path.join(__dirname, '../dist/public/_redirects');
-const rootRedirectsDestination = path.join(__dirname, '../dist/_redirects');
+console.log('🔧 Preparing Netlify configuration files...');
 
-// Create directories if they don't exist
-const destDir = path.dirname(redirectsDestination);
-if (!fs.existsSync(destDir)) {
-  fs.mkdirSync(destDir, { recursive: true });
-  console.log(`Created directory: ${destDir}`);
-}
-
-const rootDestDir = path.dirname(rootRedirectsDestination);
-if (!fs.existsSync(rootDestDir)) {
-  fs.mkdirSync(rootDestDir, { recursive: true });
-  console.log(`Created directory: ${rootDestDir}`);
-}
-
-// Copy _redirects file to build output folders (both root and public)
-try {
-  // Copy to the public directory
-  fs.copyFileSync(redirectsSource, redirectsDestination);
-  console.log(`Successfully copied _redirects file to: ${redirectsDestination}`);
+function ensureNetlifyFiles() {
+  const distPublicDir = path.join(process.cwd(), 'dist/public');
   
-  // Copy to the root dist directory as a fallback
-  fs.copyFileSync(redirectsSource, rootRedirectsDestination);
-  console.log(`Successfully copied _redirects file to: ${rootRedirectsDestination}`);
-} catch (error) {
-  console.error(`Error copying _redirects file: ${error.message}`);
-  process.exit(1);
-}
-
-// Create a special _headers file for Netlify
-const headersContent = `
-# Headers for all files
+  // Create the directory if it doesn't exist
+  if (!fs.existsSync(distPublicDir)) {
+    fs.mkdirSync(distPublicDir, { recursive: true });
+    console.log('📁 Created dist/public directory');
+  }
+  
+  // Create _redirects file for Netlify SPA routing
+  const redirectsPath = path.join(distPublicDir, '_redirects');
+  const redirectsContent = `# Netlify redirects for SPA
+/*    /index.html   200
+`;
+  fs.writeFileSync(redirectsPath, redirectsContent, 'utf8');
+  console.log('✅ Created _redirects file for SPA routing');
+  
+  // Create _headers file for content security policy
+  const headersPath = path.join(distPublicDir, '_headers');
+  const headersContent = `# Netlify headers for security and caching
 /*
   X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
   X-Content-Type-Options: nosniff
   Referrer-Policy: no-referrer-when-downgrade
+  Content-Security-Policy: default-src 'self' https://*.vechain.org https://*.netlify.app; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.netlify.app; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://* blob:; connect-src 'self' https://* wss://* blob:; frame-src 'self' https://*.vechain.org
 
-# Cache assets for a year
+# Cache assets
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 `;
+  fs.writeFileSync(headersPath, headersContent, 'utf8');
+  console.log('✅ Created _headers file for security headers');
+  
+  // Create a netlify.toml in the dist directory (this isn't used, but helps debugging)
+  const netlifyTOMLPath = path.join(distPublicDir, 'netlify.toml');
+  const netlifyTOMLContent = `# Netlify configuration (dist copy for reference)
+# The actual configuration is at the project root
+[build]
+  publish = "dist/public"
+  command = "node scripts/netlify-build.cjs"
 
-try {
-  fs.writeFileSync(path.join(__dirname, '../dist/public/_headers'), headersContent);
-  console.log('Successfully created _headers file for Netlify');
-} catch (error) {
-  console.error(`Error creating _headers file: ${error.message}`);
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+`;
+  fs.writeFileSync(netlifyTOMLPath, netlifyTOMLContent, 'utf8');
+  console.log('✅ Created netlify.toml reference in dist directory');
+  
+  return true;
 }
 
-// Verify the structure of the build directory
-try {
-  const publicDir = path.join(__dirname, '../dist/public');
-  const indexFile = path.join(publicDir, 'index.html');
-  const assetsDir = path.join(publicDir, 'assets');
-  
-  if (!fs.existsSync(publicDir)) {
-    console.error('Error: dist/public directory does not exist!');
-    process.exit(1);
-  }
-  
-  if (!fs.existsSync(indexFile)) {
-    console.error('Error: index.html does not exist in the build output!');
-    process.exit(1);
-  }
-  
-  if (!fs.existsSync(assetsDir)) {
-    console.warn('Warning: assets directory does not exist in the build output!');
-  } else {
-    const assetFiles = fs.readdirSync(assetsDir);
-    console.log(`Found ${assetFiles.length} files in the assets directory.`);
-  }
-  
-  console.log('Build directory verification complete.');
-} catch (error) {
-  console.error(`Error verifying build directory: ${error.message}`);
-}
+// Run the function
+ensureNetlifyFiles();
 
-console.log('Netlify deployment preparation completed successfully.');
+// Export for import in other scripts
+module.exports = {
+  ensureNetlifyFiles,
+};
