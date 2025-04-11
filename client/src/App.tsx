@@ -57,18 +57,47 @@ function Router() {
 }
 
 function App() {
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    // Simulate minimal load time to prevent flash
+    setTimeout(() => setIsLoading(false), 100);
+  }, []);
+
+  if (isLoading) {
+    return <div style={{ padding: 20 }}>Loading...</div>;
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
-      <VeChainDAppKitProvider>
-        <WalletProvider>
-          <AuthProvider>
-            <Router />
-            <Toaster />
-          </AuthProvider>
-        </WalletProvider>
-      </VeChainDAppKitProvider>
+      <ErrorBoundary fallback={<div>Something went wrong</div>}>
+        <VeChainDAppKitProvider>
+          <WalletProvider>
+            <AuthProvider>
+              <Router />
+              <Toaster />
+            </AuthProvider>
+          </WalletProvider>
+        </VeChainDAppKitProvider>
+      </ErrorBoundary>
     </QueryClientProvider>
   );
+}
+
+// Basic error boundary component
+class ErrorBoundary extends React.Component<{children: React.ReactNode, fallback: React.ReactNode}> {
+  state = { hasError: false };
+  
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
 }
 
 export default App;
