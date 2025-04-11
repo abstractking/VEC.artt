@@ -84,15 +84,31 @@ If you encounter deployment issues:
 
 5. **Syntax Errors in Scripts**: If you encounter errors like "missing ) after argument list" or other syntax issues in the preparation scripts, check for mismatched backticks, parentheses or braces in `scripts/prepare-vercel.js` and `scripts/post-build-vercel.js`.
 
-6. **Dependency Warnings**: Address deprecated packages and vulnerability warnings by running:
+6. **Dependency Warnings**: Address dependency conflicts by adding the following to your vercel.json:
+   ```json
+   "installCommand": "npm ci --legacy-peer-deps"
    ```
-   # Use the --legacy-peer-deps flag to handle dependency conflicts with Hardhat
-   npm install uuid@latest lodash.isequal@latest --legacy-peer-deps
-   npm audit fix --legacy-peer-deps
    
-   # Alternatively, manually install missing Hardhat peer dependencies
-   npm install @nomicfoundation/hardhat-chai-matchers@^2.0.0 @nomicfoundation/hardhat-ethers@^3.0.0 @nomicfoundation/hardhat-ignition-ethers@^0.15.0 @nomicfoundation/hardhat-network-helpers@^1.0.0 @nomicfoundation/hardhat-verify@^2.0.0 @typechain/ethers-v6@^0.5.0 @typechain/hardhat@^9.0.0 @types/chai@^4.2.0 @types/mocha@>=9.1.0 chai@^4.2.0 ethers@^6.4.0 --legacy-peer-deps
+   Or by running the following if you're using npm install directly:
    ```
+   # Use the --legacy-peer-deps flag to handle dependency conflicts
+   npm install --legacy-peer-deps
+   ```
+
+7. **Hardhat and Chai Version Conflicts**: The specific dependency conflict between @types/chai and hardhat-chai-matchers can be resolved in a few ways:
+   
+   - Option 1: Use the --legacy-peer-deps flag in your install command (recommended for Vercel)
+   
+   - Option 2: If not using Vercel, create a .npmrc file with:
+     ```
+     legacy-peer-deps=true
+     ```
+     
+   - Option 3: If you're experiencing issues specifically with chai versions, you can try to temporarily downgrade:
+     ```
+     # If using npm directly (not on Vercel)
+     npm install @types/chai@4.2.0 --save-dev --legacy-peer-deps
+     ```
 
 ## Additional Resources
 
