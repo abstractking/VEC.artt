@@ -1,0 +1,80 @@
+🏗️ Building the application...
+2:56:34 PM: 📝 Preparing build configuration...
+2:56:35 PM: failed to load config from /opt/build/repo/vite.config.netlify.js
+2:56:35 PM: error during build:
+2:56:35 PM: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@vitejs/plugin-react' imported from /opt/build/repo/vite.config.netlify.js.timestamp-1744401395552-164d3455b0e2f.mjs
+2:56:35 PM:     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:268:9)
+2:56:35 PM:     at packageResolve (node:internal/modules/esm/resolve:768:81)
+2:56:35 PM:     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+2:56:35 PM:     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+2:56:35 PM:     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:685:12)
+2:56:35 PM:     at #cachedDefaultResolve (node:internal/modules/esm/loader:634:25)
+2:56:35 PM:     at ModuleLoader.resolve (node:internal/modules/esm/loader:617:38)
+2:56:35 PM:     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:273:38)
+2:56:35 PM:     at ModuleJob._link (node:internal/modules/esm/module_job:135:49)
+2:56:35 PM: Build failed, trying alternative configuration...
+2:56:35 PM: failed to load config from /opt/build/repo/vite.config.simple.js
+2:56:35 PM: error during build:
+2:56:35 PM: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@vitejs/plugin-react' imported from /opt/build/repo/vite.config.simple.js.timestamp-1744401395953-08bd7139284a2.mjs
+2:56:35 PM:     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:268:9)
+2:56:35 PM:     at packageResolve (node:internal/modules/esm/resolve:768:81)
+2:56:35 PM:     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+2:56:35 PM:     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+2:56:35 PM:     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:685:12)
+2:56:35 PM:     at #cachedDefaultResolve (node:internal/modules/esm/loader:634:25)
+2:56:35 PM:     at ModuleLoader.resolve (node:internal/modules/esm/loader:617:38)
+2:56:35 PM:     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:273:38)
+2:56:35 PM:     at ModuleJob._link (node:internal/modules/esm/module_job:135:49)
+2:56:35 PM: ❌ Build failed: Command failed: npx vite build --config vite.config.simple.js
+2:56:35 PM: ​
+2:56:35 PM: "build.command" failed                                        
+2:56:35 PM: ────────────────────────────────────────────────────────────────
+2:56:35 PM: ​
+2:56:35 PM:   Error message
+2:56:35 PM:   Command failed with exit code 1: node scripts/netlify-build.cjs (https://ntl.fyi/exit-code-1)
+2:56:35 PM: ​
+2:56:35 PM:   Error location
+2:56:35 PM:   In build.command from netlify.toml:
+2:56:35 PM:   node scripts/netlify-build.cjs
+2:56:35 PM: ​
+2:56:35 PM:   Resolved config
+2:56:35 PM:   build:
+2:56:35 PM:     command: node scripts/netlify-build.cjs
+2:56:35 PM:     commandOrigin: config
+2:56:35 PM:     environment:
+2:56:35 PM:       - ITE_DEPLOYMENT_ENV
+2:56:35 PM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+2:56:35 PM:       - VITE_REACT_APP_VECHAIN_NETWORK
+2:56:35 PM:       - VITE_VECHAIN_EXPLORER_URL
+2:56:35 PM:       - VITE_VECHAIN_MAINNET_GENESIS_ID
+2:56:35 PM:       - VITE_VECHAIN_PRIVATE_KEY
+2:56:35 PM:       - VITE_VECHAIN_TESTNET_GENESIS_ID
+2:56:35 PM:       - VITE_WALLETCONNECT_PROJECT_ID
+2:56:35 PM:       - NETLIFY_CACHE_BUST
+2:56:35 PM:       - NODE_ENV
+2:56:35 PM:       - NPM_FLAGS
+2:56:35 PM:       - CI_NPM_FLAGS
+2:56:35 PM:       - VITE_VECHAIN_NODE_URL_TESTNET
+2:56:35 PM:       - VITE_VECHAIN_NODE_URL_MAINNET
+2:56:35 PM:     publish: /opt/build/repo/dist/public
+2:56:35 PM:     publishOrigin: config
+2:56:35 PM:   headers:
+2:56:36 PM:     - for: /*
+      values:
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: /assets/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+2:56:36 PM: Build failed due to a user error: Build script returned non-zero exit code: 2
+2:56:36 PM: Failing build: Failed to build site
+2:56:36 PM: Finished processing build request in 1m38.716s
+2:56:36 PM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)

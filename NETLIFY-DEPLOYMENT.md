@@ -51,10 +51,31 @@ If build failures occur:
 4. Check that environment variables are properly set in Netlify settings
 5. Try clearing the Netlify cache and redeploying
 
+### Known Issues and Solutions
+
+#### Missing @vitejs/plugin-react Error
+If you see an error like `Cannot find package '@vitejs/plugin-react'`, this indicates that the React plugin dependency is not being correctly installed or located. Our build script implements multiple fallback mechanisms:
+
+1. It attempts to install the package globally and locally
+2. It provides fallback configurations that can work without the plugin
+3. It includes a CommonJS fallback configuration for environments that have issues with ESM imports
+4. As a last resort, it attempts to build without any configuration
+
+The most reliable solution is to ensure that `@vitejs/plugin-react` is explicitly listed in both the dependencies and devDependencies sections of package.json.
+
 ## Implementation Notes
 
-- We use a multi-stage fallback approach in the build script
+- We use a multi-stage fallback approach in the build script with multiple configuration options:
+  1. Main configuration with full node polyfills and React plugin
+  2. Simplified configuration with React plugin only
+  3. Ultra-minimal ESM configuration with optional React plugin
+  4. CommonJS configuration as a last resort
+  5. Direct build without configuration if all else fails
 - We inject polyfills directly into the HTML before any JavaScript executes
+- We install dependencies in multiple ways to ensure they're available:
+  1. Global installation of critical tools
+  2. Full package installation from package.json
+  3. Individual critical package installation with error handling
 - We provide environment-specific handling for VeChain wallet connections
 - We use various polyfill techniques to ensure compatibility across environments
 

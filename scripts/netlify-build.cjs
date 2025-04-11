@@ -15,7 +15,14 @@ console.log('📦 Starting Netlify build process...');
 try {
   // Make sure we have all the necessary dependencies
   console.log('🔍 Ensuring build dependencies are installed...');
-  execSync('npm install -g vite esbuild', { stdio: 'inherit' });
+  try {
+    // First try with global install
+    execSync('npm install -g vite esbuild @vitejs/plugin-react', { stdio: 'inherit' });
+  } catch (e) {
+    console.warn('⚠️ Global install failed, trying local install...');
+    // If global install fails, try local install
+    execSync('npm install vite esbuild @vitejs/plugin-react', { stdio: 'inherit' });
+  }
   
   // Create the polyfill stub directly to avoid path issues
   console.log('📝 Creating polyfill stub...');
@@ -72,7 +79,23 @@ console.log('Critical polyfills initialized via inline script');`;
   
   // Also install the critical packages explicitly in case they were missed
   console.log('🔍 Installing critical packages explicitly...');
-  execSync('npm install --no-save @vitejs/plugin-react vite-plugin-node-polyfills typescript crypto-browserify buffer', { stdio: 'inherit' });
+  try {
+    // Install packages one by one to ensure they each get installed properly
+    execSync('npm install --no-save @vitejs/plugin-react', { stdio: 'inherit' });
+    execSync('npm install --no-save vite-plugin-node-polyfills', { stdio: 'inherit' });
+    execSync('npm install --no-save typescript', { stdio: 'inherit' });
+    execSync('npm install --no-save crypto-browserify', { stdio: 'inherit' });
+    execSync('npm install --no-save buffer', { stdio: 'inherit' });
+    // Check if react plugin is installed correctly
+    const modulePath = path.resolve('./node_modules/@vitejs/plugin-react');
+    if (!fs.existsSync(modulePath)) {
+      console.warn('⚠️ @vitejs/plugin-react not found in node_modules, trying alternative install...');
+      execSync('npm install --legacy-peer-deps --no-save @vitejs/plugin-react', { stdio: 'inherit' });
+    }
+  } catch (e) {
+    console.warn('⚠️ Some dependency installations failed, but continuing with build process...');
+    console.error(e.message);
+  }
   
   // Clean cache
   console.log('🧹 Cleaning build cache...');
@@ -210,20 +233,51 @@ console.log('Critical polyfills initialized via inline script');`;
       console.error('Simple config failed too, trying minimal config...');
       
       // Create a super minimal vite.config.js as the last resort
+      console.log('🔄 Creating an ultra-minimal config as last resort...');
       const minimalConfig = `
+        // Ultra-minimal configuration
         import { defineConfig } from 'vite';
-        import react from '@vitejs/plugin-react';
+        
+        // Try to import react plugin, but continue even if it fails
+        let react;
+        try {
+          react = require('@vitejs/plugin-react').default;
+        } catch (e) {
+          console.warn('Failed to import @vitejs/plugin-react, continuing without it');
+        }
         
         export default defineConfig({
-          plugins: [react()],
+          plugins: react ? [react()] : [],
           build: {
             outDir: 'dist/public',
+          },
+          define: {
+            'global': 'window',
           }
         });
       `;
       
       fs.writeFileSync('vite.config.js', minimalConfig, 'utf8');
-      execSync('npx vite build', { stdio: 'inherit' });
+      
+      try {
+        console.log('🔄 Running build with minimal config...');
+        execSync('npx vite build', { stdio: 'inherit' });
+      } catch (finalError) {
+        console.error('🔄 ESM configs failed, trying CommonJS config...');
+        
+        // Create a CommonJS config as the absolute last resort
+        const createCommonConfig = require('./create-common-vite-config.cjs');
+        const cjsConfigPath = createCommonConfig();
+        
+        try {
+          // Try building with the CommonJS config
+          execSync(`npx vite build --config ${cjsConfigPath}`, { stdio: 'inherit' });
+        } catch (err) {
+          console.error('🔄 All configurations failed, attempting direct build...');
+          // As an absolute last resort, try to run vite without any config
+          execSync('cd client && npx vite build --outDir ../dist/public', { stdio: 'inherit' });
+        }
+      }
     }
   }
   
