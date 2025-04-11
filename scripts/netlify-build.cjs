@@ -18,11 +18,11 @@ try {
   try {
     // Force install of critical packages globally
     console.log('💻 Installing global dependencies...');
-    execSync('npm install -g vite esbuild @vitejs/plugin-react postcss tailwindcss autoprefixer', { stdio: 'inherit' });
+    execSync('npm install -g vite esbuild @vitejs/plugin-react postcss tailwindcss autoprefixer vite-plugin-node-polyfills path crypto-browserify stream-browserify buffer', { stdio: 'inherit' });
     
     // Also install them locally to ensure they're available in the local node_modules
     console.log('💻 Installing local dependencies...');
-    execSync('npm install --no-save vite esbuild @vitejs/plugin-react postcss tailwindcss autoprefixer', { stdio: 'inherit' });
+    execSync('npm install --no-save vite esbuild @vitejs/plugin-react postcss tailwindcss autoprefixer vite-plugin-node-polyfills path crypto-browserify stream-browserify buffer', { stdio: 'inherit' });
     
     // Create symlinks to ensure node can find them
     console.log('🔗 Creating dependency symlinks...');
