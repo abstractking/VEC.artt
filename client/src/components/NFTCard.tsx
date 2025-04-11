@@ -131,15 +131,15 @@ export default function NFTCard({ nft }: NFTCardProps) {
   };
 
   return (
-    <Link href={`/nft/${nft.id}`} className="block w-full h-full">
-      <div className="bg-card rounded-xl shadow-sm border border-border cursor-pointer h-full transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] hover:border-primary/30 group">
-        <div className="relative overflow-hidden">
-          <div className="w-full h-64 bg-muted object-cover rounded-t-xl overflow-hidden">
+    <Link href={`/nft/${nft.id}`} className="block w-full h-full group/card">
+      <div className="bg-card rounded-xl shadow-sm border border-border cursor-pointer h-full transition-all duration-300 ease-out hover:shadow-lg hover:shadow-primary/5 hover:translate-y-[-3px] hover:border-primary/30 group will-change-transform">
+        <div className="relative overflow-hidden rounded-t-xl">
+          <div className="w-full h-64 bg-muted object-cover overflow-hidden">
             {nft.imageUrl ? (
               <img
                 src={nft.imageUrl}
                 alt={nft.name}
-                className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform duration-700 ease-in-out group-hover:scale-105 will-change-transform"
                 onError={(e) => {
                   // Detailed error logging
                   const imgElement = e.target as HTMLImageElement;
@@ -154,15 +154,18 @@ export default function NFTCard({ nft }: NFTCardProps) {
                 }}
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center transition-colors duration-300 group-hover:bg-muted/80">
-                <svg className="w-12 h-12 text-muted-foreground transition-transform duration-300 group-hover:scale-110" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-full h-full flex items-center justify-center transition-all duration-300 group-hover:bg-muted/80">
+                <svg className="w-12 h-12 text-muted-foreground transition-all duration-300 group-hover:scale-110 group-hover:text-primary/70" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
             )}
             
             {/* Overlay effect on hover */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out"></div>
+            
+            {/* Subtle glow effect */}
+            <div className="absolute -inset-1 bg-primary/0 group-hover:bg-primary/5 rounded-xl blur opacity-0 group-hover:opacity-100 transition-all duration-300 -z-10"></div>
           </div>
           
           {/* Favorite button */}
