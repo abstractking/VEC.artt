@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { createContext, useContext, useCallback, useState, useEffect, ReactNode } from 'react';
-import { DAppKitUI } from '@vechain/dapp-kit-ui';
 import { useToast } from '@/hooks/use-toast';
 import { Network, NETWORKS } from '@/lib/Network';
 import { VeChainWalletType } from '@/lib/wallet-detection';
+import { loadDAppKitUI, createDAppKitConfig, isBrowser, isMobileDevice } from '@/lib/dappkit-helpers';
 
 // Define types for our context
 type VeChainDAppKitContextType = {
@@ -92,86 +92,145 @@ export const VeChainDAppKitProvider: React.FC<VeChainDAppKitProviderProps> = ({
   
   // Initialize DAppKit
   useEffect(() => {
-    try {
-      // Set up WalletConnect options
-      const walletConnectOptions = {
-        projectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || '5e81b15898eb5b868a361ed4f72f1293',
-        metadata: {
-          name: 'VeCollab',
-          description: 'A decentralized collaboration platform on VeChain',
-          url: window.location.origin,
-          icons: [`${window.location.origin}/logo.png`],
-        },
-      };
-      
-      // Create DAppKit with options - follow the exact structure from the documentation
-      // Use DAppKitUI.configure() instead of constructor
-      const options = {
-        nodeUrl: config.node, // Must use nodeUrl, not node
-        genesis: config.genesisId, // Use exact genesis ID instead of network name
-        useFirstDetectedSource: false,
-        usePersistence: true,
-        walletConnectOptions,
-        logLevel: process.env.NODE_ENV === 'development' ? 'DEBUG' : 'ERROR',
-        themeMode: 'LIGHT',
-        allowedWallets: ['veworld', 'sync2', 'wallet-connect']
-      };
-      
-      console.log("[DAppKit] Configuration", JSON.stringify(options));
-      
-      // Configure DAppKit and get instance
-      const veChainDAppKit = DAppKitUI.configure(options as any); // Use type casting for now
-      
-      // Set DAppKit instance
-      setDappKit(veChainDAppKit);
-      
-      // Check if we already have a connection from persistence
-      if (veChainDAppKit.wallet.state.account) {
-        setAccount(veChainDAppKit.wallet.state.account);
-        setIsConnected(true);
+    // Don't initialize if we're running server-side
+    if (!isBrowser()) return;
+
+    const initDAppKit = async () => {
+      try {
+        // Dynamically import DAppKit module
+        const { DAppKitUI, error: importError } = await loadDAppKitUI();
+        
+        if (importError || !DAppKitUI) {
+          console.error('[DAppKit] Failed to load DAppKit:', importError);
+          setError(importError || new Error('Failed to load DAppKit module'));
+          return;
+        }
+        
+        // Get network type (main or test)
+        const networkName = config.network === 'main' ? 'main' : 'test';
+        
+        // Create DAppKit configuration using helper
+        const options = createDAppKitConfig(networkName as 'main' | 'test', config.node);
+        
+        console.log("[DAppKit] Configuration", JSON.stringify(options));
+        console.log("[DAppKit] Environment:", import.meta.env.MODE);
+        
+        try {
+          // Configure DAppKit with a timeout
+          const veChainDAppKit = await Promise.race([
+            Promise.resolve(DAppKitUI.configure(options)),
+            new Promise<never>((_, reject) => 
+              setTimeout(() => reject(new Error('DAppKit initialization timed out')), 8000)
+            )
+          ]);
+          
+          console.log("[DAppKit] Initialized successfully");
+          
+          // Set DAppKit instance
+          setDappKit(veChainDAppKit);
+          
+          // Check if we already have a connection from persistence
+          if (veChainDAppKit?.wallet?.state?.account) {
+            setAccount(veChainDAppKit.wallet.state.account);
+            setIsConnected(true);
+            console.log("[DAppKit] Restored previous connection to account:", veChainDAppKit.wallet.state.account);
+          }
+          
+          // Register event listeners if wallet API is available
+          if (veChainDAppKit?.wallet) {
+            // Set up event listeners
+            const onConnect = (account: string) => {
+              console.log('[DAppKit] Connected to account:', account);
+              setAccount(account);
+              setIsConnected(true);
+              setIsConnecting(false);
+            };
+            
+            const onDisconnect = () => {
+              console.log('[DAppKit] Disconnected');
+              setAccount(null);
+              setIsConnected(false);
+            };
+            
+            const onError = (error: Error) => {
+              console.error('[DAppKit] Error:', error);
+              setError(error);
+              setIsConnecting(false);
+            };
+            
+            // Safely register event listeners
+            if (typeof veChainDAppKit.wallet.on === 'function') {
+              veChainDAppKit.wallet.on('connect', onConnect);
+              veChainDAppKit.wallet.on('disconnect', onDisconnect);
+              veChainDAppKit.wallet.on('error', onError);
+              
+              // Clean up event listeners
+              return () => {
+                if (veChainDAppKit && typeof veChainDAppKit.wallet.off === 'function') {
+                  try {
+                    veChainDAppKit.wallet.off('connect', onConnect);
+                    veChainDAppKit.wallet.off('disconnect', onDisconnect);
+                    veChainDAppKit.wallet.off('error', onError);
+                  } catch (cleanupError) {
+                    console.error('[DAppKit] Error during cleanup:', cleanupError);
+                  }
+                }
+              };
+            }
+          }
+        } catch (configError) {
+          console.error('[DAppKit] Configuration error:', configError);
+          setError(configError instanceof Error ? configError : new Error(String(configError)));
+          
+          // Show error notification in development mode
+          if (import.meta.env.DEV) {
+            toast({
+              title: "DAppKit Configuration Error",
+              description: configError instanceof Error ? configError.message : String(configError),
+              variant: "destructive"
+            });
+          }
+        }
+      } catch (err) {
+        console.error('[DAppKit] Initialization error:', err);
+        setError(err instanceof Error ? err : new Error(String(err)));
       }
-      
-      // Set up event listeners
-      const onConnect = (account: string) => {
-        console.log('DAppKit connected to account:', account);
-        setAccount(account);
-        setIsConnected(true);
-        setIsConnecting(false);
-      };
-      
-      const onDisconnect = () => {
-        console.log('DAppKit disconnected');
-        setAccount(null);
-        setIsConnected(false);
-      };
-      
-      const onError = (error: Error) => {
-        console.error('DAppKit error:', error);
-        setError(error);
-        setIsConnecting(false);
-      };
-      
-      // Register events
-      veChainDAppKit.wallet.on('connect', onConnect);
-      veChainDAppKit.wallet.on('disconnect', onDisconnect);
-      veChainDAppKit.wallet.on('error', onError);
-      
-      // Clean up event listeners
-      return () => {
-        veChainDAppKit.wallet.off('connect', onConnect);
-        veChainDAppKit.wallet.off('disconnect', onDisconnect);
-        veChainDAppKit.wallet.off('error', onError);
-      };
-    } catch (err) {
-      console.error('Error initializing DAppKit:', err);
-      setError(err instanceof Error ? err : new Error(String(err)));
-    }
-  }, [config.node, config.network]);
+    };
+    
+    // Initialize DAppKit with a small delay to let React fully render
+    // This helps with Netlify deployments and browser inconsistencies
+    setTimeout(() => {
+      initDAppKit();
+    }, 500);
+    
+  }, [config.node, config.network, toast]);
   
   // Connect to wallet with specific wallet type
   const connect = useCallback(async (walletType?: VeChainWalletType) => {
+    // If DAppKit is not initialized, attempt to show a better error message
     if (!dappKit) {
-      setError(new Error('DAppKit not initialized'));
+      console.error('[DAppKit] Connection attempt failed - DAppKit not initialized');
+      
+      // Check if we're on a mobile device without a proper wallet
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+      
+      if (isMobileDevice) {
+        setError(new Error('Please install the VeWorld mobile app or use Sync2 mobile app to connect'));
+        toast({
+          title: "Mobile Wallet Required",
+          description: "For mobile devices, please install the VeWorld or Sync2 mobile wallet app to connect",
+          variant: "destructive"
+        });
+      } else {
+        setError(new Error('DAppKit not initialized. Please ensure VeWorld or Sync2 extension is installed'));
+        toast({
+          title: "Wallet Connection Failed",
+          description: "Please make sure you have the VeWorld or Sync2 extension installed and refresh the page",
+          variant: "destructive"
+        });
+      }
       return;
     }
     
@@ -179,16 +238,33 @@ export const VeChainDAppKitProvider: React.FC<VeChainDAppKitProviderProps> = ({
       setIsConnecting(true);
       setError(null);
       
+      console.log('[DAppKit] Connecting to wallet type:', walletType);
+      
       // Map wallet type to DAppKit source
       const source = mapWalletType(walletType);
       
       if (source) {
         // Set specific source if provided
-        await dappKit.wallet.setSource(source);
+        console.log('[DAppKit] Setting wallet source:', source);
+        try {
+          await dappKit.wallet.setSource(source);
+        } catch (sourceError) {
+          console.error('[DAppKit] Failed to set wallet source:', sourceError);
+          throw new Error(`Failed to set wallet source: ${sourceError.message || 'Unknown error'}`);
+        }
+      } else {
+        console.log('[DAppKit] No source specified, using default source');
       }
       
-      // Connect to wallet
-      const response = await dappKit.wallet.connect();
+      // Connect to wallet with a timeout to avoid hanging
+      const response = await Promise.race([
+        dappKit.wallet.connect(),
+        new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error('Wallet connection timed out after 15 seconds')), 15000)
+        )
+      ]);
+      
+      console.log('[DAppKit] Connection response:', response);
       
       // Update state with connected account
       if (response && response.address) {
@@ -199,16 +275,35 @@ export const VeChainDAppKitProvider: React.FC<VeChainDAppKitProviderProps> = ({
           title: "Wallet Connected",
           description: `Connected to ${response.address.substring(0, 6)}...${response.address.substring(response.address.length - 4)}`,
         });
+        
+        // Log additional connection information if available
+        if (response.verified !== undefined) {
+          console.log('[DAppKit] Connection verified:', response.verified);
+        }
       } else {
         throw new Error('No address returned from wallet connection');
       }
     } catch (err) {
-      console.error('Wallet connection error:', err);
-      setError(err instanceof Error ? err : new Error(String(err)));
+      console.error('[DAppKit] Wallet connection error:', err);
+      
+      // Provide a more specific error message based on the error
+      let errorMessage = '';
+      
+      if (err.message?.includes('User rejected')) {
+        errorMessage = 'Connection request was rejected by user';
+      } else if (err.message?.includes('timed out')) {
+        errorMessage = 'Connection timed out. Please check if your wallet is unlocked and try again';
+      } else if (err.message?.includes('not installed') || err.message?.includes('not found')) {
+        errorMessage = 'Wallet not detected. Please make sure you have the wallet installed';
+      } else {
+        errorMessage = err instanceof Error ? err.message : String(err);
+      }
+      
+      setError(err instanceof Error ? err : new Error(errorMessage));
       
       toast({
         title: "Connection Failed",
-        description: err instanceof Error ? err.message : String(err),
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
