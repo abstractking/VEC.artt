@@ -1,0 +1,61 @@
+[17:39:17.514] Cloning github.com/abstractking/VEC.artt (Branch: main, Commit: 0326304)
+[17:39:17.979] Previous build caches not available
+[17:39:18.680] Cloning completed: 1.166s
+[17:39:18.939] Running build in Washington, D.C., USA (East) – iad1
+[17:39:19.128] Running "vercel build"
+[17:39:19.503] Vercel CLI 41.5.0
+[17:39:20.415] Running "install" command: `npm ci --legacy-peer-deps`...
+[17:39:25.434] npm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
+[17:39:25.704] npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+[17:39:25.940] npm warn deprecated glob@8.1.0: Glob versions prior to v9 are no longer supported
+[17:39:27.401] npm warn deprecated @web3modal/core@2.7.1: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:39:28.414] npm warn deprecated @web3modal/html@2.7.1: Please use new @web3modal/wagmi package
+[17:39:29.335] npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+[17:39:29.375] npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+[17:39:30.553] npm warn deprecated @web3modal/wagmi@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:39:31.326] npm warn deprecated uuid@2.0.1: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+[17:39:31.396] npm warn deprecated @motionone/vue@10.16.4: Motion One for Vue is deprecated. Use Oku Motion instead https://oku-ui.com/motion
+[17:39:31.709] npm warn deprecated @web3modal/siwe@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:39:32.129] npm warn deprecated @walletconnect/sign-client@2.11.3: Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases
+[17:39:33.377] npm warn deprecated @web3modal/ui@2.7.1: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:39:35.149] npm warn deprecated @walletconnect/sign-client@2.16.1: Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases
+[17:39:35.171] npm warn deprecated @walletconnect/sign-client@2.16.1: Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases
+[17:39:35.269] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:39:35.300] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:39:35.324] npm warn deprecated @web3modal/ethereum@2.7.1: Please use new @web3modal/wagmi package
+[17:39:35.355] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:39:35.356] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:39:40.541] npm warn deprecated @web3modal/ui@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:39:40.548] npm warn deprecated @web3modal/ui@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:39:40.566] npm warn deprecated @web3modal/ui@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:39:46.000] 
+[17:39:46.000] added 1142 packages, and audited 1143 packages in 25s
+[17:39:46.000] 
+[17:39:46.000] 170 packages are looking for funding
+[17:39:46.000]   run `npm fund` for details
+[17:39:46.059] 
+[17:39:46.059] 23 vulnerabilities (6 low, 7 moderate, 9 high, 1 critical)
+[17:39:46.059] 
+[17:39:46.059] To address issues that do not require attention, run:
+[17:39:46.059]   npm audit fix
+[17:39:46.059] 
+[17:39:46.059] To address all issues possible (including breaking changes), run:
+[17:39:46.060]   npm audit fix --force
+[17:39:46.060] 
+[17:39:46.061] Some issues need review, and may require choosing
+[17:39:46.061] a different dependency.
+[17:39:46.061] 
+[17:39:46.061] Run `npm audit` for details.
+[17:39:46.685] file:///vercel/path0/scripts/prepare-vercel.js:555
+[17:39:46.685] ensureFileExists(postBuildScript, `/**
+[17:39:46.685] 
+[17:39:46.685] SyntaxError: missing ) after argument list
+[17:39:46.685]     at compileSourceTextModule (node:internal/modules/esm/utils:338:16)
+[17:39:46.685]     at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:102:18)
+[17:39:46.685]     at #translate (node:internal/modules/esm/loader:468:12)
+[17:39:46.685]     at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:515:27)
+[17:39:46.685]     at async ModuleJob._link (node:internal/modules/esm/module_job:115:19)
+[17:39:46.685] 
+[17:39:46.685] Node.js v22.14.0
+[17:39:46.691] Error: Command "node scripts/prepare-vercel.js && vite build --config vite.config.vercel.js && node scripts/post-build-vercel.js" exited with 1
+[17:39:47.126] 
