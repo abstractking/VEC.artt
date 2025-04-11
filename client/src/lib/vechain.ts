@@ -138,8 +138,7 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
             const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
             const isMainNet = networkType === Network.MAIN;
 
-            // Import network descriptors from Network.ts
-            const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
+            // Get network descriptor
             const networkDescriptor = getNetwork(networkType);
             
             if (!networkDescriptor || !networkDescriptor.id) {
