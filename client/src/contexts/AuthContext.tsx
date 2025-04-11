@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect, useCallback } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { User } from "@shared/schema";
-import { useWallet } from "@/hooks/useVechain";
+import { useWallet } from "@/contexts/WalletContext";
 import { useToast } from "@/hooks/use-toast";
 
 interface AuthContextType {

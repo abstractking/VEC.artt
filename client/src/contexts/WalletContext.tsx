@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { useVeChain } from './VeChainContext';
+import { useVeChainDAppKit } from './VeChainDAppKitContext';
 import { getWalletBalance } from '@/lib/vechain';
 import { VeChainWalletType, detectBestWalletOption, verifyWalletAvailability, getWalletDisplayName } from '@/lib/wallet-detection';
 import { connectSmartWallet, isMobileDevice } from '@/lib/mobile-wallet-connector';
@@ -53,7 +53,7 @@ export function WalletProvider({ children }: WalletProviderProps) {
   const { toast } = useToast();
   
   // Get access to our VeChain context
-  const vechain = useVeChain();
+  const vechain = useVeChainDAppKit();
 
   // Load wallet state from local storage on initial load
   useEffect(() => {

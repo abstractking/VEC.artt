@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useCallback, useState, useEffect, ReactNode } from 'react';
+import * as React from 'react';
+import { createContext, useContext, useCallback, useState, useEffect, ReactNode } from 'react';
 import { DAppKitUI } from '@vechain/dapp-kit-ui';
 import { useToast } from '@/hooks/use-toast';
 import { Network, NETWORKS } from '@/lib/Network';
@@ -6,7 +7,7 @@ import { VeChainWalletType } from '@/lib/wallet-detection';
 
 // Define types for our context
 type VeChainDAppKitContextType = {
-  dappKit: DAppKitUI | null;
+  dappKit: any | null; // Use any to avoid TypeScript issues with DAppKitUI
   account: string | null;
   isConnected: boolean;
   isConnecting: boolean;
@@ -78,7 +79,7 @@ interface VeChainDAppKitProviderProps {
 export const VeChainDAppKitProvider: React.FC<VeChainDAppKitProviderProps> = ({ 
   children 
 }) => {
-  const [dappKit, setDappKit] = useState<DAppKitUI | null>(null);
+  const [dappKit, setDappKit] = useState<any | null>(null);
   const [account, setAccount] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -103,16 +104,21 @@ export const VeChainDAppKitProvider: React.FC<VeChainDAppKitProviderProps> = ({
         },
       };
       
-      // Create DAppKit with options
-      const veChainDAppKit = new DAppKitUI({
-        node: config.node,
-        network: config.network,
+      // Create DAppKit with options - follow the exact structure from the documentation
+      // Use DAppKitUI.configure() instead of constructor
+      const options = {
+        nodeUrl: config.node, // Must use nodeUrl, not node
+        genesis: config.network, // Use genesis instead of network as per docs
+        useFirstDetectedSource: false,
         usePersistence: true,
         walletConnectOptions,
         logLevel: process.env.NODE_ENV === 'development' ? 'DEBUG' : 'ERROR',
         themeMode: 'LIGHT',
         allowedWallets: ['veworld', 'sync2', 'wallet-connect']
-      });
+      };
+      
+      // Configure DAppKit and get instance
+      const veChainDAppKit = DAppKitUI.configure(options as any); // Use type casting for now
       
       // Set DAppKit instance
       setDappKit(veChainDAppKit);

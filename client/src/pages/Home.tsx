@@ -13,11 +13,11 @@ import BlockchainConnectionError from "@/components/BlockchainConnectionError";
 import { useQuery } from "@tanstack/react-query";
 import type { Collection, NFT } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
-import { useVeChain } from "@/contexts/VeChainContext";
+import { useVeChain } from "@/hooks/useVechain";
 
 export default function Home() {
   const { user } = useAuth();
-  const { error: blockchainError, isInitializing } = useVeChain();
+  const { error: blockchainError, isConnecting: isInitializing } = useVeChain();
   
   // Fetch collections for homepage
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({

@@ -10,6 +10,7 @@ import NotificationCenter from "@/components/NotificationCenter";
 import NetworkIndicator from "@/components/NetworkIndicator";
 import FaucetLink from "@/components/FaucetLink";
 import WalletPopoverMenu from "@/components/WalletPopoverMenu";
+import DAppKitWalletButton from "@/components/DAppKitWalletButton";
 import VeChainWalletButton from "@/components/VeChainWalletButton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
@@ -131,6 +132,12 @@ export default function Header() {
               <ThemeToggle />
             </div>
             
+            {/* Add DAppKitWalletButton for the new API (in new UI element) */}
+            <div className="hidden md:block mr-4">
+              <DAppKitWalletButton />
+            </div>
+            
+            {/* Keep existing wallet UI for backward compatibility */}
             {isConnected ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
