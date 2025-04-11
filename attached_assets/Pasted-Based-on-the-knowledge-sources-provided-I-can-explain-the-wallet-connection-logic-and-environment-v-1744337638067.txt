@@ -1,0 +1,100 @@
+Based on the knowledge sources provided, I can explain the wallet connection logic and environment variables for VeWorld on both desktop and mobile platforms.
+
+## VeWorld Wallet Connection Logic
+
+### Desktop (Browser Extension)
+
+VeWorld's desktop version is available as a Chrome browser extension. The connection process involves:
+
+1. **Initial Setup**: Users need to either create a new wallet or import an existing one using a seed phrase, private key, or keystore [Link to Quick Start Guide](https://support.veworld.com/support/solutions/articles/103000301901-veworld-quick-start-guide)
+
+2. **Wallet Management**: Users can manage multiple wallets by clicking the three vertical dots at the top right corner and selecting 'Manage Wallets' [Link to FAQ](https://support.veworld.com/support/solutions/articles/103000301911-veworld-faq)
+
+3. **Ledger Support**: VeWorld desktop supports Ledger hardware wallets for enhanced security [Link to Ledger Support](https://support.veworld.com/support/solutions/articles/103000109577-does-veworld-support-ledger-based-wallets-)
+
+### Mobile (iOS/Android)
+
+The mobile version follows a similar connection logic:
+
+1. **Authentication**: Users can secure their wallet using either biometric authentication (fingerprint, Face ID) or a password [Link to Quick Start Guide](https://support.veworld.com/support/solutions/articles/103000301901-veworld-quick-start-guide)
+
+2. **Wallet Switching**: To switch between multiple wallets, users can tap the wallet icon in the top right corner [Link to FAQ](https://support.veworld.com/support/solutions/articles/103000301911-veworld-faq)
+
+3. **Network Selection**: Users can switch between Main Net and Test Net through Settings > Networks [Link to FAQ](https://support.veworld.com/support/solutions/articles/103000301911-veworld-faq)
+
+## DApp Kit Integration
+
+For developers integrating with VeWorld, the VeChain DApp Kit provides connection functionality:
+
+### Environment Variables and Options
+
+When configuring the DApp Kit to connect with VeWorld, several environment variables and options can be set:
+
+```javascript
+import { DAppKitUI } from '@vechain/dapp-kit-ui';
+
+const walletConnectOptions = {
+    projectId: '<PROJECT_ID>', // Required for WalletConnect
+    metadata: {
+        name: 'My dApp',
+        description: 'My dApp description',
+        url: window.location.origin,
+        icons: [`${window.location.origin}/images/my-dapp-icon.png`],
+    },
+};
+
+const vechainWalletKitOptions = {
+    node: 'https://testnet.vechain.org/', // Required - Node URL
+    network: 'test', // Optional - "main" | "test"
+    walletConnectOptions, // Optional - WalletConnect configuration
+    usePersistence: true, // Optional - Persist account in local storage
+    useFirstDetectedSource: true, // Optional - Use first available wallet
+    logLevel: 'DEBUG', // Optional - Set log level
+    themeVariables: ThemeVariables, // Optional - Theme customization
+    language: "en", // Optional - UI language
+    i18n: defaultI18n, // Optional - i18n customization
+    modalParent: document.body, // Optional - Modal rendering location
+    requireCertificate: false, // Optional - Force certificate signing
+    allowedWallets: ['veworld', 'wallet-connect'] // Optional - Specify allowed wallets
+};
+```
+
+[Link to DApp Kit Usage](https://docs.vechain.org/developer-resources/sdks-and-providers/dapp-kit/dapp-kit-1/vanilla/usage)
+
+### Wallet Manager
+
+The DApp Kit provides a Wallet Manager for handling connections:
+
+```javascript
+const {wallet, thor, connex} = new DAppKitUI(...)
+
+// Set wallet source
+wallet.setSource('veworld');
+
+// Connect to wallet
+const res = await wallet.connect();
+console.log(res);
+// { "address": "0x995711ADca070C8f6cC9ca98A5B9C5A99b8350b1","verified": true}
+
+// Access wallet state
+const state = wallet.state;
+// Contains: account, accountDomain, source, connectionCertificate, etc.
+```
+
+[Link to Wallet Manager Documentation](https://docs.vechain.org/developer-resources/sdks-and-providers/dapp-kit/dapp-kit-1/vanilla/usage#wallet-manager)
+
+### Multi-language Support
+
+The DApp Kit supports multiple languages including English, Italian, French, Spanish, German, Chinese, Japanese, and Russian:
+
+```javascript
+// Set language
+language="en"
+
+// Custom i18n object
+i18n={customI18nObject}
+```
+
+[Link to i18n Documentation](https://docs.vechain.org/developer-resources/sdks-and-providers/dapp-kit/dapp-kit-1/i18n)
+
+This information should help you understand the environment variables and wallet connection logic for VeWorld on both desktop and mobile platforms.
