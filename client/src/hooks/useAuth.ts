@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useWallet } from '../context/WalletContext';
+import { useVeChainWallet } from '../context/VeChainWalletProvider';
 
 export interface User {
   id: number;
@@ -13,7 +13,7 @@ export interface User {
 // Basic authentication hook that uses wallet address for identification
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
-  const { walletInfo } = useWallet();
+  const { walletInfo } = useVeChainWallet();
   const account = walletInfo.address;
 
   useEffect(() => {

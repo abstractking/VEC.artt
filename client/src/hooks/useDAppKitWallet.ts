@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useWallet } from '../context/WalletContext';
+import { useVeChainWallet } from '../context/VeChainWalletProvider';
 
 /**
  * Hook for interacting with VeChain wallet
  * 
- * This hook wraps our custom wallet context and provides a compatible
+ * This hook wraps our VeChainWalletProvider and provides a compatible
  * interface for existing components expecting the DAppKit interface.
  */
 export function useDAppKitWallet() {
@@ -13,7 +13,7 @@ export function useDAppKitWallet() {
     connectWallet,
     disconnectWallet,
     isVeWorldAvailable
-  } = useWallet();
+  } = useVeChainWallet();
   
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);

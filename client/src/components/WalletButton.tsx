@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { useWallet } from '../context/WalletContext';
+import { useVeChainWallet } from '../context/VeChainWalletProvider';
 
 /**
- * VeChain wallet connection button using our custom wallet context
+ * VeChain wallet connection button using official VeChain tools
  */
 export function WalletButton() {
-  const { walletInfo, connectWallet, disconnectWallet, isVeWorldAvailable } = useWallet();
+  const { walletInfo, connectWallet, disconnectWallet, isVeWorldAvailable } = useVeChainWallet();
 
   const handleWalletAction = async () => {
     if (walletInfo.isConnected) {
