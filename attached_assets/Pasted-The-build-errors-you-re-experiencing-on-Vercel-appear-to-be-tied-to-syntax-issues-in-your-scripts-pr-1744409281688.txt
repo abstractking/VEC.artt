@@ -1,0 +1,59 @@
+The build errors you're experiencing on Vercel appear to be tied to syntax issues in your scripts/prepare-vercel.js, specifically in the creation of the postBuildScript. The error message indicates a "missing ) after argument list" which usually signifies a problem with how the script is constructed.
+
+Here’s a breakdown of steps to fix the issue:
+
+1. Review and Fix scripts/prepare-vercel.js
+Locate the part of your scripts/prepare-vercel.js that creates the post-build script. Ensure that it is formatted correctly. Here’s how this section should look:
+
+const postBuildScript = path.join(ROOT_DIR, 'scripts/post-build-vercel.js');
+ensureFileExists(postBuildScript, `/**
+ * Post-build script for Vercel deployment
+ * This script runs after the build phase to handle any final tasks:
+ * 1. Create necessary server-side files
+ * 2. Move API routes to the correct location
+ * 3. Create a static fallback page
+ */
+const fs = require('fs');
+const path = require('path');
+console.log('🔄 Running VeCollab post-build script for Vercel...');
+// Paths
+const ROOT_DIR = path.resolve(__dirname, '..');
+const DIST_DIR = path.join(ROOT_DIR, 'dist');
+const PUBLIC_DIR = path.join(DIST_DIR, 'public');
+const API_DIR = path.join(DIST_DIR, 'api');
+// Create API directory if it doesn't exist
+if (!fs.existsSync(API_DIR)) {
+  console.log('Creating API directory...');
+  fs.mkdirSync(API_DIR, { recursive: true });
+}
+// Create an index.js file in the API directory for Vercel serverless functions
+const apiIndexFile = path.join(API_DIR, 'index.js');
+if (!fs.existsSync(apiIndexFile)) {
+  console.log('Creating API routes file...');
+  fs.writeFileSync(apiIndexFile, `// Vercel Serverless API Handler
+const express = require('express');
+const app = express();
+app.use(express.json());
+// Define your API routes here...
+module.exports = app;`);
+}
+`);
+Ensure that the above block correctly formats all the multiline strings and check for mismatched backticks or quotes.
+
+2. Handle Deprecation Warnings
+The log also indicates several deprecated packages that you should consider updating. For example, upgrading the uuid package and addressing lodash.isequal. Run the following commands to upgrade:
+
+npm install uuid@latest
+npm install lodash.isequal@latest
+3. Address Vulnerabilities
+There are a number of vulnerabilities reported. To review and potentially fix them, you can run:
+
+npm audit
+npm audit fix
+4. Retry the Build Process
+After making the changes above, try redeploying your application:
+
+npm run build
+Each of these steps should help you address the current build issues you're encountering on Vercel. Debugging the syntax should help eliminate the immediate error, and updating your dependencies can help with overall functionality and security.
+
+Make these adjustments and run your build once again, and let me know if you encounter any further issues!

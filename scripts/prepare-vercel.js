@@ -617,7 +617,6 @@ module.exports = async (req, res) => {
 };`;
   fs.writeFileSync(apiIndexFile, apiCode);
 }
-}
 
 // Create a static fallback page
 const fallbackHtml = path.join(PUBLIC_DIR, '200.html');
@@ -744,8 +743,7 @@ if (!fs.existsSync(fallbackHtml)) {
 </html>`;
   fs.writeFileSync(fallbackHtml, fallbackHtmlContent);
 }
-}
 
-console.log('✅ VeCollab post-build preparation complete!');`);
+console.log('✅ VeCollab post-build preparation complete!');
 
 console.log('✅ VeCollab preparation script completed successfully!');

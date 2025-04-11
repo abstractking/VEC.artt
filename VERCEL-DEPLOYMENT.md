@@ -77,6 +77,14 @@ If you encounter deployment issues:
 
 4. **Runtime Errors**: Check the browser console for errors related to polyfills or missing functionality.
 
+5. **Syntax Errors in Scripts**: If you encounter errors like "missing ) after argument list" or other syntax issues in the preparation scripts, check for mismatched backticks, parentheses or braces in `scripts/prepare-vercel.js` and `scripts/post-build-vercel.js`.
+
+6. **Dependency Warnings**: Address deprecated packages and vulnerability warnings by running:
+   ```
+   npm install uuid@latest lodash.isequal@latest
+   npm audit fix
+   ```
+
 ## Additional Resources
 
 - [Vercel Deployment Documentation](https://vercel.com/docs/deployments/overview)
