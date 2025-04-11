@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useWallet } from '@vechain/dapp-kit-react';
+import { useWallet } from '../context/WalletContext';
 
 export interface User {
   id: number;
@@ -7,12 +7,14 @@ export interface User {
   email?: string;
   walletAddress?: string;
   profileImage?: string;
+  favorites?: number[];
 }
 
 // Basic authentication hook that uses wallet address for identification
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
-  const { account } = useWallet();
+  const { walletInfo } = useWallet();
+  const account = walletInfo.address;
 
   useEffect(() => {
     // If wallet is connected, create a basic user profile
@@ -22,7 +24,8 @@ export function useAuth() {
       setUser({
         id: 1, // Mock ID
         username: `user_${account.slice(-6)}`,
-        walletAddress: account
+        walletAddress: account,
+        favorites: [], // Initialize empty favorites array
       });
     } else {
       setUser(null);

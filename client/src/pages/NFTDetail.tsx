@@ -158,7 +158,9 @@ export default function NFTDetail() {
   const handleConnectWallet = async () => {
     try {
       await connectWallet();
+      console.log("Wallet connected successfully.");
     } catch (error) {
+      console.error("Wallet connection error:", error);
       toast({
         title: "Wallet Connection Failed",
         description: "Failed to connect to your wallet. Please try again.",

@@ -1,28 +1,26 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useWallet, useWalletModal } from '@vechain/dapp-kit-react';
-import { VeChainWalletType } from '@/lib/wallet-detection';
+import { useWallet } from '../context/WalletContext';
 
 /**
- * Hook for interacting with VeChain wallet through DAppKit
+ * Hook for interacting with VeChain wallet
  * 
- * This hook wraps the functionality of the dapp-kit hooks and provides
- * a more convenient interface for wallet connection in our application.
+ * This hook wraps our custom wallet context and provides a compatible
+ * interface for existing components expecting the DAppKit interface.
  */
 export function useDAppKitWallet() {
   const { 
-    account, 
-    connect: dappKitConnect, 
-    disconnect: dappKitDisconnect,
-    setSource,
-    availableWallets
+    walletInfo,
+    connectWallet,
+    disconnectWallet,
+    isVeWorldAvailable
   } = useWallet();
   
-  const { open: openWalletModal } = useWalletModal();
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Check if wallet is connected
-  const isConnected = !!account;
+  const isConnected = walletInfo.isConnected;
+  const account = walletInfo.address;
 
   // Clean up connection state when component unmounts
   useEffect(() => {
@@ -31,54 +29,19 @@ export function useDAppKitWallet() {
     };
   }, []);
 
-  // Handle wallet connection with specific wallet type
-  const connect = useCallback(async (walletType?: VeChainWalletType) => {
+  // Handle wallet connection
+  const connect = useCallback(async () => {
     try {
       setIsConnecting(true);
       setError(null);
       
-      // If wallet type is specified, try to connect directly
-      if (walletType) {
-        console.log(`Attempting to connect to wallet type: ${walletType}`);
-        
-        // Try to find a matching wallet source
-        let matched = false;
-        
-        // Map legacy wallet types to DAppKit wallet sources
-        if (walletType === 'veworld') {
-          matched = true;
-          try {
-            // Just use the connect function - DAppKit will handle wallet selection
-            await dappKitConnect();
-          } catch (e) {
-            console.error('Error connecting to VeWorld:', e);
-            openWalletModal();
-          }
-        } 
-        else if (walletType === 'sync' || walletType === 'sync2' || walletType === 'thor') {
-          matched = true;
-          try {
-            // Just use the connect function - DAppKit will handle wallet selection
-            await dappKitConnect();
-          } catch (e) {
-            console.error('Error connecting to Sync/Thor:', e);
-            openWalletModal();
-          }
-        }
-        else if (walletType === 'walletconnect' || walletType === 'wallet-connect') {
-          matched = true;
-          // Open modal for WalletConnect 
-          openWalletModal();
-        }
-        
-        // If we didn't find a match, open the modal
-        if (!matched) {
-          console.log('No direct match for wallet type, opening modal');
-          openWalletModal();
-        }
+      // Check if VeWorld wallet is available
+      if (isVeWorldAvailable()) {
+        await connectWallet();
       } else {
-        // If no wallet type is specified, open the modal
-        openWalletModal();
+        setError('VeWorld wallet not installed. Please install it to connect.');
+        // Open wallet provider website
+        window.open('https://www.veworld.net/', '_blank');
       }
     } catch (err) {
       console.error('Wallet connection error:', err);
@@ -86,23 +49,27 @@ export function useDAppKitWallet() {
     } finally {
       setIsConnecting(false);
     }
-  }, [dappKitConnect, openWalletModal]);
+  }, [connectWallet, isVeWorldAvailable]);
 
   // Handle wallet disconnection
   const disconnect = useCallback(() => {
     try {
-      dappKitDisconnect();
+      disconnectWallet();
       setError(null);
     } catch (err) {
       console.error('Wallet disconnection error:', err);
       setError(err instanceof Error ? err.message : 'Failed to disconnect wallet');
     }
-  }, [dappKitDisconnect]);
+  }, [disconnectWallet]);
 
-  // Open wallet selection modal
+  // Simulated modal open (we don't have a modal in our custom implementation)
   const openModal = useCallback(() => {
-    openWalletModal();
-  }, [openWalletModal]);
+    // Instead of showing modal, just try connecting
+    connect();
+  }, [connect]);
+
+  // Simulated available wallets list
+  const availableWallets = ['veworld'];
 
   return {
     address: account,

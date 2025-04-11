@@ -8,6 +8,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useWallet } from "../context/WalletContext";
 
 interface NFTCardProps {
   nft: NFT;
@@ -16,6 +17,7 @@ interface NFTCardProps {
 export default function NFTCard({ nft }: NFTCardProps) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { walletInfo } = useWallet();
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [isFavorite, setIsFavorite] = useState<boolean>(false);
   const [isTogglingFavorite, setIsTogglingFavorite] = useState<boolean>(false);
