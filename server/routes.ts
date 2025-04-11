@@ -1,7 +1,13 @@
-import express, { type Express, Request, Response, NextFunction } from "express";
+import expressModule, { type Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { storage } from "./storage";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const express = expressModule;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import { insertUserSchema, insertCollectionSchema, insertNftSchema, insertBidSchema, insertTransactionSchema } from "@shared/schema";
 import { z } from "zod";
 import fetch from "node-fetch";
