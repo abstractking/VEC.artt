@@ -108,7 +108,7 @@ export const VeChainDAppKitProvider: React.FC<VeChainDAppKitProviderProps> = ({
       // Use DAppKitUI.configure() instead of constructor
       const options = {
         nodeUrl: config.node, // Must use nodeUrl, not node
-        genesis: config.network, // Use genesis instead of network as per docs
+        genesis: config.genesisId, // Use exact genesis ID instead of network name
         useFirstDetectedSource: false,
         usePersistence: true,
         walletConnectOptions,
@@ -116,6 +116,8 @@ export const VeChainDAppKitProvider: React.FC<VeChainDAppKitProviderProps> = ({
         themeMode: 'LIGHT',
         allowedWallets: ['veworld', 'sync2', 'wallet-connect']
       };
+      
+      console.log("[DAppKit] Configuration", JSON.stringify(options));
       
       // Configure DAppKit and get instance
       const veChainDAppKit = DAppKitUI.configure(options as any); // Use type casting for now

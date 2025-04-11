@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useVeChainDAppKit } from "@/contexts/VeChainDAppKitContext";
 import { useWallet } from "@/contexts/WalletContext";
 
