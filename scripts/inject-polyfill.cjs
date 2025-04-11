@@ -62,10 +62,32 @@ console.log('Critical polyfills initialized via inline script');
 // Build an HTML injection function
 function injectPolyfillToHTML(htmlFilePath) {
   try {
-    // Check if the file exists
+    // Check if the file exists, if not, create it
     if (!fs.existsSync(htmlFilePath)) {
-      console.error(`HTML file not found: ${htmlFilePath}`);
-      return false;
+      console.log(`HTML file not found: ${htmlFilePath} - Creating a default template`);
+      
+      // Create the directory if it doesn't exist
+      const dir = path.dirname(htmlFilePath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+      
+      // Create a basic HTML template
+      const defaultHTML = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VeCollab Marketplace</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>`;
+      
+      fs.writeFileSync(htmlFilePath, defaultHTML, 'utf8');
+      console.log(`✅ Created default HTML template at ${htmlFilePath}`);
     }
 
     // Read the HTML content

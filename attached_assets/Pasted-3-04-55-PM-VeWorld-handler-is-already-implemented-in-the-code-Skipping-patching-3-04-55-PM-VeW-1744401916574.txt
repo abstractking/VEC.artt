@@ -1,0 +1,145 @@
+3:04:55 PM: ✅ VeWorld handler is already implemented in the code. Skipping patching.
+3:04:55 PM: VeWorld vendor patch ✅ completed successfully
+3:04:55 PM: Remember to rebuild the project after this patch!
+3:04:55 PM: 🔧 Injecting polyfills into HTML template...
+3:04:55 PM: 🔧 Injecting polyfills into index.html
+3:04:55 PM: HTML file not found: /opt/build/repo/public/index.html
+3:04:55 PM: 🏗️ Building the application...
+3:04:55 PM: 📝 Preparing build configuration...
+3:04:56 PM: failed to load config from /opt/build/repo/vite.config.netlify.js
+3:04:56 PM: error during build:
+3:04:56 PM: Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /opt/build/repo/node_modules/.vite-temp/vite.config.netlify.js.timestamp-1744401896117-280b08065cdfd.mjs
+3:04:56 PM:     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:268:9)
+3:04:56 PM:     at packageResolve (node:internal/modules/esm/resolve:768:81)
+3:04:56 PM:     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+3:04:56 PM:     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+3:04:56 PM:     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:685:12)
+3:04:56 PM:     at #cachedDefaultResolve (node:internal/modules/esm/loader:634:25)
+3:04:56 PM:     at ModuleLoader.resolve (node:internal/modules/esm/loader:617:38)
+3:04:56 PM:     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:273:38)
+3:04:56 PM:     at ModuleJob._link (node:internal/modules/esm/module_job:135:49)
+3:04:56 PM: Build failed, trying alternative configuration...
+3:04:56 PM: failed to load config from /opt/build/repo/vite.config.simple.js
+3:04:56 PM: error during build:
+3:04:56 PM: Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /opt/build/repo/node_modules/.vite-temp/vite.config.simple.js.timestamp-1744401896404-9807ce2afec2a.mjs
+3:04:56 PM:     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:268:9)
+3:04:56 PM:     at packageResolve (node:internal/modules/esm/resolve:768:81)
+3:04:56 PM:     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+3:04:56 PM:     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+3:04:56 PM:     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:685:12)
+3:04:56 PM:     at #cachedDefaultResolve (node:internal/modules/esm/loader:634:25)
+3:04:56 PM:     at ModuleLoader.resolve (node:internal/modules/esm/loader:617:38)
+3:04:56 PM:     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:273:38)
+3:04:56 PM:     at ModuleJob._link (node:internal/modules/esm/module_job:135:49)
+3:04:56 PM: Simple config failed too, trying minimal config...
+3:04:56 PM: 🔄 Creating an ultra-minimal config as last resort...
+3:04:56 PM: 🔄 Running build with minimal config...
+3:04:56 PM: failed to load config from /opt/build/repo/vite.config.js
+3:04:56 PM: error during build:
+3:04:56 PM: Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'vite' imported from /opt/build/repo/node_modules/.vite-temp/vite.config.js.timestamp-1744401896692-afce5953375bf.mjs
+3:04:56 PM:     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:268:9)
+3:04:56 PM:     at packageResolve (node:internal/modules/esm/resolve:768:81)
+3:04:56 PM:     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+3:04:56 PM:     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+3:04:56 PM:     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:685:12)
+3:04:56 PM:     at #cachedDefaultResolve (node:internal/modules/esm/loader:634:25)
+3:04:56 PM:     at ModuleLoader.resolve (node:internal/modules/esm/loader:617:38)
+3:04:56 PM:     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:273:38)
+3:04:56 PM:     at ModuleJob._link (node:internal/modules/esm/module_job:135:49)
+3:04:56 PM: 🔄 ESM configs failed, trying CommonJS config...
+3:04:56 PM: 🔧 Creating CommonJS vite config fallback...
+3:04:56 PM: ✅ CommonJS config created at vite.config.cjs
+3:04:56 PM: failed to load config from /opt/build/repo/vite.config.cjs
+3:04:56 PM: error during build:
+3:04:56 PM: Error: Cannot find module 'vite'
+3:04:56 PM: Require stack:
+3:04:56 PM: - /opt/build/repo/vite.config.cjs
+3:04:56 PM: - /opt/buildhome/.nvm/versions/node/v22.14.0/lib/node_modules/vite/dist/node/chunks/dep-Bid9ssRr.js
+3:04:56 PM:     at Function._resolveFilename (node:internal/modules/cjs/loader:1225:15)
+3:04:56 PM:     at Function._load (node:internal/modules/cjs/loader:1055:27)
+3:04:56 PM:     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+3:04:56 PM:     at wrapModuleLoad (node:internal/modules/cjs/loader:220:24)
+3:04:56 PM:     at Module.require (node:internal/modules/cjs/loader:1311:12)
+3:04:56 PM:     at require (node:internal/modules/helpers:136:16)
+3:04:56 PM:     at Object.<anonymous> (/opt/build/repo/vite.config.cjs:4:24)
+3:04:56 PM:     at Module._compile (node:internal/modules/cjs/loader:1554:14)
+3:04:56 PM:     at _require.extensions.<computed> [as .js] (file:///opt/buildhome/.nvm/versions/node/v22.14.0/lib/node_modules/vite/dist/node/chunks/dep-Bid9ssRr.js:54695:16)
+3:04:56 PM:     at Module.load (node:internal/modules/cjs/loader:1289:32)
+3:04:56 PM: 🔄 All configurations failed, attempting direct build...
+3:04:57 PM: vite v6.2.6 building for production...
+3:04:57 PM: 
+3:04:57 PM: (!) outDir /opt/build/repo/dist/public is not inside project root and will not be emptied.
+3:04:57 PM: Use --emptyOutDir to override.
+3:04:57 PM: 
+3:04:57 PM: transforming...
+3:04:57 PM: ✓ 2 modules transformed.
+3:04:57 PM: ✗ Build failed in 48ms
+3:04:57 PM: error during build:
+3:04:57 PM: [vite:css] Failed to load PostCSS config (searchPath: /opt/build/repo/client): [Error] Loading PostCSS Plugin failed: Cannot find module 'tailwindcss'
+3:04:57 PM: Require stack:
+3:04:57 PM: - /opt/build/repo/postcss.config.js
+3:04:57 PM: (@/opt/build/repo/postcss.config.js)
+3:04:57 PM: Error: Loading PostCSS Plugin failed: Cannot find module 'tailwindcss'
+3:04:57 PM: Require stack:
+3:04:57 PM: - /opt/build/repo/postcss.config.js
+3:04:57 PM: (@/opt/build/repo/postcss.config.js)
+3:04:57 PM:     at load (file:///opt/buildhome/.nvm/versions/node/v22.14.0/lib/node_modules/vite/dist/node/chunks/dep-Bid9ssRr.js:14870:11)
+3:04:57 PM:     at async Promise.all (index 0)
+3:04:57 PM:     at async plugins (file:///opt/buildhome/.nvm/versions/node/v22.14.0/lib/node_modules/vite/dist/node/chunks/dep-Bid9ssRr.js:14899:12)
+3:04:57 PM:     at async processResult (file:///opt/buildhome/.nvm/versions/node/v22.14.0/lib/node_modules/vite/dist/node/chunks/dep-Bid9ssRr.js:14970:14)
+3:04:57 PM: file: /opt/build/repo/client/index.html?html-proxy&inline-css&index=0.css
+3:04:57 PM: 
+3:04:57 PM: ❌ Build failed: Command failed: cd client && npx vite build --outDir ../dist/public
+3:04:57 PM: ​
+3:04:57 PM: "build.command" failed                                        
+3:04:57 PM: ────────────────────────────────────────────────────────────────
+3:04:57 PM: ​
+3:04:57 PM:   Error message
+3:04:57 PM:   Command failed with exit code 1: node scripts/netlify-build.cjs (https://ntl.fyi/exit-code-1)
+3:04:57 PM: ​
+3:04:57 PM:   Error location
+3:04:57 PM:   In build.command from netlify.toml:
+3:04:57 PM:   node scripts/netlify-build.cjs
+3:04:57 PM: ​
+3:04:57 PM:   Resolved config
+3:04:57 PM:   build:
+3:04:57 PM:     command: node scripts/netlify-build.cjs
+3:04:57 PM:     commandOrigin: config
+3:04:57 PM:     environment:
+3:04:57 PM:       - ITE_DEPLOYMENT_ENV
+3:04:57 PM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+3:04:57 PM:       - VITE_REACT_APP_VECHAIN_NETWORK
+3:04:57 PM:       - VITE_VECHAIN_EXPLORER_URL
+3:04:57 PM:       - VITE_VECHAIN_MAINNET_GENESIS_ID
+3:04:57 PM:       - VITE_VECHAIN_PRIVATE_KEY
+3:04:57 PM:       - VITE_VECHAIN_TESTNET_GENESIS_ID
+3:04:57 PM:       - VITE_WALLETCONNECT_PROJECT_ID
+3:04:57 PM:       - NETLIFY_CACHE_BUST
+3:04:57 PM:       - NODE_ENV
+3:04:57 PM:       - NPM_FLAGS
+3:04:57 PM:       - CI_NPM_FLAGS
+3:04:57 PM:       - VITE_VECHAIN_NODE_URL_TESTNET
+3:04:57 PM:       - VITE_VECHAIN_NODE_URL_MAINNET
+3:04:57 PM:       - VITE_DEPLOYMENT_ENV
+3:04:57 PM:     publish: /opt/build/repo/dist/public
+3:04:57 PM:     publishOrigin: config
+3:04:57 PM:   headers:
+3:04:57 PM:     - for: /*
+      values:
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: /assets/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+3:04:57 PM: Build failed due to a user error: Build script returned non-zero exit code: 2
+3:04:57 PM: Failing build: Failed to build site
+3:04:58 PM: Finished processing build request in 1m30.173s
+3:04:57 PM: Failed during stage 'building site': Build script returned non-zero exit code: 2 (https://ntl.fyi/exit-code-2)
