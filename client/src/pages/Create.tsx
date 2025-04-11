@@ -3,16 +3,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLocation } from "wouter";
-import { useWallet, useVeChain } from "@/hooks/useVechain";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { insertNftSchema } from "@shared/schema";
-import { mintNFT, generateMetadataURI } from "@/lib/nftUtils";
 import { AuthContext } from "@/contexts/AuthContext";
-import TransactionConfirmDialog, { TransactionDetails } from "@/components/TransactionConfirmDialog";
-import BlockchainConnectionError from "@/components/BlockchainConnectionError";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -77,16 +73,10 @@ export default function Create() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const { user } = useAuth();
-  const { walletAddress, isConnected, connectWallet } = useWallet();
-  const { error: blockchainError, isInitializing } = useVeChain();
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState<'details' | 'pricing' | 'review'>('details');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  // Transaction confirmation dialog state
-  const [showTxConfirm, setShowTxConfirm] = useState(false);
-  const [transaction, setTransaction] = useState<TransactionDetails | null>(null);
   
   // Access the AuthContext for login functionality
   const authContext = useContext(AuthContext);
@@ -162,76 +152,11 @@ export default function Create() {
 
   // Handle form submission
   const onSubmit = async (values: CreateNftFormValues) => {
-    if (!isConnected) {
-      toast({
-        title: "Wallet not connected",
-        description: "Please connect your wallet to create an NFT",
-        variant: "destructive",
-      });
-      // Open wallet connection prompt
-      handleConnectWallet();
-      return;
-    }
-
-    if (!walletAddress) {
-      toast({
-        title: "Wallet address not found",
-        description: "Please reconnect your wallet to create an NFT",
-        variant: "destructive",
-      });
-      // Open wallet connection prompt
-      handleConnectWallet();
-      return;
-    }
-
     try {
-      // Step 1: Ensure user exists, create if not exists
-      let currentUser = user;
-      if (!currentUser) {
-        try {
-          console.log("Attempting to create or fetch user account with wallet:", walletAddress);
-          
-          // Show toast for user account creation
-          toast({
-            title: "Creating Account",
-            description: "Setting up user account for your wallet...",
-            duration: 3000,
-          });
-          
-          // Generate username based on wallet address for better identification
-          const username = `user_${walletAddress.slice(-6)}`;
-          
-          if (authContext && authContext.login) {
-            await authContext.login(username, walletAddress);
-            console.log("User login successful");
-          } else {
-            throw new Error("Authentication service is not available");
-          }
-          
-          // Refetch the user data after login with proper error handling
-          try {
-            const userResponse = await apiRequest("GET", `/api/users/wallet/${walletAddress}`);
-            if (!userResponse.ok) {
-              throw new Error(`Failed to fetch user: ${userResponse.statusText}`);
-            }
-            currentUser = await userResponse.json();
-            console.log("User account created/fetched successfully:", currentUser);
-          } catch (fetchError) {
-            console.error("Error fetching user after creation:", fetchError);
-            throw new Error("Failed to retrieve user data after account creation");
-          }
-        } catch (error: any) {
-          console.error("Error creating/fetching user account:", error);
-          toast({
-            title: "Account Creation Failed",
-            description: error.message || "Could not create or fetch user account. Please try again.",
-            variant: "destructive",
-          });
-          return;
-        }
-      }
-
-      if (!currentUser) {
+      setIsSubmitting(true);
+      
+      // Check if user is authenticated
+      if (!user) {
         toast({
           title: "User not authenticated",
           description: "Please log in to create an NFT",
@@ -240,23 +165,24 @@ export default function Create() {
         return;
       }
 
-      // Step 2: Handle image file
+      // Validate image file
       const files = form.getValues("file") as unknown as FileList;
-      
       if (!files || files.length === 0) {
         throw new Error("Image file is required");
       }
       
-      // Step 3: Prepare NFT data - use the base64 image from preview
+      // Validate preview
       if (!previewUrl) {
         throw new Error("Image preview not available. Please try uploading again.");
       }
       
+      // Prepare NFT data
       const nftData = {
         ...values,
-        imageUrl: previewUrl, // Use the base64 string instead of a blob URL
-        creatorId: currentUser.id,
-        ownerId: currentUser.id,
+        imageUrl: previewUrl,
+        creatorId: user.id,
+        ownerId: user.id,
+        tokenId: Date.now().toString(16), // Simple tokenId generation
         // Convert numeric values to strings as required by schema
         royaltyPercentage: values.royaltyPercentage?.toString() || "0",
         royaltyCollabPercentage: values.royaltyCollabPercentage?.toString() || "0",
@@ -267,96 +193,30 @@ export default function Create() {
         },
       };
       
-      // Step 4: Generate metadata URI for the NFT
-      console.log("Generating metadata for NFT:", values.name);
-      const tokenURI = generateMetadataURI(nftData);
+      // Create NFT on server (without blockchain)
+      console.log("Saving NFT to database:", nftData);
+      const response = await apiRequest("POST", "/api/nfts", nftData);
       
-      // Step 5: Show transaction confirmation dialog
-      const txDetails: TransactionDetails = {
-        type: 'mint',
-        title: "Create NFT",
-        description: "You are about to mint a new NFT on the VeChain TestNet blockchain.",
-        metadata: {
-          nftName: values.name,
-          nftImage: previewUrl,
-          price: values.isForSale ? values.price : undefined,
-          currency: "VET",
-          contractAddress: "0x89e658faa1e1861b7923f35f62c96fb8e07c80b2", // VeCollabNFT contract
-          methodName: "mint",
-          gasEstimate: "0.0001 VTHO",
-        },
-        onConfirm: async () => {
-          try {
-            // Perform the actual minting
-            setIsSubmitting(true);
-            const result = await mintNFT(tokenURI, walletAddress);
-            
-            if (!result || !result.txid) {
-              throw new Error("Minting transaction failed or returned invalid result");
-            }
-            
-            console.log("NFT minted with transaction ID:", result.txid);
-            return { txid: result.txid, success: true };
-          } catch (error: any) {
-            console.error("Minting error:", error);
-            return { txid: "", success: false };
-          }
-        },
-        onSuccess: async (txid) => {
-          try {
-            // Update NFT data with blockchain information
-            const blockchainNftData = {
-              ...nftData,
-              tokenId: txid,
-              blockchainTxId: txid,
-            };
-
-            // Create NFT on server
-            console.log("Saving NFT to database:", blockchainNftData);
-            let response;
-            try {
-              response = await apiRequest("POST", "/api/nfts", blockchainNftData);
-              if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(`Server error: ${errorData.error || response.statusText || "Unknown error"}`);
-              }
-              
-              const createdNft = await response.json();
-              console.log("NFT created successfully on server:", createdNft);
-              
-              // Invalidate NFT queries
-              queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
-              
-              // Navigate to the NFT detail page
-              setTimeout(() => {
-                setLocation(`/nft/${createdNft.id}`);
-              }, 1000);
-              
-            } catch (serverError: any) {
-              console.error("Server error creating NFT:", serverError);
-              toast({
-                title: "Server Error",
-                description: `NFT was minted on the blockchain but couldn't be saved to our database: ${serverError.message}`,
-                variant: "destructive",
-              });
-            }
-          } finally {
-            setIsSubmitting(false);
-          }
-        },
-        onCancel: () => {
-          toast({
-            title: "Creation Cancelled",
-            description: "NFT creation was cancelled",
-          });
-          setIsSubmitting(false);
-        }
-      };
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Server error: ${errorData.error || response.statusText || "Unknown error"}`);
+      }
       
-      // Open the transaction confirmation dialog
-      setTransaction(txDetails);
-      setShowTxConfirm(true);
+      const createdNft = await response.json();
+      console.log("NFT created successfully:", createdNft);
       
+      // Invalidate NFT queries
+      queryClient.invalidateQueries({ queryKey: ['/api/nfts'] });
+      
+      toast({
+        title: "NFT Created",
+        description: "Your NFT has been created successfully!",
+      });
+      
+      // Navigate to the NFT detail page
+      setTimeout(() => {
+        setLocation(`/nft/${createdNft.id}`);
+      }, 1500);
     } catch (error: any) {
       console.error("Error creating NFT:", error);
       toast({
@@ -364,48 +224,20 @@ export default function Create() {
         description: error.message || "Failed to create your NFT. Please try again.",
         variant: "destructive",
       });
+    } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  // Connect wallet if not connected
-  const handleConnectWallet = async () => {
-    try {
-      await connectWallet();
-    } catch (error) {
-      toast({
-        title: "Wallet Connection Failed",
-        description: "Failed to connect to your wallet. Please try again.",
-        variant: "destructive",
-      });
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pt-16 pb-16">
-      {/* Transaction Confirmation Dialog */}
-      {transaction && (
-        <TransactionConfirmDialog
-          isOpen={showTxConfirm}
-          onClose={() => setShowTxConfirm(false)}
-          transaction={transaction}
-        />
-      )}
-      
-      {/* Show blockchain connection error if there's an issue with Connex */}
-      {blockchainError && !isInitializing && (
-        <div className="container mx-auto px-4 mb-8">
-          <BlockchainConnectionError onRetry={() => window.location.reload()} />
-        </div>
-      )}
-      
       <div className="container mx-auto px-4">
         <div className="flex flex-col mb-10">
           <h1 className="text-3xl font-bold font-poppins text-secondary dark:text-white mb-2">
             Create a New NFT
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Create your unique NFT on VeChain blockchain and sell it on the marketplace
+            Create your unique NFT and list it on the marketplace
           </p>
         </div>
 
@@ -485,33 +317,7 @@ export default function Create() {
                 <CardDescription>Fill in the details to mint your new NFT</CardDescription>
               </CardHeader>
               <CardContent>
-                {blockchainError ? (
-                  <div className="text-center py-6">
-                    <h3 className="text-lg font-bold text-secondary dark:text-white mb-2">
-                      Blockchain Connection Issue
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400 mb-4">
-                      Please check the error message at the top of the page
-                    </p>
-                  </div>
-                ) : !isConnected ? (
-                  <div className="text-center py-6">
-                    <Info className="h-12 w-12 text-primary mx-auto mb-4" />
-                    <h3 className="text-lg font-bold text-secondary dark:text-white mb-2">
-                      Connect your wallet
-                    </h3>
-                    <p className="text-gray-500 dark:text-gray-400 mb-4">
-                      You need to connect your VeChain wallet to create an NFT
-                    </p>
-                    <Button
-                      onClick={handleConnectWallet}
-                      className="bg-primary hover:bg-primary-dark text-white"
-                    >
-                      Connect Wallet
-                    </Button>
-                  </div>
-                ) : (
-                  <Form {...form}>
+                <Form {...form}>
                     <div className="mb-8">
                       <div className="relative">
                         <div className="flex items-center justify-between mb-4">

@@ -1,11 +1,27 @@
 import * as React from 'react';
-import { useVeChainDAppKit } from "@/contexts/VeChainDAppKitContext";
-import { useWallet } from "@/contexts/WalletContext";
 
-// Export useVeChain hook that redirects to our new DAppKit context
+// Mock implementation for useVeChain hook without any actual blockchain interaction
 export function useVeChain() {
-  return useVeChainDAppKit();
+  return {
+    isConnected: false,
+    account: null,
+    error: null,
+    isInitializing: false,
+    connect: async () => {},
+    disconnect: async () => {},
+    submitTransaction: async () => '',
+    waitForTransaction: async () => ({}),
+  };
 }
 
-// Export useWallet hook that redirects to our WalletContext
-export { useWallet };
+// Mock implementation for useWallet hook without any actual wallet interaction
+export function useWallet() {
+  return {
+    walletAddress: null,
+    isConnected: false,
+    isConnecting: false,
+    connectWallet: async () => {},
+    disconnectWallet: async () => {},
+    error: null,
+  };
+}
