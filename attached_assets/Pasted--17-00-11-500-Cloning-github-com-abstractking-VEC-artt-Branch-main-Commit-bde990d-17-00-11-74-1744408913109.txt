@@ -1,0 +1,63 @@
+[17:00:11.500] Cloning github.com/abstractking/VEC.artt (Branch: main, Commit: bde990d)
+[17:00:11.745] Previous build caches not available
+[17:00:12.492] Cloning completed: 992.000ms
+[17:00:12.880] Running build in Washington, D.C., USA (East) – iad1
+[17:00:13.150] Running "vercel build"
+[17:00:13.663] Vercel CLI 41.5.0
+[17:00:15.927] Running "install" command: `npm ci`...
+[17:00:22.908] npm warn deprecated uuid@2.0.1: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+[17:00:24.885] npm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
+[17:00:25.415] npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+[17:00:28.700] npm warn deprecated @web3modal/core@2.7.1: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:00:30.930] npm warn deprecated @web3modal/html@2.7.1: Please use new @web3modal/wagmi package
+[17:00:31.223] npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+[17:00:31.285] npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+[17:00:31.459] npm warn deprecated @paulmillr/qr@0.2.1: The package is now available as "qr": npm install qr
+[17:00:31.801] npm warn deprecated glob@7.1.7: Glob versions prior to v9 are no longer supported
+[17:00:32.203] npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[17:00:32.265] npm warn deprecated glob@5.0.15: Glob versions prior to v9 are no longer supported
+[17:00:32.905] npm warn deprecated glob@8.1.0: Glob versions prior to v9 are no longer supported
+[17:00:33.169] npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+[17:00:33.358] npm warn deprecated @web3modal/wagmi@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:00:35.573] npm warn deprecated @motionone/vue@10.16.4: Motion One for Vue is deprecated. Use Oku Motion instead https://oku-ui.com/motion
+[17:00:36.307] npm warn deprecated @web3modal/siwe@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:00:41.979] npm warn deprecated @web3modal/ui@2.7.1: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:00:45.475] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:00:45.547] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:00:45.547] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:00:45.547] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:00:45.665] npm warn deprecated @web3modal/ethereum@2.7.1: Please use new @web3modal/wagmi package
+[17:00:56.775] npm warn deprecated @web3modal/ui@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:00:56.831] npm warn deprecated @web3modal/ui@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:00:56.850] npm warn deprecated @web3modal/ui@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[17:01:24.033] 
+[17:01:24.034] added 1547 packages, and audited 1548 packages in 1m
+[17:01:24.034] 
+[17:01:24.035] 197 packages are looking for funding
+[17:01:24.035]   run `npm fund` for details
+[17:01:24.118] 
+[17:01:24.118] 34 vulnerabilities (16 low, 8 moderate, 9 high, 1 critical)
+[17:01:24.119] 
+[17:01:24.119] To address issues that do not require attention, run:
+[17:01:24.119]   npm audit fix
+[17:01:24.120] 
+[17:01:24.120] To address all issues possible (including breaking changes), run:
+[17:01:24.120]   npm audit fix --force
+[17:01:24.121] 
+[17:01:24.121] Some issues need review, and may require choosing
+[17:01:24.121] a different dependency.
+[17:01:24.121] 
+[17:01:24.122] Run `npm audit` for details.
+[17:01:24.437] file:///vercel/path0/scripts/prepare-vercel.js:555
+[17:01:24.437] ensureFileExists(postBuildScript, `/**
+[17:01:24.437] 
+[17:01:24.437] SyntaxError: missing ) after argument list
+[17:01:24.437]     at compileSourceTextModule (node:internal/modules/esm/utils:338:16)
+[17:01:24.437]     at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:102:18)
+[17:01:24.438]     at #translate (node:internal/modules/esm/loader:468:12)
+[17:01:24.438]     at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:515:27)
+[17:01:24.438]     at async ModuleJob._link (node:internal/modules/esm/module_job:115:19)
+[17:01:24.438] 
+[17:01:24.438] Node.js v22.14.0
+[17:01:24.445] Error: Command "node scripts/prepare-vercel.js && vite build --config vite.config.vercel.js && node scripts/post-build-vercel.js" exited with 1
+[17:01:25.900] 
