@@ -52,13 +52,37 @@ export const isMobileDevice = () => {
 export const isWalletExtensionAvailable = (type: string): boolean => {
   if (!isBrowser()) return false;
   
-  switch (type) {
-    case 'veworld':
-      return typeof window.vechain !== 'undefined';
-    case 'sync2':
-      return typeof window.connex !== 'undefined';
-    default:
-      return false;
+  try {
+    switch (type) {
+      case 'veworld':
+        // Check for VeWorld wallet
+        const hasVeWorldWallet = typeof window.vechain !== 'undefined';
+        if (hasVeWorldWallet) {
+          console.log("[WalletDetection] VeWorld wallet detected");
+        }
+        return hasVeWorldWallet;
+        
+      case 'sync':
+      case 'sync2':
+      case 'thor':
+        // Check for Sync2 wallet (via window.connex)
+        const hasSyncWallet = typeof window.connex !== 'undefined';
+        if (hasSyncWallet) {
+          console.log("[WalletDetection] Sync/Thor wallet detected");
+        }
+        return hasSyncWallet;
+        
+      case 'walletconnect':
+      case 'wallet-connect':
+        // WalletConnect is always available as it's an external service
+        return true;
+        
+      default:
+        return false;
+    }
+  } catch (error) {
+    console.error(`[WalletDetection] Error checking for ${type} wallet:`, error);
+    return false;
   }
 };
 
@@ -66,19 +90,20 @@ export const isWalletExtensionAvailable = (type: string): boolean => {
  * Get available DAppKit-compatible wallets
  */
 export const getAvailableWallets = () => {
-  const wallets = [];
+  // Always include wallet-connect as it doesn't require browser extensions
+  const wallets = ['wallet-connect'];
   
+  // Check for VeWorld
   if (isWalletExtensionAvailable('veworld')) {
-    wallets.push('veworld');
+    wallets.unshift('veworld'); // Add to front of array (preferred)
   }
   
+  // Check for Sync2
   if (isWalletExtensionAvailable('sync2')) {
-    wallets.push('sync2');
+    wallets.unshift('sync2'); // Add to front of array (preferred)
   }
   
-  // WalletConnect is always available
-  wallets.push('wallet-connect');
-  
+  console.log("[WalletDetection] Available wallets:", wallets);
   return wallets;
 };
 
@@ -103,15 +128,64 @@ export const createDAppKitConfig = (networkName: 'main' | 'test', nodeUrl?: stri
     },
   };
   
+  // Log detected wallet environment state
+  if (isBrowser()) {
+    console.log("[DAppKit] Browser environment detected");
+    
+    if (typeof window.vechain !== 'undefined') {
+      console.log("[DAppKit] VeWorld wallet is available");
+      try {
+        console.log("[DAppKit] VeWorld details:", {
+          available: true,
+          properties: Object.keys(window.vechain)
+        });
+      } catch (e) {
+        console.error("[DAppKit] Error inspecting VeWorld:", e);
+      }
+    } else {
+      console.log("[DAppKit] VeWorld wallet is NOT available");
+    }
+    
+    if (typeof window.connex !== 'undefined') {
+      console.log("[DAppKit] Connex/Sync wallet is available");
+      try {
+        console.log("[DAppKit] Connex details:", {
+          available: true,
+          version: window.connex.version
+        });
+      } catch (e) {
+        console.error("[DAppKit] Error inspecting Connex:", e);
+      }
+    } else {
+      console.log("[DAppKit] Connex/Sync wallet is NOT available");
+    }
+  }
+  
+  // Get all allowed wallet types
+  // Important: Include all wallet types that could be available
+  // This is critical because DAppKit won't detect wallets that aren't in the allowedWallets list
+  const allowedWallets = ['veworld', 'sync2', 'wallet-connect']; 
+  
+  // Output a message about wallet detection
+  console.log("[DAppKit] Configuring with allowed wallet types:", allowedWallets);
+  
   // Configuration options
-  return {
-    nodeUrl: nodeUrl || defaultNodeUrls[networkName],
-    genesis: GENESIS_IDS[networkName],
-    useFirstDetectedSource: false,
-    usePersistence: true,
-    walletConnectOptions,
-    logLevel: import.meta.env.DEV ? 'DEBUG' : 'ERROR',
-    themeMode: 'LIGHT',
-    allowedWallets: getAvailableWallets()
-  };
+  try {
+    const config = {
+      nodeUrl: nodeUrl || defaultNodeUrls[networkName],
+      genesis: GENESIS_IDS[networkName],
+      useFirstDetectedSource: false,  // Don't auto-connect to first available wallet
+      usePersistence: true,           // Remember the user's choice
+      walletConnectOptions,
+      logLevel: import.meta.env.DEV ? 'DEBUG' : 'ERROR',
+      themeMode: 'LIGHT',
+      allowedWallets
+    };
+    
+    console.log("[DAppKit] Full configuration:", JSON.stringify(config));
+    return config;
+  } catch (error) {
+    console.error("[DAppKit] Configuration error:", error);
+    throw error; // Rethrow to allow proper error handling
+  }
 };
