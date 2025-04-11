@@ -13,13 +13,18 @@
   # Ensure cache is cleared
   NODE_ENV = "production"
   # Make sure NPM installs all dev dependencies
-  NPM_FLAGS = "--production=false"
+  NPM_FLAGS = "--production=false --legacy-peer-deps"
   # CI install flags
   CI_NPM_FLAGS = "--no-audit --no-fund"
   # VeChain network configuration
   VITE_REACT_APP_VECHAIN_NETWORK = "test"
   VITE_VECHAIN_NODE_URL_TESTNET = "https://testnet.veblocks.net"
   VITE_VECHAIN_NODE_URL_MAINNET = "https://mainnet.veblocks.net"
+  # VeChain Genesis IDs
+  VITE_VECHAIN_TESTNET_GENESIS_ID = "0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409"
+  VITE_VECHAIN_MAINNET_GENESIS_ID = "0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409"
+  # Build optimization flags
+  VITE_DEPLOYMENT_ENV = "netlify"
 
 # Redirects and rewrites
 [[redirects]]

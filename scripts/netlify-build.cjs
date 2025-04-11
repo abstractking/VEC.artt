@@ -64,9 +64,15 @@ console.log('Critical polyfills initialized via inline script');`;
   }
   fs.writeFileSync(path.join(polyfillDir, 'polyfill-stub.js'), polyfillContent, 'utf8');
   
-  // Install development dependencies needed for the build
-  console.log('🔍 Installing required dev dependencies...');
-  execSync('npm install --no-save @vitejs/plugin-react @replit/vite-plugin-cartographer @replit/vite-plugin-runtime-error-modal @replit/vite-plugin-shadcn-theme-json vite-plugin-node-polyfills typescript @types/node @types/react @types/react-dom crypto-browserify buffer process stream-browserify util browserify-zlib', { stdio: 'inherit' });
+  // Install development dependencies needed for the build using the package.json approach
+  console.log('🔍 Installing ALL dependencies (including dev dependencies)...');
+  
+  // Force full dependency installation from package.json instead of selective installation
+  execSync('npm install --include=dev', { stdio: 'inherit' });
+  
+  // Also install the critical packages explicitly in case they were missed
+  console.log('🔍 Installing critical packages explicitly...');
+  execSync('npm install --no-save @vitejs/plugin-react vite-plugin-node-polyfills typescript crypto-browserify buffer', { stdio: 'inherit' });
   
   // Clean cache
   console.log('🧹 Cleaning build cache...');
@@ -197,7 +203,28 @@ console.log('Critical polyfills initialized via inline script');`;
     `;
     
     fs.writeFileSync('vite.config.simple.js', simpleConfig, 'utf8');
-    execSync('npx vite build --config vite.config.simple.js', { stdio: 'inherit' });
+    
+    try {
+      execSync('npx vite build --config vite.config.simple.js', { stdio: 'inherit' });
+    } catch (err) {
+      console.error('Simple config failed too, trying minimal config...');
+      
+      // Create a super minimal vite.config.js as the last resort
+      const minimalConfig = `
+        import { defineConfig } from 'vite';
+        import react from '@vitejs/plugin-react';
+        
+        export default defineConfig({
+          plugins: [react()],
+          build: {
+            outDir: 'dist/public',
+          }
+        });
+      `;
+      
+      fs.writeFileSync('vite.config.js', minimalConfig, 'utf8');
+      execSync('npx vite build', { stdio: 'inherit' });
+    }
   }
   
   // Build the server
