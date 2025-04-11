@@ -54,6 +54,37 @@ const filePatches = [
     file: path.join(NODE_MODULES_DIR, '@vechain/connex-driver/esm/simple-net.js'),
     replacements: [
       {
+        // Complete file replacement to ensure compatibility
+        from: `import { SimpleNet } from './interfaces';
+import { SimpleWebSocketReader } from './simple-websocket-reader';
+import { resolve } from 'url';
+import { Agent as HttpAgent } from 'http';
+import { Agent as HttpsAgent } from 'https';`,
+        to: `import { SimpleNet } from './interfaces';
+import { SimpleWebSocketReader } from './simple-websocket-reader';
+import { resolve } from 'url';
+
+// Patched by VeCollab for browser compatibility
+// Original imports removed:
+// import { Agent as HttpAgent } from 'http';
+// import { Agent as HttpsAgent } from 'https';
+
+// Replaced with stub implementations
+class HttpAgent {
+  constructor() {}
+}
+
+class HttpsAgent {
+  constructor() {}
+}`
+      }
+    ]
+  },
+  // Alternate patch as fallback if the above pattern doesn't match
+  {
+    file: path.join(NODE_MODULES_DIR, '@vechain/connex-driver/esm/simple-net.js'),
+    replacements: [
+      {
         from: `import { Agent as HttpAgent } from 'http';`,
         to: `// Patched by VeCollab for browser compatibility
 // Original: import { Agent as HttpAgent } from 'http';

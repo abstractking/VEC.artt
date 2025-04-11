@@ -1,0 +1,47 @@
+Assistant
+just now
+To address the build error you're encountering on Vercel, you need to consider the connection issues related to the imports for Node.js modules that have been externalized for browser compatibility. Here's a structured prompt for the agent AI to help fix the build errors, including the necessary .env configurations:
+
+Build Error Resolution Prompt:
+Issue Description:
+
+The build fails due to the following error:
+error: "Agent" is not exported by "__vite-browser-external", imported by "node_modules/@vechain/connex-driver/esm/simple-net.js".
+This indicates that certain Node.js modules (http, https, vm) cannot be resolved in the browser context.
+Proposed Solution:
+
+Update the Vite configuration to alias these Node.js modules to appropriate browser-compatible alternatives.
+Add a browser field to the Vite configuration if necessary, especially to support @vechain/connex-driver.
+Environment Variables Check:
+
+Ensure all required environment variables are set up in Vercel:
+VITE_VECHAIN_PRIVATE_KEY=<your_private_key>
+VITE_REACT_APP_VECHAIN_NETWORK=test
+VITE_VECHAIN_NODE_URL_TESTNET=https://testnet.veblocks.net
+Check Dependencies:
+
+Install any unmet peer dependencies as indicated in the warnings:
+For example:
+yarn add @nomicfoundation/hardhat-toolbox @nomicfoundation/hardhat-chai-matchers @nomicfoundation/hardhat-ethers @nomicfoundation/hardhat-ignition-ethers @nomicfoundation/hardhat-network-helpers @nomicfoundation/hardhat-verify @typechain/ethers-v6 @typechain/hardhat @types/chai @types/mocha chai ethers
+Modify Vite Configuration:
+Include a resolve option in your vite.config.ts to handle these external Node modules:
+
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      'http': 'rollup-plugin-node-builtins/http.js',
+      'https': 'rollup-plugin-node-builtins/https.js',
+      'vm': 'rollup-plugin-node-builtins/vm.js',
+    },
+  },
+  // Other configurations...
+});
+Rebuild and Deploy:
+
+After making these changes, run the build command:
+yarn run build
+Redeploy the application on Vercel to see if the issues are resolved.
+By following these steps and ensuring that the project dependencies and environment configurations are correct, you should be able to address the build errors successfully.
