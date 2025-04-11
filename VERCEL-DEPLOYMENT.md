@@ -27,6 +27,11 @@ VITE_VECHAIN_MAINNET_GENESIS_ID=0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6
 VITE_DEPLOYMENT_ENV=vercel
 ```
 
+If you need a specific private key for testing or for executing transactions, you should add:
+```
+VITE_VECHAIN_PRIVATE_KEY=<your_private_key>
+```
+
 If using a database, also set up the `DATABASE_URL` environment variable.
 
 ## How It Works
@@ -81,8 +86,12 @@ If you encounter deployment issues:
 
 6. **Dependency Warnings**: Address deprecated packages and vulnerability warnings by running:
    ```
-   npm install uuid@latest lodash.isequal@latest
-   npm audit fix
+   # Use the --legacy-peer-deps flag to handle dependency conflicts with Hardhat
+   npm install uuid@latest lodash.isequal@latest --legacy-peer-deps
+   npm audit fix --legacy-peer-deps
+   
+   # Alternatively, manually install missing Hardhat peer dependencies
+   npm install @nomicfoundation/hardhat-chai-matchers@^2.0.0 @nomicfoundation/hardhat-ethers@^3.0.0 @nomicfoundation/hardhat-ignition-ethers@^0.15.0 @nomicfoundation/hardhat-network-helpers@^1.0.0 @nomicfoundation/hardhat-verify@^2.0.0 @typechain/ethers-v6@^0.5.0 @typechain/hardhat@^9.0.0 @types/chai@^4.2.0 @types/mocha@>=9.1.0 chai@^4.2.0 ethers@^6.4.0 --legacy-peer-deps
    ```
 
 ## Additional Resources

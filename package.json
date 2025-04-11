@@ -84,6 +84,7 @@
     "hardhat": "^2.23.0",
     "https-browserify": "^1.0.0",
     "input-otp": "^1.2.4",
+    "lodash.isequal": "^4.5.0",
     "lucide-react": "^0.453.0",
     "memorystore": "^1.6.7",
     "node-fetch": "^3.3.2",
