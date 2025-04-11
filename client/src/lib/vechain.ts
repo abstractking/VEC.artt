@@ -1,3 +1,26 @@
+// Define custom interfaces for wallet providers
+interface VeWorldWallet {
+  isVeWorld: boolean;
+  newConnex: (options: any) => Promise<any>;
+  newConnexVendor: (options: any) => Promise<any>;
+}
+
+interface ConnexType {
+  thor: any;
+  vendor: any;
+}
+
+// Declare global window extensions for wallet providers
+declare global {
+  interface Window {
+    veworld?: VeWorldWallet;
+    vechain?: VeWorldWallet;
+    thor?: any;
+    connex?: ConnexType;
+    cryptoPolyfill?: any;
+  }
+}
+
 interface VechainProvider {
   request: (args: { method: string, params?: any[] }) => Promise<any>
 }
@@ -32,16 +55,278 @@ export const detectVechainProvider = async (): Promise<VechainProvider> => {
   })
 }
 
-export const connectWallet = async () => {
-  const provider = await detectVechainProvider()
+// Connect to a wallet with specific wallet type
+export const connectWallet = async (walletType = 'veworld', privateKey?: string) => {
+  if (typeof window === 'undefined') {
+    throw new Error('Cannot connect wallet in server-side environment');
+  }
 
   try {
-    const accounts = await provider.request({ method: 'requestAccounts' })
-    console.log('[VeChain] Connected accounts:', accounts)
-    return accounts
+    console.log(`Connecting to ${walletType} wallet...`);
+    const network = getNetwork();
+    
+    // If privateKey is provided, directly use that
+    if (privateKey) {
+      console.log("Creating wallet with provided private key");
+      
+      // Create a new wallet from the private key
+      const wallet = new SimpleWallet();
+      wallet.import(privateKey);
+      
+      // Create a driver and framework with the wallet
+      const net = new BrowserNet(network.url);
+      const driver = await Driver.connect(net, wallet);
+      const framework = new Framework(driver);
+      
+      return {
+        connex: framework,
+        vendor: { name: 'Private Key', sign: wallet }
+      };
+    }
+    
+    // If we're in development environment and have env key, use that
+    if ((import.meta.env.DEV || 
+        window.location.hostname.includes('replit') ||
+        window.location.hostname === 'localhost') && 
+        import.meta.env.VITE_VECHAIN_PRIVATE_KEY && 
+        !window.location.hostname.includes('netlify.app')) {
+      
+      console.log("Development environment with private key detected");
+      
+      // Create framework and driver using the environment key
+      const wallet = new SimpleWallet();
+      wallet.import(import.meta.env.VITE_VECHAIN_PRIVATE_KEY);
+      
+      // Initialize connex with the wallet
+      const net = new BrowserNet(network.url);
+      const driver = await Driver.connect(net, wallet);
+      const framework = new Framework(driver);
+      
+      return {
+        connex: framework,
+        vendor: { name: 'Dev Private Key', sign: wallet }
+      };
+    }
+    
+    // Handle different wallet types
+    switch(walletType.toLowerCase()) {
+      case 'veworld':
+        // Support for VeWorld wallet - using lowercase 'vechain' as that's how VeWorld injects itself
+        if (typeof window !== 'undefined' && (window as any).vechain) {
+          try {
+            console.log("Connecting to VeWorld wallet...");
+            
+            const vechain = (window as any).vechain;
+            console.log("VeWorld API methods available:", Object.keys(vechain));
+            
+            // Log all available window objects for debugging
+            console.log("Available window objects:", 
+              Object.keys(window).filter(key => 
+                key.toLowerCase().includes('vechain') || 
+                key.toLowerCase().includes('veworld') || 
+                key.toLowerCase() === 'connex'
+              )
+            );
+            
+            if (!vechain.isVeWorld) {
+              throw new Error("Not a valid VeWorld wallet extension");
+            }
+            
+            console.log("VeWorld wallet detected, creating Connex instance...");
+            
+            // Get the network parameters based on configuration
+            const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
+            const isMainNet = networkType === Network.MAIN;
+            
+            // Use environment variables with fallback to hardcoded genesis ID values
+            const GENESIS_ID_MAINNET = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || 
+                                      "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a";
+            const GENESIS_ID_TESTNET = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || 
+                                      "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127";
+            
+            // Log the genesis IDs we're using
+            console.log("Genesis IDs from environment:", {
+              mainnet: import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID,
+              testnet: import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID,
+              fallbackMainnet: "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a",
+              fallbackTestnet: "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127"
+            });
+            
+            // Hard-coded network names exactly as expected by VeWorld
+            const NETWORK_NAME_MAIN = "main";
+            const NETWORK_NAME_TEST = "test";
+            
+            // Select appropriate values
+            const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
+            const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
+            
+            console.log("Using network parameters:", {
+              networkType,
+              genesisId,
+              networkName
+            });
+            
+            // APPROACH 1: Create a new Connex instance using VeWorld API
+            if (typeof vechain.newConnex === 'function' && typeof vechain.newConnexVendor === 'function') {
+              console.log("Using VeWorld's native Connex creation API");
+              
+              try {
+                // First create a vendor for transaction signing
+                console.log("Creating vendor with parameters:", { genesis: genesisId });
+                const vendor = await vechain.newConnexVendor({
+                  genesis: genesisId
+                });
+                
+                // Then create a Connex instance
+                console.log("Creating Connex with parameters:", { 
+                  node: network.url,
+                  network: networkName,
+                  genesis: genesisId
+                });
+                const connex = await vechain.newConnex({
+                  node: network.url,
+                  network: networkName,
+                  genesis: genesisId
+                });
+                
+                return { connex, vendor };
+              } catch (error) {
+                console.error("Error creating Connex with VeWorld API:", error);
+                throw error;
+              }
+            } else {
+              throw new Error("VeWorld wallet is missing required APIs");
+            }
+          } catch (error) {
+            console.error("VeWorld wallet connection error:", error);
+            throw error;
+          }
+        } else {
+          throw new Error("VeWorld wallet extension not detected. Please install VeWorld extension and try again.");
+        }
+        
+      case 'thor':
+        // Support for VeChainThor wallet extension
+        if (typeof window !== 'undefined' && (window as any).thor) {
+          try {
+            console.log("Connecting to VeChainThor wallet...");
+            const thor = (window as any).thor;
+            
+            // Enable the wallet which returns a vendor object
+            const vendor = await thor.enable();
+            console.log("VeChainThor wallet enabled, vendor:", vendor);
+            
+            // Check if we have window.connex available
+            if (window.connex) {
+              console.log("Using window.connex for Thor wallet connection");
+              return { connex: window.connex, vendor };
+            }
+            
+            // Fallback to creating our own connex instance
+            console.log("Creating Connex instance for Thor wallet");
+            const connexInstance = await getConnex();
+            return { connex: connexInstance, vendor };
+          } catch (error) {
+            console.error("Thor wallet connection error:", error);
+            throw error;
+          }
+        } else {
+          throw new Error("VeChainThor wallet extension not detected");
+        }
+        
+      case 'sync':
+      case 'sync2':
+        // Support for Sync/Sync2 wallets
+        try {
+          console.log(`Connecting to ${walletType} wallet...`);
+          
+          // Try to detect if Sync is installed by looking for window.connex
+          if (window.connex) {
+            console.log("Found window.connex, checking for Sync capabilities");
+            
+            // Try to create a certificate to identify the wallet
+            try {
+              // Define a properly typed request
+              type CertMessage = {
+                purpose: 'identification' | 'agreement';
+                payload: {
+                  type: 'text';
+                  content: string;
+                }
+              };
+              
+              // Create the certificate message with proper typing
+              const certMessage: CertMessage = {
+                purpose: 'identification',
+                payload: {
+                  type: 'text',
+                  content: 'Connecting to VeCollab'
+                }
+              };
+              
+              const certResult = await window.connex.vendor.sign('cert', certMessage).request();
+              console.log("Wallet certificate response:", certResult);
+              
+              // If we get a result, we have a compatible wallet
+              return { 
+                connex: window.connex, 
+                vendor: window.connex.vendor 
+              };
+            } catch (certError) {
+              console.error("Certificate creation failed for Sync wallet:", certError);
+              throw new Error(`${walletType} wallet connection rejected`);
+            }
+          } else {
+            throw new Error(`${walletType} wallet not detected or not accessible`);
+          }
+        } catch (error) {
+          console.error(`${walletType} wallet connection error:`, error);
+          throw error;
+        }
+        
+      case 'walletconnect':
+      case 'wallet-connect':
+        // Support for WalletConnect
+        throw new Error("WalletConnect support is not yet fully implemented");
+        
+      default:
+        // Check if we have a provider already
+        const provider = await detectVechainProvider().catch(e => {
+          console.error("Could not detect VeChain provider:", e);
+          return null;
+        });
+        
+        if (provider) {
+          try {
+            console.log("Using detected VeChain provider");
+            const accounts = await provider.request({ method: 'requestAccounts' });
+            console.log("Connected accounts:", accounts);
+            
+            // If we have window.connex, use that
+            if (window.connex) {
+              return { 
+                connex: window.connex, 
+                vendor: window.connex.vendor 
+              };
+            }
+            
+            // Otherwise create a new connex instance
+            const connexInstance = await getConnex();
+            return { 
+              connex: connexInstance, 
+              vendor: null 
+            };
+          } catch (error) {
+            console.error("Provider connection error:", error);
+            throw error;
+          }
+        }
+        
+        throw new Error(`Unsupported wallet type: ${walletType}`);
+    }
   } catch (error) {
-    console.error('[VeChain] Error connecting wallet:', error)
-    throw error
+    console.error("Wallet connection error:", error);
+    throw error;
   }
 }
 
