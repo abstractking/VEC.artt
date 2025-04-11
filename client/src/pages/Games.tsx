@@ -14,7 +14,7 @@ const games: Game[] = [
     id: "galactic-hit",
     title: "Galactic Hit",
     thumbnail: "/images/galactic-hit-thumb.jpg",
-    url: "/api/games/galactic-hit.html"
+    url: "/games/galactic-hit.html"
   },
   {
     id: "crypto-racer",

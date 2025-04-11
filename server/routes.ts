@@ -999,10 +999,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  //Game Route
-  app.get('/games/:gameName', (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, '../public/games', `${req.params.gameName}`));
-  });
+  //Game Routes
+  app.use('/games', express.static(path.join(__dirname, '../public/games')));
+  app.use('/images', express.static(path.join(__dirname, '../public/images')));
 
   return httpServer;
 }
