@@ -1,0 +1,104 @@
+### Analysis of the Error
+
+The error **"Invalid genesisId"** indicates that the `genesisId` provided during the initialization of the VeWorld wallet's `ConnexVendor` is not valid or does not match the expected value for the current blockchain network (TestNet or MainNet). This results in the following cascading issues:
+1. The `ConnexVendor` object cannot be created.
+2. The connection to the VeWorld wallet fails.
+
+---
+
+### Possible Causes
+
+1. **Incorrect `genesisId` in Code**:
+   - The `genesisId` parameter is either hardcoded or fetched from environment variables. If this value is incorrect or missing, the wallet API will reject it.
+
+2. **Environment Misconfiguration**:
+   - The environment variables `VITE_VECHAIN_MAINNET_GENESIS_ID` or `VITE_VECHAIN_TESTNET_GENESIS_ID` may not be properly set or are incorrect.
+
+3. **Network Selection Mismatch**:
+   - If the application is configured for TestNet but uses a MainNet `genesisId` (or vice versa), the initialization will fail.
+
+4. **VeWorld Wallet API Version**:
+   - A mismatch between the VeWorld wallet API version and the expected parameters in your code could result in this issue.
+
+---
+
+### Recommendations to Resolve the Issue
+
+#### 1. Verify `genesisId` Values
+Ensure the correct `genesisId` values are being used for the respective blockchain networks:
+- **MainNet `genesisId`**:
+  ```text
+  0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a
+  ```
+- **TestNet `genesisId`**:
+  ```text
+  0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127
+  ```
+
+#### 2. Validate Environment Variables
+Ensure the following environment variables are correctly set in your `.env` file:
+```env
+VITE_VECHAIN_MAINNET_GENESIS_ID=0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a
+VITE_VECHAIN_TESTNET_GENESIS_ID=0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127
+```
+
+#### 3. Add Debug Logs
+Add logs to confirm the `genesisId` and network being used during the wallet connection:
+```typescript
+console.log("Genesis ID:", genesisId);
+console.log("Network Name:", networkName);
+```
+
+#### 4. Centralize Network Configurations
+Create a centralized configuration file for managing network settings:
+```typescript name=config/networkConfig.ts
+export const NETWORK_CONFIG = {
+  mainnet: {
+    genesisId: process.env.VITE_VECHAIN_MAINNET_GENESIS_ID || "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a",
+    networkName: "main",
+  },
+  testnet: {
+    genesisId: process.env.VITE_VECHAIN_TESTNET_GENESIS_ID || "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127",
+    networkName: "test",
+  },
+};
+```
+
+#### 5. Validate `genesisId` Early
+Before attempting to connect, validate the `genesisId` format:
+```typescript
+if (!genesisId.startsWith("0x") || genesisId.length !== 66) {
+  throw new Error("Invalid genesisId format");
+}
+```
+
+#### 6. Retry with Fallbacks
+Implement a retry mechanism with fallback values for `genesisId`:
+```typescript name=utils/connex.ts
+export async function initializeConnex(genesisId: string, retries: number = 3): Promise<any> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      console.log(`Attempt ${attempt}: Initializing Connex with genesisId: ${genesisId}`);
+      const connex = await vechain.newConnex({ genesis: genesisId });
+      return connex;
+    } catch (error) {
+      console.warn(`Attempt ${attempt} failed: ${error.message}`);
+      if (attempt === retries) throw error;
+    }
+  }
+}
+```
+
+#### 7. Synchronize Mobile and Desktop Handling
+Ensure consistent handling of `genesisId` across mobile and desktop connectors:
+- Mobile: `connectMobileWallet`
+- Desktop: `connectVeWorld`
+
+---
+
+### Next Steps
+1. **Test** the node connectivity and validate the `genesisId` values.
+2. **Update** your code to include centralized configurations and enhanced logging.
+3. **Monitor** the logs to confirm the correct `genesisId` is being used.
+
+Let me know if you would like me to help implement these updates!

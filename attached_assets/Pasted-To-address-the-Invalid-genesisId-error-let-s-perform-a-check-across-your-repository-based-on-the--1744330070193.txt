@@ -1,0 +1,60 @@
+To address the "Invalid genesisId" error, let's perform a check across your repository based on the possible causes outlined in your error analysis. I'll suggest modifications and checks to ensure your app correctly uses the genesis IDs.
+
+Checklist for Validating Configuration
+Verify genesisId Values:
+Check that the correct genesisId values are being utilized in your environment.
+
+MainNet genesisId:
+0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a
+TestNet genesisId:
+0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127
+Environment Variables:
+Ensure the following environment variables are set in your .env file or any other configuration method you are using:
+
+VITE_VECHAIN_MAINNET_GENESIS_ID=0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a
+VITE_VECHAIN_TESTNET_GENESIS_ID=0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127
+Network Configuration Centralization:
+Create or validate a central configuration file containing the network settings so that the genesis IDs are standardized across your application.
+
+// client/src/config/networkConfig.ts
+export const NETWORK_CONFIG = {
+  mainnet: {
+    genesisId: process.env.VITE_VECHAIN_MAINNET_GENESIS_ID || "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a",
+    networkName: "main",
+  },
+  testnet: {
+    genesisId: process.env.VITE_VECHAIN_TESTNET_GENESIS_ID || "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127",
+    networkName: "test",
+  },
+};
+Debugging Logs:
+Add logs to your connection code to display the genesis ID and the network name in use. This will help verify that the correct parameters are being sent during wallet initialization.
+
+console.log("Genesis ID:", genesisId);
+console.log("Network Name:", networkName);
+Validate Genesis ID Format:
+Before connecting, check if the genesis ID is correctly formatted and log an error if it isn't:
+
+if (!genesisId.startsWith("0x") || genesisId.length !== 66) {
+  throw new Error("Invalid genesisId format");
+}
+Testing for Abyss:
+Test multiple approaches using retry logic:
+
+export async function initializeConnex(genesisId: string, retries: number = 3): Promise<any> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      console.log(`Attempt ${attempt}: Initializing Connex with genesisId: ${genesisId}`);
+      const connex = await vechain.newConnex({ genesis: genesisId });
+      return connex;
+    } catch (error) {
+      console.warn(`Attempt ${attempt} failed: ${error.message}`);
+      if (attempt === retries) throw error;
+    }
+  }
+}
+Summary
+Confirm that the genesisId values are correctly specified both in your code and environment variables.
+Utilize centralized configuration for better management of network settings.
+Implement logging to trace and debug the genesis ID used during connections.
+This comprehensive checkmark list should help identify misconfigurations leading to the invalid genesis ID error. Let me know if you need any specific implementations or further adjustments!
