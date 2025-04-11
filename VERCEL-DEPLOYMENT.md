@@ -82,7 +82,22 @@ If you encounter deployment issues:
 
 4. **Runtime Errors**: Check the browser console for errors related to polyfills or missing functionality.
 
-5. **Syntax Errors in Scripts**: If you encounter errors like "missing ) after argument list" or other syntax issues in the preparation scripts, check for mismatched backticks, parentheses or braces in `scripts/prepare-vercel.js` and `scripts/post-build-vercel.js`.
+5. **Syntax Errors in Scripts**: If you encounter errors like "missing ) after argument list" or other syntax issues in the preparation scripts:
+   
+   - Check for mismatched backticks, parentheses or braces in `scripts/prepare-vercel.js` and `scripts/post-build-vercel.js`
+   
+   - Look for browser API calls that don't exist in Node.js:
+     ```javascript
+     // Problematic - causes "missing ) after argument list" in Node.js
+     const hashBuffer = window.crypto.subtle.digestSync('SHA-256', data);
+     
+     // Fixed version
+     const hashBuffer = new ArrayBuffer(32); // Placeholder for hash
+     ```
+   
+   - Simplify complex template literals with HTML/CSS, especially those containing special characters or syntax like @keyframes that might be misinterpreted
+   
+   - Check for unterminated template literals or string interpolation in large template literals
 
 6. **Dependency Warnings**: Address dependency conflicts by adding the following to your vercel.json:
    ```json
