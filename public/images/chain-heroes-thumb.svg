@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="225" viewBox="0 0 400 225" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4C1D95"/>
+      <stop offset="100%" stop-color="#7E22CE"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  
+  <!-- Main Background -->
+  <rect width="400" height="225" fill="url(#bg-gradient)"/>
+  
+  <!-- Particle Effect Background -->
+  <g opacity="0.4">
+    <circle cx="50" cy="50" r="2" fill="#FFFFFF"/>
+    <circle cx="100" cy="80" r="3" fill="#FFFFFF"/>
+    <circle cx="170" cy="30" r="2" fill="#FFFFFF"/>
+    <circle cx="200" cy="70" r="3" fill="#FFFFFF"/>
+    <circle cx="250" cy="40" r="2" fill="#FFFFFF"/>
+    <circle cx="300" cy="60" r="3" fill="#FFFFFF"/>
+    <circle cx="350" cy="20" r="2" fill="#FFFFFF"/>
+    
+    <circle cx="70" cy="120" r="2" fill="#FFFFFF"/>
+    <circle cx="130" cy="140" r="3" fill="#FFFFFF"/>
+    <circle cx="190" cy="110" r="2" fill="#FFFFFF"/>
+    <circle cx="230" cy="150" r="3" fill="#FFFFFF"/>
+    <circle cx="280" cy="130" r="2" fill="#FFFFFF"/>
+    <circle cx="320" cy="170" r="3" fill="#FFFFFF"/>
+    <circle cx="370" cy="120" r="2" fill="#FFFFFF"/>
+    
+    <circle cx="40" cy="180" r="2" fill="#FFFFFF"/>
+    <circle cx="90" cy="200" r="3" fill="#FFFFFF"/>
+    <circle cx="160" cy="190" r="2" fill="#FFFFFF"/>
+    <circle cx="210" cy="210" r="3" fill="#FFFFFF"/>
+    <circle cx="260" cy="180" r="2" fill="#FFFFFF"/>
+    <circle cx="330" cy="200" r="3" fill="#FFFFFF"/>
+  </g>
+  
+  <!-- Blockchain Pattern -->
+  <g stroke="#FFFFFF" stroke-width="2" opacity="0.2">
+    <line x1="50" y1="50" x2="100" y2="80"/>
+    <line x1="100" y1="80" x2="170" y2="30"/>
+    <line x1="170" y1="30" x2="200" y2="70"/>
+    <line x1="200" y1="70" x2="250" y2="40"/>
+    <line x1="250" y1="40" x2="300" y2="60"/>
+    <line x1="300" y1="60" x2="350" y2="20"/>
+    
+    <line x1="70" y1="120" x2="130" y2="140"/>
+    <line x1="130" y1="140" x2="190" y2="110"/>
+    <line x1="190" y1="110" x2="230" y2="150"/>
+    <line x1="230" y1="150" x2="280" y2="130"/>
+    <line x1="280" y1="130" x2="320" y2="170"/>
+    <line x1="320" y1="170" x2="370" y2="120"/>
+    
+    <line x1="40" y1="180" x2="90" y2="200"/>
+    <line x1="90" y1="200" x2="160" y2="190"/>
+    <line x1="160" y1="190" x2="210" y2="210"/>
+    <line x1="210" y1="210" x2="260" y2="180"/>
+    <line x1="260" y1="180" x2="330" y2="200"/>
+    
+    <line x1="70" y1="120" x2="50" y2="50"/>
+    <line x1="130" y1="140" x2="100" y2="80"/>
+    <line x1="190" y1="110" x2="170" y2="30"/>
+    <line x1="230" y1="150" x2="200" y2="70"/>
+    <line x1="280" y1="130" x2="250" y2="40"/>
+    <line x1="320" y1="170" x2="300" y2="60"/>
+    <line x1="370" y1="120" x2="350" y2="20"/>
+    
+    <line x1="40" y1="180" x2="70" y2="120"/>
+    <line x1="90" y1="200" x2="130" y2="140"/>
+    <line x1="160" y1="190" x2="190" y2="110"/>
+    <line x1="210" y1="210" x2="230" y2="150"/>
+    <line x1="260" y1="180" x2="280" y2="130"/>
+    <line x1="330" y1="200" x2="320" y2="170"/>
+  </g>
+  
+  <!-- Hero Characters -->
+  <!-- Hero 1 (Sword Fighter) -->
+  <g transform="translate(120, 120)">
+    <!-- Body -->
+    <circle cx="0" cy="0" r="20" fill="#FFD700"/>
+    <!-- Sword -->
+    <rect x="15" y="-30" width="5" height="40" rx="2" transform="rotate(45)" fill="#C0C0C0"/>
+    <rect x="10" y="-5" width="15" height="5" rx="2" transform="rotate(45)" fill="#A0A0A0"/>
+    <!-- Shield -->
+    <path d="M-20,0 L-10,-10 L-10,10 Z" fill="#B22222"/>
+    <!-- Helmet -->
+    <path d="M-5,-15 L5,-15 L7,-25 L-7,-25 Z" fill="#DAA520"/>
+    <!-- Face -->
+    <circle cx="-3" cy="-5" r="2" fill="#000000"/>
+    <circle cx="3" cy="-5" r="2" fill="#000000"/>
+    <path d="M-3,5 L3,5" stroke="#000000" stroke-width="2" fill="none"/>
+    <!-- Glow -->
+    <circle cx="0" cy="0" r="30" fill="url(#glow)" opacity="0.5"/>
+  </g>
+  
+  <!-- Hero 2 (Wizard) -->
+  <g transform="translate(200, 130)">
+    <!-- Body -->
+    <circle cx="0" cy="0" r="20" fill="#4169E1"/>
+    <!-- Staff -->
+    <rect x="-2" y="-40" width="4" height="50" rx="2" fill="#8B4513"/>
+    <circle cx="0" cy="-45" r="8" fill="#00FFFF"/>
+    <!-- Hat -->
+    <path d="M-15,-15 L15,-15 L0,-35 Z" fill="#0000CD"/>
+    <!-- Face -->
+    <circle cx="-3" cy="-5" r="2" fill="#000000"/>
+    <circle cx="3" cy="-5" r="2" fill="#000000"/>
+    <path d="M-3,5 L3,5" stroke="#000000" stroke-width="2" fill="none"/>
+    <!-- Magic Particles -->
+    <circle cx="10" cy="-20" r="2" fill="#00FFFF"/>
+    <circle cx="-10" cy="-25" r="3" fill="#00FFFF"/>
+    <circle cx="15" cy="-30" r="2" fill="#00FFFF"/>
+    <circle cx="-5" cy="-35" r="2" fill="#00FFFF"/>
+    <!-- Glow -->
+    <circle cx="0" cy="0" r="30" fill="url(#glow)" opacity="0.5"/>
+  </g>
+  
+  <!-- Hero 3 (Archer) -->
+  <g transform="translate(280, 110)">
+    <!-- Body -->
+    <circle cx="0" cy="0" r="20" fill="#32CD32"/>
+    <!-- Bow -->
+    <path d="M15,10 Q30,0 15,-10" stroke="#8B4513" stroke-width="4" fill="none"/>
+    <line x1="15" y1="0" x2="40" y2="0" stroke="#8B4513" stroke-width="2"/>
+    <!-- Arrow Head -->
+    <path d="M40,0 L35,-3 L35,3 Z" fill="#C0C0C0"/>
+    <!-- Hat -->
+    <path d="M-10,-15 L10,-15 L0,-25 Z" fill="#228B22"/>
+    <!-- Face -->
+    <circle cx="-3" cy="-5" r="2" fill="#000000"/>
+    <circle cx="3" cy="-5" r="2" fill="#000000"/>
+    <path d="M-3,5 L3,5" stroke="#000000" stroke-width="2" fill="none"/>
+    <!-- Glow -->
+    <circle cx="0" cy="0" r="30" fill="url(#glow)" opacity="0.5"/>
+  </g>
+  
+  <!-- Game Title -->
+  <text x="200" y="40" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#FFFFFF" text-anchor="middle">Chain Heroes</text>
+  
+  <!-- Tagline -->
+  <text x="200" y="70" font-family="Arial, sans-serif" font-size="14" fill="#FFFFFF" text-anchor="middle">Battle on the Blockchain</text>
+  
+  <!-- Token Icons -->
+  <g transform="translate(30, 40)">
+    <circle cx="0" cy="0" r="15" fill="#FFFFFF" opacity="0.2"/>
+    <text x="0" y="5" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">VET</text>
+  </g>
+  <g transform="translate(370, 40)">
+    <circle cx="0" cy="0" r="15" fill="#FFFFFF" opacity="0.2"/>
+    <text x="0" y="5" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#FFFFFF" text-anchor="middle">NFT</text>
+  </g>
+</svg>
