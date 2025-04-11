@@ -28,6 +28,13 @@
 
 # Redirects and rewrites
 [[redirects]]
+  # Fallback for specific paths that might error
+  from = "/nft/*"
+  to = "/static-fallback.html"
+  status = 404
+  force = false
+
+[[redirects]]
   # Redirect all paths to index.html (for client-side routing)
   from = "/*"
   to = "/index.html"

@@ -76,7 +76,7 @@ const SocialShareButtons: React.FC<SocialShareProps> = ({
 
   // Share using native Web Share API if available
   const useNativeShare = () => {
-    if (navigator.share) {
+    if (typeof navigator !== 'undefined' && navigator.share) {
       navigator.share({
         title: title,
         text: description,
@@ -201,7 +201,7 @@ const SocialShareButtons: React.FC<SocialShareProps> = ({
         </Tooltip>
 
         {/* Native Share (if available) */}
-        {navigator?.share && (
+        {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
           <Tooltip>
             <TooltipTrigger asChild>
               <Button

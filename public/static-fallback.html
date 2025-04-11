@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VeCollab Marketplace - Explore NFTs on VeChain</title>
+  <meta name="description" content="Discover unique digital assets on VeCollab, the decentralized NFT marketplace on VeChain blockchain.">
+  <meta property="og:title" content="VeCollab NFT Marketplace on VeChain">
+  <meta property="og:description" content="Discover, collect, and trade unique digital assets on the VeChain blockchain.">
+  <meta property="og:image" content="/logo-og.png">
+  <meta property="og:url" content="https://vecollab.replit.app/">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="VeCollab NFT Marketplace on VeChain">
+  <meta name="twitter:description" content="Discover, collect, and trade unique digital assets on the VeChain blockchain.">
+  <meta name="twitter:image" content="/logo-og.png">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <style>
+    :root {
+      --primary: #3498db;
+      --primary-dark: #2980b9;
+      --secondary: #2c3e50;
+      --accent: #e74c3c;
+      --bg-light: #f5f7fa;
+      --bg-dark: #1a1d21;
+      --text-light: #333;
+      --text-dark: #eee;
+      --gray-100: #f8f9fa;
+      --gray-200: #e9ecef;
+      --gray-300: #dee2e6;
+      --gray-400: #ced4da;
+      --gray-500: #adb5bd;
+      --gray-600: #6c757d;
+      --gray-700: #495057;
+      --gray-800: #343a40;
+      --gray-900: #212529;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+    
+    header {
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    
+    .logo img {
+      height: 40px;
+      margin-right: 0.5rem;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    
+    .nav-links a {
+      text-decoration: none;
+      color: var(--gray-700);
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-weight: 500;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--gray-300);
+      color: var(--gray-700);
+    }
+    
+    .btn-outline:hover {
+      background-color: var(--gray-100);
+    }
+    
+    .hero {
+      padding: 4rem 0;
+      text-align: center;
+      background: linear-gradient(135deg, #e0f7fa 0%, #d4e6f1 100%);
+      border-radius: 0 0 2rem 2rem;
+    }
+    
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--secondary);
+    }
+    
+    .hero p {
+      font-size: 1.125rem;
+      color: var(--gray-700);
+      max-width: 800px;
+      margin: 0 auto 2rem auto;
+    }
+    
+    .nft-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+      padding: 3rem 0;
+    }
+    
+    .nft-card {
+      background-color: white;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .nft-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+    }
+    
+    .nft-image {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+    }
+    
+    .nft-details {
+      padding: 1.5rem;
+    }
+    
+    .nft-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--secondary);
+    }
+    
+    .nft-creator {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      font-size: 0.875rem;
+    }
+    
+    .nft-creator-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      object-fit: cover;
+    }
+    
+    .nft-price {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid var(--gray-200);
+    }
+    
+    .price-amount {
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .section-title {
+      font-size: 2rem;
+      text-align: center;
+      margin: 2rem 0;
+      color: var(--secondary);
+    }
+    
+    .features {
+      padding: 4rem 0;
+      background-color: white;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .feature-card {
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .feature-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1rem auto;
+    }
+    
+    .feature-title {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--secondary);
+    }
+    
+    footer {
+      background-color: var(--secondary);
+      color: white;
+      padding: 3rem 0;
+    }
+    
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+    
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links h3 {
+      font-size: 1.125rem;
+      margin-bottom: 1rem;
+    }
+    
+    .footer-links ul {
+      list-style: none;
+    }
+    
+    .footer-links li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .footer-links a {
+      color: var(--gray-300);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+    }
+    
+    .footer-bottom {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--gray-400);
+    }
+    
+    .social-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin: 1.5rem 0;
+    }
+    
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 9999px;
+      transition: all 0.2s;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .twitter-btn {
+      background-color: #1DA1F2;
+    }
+    
+    .twitter-btn:hover {
+      background-color: #0c85d0;
+    }
+    
+    .facebook-btn {
+      background-color: #1877F2;
+    }
+    
+    .facebook-btn:hover {
+      background-color: #0a56b3;
+    }
+    
+    .linkedin-btn {
+      background-color: #0A66C2;
+    }
+    
+    .linkedin-btn:hover {
+      background-color: #074a8c;
+    }
+    
+    .reddit-btn {
+      background-color: #FF4500;
+    }
+    
+    .reddit-btn:hover {
+      background-color: #cc3700;
+    }
+    
+    .mail-btn {
+      background-color: #6b7280;
+    }
+    
+    .mail-btn:hover {
+      background-color: #4b5563;
+    }
+    
+    .error-container {
+      padding: 4rem 0;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .error-title {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--secondary);
+    }
+    
+    .error-message {
+      font-size: 1.125rem;
+      margin-bottom: 2rem;
+      color: var(--gray-700);
+    }
+    
+    .error-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .hero h1 {
+        font-size: 2rem;
+      }
+      
+      .error-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <a href="/" class="logo">
+          <img src="/logo.png" alt="VeCollab Logo" onerror="this.src='data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2240%22%20height%3D%2240%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2220%22%20r%3D%2220%22%20fill%3D%22%233498db%22%2F%3E%3Ctext%20x%3D%2220%22%20y%3D%2225%22%20font-family%3D%22Arial%22%20font-size%3D%2218%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%3EVC%3C%2Ftext%3E%3C%2Fsvg%3E'">
+          VeCollab
+        </a>
+        <nav class="nav-links">
+          <a href="/">Home</a>
+          <a href="/#explore">Explore</a>
+          <a href="/#features">Features</a>
+          <a href="https://vechain.org/" target="_blank" rel="noopener noreferrer">VeChain</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="error-container">
+      <h1 class="error-title">Experience the Full App</h1>
+      <p class="error-message">
+        You're viewing a simplified version of the VeCollab NFT Marketplace.
+        For the full interactive experience with wallet connectivity,
+        please try opening the app in another browser or ensure JavaScript is enabled.
+      </p>
+      
+      <h2 style="margin-top: 2rem; font-size: 1.5rem; color: var(--secondary);">Share Our Marketplace</h2>
+      <p style="margin-bottom: 1rem;">Help us grow the VeChain NFT community!</p>
+      
+      <div class="social-buttons">
+        <a href="https://twitter.com/intent/tweet?url=https://vecollab.replit.app&text=Check%20out%20VeCollab%20NFT%20Marketplace%20on%20VeChain%21&hashtags=NFT,VeChain,Blockchain" target="_blank" class="social-btn twitter-btn" aria-label="Share on Twitter">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path></svg>
+        </a>
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https://vecollab.replit.app" target="_blank" class="social-btn facebook-btn" aria-label="Share on Facebook">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+        </a>
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://vecollab.replit.app" target="_blank" class="social-btn linkedin-btn" aria-label="Share on LinkedIn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+        </a>
+        <a href="https://www.reddit.com/submit?url=https://vecollab.replit.app&title=VeCollab%20NFT%20Marketplace%20on%20VeChain" target="_blank" class="social-btn reddit-btn" aria-label="Share on Reddit">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16.2 7.8l-2 .4-1-2.4c-.17-.41-.7-.58-1.12-.4-.41.17-.58.7-.4 1.12l1 2.4-4.6.95-1-2.4c-.17-.41-.7-.58-1.12-.4-.41.17-.58.7-.4 1.12l1 2.4-2 .4c-.41.09-.72.5-.63.91.09.41.5.72.91.63l2-.4 1 2.4c.17.41.7.58 1.12.4.41-.17.58-.7.4-1.12l-1-2.4 4.6-.95 1 2.4c.17.41.7.58 1.12.4.41-.17.58-.7.4-1.12l-1-2.4 2-.4c.41-.09.72-.5.63-.91-.09-.41-.5-.72-.91-.63zM6.8 12.12c-.5 0-.9.4-.9.9 0 .5.4.9.9.9.5 0 .9-.4.9-.9 0-.5-.4-.9-.9-.9zm10.4 0c-.5 0-.9.4-.9.9 0 .5.4.9.9.9.5 0 .9-.4.9-.9 0-.5-.4-.9-.9-.9z"></path><path d="M11.5 15c-.5 0-.9-.4-.9-.9s.4-.9.9-.9.9.4.9.9-.4.9-.9.9zm2 0c-.5 0-.9-.4-.9-.9s.4-.9.9-.9.9.4.9.9-.4.9-.9.9z"></path></svg>
+        </a>
+        <a href="mailto:?subject=Check%20out%20VeCollab%20NFT%20Marketplace&body=I%20found%20this%20amazing%20NFT%20marketplace%20on%20VeChain:%20https://vecollab.replit.app" class="social-btn mail-btn" aria-label="Share via Email">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+        </a>
+      </div>
+      
+      <div class="error-actions">
+        <a href="/" class="btn btn-primary">Reload Application</a>
+        <a href="https://docs.vechain.org/" target="_blank" rel="noopener noreferrer" class="btn btn-outline">Learn About VeChain</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div>
+          <div class="footer-logo">VeCollab</div>
+          <p>A decentralized NFT marketplace built on VeChain blockchain.</p>
+        </div>
+        <div class="footer-links">
+          <h3>Explore</h3>
+          <ul>
+            <li><a href="/#explore">Marketplace</a></li>
+            <li><a href="/#collections">Collections</a></li>
+            <li><a href="/#artists">Featured Artists</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h3>Resources</h3>
+          <ul>
+            <li><a href="/#about">About Us</a></li>
+            <li><a href="/#faq">FAQ</a></li>
+            <li><a href="https://vechain.org/" target="_blank" rel="noopener noreferrer">VeChain</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 VeCollab NFT Marketplace. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Simple script to create social sharing functionality without relying on modern JS features
+    function createSimpleSharingLinks() {
+      // URLs for sharing
+      var pageUrl = encodeURIComponent(window.location.href);
+      var pageTitle = encodeURIComponent(document.title);
+      var pageDescription = encodeURIComponent("Check out this amazing NFT marketplace on VeChain!");
+      
+      // Update sharing links with the current page information
+      var twitterLinks = document.querySelectorAll('a[href*="twitter.com/intent/tweet"]');
+      for (var i = 0; i < twitterLinks.length; i++) {
+        twitterLinks[i].href = "https://twitter.com/intent/tweet?url=" + pageUrl + "&text=" + pageTitle + "&hashtags=NFT,VeChain,Blockchain";
+      }
+      
+      var facebookLinks = document.querySelectorAll('a[href*="facebook.com/sharer"]');
+      for (var i = 0; i < facebookLinks.length; i++) {
+        facebookLinks[i].href = "https://www.facebook.com/sharer/sharer.php?u=" + pageUrl;
+      }
+      
+      var linkedinLinks = document.querySelectorAll('a[href*="linkedin.com/sharing"]');
+      for (var i = 0; i < linkedinLinks.length; i++) {
+        linkedinLinks[i].href = "https://www.linkedin.com/sharing/share-offsite/?url=" + pageUrl;
+      }
+      
+      var redditLinks = document.querySelectorAll('a[href*="reddit.com/submit"]');
+      for (var i = 0; i < redditLinks.length; i++) {
+        redditLinks[i].href = "https://www.reddit.com/submit?url=" + pageUrl + "&title=" + pageTitle;
+      }
+      
+      var mailLinks = document.querySelectorAll('a[href^="mailto:"]');
+      for (var i = 0; i < mailLinks.length; i++) {
+        mailLinks[i].href = "mailto:?subject=" + pageTitle + "&body=" + pageDescription + "%0A%0A" + pageUrl;
+      }
+    }
+    
+    // Run when the page loads
+    if (window.addEventListener) {
+      window.addEventListener('load', createSimpleSharingLinks);
+    } else if (window.attachEvent) {
+      window.attachEvent('onload', createSimpleSharingLinks);
+    }
+  </script>
+</body>
+</html>

@@ -605,7 +605,12 @@ export default function NFTDetail() {
                 )}
                 {isFavorite ? "Favorited" : "Favorite"}
               </Button>
-              <Button variant="outline" className="flex items-center" size="sm">
+              <Button 
+                variant="outline" 
+                className="flex items-center" 
+                size="sm"
+                onClick={() => setShareDialogOpen(true)}
+              >
                 <Share className="h-4 w-4 mr-1" />
                 Share
               </Button>
@@ -841,6 +846,29 @@ export default function NFTDetail() {
           }}
         />
       )}
+
+      {/* Share Dialog */}
+      <Dialog open={isShareDialogOpen} onOpenChange={setShareDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Share this NFT</DialogTitle>
+            <DialogDescription>
+              Share this amazing NFT with your friends and followers
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-6">
+            <SocialShareButtons
+              url={window.location.href}
+              title={`Check out ${nft?.name} on VeCollab NFT Marketplace`}
+              description={`I found this amazing NFT: ${nft?.name}${nft?.description ? ` - ${nft.description.substring(0, 100)}${nft.description.length > 100 ? '...' : ''}` : ''}`}
+              imageUrl={nft?.imageUrl}
+              hashtags={['NFT', 'VeChain', 'VeCollab', 'Blockchain']}
+              size="md"
+              className="justify-center"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
