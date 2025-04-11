@@ -10,6 +10,7 @@ import NotificationCenter from "@/components/NotificationCenter";
 import NetworkIndicator from "@/components/NetworkIndicator";
 import FaucetLink from "@/components/FaucetLink";
 import WalletPopoverMenu from "@/components/WalletPopoverMenu";
+import VeChainWalletButton from "@/components/VeChainWalletButton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   DropdownMenu,

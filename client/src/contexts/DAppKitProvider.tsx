@@ -5,6 +5,8 @@ import {
 } from '@vechain/dapp-kit-react';
 import { createWeb3Modal } from '@web3modal/wagmi/react';
 import { WalletConnectOptions } from '@vechain/dapp-kit';
+import { createConfig, http } from 'wagmi';
+import { mainnet } from 'wagmi/chains';
 
 // Configuration type for our DAppKit context
 type Config = {
@@ -71,53 +73,43 @@ export function DAppKitProvider({ children }: DAppKitProviderProps) {
     }
   }), []);
   
+  // Create wagmi config (required by web3modal)
+  const wagmiConfig = useMemo(() => {
+    return createConfig({
+      // Use a placeholder chain as the real VeChain chain will be defined in DAppKit
+      chains: [mainnet],
+      transports: {
+        [mainnet.id]: http(),
+      },
+    });
+  }, []);
+  
   // Create Web3Modal instance with minimal configuration
-  // Using any type for configuration to bypass TypeScript errors
-  // This is needed because the VeChain types don't perfectly match web3modal expectations
   const web3Modal = useMemo(() => {
-    // Need to cast the config to any to avoid TypeScript errors with the web3modal API
-    const modalConfig: any = {
+    return createWeb3Modal({
+      wagmiConfig,
       projectId: walletConnectOptions.projectId,
       themeMode: 'light',
       themeVariables: {
-        '--w3m-accent': '#7c3aed',
-        '--w3m-background-color': '#7c3aed',
+        '--w3m-accent': '#7c3aed'
       },
-      // VeChain chain configuration
-      defaultChain: {
-        id: config.network === 'main' ? 74 : 39, // VeChain MainNet/TestNet chain IDs
-        name: config.network === 'main' ? 'VeChain MainNet' : 'VeChain TestNet',
-        nativeCurrency: {
-          name: 'VET',
-          symbol: 'VET',
-          decimals: 18
-        },
-        rpcUrls: {
-          default: { 
-            http: [config.nodeUrl] 
-          }
-        }
-      },
+      // Basic metadata for the web3modal
       metadata: {
         name: 'VeCollab',
         description: 'A decentralized collaboration platform built on VeChain',
         url: window.location.origin,
         icons: [`${window.location.origin}/logo.png`]
       }
-    };
-    
-    return createWeb3Modal(modalConfig);
-  }, [walletConnectOptions.projectId, config.network, config.nodeUrl]);
+    });
+  }, [wagmiConfig, walletConnectOptions.projectId]);
   
   // DAppKit provider options - following VeChain documentation recommendations
-  const dappKitOptions: DAppKitProviderOptions = {
+  // Apply TypeScript type casting to handle property discrepancies
+  const dappKitOptions = {
     // Required - The URL of the node to connect to
     nodeUrl: config.nodeUrl,
     
-    // Network setting (main or test)
-    network: config.network, 
-    
-    // For backward compatibility - provide both network and genesis
+    // Genesis configuration
     genesis: config.network,
     
     // WalletConnect options
@@ -137,9 +129,7 @@ export function DAppKitProvider({ children }: DAppKitProviderProps) {
     
     // Allow all wallet types
     allowedWallets: ['wallet-connect', 'veworld', 'sync2', 'sync'],
-    
-    children: null // Will be set later
-  };
+  } as DAppKitProviderOptions;
   
   // Context value
   const contextValue = {
