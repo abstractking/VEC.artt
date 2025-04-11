@@ -1,5 +1,5 @@
 {
-  "buildCommand": "node scripts/prepare-vercel.cjs && vite build --config vite.config.vercel.js && node scripts/post-build-vercel.cjs",
+  "buildCommand": "./scripts/vercel-build.sh",
   "installCommand": "npm ci --legacy-peer-deps",
   "outputDirectory": "dist/public",
   "framework": "vite",

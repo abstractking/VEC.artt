@@ -2,6 +2,9 @@
 # Script to run Vercel build process with the correct file extensions
 
 echo "🔄 Starting Vercel build process"
+# First clean up any potential duplicate agent declarations
+node scripts/fix-duplicated-agents.cjs
+# Then run the normal build process
 node scripts/prepare-vercel.cjs && vite build --config vite.config.vercel.js && node scripts/post-build-vercel.cjs
 BUILD_STATUS=$?
 

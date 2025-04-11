@@ -93,7 +93,7 @@ const filePatches = [
     file: path.join(NODE_MODULES_DIR, '@vechain/connex-driver/esm/simple-net.js'),
     replacements: [
       {
-        // Complete file replacement to ensure compatibility
+        // Complete replacement of the import section only - using one patching approach
         from: `import { SimpleNet } from './interfaces';
 import { SimpleWebSocketReader } from './simple-websocket-reader';
 import { resolve } from 'url';
@@ -120,28 +120,7 @@ class HttpsAgent {
       }
     ]
   },
-  // Alternate patch as fallback if the above pattern doesn't match
-  {
-    file: path.join(NODE_MODULES_DIR, '@vechain/connex-driver/esm/simple-net.js'),
-    replacements: [
-      {
-        from: `import { Agent as HttpAgent } from 'http';`,
-        to: `// Patched by VeCollab for browser compatibility
-// Original: import { Agent as HttpAgent } from 'http';
-const HttpAgent = class {
-  constructor() {}
-};`
-      },
-      {
-        from: `import { Agent as HttpsAgent } from 'https';`,
-        to: `// Patched by VeCollab for browser compatibility
-// Original: import { Agent as HttpsAgent } from 'https';
-const HttpsAgent = class {
-  constructor() {}
-};`
-      }
-    ]
-  },
+  // Remove the duplicate alternative patching approach that was causing the conflict
   {
     file: path.join(NODE_MODULES_DIR, 'thor-devkit/dist/es/cry/secp256k1.js'),
     replacements: [
