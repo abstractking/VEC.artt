@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { insertUserSchema, insertCollectionSchema, insertNftSchema, insertBidSchema, insertTransactionSchema } from "@shared/schema";
 import { z } from "zod";
 import fetch from "node-fetch";
+import path from 'path'; // Import path module
 
 // Define WebSocket connection types
 interface WebSocketClient extends WebSocket {
@@ -38,7 +39,7 @@ function sendNotification(userId: number | null, notification: any) {
         type: 'notification',
         ...notification
       });
-      
+
       userClients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
           client.send(message);
@@ -54,12 +55,12 @@ function sendNotification(userId: number | null, notification: any) {
         allClients.push(clients[i]);
       }
     });
-    
+
     const message = JSON.stringify({
       type: 'notification',
       ...notification
     });
-    
+
     allClients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
         client.send(message);
@@ -75,19 +76,19 @@ function generateId() {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
-  
+
   // Initialize WebSocket server with explicit path
   const wss = new WebSocketServer({ 
     server: httpServer, 
     path: '/ws',
     clientTracking: true
   });
-  
+
   // Handle WebSocket connections
   wss.on('connection', (ws: WebSocketClient) => {
     ws.isAlive = true;
     console.log('WebSocket client connected');
-    
+
     // Send immediate confirmation to the client
     try {
       ws.send(JSON.stringify({
@@ -98,27 +99,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (err) {
       console.error('Error sending connection confirmation:', err);
     }
-    
+
     // Handle messages from client
     ws.on('message', (message) => {
       try {
         // Convert buffer to string if necessary
         const messageStr = message instanceof Buffer ? message.toString() : message.toString();
         const data = JSON.parse(messageStr);
-        
+
         // Handle authentication
         if (data.type === 'auth' && data.userId) {
           const userId = parseInt(data.userId);
           ws.userId = userId;
-          
+
           // Add client to connected clients map
           if (!connectedClients.has(userId)) {
             connectedClients.set(userId, []);
           }
           connectedClients.get(userId)!.push(ws);
-          
+
           console.log(`WebSocket client authenticated: User #${userId}`);
-          
+
           // Send welcome notification
           try {
             ws.send(JSON.stringify({
@@ -136,7 +137,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.error('Error parsing WebSocket message:', error);
       }
     });
-    
+
     // Handle disconnections
     ws.on('close', () => {
       if (ws.userId) {
@@ -147,23 +148,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (index !== -1) {
             userClients.splice(index, 1);
           }
-          
+
           // If no clients left for this user, remove the user entry
           if (userClients.length === 0) {
             connectedClients.delete(ws.userId);
           }
         }
       }
-      
+
       console.log('WebSocket client disconnected');
     });
-    
+
     // Handle pings to keep connection alive
     ws.on('pong', () => {
       ws.isAlive = true;
     });
   });
-  
+
   // Ping clients periodically to check if they're still alive
   const interval = setInterval(() => {
     wss.clients.forEach((ws: any) => {
@@ -171,12 +172,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (client.isAlive === false) {
         return client.terminate();
       }
-      
+
       client.isAlive = false;
       client.ping();
     });
   }, 30000); // Check every 30 seconds
-  
+
   wss.on('close', () => {
     clearInterval(interval);
   });
@@ -194,7 +195,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const user = await storage.createUser(data);
-      
+
       // Send notification about new user registration
       sendNotification(null, {
         id: generateId(),
@@ -203,7 +204,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: new Date().toISOString(),
         link: `/profile/${user.id}`
       });
-      
+
       res.status(201).json(user);
     } catch (err) {
       res.status(500).json({ error: 'Failed to create user' });
@@ -255,7 +256,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const collection = await storage.createCollection(data);
-      
+
       // Send notification about new collection
       sendNotification(null, {
         id: generateId(),
@@ -264,7 +265,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: new Date().toISOString(),
         link: `/collections/${collection.id}`
       });
-      
+
       // Send personalized notification to the creator
       sendNotification(data.creatorId, {
         id: generateId(),
@@ -273,7 +274,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: new Date().toISOString(),
         link: `/collections/${collection.id}`
       });
-      
+
       res.status(201).json(collection);
     } catch (err) {
       res.status(500).json({ error: 'Failed to create collection' });
@@ -332,11 +333,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const nft = await storage.createNFT(data);
-      
+
       // Fetch creator info for notification message
       const creator = await storage.getUser(data.creatorId);
       const creatorName = creator ? creator.username : `Artist #${data.creatorId}`;
-      
+
       // Send global notification for new NFT mint
       sendNotification(null, {
         id: generateId(),
@@ -346,7 +347,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         link: `/nft/${nft.id}`,
         thumbnail: data.imageUrl
       });
-      
+
       // If the NFT is part of a collection, send notification to collection followers
       if (data.collectionId) {
         // In a real implementation we would fetch collection followers here
@@ -363,7 +364,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         }
       }
-      
+
       res.status(201).json(nft);
     } catch (err) {
       res.status(500).json({ error: 'Failed to create NFT' });
@@ -386,7 +387,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!nft) {
         return res.status(404).json({ error: 'NFT not found' });
       }
-      
+
       // Track view if userId is provided
       if (req.query.userId) {
         try {
@@ -407,7 +408,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 ownedNFTs: number;
                 collections: number;
               };
-              
+
               const currentStats = (creator.stats as UserStats) || { 
                 totalViews: 0, 
                 totalLikes: 0, 
@@ -418,14 +419,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 ownedNFTs: 0,
                 collections: 0
               };
-              
+
               await storage.updateUser(nft.creatorId, {
                 stats: {
                   ...currentStats,
                   totalViews: (currentStats.totalViews || 0) + 1
                 }
               });
-              
+
               // Send notification to creator about the view
               sendNotification(nft.creatorId, {
                 id: generateId(),
@@ -441,7 +442,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Continue with the request even if stats update fails
         }
       }
-      
+
       res.json(nft);
     } catch (err) {
       res.status(500).json({ error: 'Failed to retrieve NFT' });
@@ -498,17 +499,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const bid = await storage.createBid(data);
-      
+
       // Get NFT details for notification
       const nft = await storage.getNFT(data.nftId);
       if (!nft) {
         throw new Error('NFT not found');
       }
-      
+
       // Get bidder details
       const bidder = await storage.getUser(data.bidderId);
       const bidderName = bidder ? bidder.username : `User #${data.bidderId}`;
-      
+
       // Notify NFT owner about new bid
       sendNotification(nft.ownerId, {
         id: generateId(),
@@ -518,7 +519,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         link: `/nft/${nft.id}`,
         thumbnail: nft.imageUrl
       });
-      
+
       // Notify NFT creator if different from owner
       if (nft.creatorId !== nft.ownerId) {
         sendNotification(nft.creatorId, {
@@ -530,17 +531,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           thumbnail: nft.imageUrl
         });
       }
-      
+
       // Notify other bidders about higher bid
       const otherBids = await storage.getBidsByNFT(nft.id);
       const highestBid = Math.max(...otherBids.map(b => parseFloat(b.amount)));
       const bidAmount = parseFloat(data.amount);
-      
+
       if (bidAmount > highestBid) {
         // Get unique bidders except current one without using Set spread
         const seenBidderIds = new Map<number, boolean>();
         const uniqueBidders: number[] = [];
-        
+
         otherBids
           .filter(b => b.bidderId !== data.bidderId)
           .forEach(b => {
@@ -549,7 +550,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               uniqueBidders.push(b.bidderId);
             }
           });
-        
+
         // Notify them about being outbid
         uniqueBidders.forEach(bidderId => {
           sendNotification(bidderId, {
@@ -562,7 +563,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           });
         });
       }
-      
+
       res.status(201).json(bid);
     } catch (err) {
       res.status(500).json({ error: 'Failed to create bid' });
@@ -609,20 +610,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const transaction = await storage.createTransaction(data);
-      
+
       // Get NFT details for notification
       const nft = await storage.getNFT(data.nftId);
       if (!nft) {
         throw new Error('NFT not found');
       }
-      
+
       // Get buyer and seller details
       const buyer = await storage.getUser(data.buyerId);
       const seller = await storage.getUser(data.sellerId);
-      
+
       const buyerName = buyer ? buyer.username : `User #${data.buyerId}`;
       const sellerName = seller ? seller.username : `User #${data.sellerId}`;
-      
+
       // Notify seller about sale
       sendNotification(data.sellerId, {
         id: generateId(),
@@ -632,7 +633,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         link: `/nft/${nft.id}`,
         thumbnail: nft.imageUrl
       });
-      
+
       // Notify buyer about purchase
       sendNotification(data.buyerId, {
         id: generateId(),
@@ -642,14 +643,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         link: `/nft/${nft.id}`,
         thumbnail: nft.imageUrl
       });
-      
+
       // Notify creator if different from seller
       if (nft.creatorId !== data.sellerId) {
         // Calculate royalty (typically 5-10%)
         const royaltyPercentage = 0.1; // 10%
         const priceValue = parseFloat(data.price);
         const royaltyAmount = (priceValue * royaltyPercentage).toFixed(2);
-        
+
         sendNotification(nft.creatorId, {
           id: generateId(),
           notificationType: 'sale',
@@ -659,7 +660,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           thumbnail: nft.imageUrl
         });
       }
-      
+
       // Send global notification about high-value sales (optional, for marketplace activity)
       const isHighValue = parseFloat(data.price) >= 1000; // Example threshold
       if (isHighValue) {
@@ -672,14 +673,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
           thumbnail: nft.imageUrl
         });
       }
-      
+
       // Update NFT ownership
       await storage.updateNFT(nft.id, { 
         ownerId: data.buyerId,
         lastSoldPrice: data.price,
         lastSoldAt: new Date()
       });
-      
+
       res.status(201).json(transaction);
     } catch (err) {
       res.status(500).json({ error: 'Failed to create transaction' });
@@ -715,12 +716,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: 'Failed to retrieve transactions' });
     }
   });
-  
+
   // Custom notification endpoint for handling transaction events from client
   app.post('/api/notifications', async (req: Request, res: Response) => {
     try {
       const { userId, type, status, txId, metadata, timestamp, message: customMessage, notificationType: customType } = req.body;
-      
+
       // Check if this is a direct notification (not a transaction)
       if (userId && customMessage && (type === 'like' || type === 'follow' || type === 'view')) {
         // For direct notifications, use the provided message and type
@@ -731,35 +732,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
           timestamp: timestamp || new Date().toISOString(),
           metadata
         };
-        
+
         // Log notification for debugging
         console.log(`Sending direct notification to user #${userId}:`, notification.message);
-        
+
         // Send notification through WebSocket
         sendNotification(userId, notification);
-        
+
         // Respond to client
         return res.status(200).json({ 
           success: true,
           notification
         });
       }
-      
+
       // For transaction notifications, require these fields
       if (!userId || !type || !status) {
         return res.status(400).json({ error: 'Missing required notification fields' });
       }
-      
+
       // Validate user exists
       const user = await storage.getUser(userId);
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
-      
+
       // Generate notification message based on transaction type and status
       let message = '';
       let notificationType = 'transaction';
-      
+
       // Process different transaction types and statuses
       if (status === 'initiated') {
         message = `Your ${type} transaction has been initiated and is awaiting confirmation.`;
@@ -791,7 +792,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else if (status === 'failed') {
         message = `Your ${type} transaction has failed. Please try again.`;
       }
-      
+
       // Create notification object
       const notification = {
         id: generateId(),
@@ -801,13 +802,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         txId,
         metadata
       };
-      
+
       // Log notification for debugging
       console.log(`Sending notification to user #${userId}:`, notification.message);
-      
+
       // Send notification through WebSocket
       sendNotification(userId, notification);
-      
+
       // Respond to client
       res.status(200).json({ 
         success: true,
@@ -834,20 +835,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const baseUrl = VECHAIN_NODES[network];
       const path = req.path.replace(`/api/vechain/${network}`, '');
       const url = `${baseUrl}${path}`;
-      
+
       console.log(`[VeChain Proxy] Forwarding request to: ${url}`);
-      
+
       // Set CORS headers to ensure browsers accept our response
       res.header('Access-Control-Allow-Origin', '*');
       res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
       res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-      
+
       // Handle preflight requests
       if (req.method === 'OPTIONS') {
         res.status(200).end();
         return;
       }
-      
+
       // Build query parameters
       const params = new URLSearchParams();
       for (const [key, value] of Object.entries(req.query)) {
@@ -855,16 +856,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           params.append(key, value as string);
         }
       }
-      
+
       const queryString = params.toString();
       const fullUrl = queryString ? `${url}?${queryString}` : url;
-      
+
       // Copy headers from the original request
       const headers: Record<string, string> = {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       };
-      
+
       // Copy important headers from the client request
       const headersToForward = ['authorization', 'x-api-key'];
       for (const header of headersToForward) {
@@ -873,37 +874,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
           headers[header] = value as string;
         }
       }
-      
+
       const options: any = {
         method: req.method,
         headers: headers,
       };
-      
+
       // Forward request body for non-GET requests
       if (req.method !== 'GET' && req.body) {
         options.body = JSON.stringify(req.body);
       }
-      
+
       console.log(`[VeChain Proxy] Request options:`, {
         url: fullUrl,
         method: options.method,
         headersLength: Object.keys(options.headers).length,
         hasBody: !!options.body
       });
-      
+
       const response = await fetch(fullUrl, options);
-      
+
       // Handle various response types
       const contentType = response.headers.get('content-type');
       let data;
-      
+
       if (contentType && contentType.includes('application/json')) {
         data = await response.json();
       } else {
         // For non-JSON responses, use text
         data = { text: await response.text() };
       }
-      
+
       // Forward important response headers
       // Use Array.from to convert iterator to array to work with TypeScript
       const headerEntries = Array.from(response.headers.entries());
@@ -914,7 +915,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           res.header(key, value);
         }
       }
-      
+
       res.status(response.status).json(data);
     } catch (error: any) {
       console.error('[VeChain Proxy] Error:', error);
@@ -933,11 +934,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     res.status(200).end();
   });
-  
+
   app.get('/api/vechain/testnet/*', (req: Request, res: Response) => {
     veChainProxy(req, res, 'testnet');
   });
-  
+
   app.post('/api/vechain/testnet/*', (req: Request, res: Response) => {
     veChainProxy(req, res, 'testnet');
   });
@@ -949,11 +950,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     res.status(200).end();
   });
-  
+
   app.get('/api/vechain/mainnet/*', (req: Request, res: Response) => {
     veChainProxy(req, res, 'mainnet');
   });
-  
+
   app.post('/api/vechain/mainnet/*', (req: Request, res: Response) => {
     veChainProxy(req, res, 'mainnet');
   });
@@ -977,13 +978,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/vechain/genesis-id', async (req: Request, res: Response) => {
     try {
       const network = req.query.network === 'main' ? 'mainnet' : 'testnet';
-      
+
       // Use hardcoded genesis IDs for reliable response - these are the official IDs
       const GENESIS_IDS = {
         mainnet: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
         testnet: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'
       };
-      
+
       // Return the correct genesis ID for the requested network
       res.json({
         genesisId: GENESIS_IDS[network],
@@ -996,6 +997,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: error.message
       });
     }
+  });
+
+  //Game Route
+  app.get('/games/:gameName', (req: Request, res: Response) => {
+    res.sendFile(path.join(__dirname, '../public/games', `${req.params.gameName}`));
   });
 
   return httpServer;
