@@ -1,12 +1,9 @@
 import { useState, useCallback } from 'react';
-import * as WalletContextModule from '../context/WalletContext';
+import { useVeChainWallet } from '../context/VeChainWalletProvider';
 
-// Use a different name to avoid name conflicts
-const useWalletFromContext = WalletContextModule.useWallet;
-
-// Implementation for useVeChain hook using our custom wallet context
+// Implementation for useVeChain hook using our VeChainWalletProvider
 export function useVeChain() {
-  const { walletInfo, connectWallet, disconnectWallet } = useWalletFromContext();
+  const { walletInfo, connectWallet, disconnectWallet } = useVeChainWallet();
   const [error, setError] = useState<string | null>(null);
 
   const submitTransaction = useCallback(async () => {
@@ -30,10 +27,9 @@ export function useVeChain() {
   };
 }
 
-// Implementation for useWallet hook using our custom wallet context
+// Implementation for useWallet hook for compatibility with existing components
 export function useWallet() {
-  // Use our renamed import to avoid recursion
-  const { walletInfo, connectWallet, disconnectWallet, isVeWorldAvailable } = useWalletFromContext();
+  const { walletInfo, connectWallet, disconnectWallet, isVeWorldAvailable } = useVeChainWallet();
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [useRealWallet, setUseRealWallet] = useState(true);
