@@ -17,9 +17,56 @@ try {
   console.log('🔍 Ensuring build dependencies are installed...');
   execSync('npm install -g vite esbuild', { stdio: 'inherit' });
   
+  // Create the polyfill stub directly to avoid path issues
+  console.log('📝 Creating polyfill stub...');
+  const polyfillContent = `/**
+ * This script gets injected directly into the HTML before any modules load
+ * It provides minimal polyfills needed for initialization
+ */
+
+// Ensure crypto is available early
+if (typeof window !== 'undefined' && !window.crypto) {
+  window.crypto = {
+    getRandomValues: function(buffer) {
+      for (let i = 0; i < buffer.length; i++) {
+        buffer[i] = Math.floor(Math.random() * 256);
+      }
+      return buffer;
+    }
+  };
+}
+
+// Ensure Buffer is available early
+if (typeof window !== 'undefined' && !window.Buffer) {
+  window.Buffer = {
+    from: function(data) {
+      if (typeof data === 'string') {
+        return new TextEncoder().encode(data);
+      }
+      return new Uint8Array(data);
+    },
+    isBuffer: function() { return false; }
+  };
+}
+
+// Minimal global needed for some libraries
+if (typeof window !== 'undefined' && !window.global) {
+  window.global = window;
+}
+
+// Log that polyfills are initialized
+console.log('Critical polyfills initialized via inline script');`;
+
+  // Ensure the directory exists
+  const polyfillDir = path.join(__dirname, '../client/src');
+  if (!fs.existsSync(polyfillDir)) {
+    fs.mkdirSync(polyfillDir, { recursive: true });
+  }
+  fs.writeFileSync(path.join(polyfillDir, 'polyfill-stub.js'), polyfillContent, 'utf8');
+  
   // Install development dependencies needed for the build
   console.log('🔍 Installing required dev dependencies...');
-  execSync('npm install --no-save @vitejs/plugin-react @replit/vite-plugin-cartographer @replit/vite-plugin-runtime-error-modal @replit/vite-plugin-shadcn-theme-json vite-plugin-node-polyfills typescript @types/node @types/react @types/react-dom', { stdio: 'inherit' });
+  execSync('npm install --no-save @vitejs/plugin-react @replit/vite-plugin-cartographer @replit/vite-plugin-runtime-error-modal @replit/vite-plugin-shadcn-theme-json vite-plugin-node-polyfills typescript @types/node @types/react @types/react-dom crypto-browserify buffer process stream-browserify util browserify-zlib', { stdio: 'inherit' });
   
   // Clean cache
   console.log('🧹 Cleaning build cache...');
@@ -34,6 +81,11 @@ try {
   console.log('🔧 Patching VeWorld vendor...');
   require('./veworld-vendor-patch.cjs');
   
+  // Inject polyfills directly into index.html
+  console.log('🔧 Injecting polyfills into HTML template...');
+  const injectPolyfill = require('./inject-polyfill.cjs');
+  injectPolyfill.injectPolyfillToHTML(path.join(__dirname, '../public/index.html'));
+  
   // Run the build with detailed output
   console.log('🏗️ Building the application...');
   
@@ -44,22 +96,38 @@ try {
     import { defineConfig } from 'vite';
     import react from '@vitejs/plugin-react';
     import { nodePolyfills } from 'vite-plugin-node-polyfills';
+    import { readFileSync } from 'fs';
+    import { resolve } from 'path';
+    
+    // Make sure to use the correct absolute path
+    const polyfillScript = readFileSync(resolve(__dirname, '../client/src/polyfill-stub.js'), 'utf-8');
     
     export default defineConfig({
       plugins: [
         react(),
         nodePolyfills({
-          include: ['buffer', 'crypto', 'stream', 'util'],
+          include: ['buffer', 'crypto', 'stream', 'util', 'process', 'events'],
           globals: {
             Buffer: true,
             global: true,
             process: true,
           },
         }),
+        // Insert the polyfill script at the top of the page
+        {
+          name: 'inject-polyfill',
+          transformIndexHtml(html) {
+            return html.replace(
+              '<head>',
+              \`<head><script>\${polyfillScript}</script>\`
+            );
+          }
+        }
       ],
       define: {
         'process.env': process.env,
         'window.global': 'window',
+        'global': 'window',
       },
       build: {
         outDir: 'dist/public',
@@ -69,10 +137,18 @@ try {
           transformMixedEsModules: true,
         },
       },
+      optimizeDeps: {
+        include: ['crypto-browserify', 'buffer', 'process', 'stream-browserify'],
+        esbuildOptions: {
+          target: 'es2020',
+        },
+      },
       resolve: {
         alias: {
           '@': '/client/src',
           '@shared': '/shared',
+          'stream': 'stream-browserify',
+          'crypto': 'crypto-browserify',
         },
       },
     });
@@ -90,12 +166,33 @@ try {
     const simpleConfig = `
       import { defineConfig } from 'vite';
       import react from '@vitejs/plugin-react';
+      import { readFileSync } from 'fs';
+      import { resolve } from 'path';
+      
+      // Read the polyfill script - with correct path
+      const polyfillScript = readFileSync(resolve(__dirname, '../client/src/polyfill-stub.js'), 'utf-8');
       
       export default defineConfig({
-        plugins: [react()],
+        plugins: [
+          react(),
+          // Basic plugin to inject our polyfill script
+          {
+            name: 'minimal-inject-polyfill',
+            transformIndexHtml(html) {
+              return html.replace(
+                '<head>',
+                \`<head><script>\${polyfillScript}</script>\`
+              );
+            }
+          }
+        ],
         build: {
           outDir: 'dist/public',
         },
+        define: {
+          'global': 'window',
+          'process.env': process.env
+        }
       });
     `;
     
