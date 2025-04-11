@@ -11,6 +11,12 @@ interface Game {
 
 const games: Game[] = [
   {
+    id: "asteroidzuna",
+    title: "AsteroidZUNA",
+    thumbnail: "/images/asteroid-zuna-thumb.jpg",
+    url: "/games/asteroid-zuna"
+  },
+  {
     id: "galactic-hit",
     title: "Galactic Hit",
     thumbnail: "/images/galactic-hit-thumb.jpg",
