@@ -7,17 +7,13 @@ import CreateAndSell from "@/components/CreateAndSell";
 import Newsletter from "@/components/Newsletter";
 import NFTShuffle from "@/components/NFTShuffle";
 import RandomArtGallery from "@/components/RandomArtGallery";
-import TransactionTest from "@/components/TransactionTest";
 import TestNetGuide from "@/components/TestNetGuide";
-import BlockchainConnectionError from "@/components/BlockchainConnectionError";
 import { useQuery } from "@tanstack/react-query";
 import type { Collection, NFT } from "@shared/schema";
-import { useAuth } from "@/hooks/useAuth";
-import { useVeChain } from "@/hooks/useVechain";
+import { useWallet } from "@vechain/dapp-kit-react";
 
 export default function Home() {
-  const { user } = useAuth();
-  const { error: blockchainError, isConnecting: isInitializing } = useVeChain();
+  const wallet = useWallet();
   
   // Fetch collections for homepage
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
@@ -39,13 +35,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       <Hero />
-      
-      {/* Show blockchain connection error if there's an issue with Connex */}
-      {blockchainError && !isInitializing && (
-        <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <BlockchainConnectionError onRetry={() => window.location.reload()} />
-        </section>
-      )}
       
       {/* TestNet Guide for Netlify deployments */}
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -84,19 +73,6 @@ export default function Home() {
       <CreatorSpotlight />
       
       <CreateAndSell />
-      
-      {/* Show transaction test component only when user is logged in */}
-      {user && (
-        <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto bg-gradient-to-b from-background to-accent/10">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-foreground mb-2">Notification System</h2>
-            <p className="text-muted-foreground">Test the real-time WebSocket notification system with simulated transactions and direct notifications</p>
-          </div>
-          <div className="max-w-3xl mx-auto">
-            <TransactionTest />
-          </div>
-        </section>
-      )}
       
       <Newsletter />
     </div>

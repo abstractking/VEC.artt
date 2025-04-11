@@ -3,7 +3,6 @@ import { Switch, Route, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { queryClient } from "./lib/queryClient";
-import { AuthProvider } from "./contexts/AuthContext";
 
 import Layout from "./components/Layout";
 import Home from "./pages/Home";
@@ -16,8 +15,7 @@ import EditNFT from "./pages/EditNFT";
 import Artists from "./pages/Artists";
 import Badges from "./pages/Badges";
 import Games from "./pages/Games"
-import WalletTest from "./pages/WalletTest"; // Add wallet testing page
-import WalletTestAdvanced from "./pages/WalletTestAdvanced"; // Add advanced wallet testing page
+// Wallet test pages have been removed
 import NotFound from "./pages/not-found";
 
 // Game components (lazy loaded)
@@ -42,9 +40,6 @@ function Router() {
         <Route path="/edit-nft/:id" component={EditNFT} />
         <Route path="/artists" component={Artists} />
         <Route path="/badges" component={Badges} />
-        <Route path="/wallet-test" component={WalletTest} />
-        <Route path="/test-wallet" component={WalletTest} />
-        <Route path="/wallet-test-advanced" component={WalletTestAdvanced} />
         <Route path="/games" component={Games} />
         <Route path="/games/asteroid-zuna" component={AsteroidZunaGame} />
         <Route path="/games/galactic-hit" component={GalacticHitGame} />
@@ -75,10 +70,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary fallback={<div>Something went wrong</div>}>
-        <AuthProvider>
-          <Router />
-          <Toaster />
-        </AuthProvider>
+        <Router />
+        <Toaster />
       </ErrorBoundary>
     </QueryClientProvider>
   );
