@@ -1,11 +1,6 @@
 /**
  * Prepare script for Vercel deployment
- * This script runs during the build phase to:
- * 1. Copy necessary shim files
- * 2. Patch problematic dependencies
- * 3. Configure environment-specific settings
- * 
- * Run with: node scripts/prepare-vercel.js
+ * This script runs during the build phase
  */
 
 const fs = require('fs');
@@ -21,9 +16,6 @@ const DIST_DIR = path.join(ROOT_DIR, 'dist');
 const PUBLIC_DIR = path.join(DIST_DIR, 'public');
 const NODE_MODULES_DIR = path.join(ROOT_DIR, 'node_modules');
 
-// Patch problematic dependencies to use our shims
-console.log('Patching VeChain dependencies for browser compatibility...');
-
 // Function to patch a file with correct import replacements
 function patchFile(filePath, replacements) {
   if (!fs.existsSync(filePath)) {
@@ -33,20 +25,67 @@ function patchFile(filePath, replacements) {
 
   let content = fs.readFileSync(filePath, 'utf8');
   let originalContent = content;
-  
+
   replacements.forEach(({ from, to }) => {
     content = content.replace(from, to);
   });
-  
+
   if (content !== originalContent) {
     fs.writeFileSync(filePath, content);
     console.log(`Patched: ${filePath}`);
     return true;
   }
-  
+
   console.log(`No changes needed: ${filePath}`);
   return false;
 }
+
+// Function to ensure a file exists
+function ensureFileExists(filePath, content) {
+  if (!fs.existsSync(filePath)) {
+    console.log(`Creating ${path.basename(filePath)}...`);
+    fs.writeFileSync(filePath, content);
+    return true;
+  }
+  return false;
+}
+
+// Create post-build script
+const postBuildScript = path.join(ROOT_DIR, 'scripts/post-build-vercel.js');
+const postBuildContent = `
+const fs = require('fs');
+const path = require('path');
+
+console.log('🔄 Running VeCollab post-build script for Vercel...');
+
+const ROOT_DIR = path.resolve(__dirname, '..');
+const DIST_DIR = path.join(ROOT_DIR, 'dist');
+const PUBLIC_DIR = path.join(DIST_DIR, 'public');
+const API_DIR = path.join(DIST_DIR, 'api');
+
+if (!fs.existsSync(API_DIR)) {
+  console.log('Creating API directory...');
+  fs.mkdirSync(API_DIR, { recursive: true });
+}
+
+const apiIndexFile = path.join(API_DIR, 'index.js');
+if (!fs.existsSync(apiIndexFile)) {
+  console.log('Creating API routes file...');
+  fs.writeFileSync(apiIndexFile, \`
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+module.exports = (req, res) => {
+  return app(req, res);
+};\`);
+}
+
+console.log('✅ VeCollab post-build preparation complete!');
+`;
+
+ensureFileExists(postBuildScript, postBuildContent);
+
 
 // List of files to patch
 const filePatches = [
@@ -76,7 +115,8 @@ class HttpAgent {
 
 class HttpsAgent {
   constructor() {}
-}`
+}
+`
       }
     ]
   },
@@ -189,15 +229,6 @@ if (!fs.existsSync(SHIMS_DIR)) {
   fs.mkdirSync(SHIMS_DIR, { recursive: true });
 }
 
-// Function to check if a file exists and create it if not
-function ensureFileExists(filePath, content) {
-  if (!fs.existsSync(filePath)) {
-    console.log(`Creating ${path.basename(filePath)}...`);
-    fs.writeFileSync(filePath, content);
-    return true;
-  }
-  return false;
-}
 
 // Make sure that all shim files exist
 const httpsShim = path.join(SHIMS_DIR, 'https-shim.js');
@@ -552,103 +583,5 @@ ensureFileExists(vercelConfigFile, `{
   }
 }`);
 
-// Create post-build-vercel.js script to handle any post-build tasks
-const postBuildScript = path.join(ROOT_DIR, 'scripts/post-build-vercel.js');
-ensureFileExists(postBuildScript, `/**
- * Post-build script for Vercel deployment
- * This script runs after the build phase to handle any final tasks:
- * 1. Create necessary server-side files
- * 2. Move API routes to the correct location
- * 3. Create a static fallback page
- */
-
-const fs = require('fs');
-const path = require('path');
-
-console.log('🔄 Running VeCollab post-build script for Vercel...');
-
-// Paths
-const ROOT_DIR = path.resolve(__dirname, '..');
-const DIST_DIR = path.join(ROOT_DIR, 'dist');
-const PUBLIC_DIR = path.join(DIST_DIR, 'public');
-const API_DIR = path.join(DIST_DIR, 'api');
-
-// Create API directory if it doesn't exist
-if (!fs.existsSync(API_DIR)) {
-  console.log('Creating API directory...');
-  fs.mkdirSync(API_DIR, { recursive: true });
-}
-
-// Create an index.js file in the API directory for Vercel serverless functions
-const apiIndexFile = path.join(API_DIR, 'index.js');
-if (!fs.existsSync(apiIndexFile)) {
-  console.log('Creating API routes file...');
-  // Simplified API handler code with proper escaping
-  const apiCode = `// Vercel Serverless API Handler
-const express = require('express');
-const { createServer } = require('http');
-const { MemStorage } = require('../server/storage');
-const { setupRoutes } = require('../server/routes');
-
-// Setup Express app
-const app = express();
-app.use(express.json());
-
-// Setup storage
-const storage = new MemStorage();
-
-// Setup routes
-setupRoutes(app, storage);
-
-// Vercel serverless handler
-module.exports = (req, res) => {
-  return app(req, res);
-};`;
-  fs.writeFileSync(apiIndexFile, apiCode);
-}
-
-// Create a static fallback page
-const fallbackHtml = path.join(PUBLIC_DIR, '200.html');
-if (!fs.existsSync(fallbackHtml)) {
-  console.log('Creating static fallback page...');
-  // Simplified HTML to avoid template literal parsing issues
-  const fallbackHtmlContent = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VeCollab NFT Marketplace</title>
-  <style>
-    body { font-family: system-ui, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; display: flex; flex-direction: column; min-height: 100vh; color: #333; }
-    header { background-color: #294b7a; color: white; padding: 1rem; text-align: center; }
-    main { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; margin: 0 auto; text-align: center; }
-    h1 { font-size: 2.5rem; margin-bottom: 1rem; }
-    p { font-size: 1.2rem; margin-bottom: 2rem; line-height: 1.5; }
-    .spinner { border: 5px solid #f3f3f3; border-top: 5px solid #294b7a; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .retry-button { background-color: #294b7a; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 4px; font-size: 1rem; cursor: pointer; }
-    footer { text-align: center; padding: 1rem; background-color: #f1f1f1; margin-top: auto; }
-  </style>
-  <script>
-    setTimeout(function() { window.location.href = '/'; }, 2000);
-  </script>
-</head>
-<body>
-  <header><h1>VeCollab NFT Marketplace</h1></header>
-  <main>
-    <div class="spinner"></div>
-    <p>Loading the application...</p>
-    <p>Discover and trade unique digital assets on the VeChain blockchain.</p>
-    <button class="retry-button" onclick="window.location.reload()">Retry Loading</button>
-  </main>
-  <footer>
-    <p>&copy; 2025 VeCollab NFT Marketplace</p>
-  </footer>
-</body>
-</html>`;
-  fs.writeFileSync(fallbackHtml, fallbackHtmlContent);
-}
-
-console.log('✅ VeCollab post-build preparation complete!');
 
 console.log('✅ VeCollab preparation script completed successfully!');
