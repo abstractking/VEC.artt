@@ -15,17 +15,15 @@ const network = isTestNet ? 'test' : 'main';
 const walletConnectProjectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID || '';
 
 // WalletConnect configuration
-const walletConnectOptions = {
+export const walletConnectConfig = {
   projectId: walletConnectProjectId,
-  metadata: {
-    name: 'VeCollab NFT Marketplace',
-    description: 'A decentralized NFT marketplace on VeChain',
-    url: window.location.origin,
-    icons: [`${window.location.origin}/favicon.ico`]
-  },
-  modalOptions: {
-    explorerRecommendedWalletIds: ['veworld', 'sync2'], 
-    enableExplorer: true
+  chains: [isTestNet ? 'vechain:testnet' : 'vechain:mainnet'],
+  showQrModal: true,
+  methods: ['eth_sendTransaction', 'eth_sign', 'personal_sign'],
+  optionalMethods: ['eth_signTypedData', 'eth_signTypedData_v4'],
+  rpcMap: {
+    'vechain:mainnet': 'https://mainnet.veblocks.net',
+    'vechain:testnet': 'https://testnet.veblocks.net'
   }
 };
 
@@ -33,19 +31,19 @@ const walletConnectOptions = {
 export const dAppKitOptions = {
   // Node URL from our Network configuration
   node: getNodeUrl(isTestNet ? Network.TEST : Network.MAIN),
-  
+
   // Network setting (test or main)
   network,
-  
+
   // WalletConnect configuration
-  walletConnectOptions,
-  
+  walletConnectOptions: walletConnectConfig, // Use the new config
+
   // Enable persistence of wallet connection
   usePersistence: true,
-  
+
   // Use first detected source for convenience
   useFirstDetectedSource: false,
-  
+
   // Enable debug logging in development
   logLevel: process.env.NODE_ENV === 'development' ? 'DEBUG' : 'ERROR'
 };

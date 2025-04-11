@@ -124,8 +124,8 @@ export default function WalletModal() {
       icon: "https://walletconnect.org/favicon.ico",
       handler: () => connectWallet("walletconnect"), // Now using proper type
       type: "protocol",
-      available: false,  // Not fully implemented yet
-      installed: false,
+      available: true,
+      installed: true,
       supportsMobile: true
     }
   ];
