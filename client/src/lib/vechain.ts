@@ -138,24 +138,23 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
             const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
             const isMainNet = networkType === Network.MAIN;
 
-            // VeWorld requires specific genesis IDs
-            const GENESIS_ID_MAINNET = "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a";
-            const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127";
+            // Import network descriptors from Network.ts
+            const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
+            const networkDescriptor = getNetwork(networkType);
+            
+            if (!networkDescriptor || !networkDescriptor.id) {
+              throw new Error('Invalid network configuration');
+            }
 
-            // Log the genesis IDs we're using
-            console.log("Genesis IDs:", {
-              mainnet: GENESIS_ID_MAINNET,
-              testnet: GENESIS_ID_TESTNET
-            });
-
-            // Hard-coded network names exactly as expected by VeWorld
-            const NETWORK_NAME_MAIN = "main";
-            const NETWORK_NAME_TEST = "test";
-
-            // Select appropriate values based on network
-            const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
-            const networkDescriptor = getNetworkDescriptor(networkName);
             const genesisId = networkDescriptor.id;
+            const networkName = networkDescriptor.name;
+
+            console.log("Using VeWorld network parameters:", {
+              networkType,
+              genesisId,
+              networkName,
+              networkDescriptor
+            });
 
             console.log("Using network parameters:", {
               networkType,
@@ -169,21 +168,15 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
               console.log("Using VeWorld's native Connex creation API");
 
               try {
-                // First create a vendor for transaction signing
-                console.log("Creating vendor with parameters:", { genesis: genesisId });
+                // Create vendor with minimal parameters
+                console.log("Creating VeWorld vendor with genesis:", genesisId);
                 const vendor = await vechain.newConnexVendor({
                   genesis: genesisId
                 });
 
-                // Then create a Connex instance
-                console.log("Creating Connex with parameters:", { 
-                  node: network.url,
-                  network: networkName,
-                  genesis: genesisId
-                });
+                // Create Connex with minimal parameters
+                console.log("Creating VeWorld Connex instance");
                 const connex = await vechain.newConnex({
-                  node: network.url,
-                  network: networkName,
                   genesis: genesisId
                 });
 
