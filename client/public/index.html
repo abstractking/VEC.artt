@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VeCollab Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  
+  <!-- Add initial loading style to prevent blank screens -->
+  <style>
+    #initial-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      color: #333;
+      background-color: #f7f7f7;
+      transition: opacity 0.5s ease-out;
+    }
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: #7928ca;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 20px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loading-message {
+      margin-top: 8px;
+      text-align: center;
+    }
+    .loading-title {
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .loading-subtitle {
+      font-size: 1rem;
+      color: #666;
+    }
+    /* This will be set to display:none when the app loads */
+    #root { display: none; }
+  </style>
+  
+  <!-- Define critical objects before any modules load -->
+  <script>
+    // Define global object
+    window.global = window;
+    global = window;
+    
+    // Define process object with minimal properties needed before full polyfill loads
+    window.process = window.process || {
+      env: {},
+      nextTick: function(cb) { setTimeout(cb, 0); },
+      browser: true,
+      version: '',
+      versions: {},
+      platform: 'browser'
+    };
+    
+    // Define Buffer placeholder until the full polyfill loads
+    window.Buffer = window.Buffer || { 
+      from: function() { return []; },
+      isBuffer: function() { return false; }
+    };
+    
+    // Define crypto polyfill storage WITHOUT touching native window.crypto
+    // Modern browsers protect window.crypto property with a getter
+    window.cryptoPolyfill = window.cryptoPolyfill || {};
+    
+    // Define thorCrypto placeholder
+    window.thorCrypto = window.thorCrypto || {
+      randomBytes: function() { return []; },
+      createHash: function() { return { update: function() { return { digest: function() { return ''; } }; } }; },
+      createHmac: function() { return { update: function() { return { digest: function() { return ''; } }; } }; }
+    };
+    
+    // Add fallback mechanism for Netlify deployments
+    window.addEventListener('DOMContentLoaded', function() {
+      // Add production error tracking
+      window.appErrors = [];
+      var originalError = console.error;
+      console.error = function() {
+        window.appErrors.push(Array.from(arguments).join(' '));
+        return originalError.apply(console, arguments);
+      };
+
+      // Set a timeout to check if app loaded
+      setTimeout(function() {
+        var root = document.getElementById('root');
+        // If root is still empty after 10 seconds, show fallback
+        if (root && (root.children.length === 0 || window.appErrors.length > 0)) {
+          console.log('Application failed to load in time, showing error information');
+          document.getElementById('initial-loading-subtitle').textContent = 'Loading is taking longer than expected...';
+          
+          // Add error details if available
+          if (window.appErrors.length > 0) {
+            var errorDiv = document.createElement('div');
+            errorDiv.style.color = 'red';
+            errorDiv.style.marginTop = '20px';
+            errorDiv.style.padding = '10px';
+            errorDiv.style.backgroundColor = 'rgba(255,0,0,0.1)';
+            errorDiv.style.borderRadius = '5px';
+            errorDiv.style.maxWidth = '80%';
+            errorDiv.style.overflow = 'auto';
+            
+            var errorTitle = document.createElement('h3');
+            errorTitle.textContent = 'Errors Detected:';
+            errorDiv.appendChild(errorTitle);
+            
+            var errorList = document.createElement('ul');
+            window.appErrors.slice(0, 5).forEach(function(err) {
+              var li = document.createElement('li');
+              li.textContent = err.substring(0, 200) + (err.length > 200 ? '...' : '');
+              errorList.appendChild(li);
+            });
+            errorDiv.appendChild(errorList);
+            
+            document.getElementById('initial-loading').appendChild(errorDiv);
+          }
+        }
+      }, 10000);
+    });
+    
+    console.log("Critical polyfills initialized via inline script");
+  </script>
+</head>
+<body>
+  <!-- Initial loading indicator -->
+  <div id="initial-loading">
+    <div class="loading-spinner"></div>
+    <div class="loading-message">
+      <div class="loading-title">VeCollab Marketplace</div>
+      <div id="initial-loading-subtitle" class="loading-subtitle">Loading application...</div>
+    </div>
+  </div>
+  
+  <!-- React root -->
+  <div id="root"></div>
+  
+  <!-- Main application script -->
+  <script type="module" src="/src/main.tsx"></script>
+  
+  <!-- Script to hide loading screen once app is loaded -->
+  <script>
+    window.addEventListener('load', function() {
+      // Monitor for React rendering the app
+      var checkAppLoaded = setInterval(function() {
+        var root = document.getElementById('root');
+        if (root && root.children.length > 0) {
+          document.getElementById('initial-loading').style.display = 'none';
+          root.style.display = 'block';
+          clearInterval(checkAppLoaded);
+        }
+      }, 100);
+      
+      // Fallback - hide loading screen after 20 seconds regardless
+      setTimeout(function() {
+        document.getElementById('initial-loading').style.display = 'none';
+        document.getElementById('root').style.display = 'block';
+        clearInterval(checkAppLoaded);
+      }, 20000);
+    });
+  </script>
+</body>
+</html>
