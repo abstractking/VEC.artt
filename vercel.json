@@ -1,11 +1,37 @@
 {
-  "version": 2,
-  "framework": "vite",
-  "buildCommand": "node scripts/prepare-vercel.js && npm run build",
+  "buildCommand": "node scripts/prepare-vercel.js && vite build --config vite.config.vercel.js && node scripts/post-build-vercel.js",
+  "installCommand": "npm ci",
   "outputDirectory": "dist/public",
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
   ],
   "env": {
     "VITE_VECHAIN_NETWORK": "test",
