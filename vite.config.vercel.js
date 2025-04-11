@@ -61,10 +61,12 @@ export default defineConfig({
       'http': path.resolve(__dirname, './client/src/shims/http-shim.js'),
       'stream': path.resolve(__dirname, './client/src/shims/stream-shim.js'),
       'util': path.resolve(__dirname, './client/src/shims/util-shim.js'),
+      'crypto': path.resolve(__dirname, './client/src/shims/crypto-shim.js'),
       // These are needed because of weird import issues in dependencies
       'stream/web': path.resolve(__dirname, './client/src/shims/stream-shim.js'),
       'node:stream': path.resolve(__dirname, './client/src/shims/stream-shim.js'),
       'node:util': path.resolve(__dirname, './client/src/shims/util-shim.js'),
+      'node:crypto': path.resolve(__dirname, './client/src/shims/crypto-shim.js'),
     }
   },
   build: {
@@ -82,15 +84,17 @@ export default defineConfig({
           name: 'override-node-modules',
           resolveId(source, importer) {
             // Handle specific Node.js modules that cause issues
-            if (source === 'https' || source === 'http' || source === 'stream' || source === 'util' ||
-                source === 'node:stream' || source === 'node:util' || source === 'stream/web') {
+            if (source === 'https' || source === 'http' || source === 'stream' || source === 'util' || source === 'crypto' ||
+                source === 'node:stream' || source === 'node:util' || source === 'node:crypto' || source === 'stream/web') {
               const aliases = {
                 'https': path.resolve(__dirname, './client/src/shims/https-shim.js'),
                 'http': path.resolve(__dirname, './client/src/shims/http-shim.js'),
                 'stream': path.resolve(__dirname, './client/src/shims/stream-shim.js'),
                 'util': path.resolve(__dirname, './client/src/shims/util-shim.js'),
+                'crypto': path.resolve(__dirname, './client/src/shims/crypto-shim.js'),
                 'node:stream': path.resolve(__dirname, './client/src/shims/stream-shim.js'),
                 'node:util': path.resolve(__dirname, './client/src/shims/util-shim.js'),
+                'node:crypto': path.resolve(__dirname, './client/src/shims/crypto-shim.js'),
                 'stream/web': path.resolve(__dirname, './client/src/shims/stream-shim.js'),
               };
               return aliases[source] || null;

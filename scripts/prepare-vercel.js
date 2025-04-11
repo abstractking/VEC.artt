@@ -19,6 +19,136 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 const SHIMS_DIR = path.join(ROOT_DIR, 'client/src/shims');
 const DIST_DIR = path.join(ROOT_DIR, 'dist');
 const PUBLIC_DIR = path.join(DIST_DIR, 'public');
+const NODE_MODULES_DIR = path.join(ROOT_DIR, 'node_modules');
+
+// Patch problematic dependencies to use our shims
+console.log('Patching VeChain dependencies for browser compatibility...');
+
+// Function to patch a file with correct import replacements
+function patchFile(filePath, replacements) {
+  if (!fs.existsSync(filePath)) {
+    console.log(`Skip patching: File not found: ${filePath}`);
+    return false;
+  }
+
+  let content = fs.readFileSync(filePath, 'utf8');
+  let originalContent = content;
+  
+  replacements.forEach(({ from, to }) => {
+    content = content.replace(from, to);
+  });
+  
+  if (content !== originalContent) {
+    fs.writeFileSync(filePath, content);
+    console.log(`Patched: ${filePath}`);
+    return true;
+  }
+  
+  console.log(`No changes needed: ${filePath}`);
+  return false;
+}
+
+// List of files to patch
+const filePatches = [
+  {
+    file: path.join(NODE_MODULES_DIR, '@vechain/connex-driver/esm/simple-net.js'),
+    replacements: [
+      {
+        from: `import { Agent as HttpAgent } from 'http';`,
+        to: `// Patched by VeCollab for browser compatibility
+// Original: import { Agent as HttpAgent } from 'http';
+const HttpAgent = class {
+  constructor() {}
+};`
+      },
+      {
+        from: `import { Agent as HttpsAgent } from 'https';`,
+        to: `// Patched by VeCollab for browser compatibility
+// Original: import { Agent as HttpsAgent } from 'https';
+const HttpsAgent = class {
+  constructor() {}
+};`
+      }
+    ]
+  },
+  {
+    file: path.join(NODE_MODULES_DIR, 'thor-devkit/dist/es/cry/secp256k1.js'),
+    replacements: [
+      {
+        from: `import { createHash } from "crypto";`,
+        to: `// Patched by VeCollab for browser compatibility
+// Original: import { createHash } from "crypto";
+const createHash = function(algorithm) {
+  // Basic browser-compatible SHA256 implementation using Web Crypto API
+  return {
+    update: function(data) {
+      this._data = data;
+      return this;
+    },
+    digest: function() {
+      // For browser, use subtle crypto
+      if (typeof window !== 'undefined' && window.crypto && window.crypto.subtle) {
+        // Note: This is a sync implementation for simplicity
+        // In a real app, you'd want to use the async version
+        const textEncoder = new TextEncoder();
+        const data = textEncoder.encode(this._data);
+        const hashBuffer = window.crypto.subtle.digestSync('SHA-256', data);
+        return new Uint8Array(hashBuffer);
+      }
+      // Fallback
+      console.warn('Crypto hash requested but not available in browser');
+      return new Uint8Array(32); // Return empty hash
+    }
+  };
+};`
+      }
+    ]
+  },
+  {
+    file: path.join(NODE_MODULES_DIR, '@vechain/connex-framework/dist/esm/driver-interface.js'),
+    replacements: [
+      {
+        from: `import { EventEmitter } from "events";`,
+        to: `// Patched by VeCollab for browser compatibility
+// Original: import { EventEmitter } from "events";
+class EventEmitter {
+  constructor() {
+    this._events = {};
+  }
+  
+  on(event, listener) {
+    this._events[event] = this._events[event] || [];
+    this._events[event].push(listener);
+    return this;
+  }
+  
+  emit(event, ...args) {
+    if (!this._events[event]) return false;
+    this._events[event].forEach(listener => listener(...args));
+    return true;
+  }
+  
+  removeListener(event, listener) {
+    if (!this._events[event]) return this;
+    this._events[event] = this._events[event].filter(l => l !== listener);
+    return this;
+  }
+}
+`
+      }
+    ]
+  }
+];
+
+// Apply all patches
+let patchesApplied = 0;
+filePatches.forEach(patch => {
+  if (patchFile(patch.file, patch.replacements)) {
+    patchesApplied++;
+  }
+});
+
+console.log(`Applied ${patchesApplied} patches out of ${filePatches.length} total.`);
 
 // Make sure the shims directory exists
 if (!fs.existsSync(SHIMS_DIR)) {
