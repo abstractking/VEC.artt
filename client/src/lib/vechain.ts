@@ -152,14 +152,16 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
             const NETWORK_NAME_MAIN = "main";
             const NETWORK_NAME_TEST = "test";
 
-            // Select appropriate values
-            const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
+            // Select appropriate values based on network
             const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
+            const networkDescriptor = getNetworkDescriptor(networkName);
+            const genesisId = networkDescriptor.id;
 
             console.log("Using network parameters:", {
               networkType,
               genesisId,
-              networkName
+              networkName,
+              networkDescriptor
             });
 
             // APPROACH 1: Create a new Connex instance using VeWorld API
