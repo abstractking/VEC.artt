@@ -102,7 +102,7 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
 
     // Check if VeWorld is available
     if (typeof window === 'undefined' || !window.vechain) {
-      throw new Error('VeWorld wallet not detected');
+      throw new Error('VeWorld wallet not detected. Please install the VeWorld extension or app and try again.');
     }
 
     const vechain = window.vechain;
@@ -110,42 +110,107 @@ export async function connectVeWorld(networkType: Network): Promise<VeWorldConne
       throw new Error('Not a valid VeWorld wallet');
     }
 
-    // Mobile-specific handling
+    // Enhanced details for debugging
+    console.log('VeWorld details:', {
+      isVeWorld: vechain.isVeWorld,
+      version: vechain.version || 'unknown',
+      hasNewConnex: typeof vechain.newConnex === 'function',
+      hasNewConnexVendor: typeof vechain.newConnexVendor === 'function',
+      availableMethods: Object.keys(vechain),
+    });
+
+    // Mobile-specific handling with improved error reporting
     if (isVeWorldMobileApp()) {
       console.log('Mobile VeWorld detected, using minimal configuration');
       try {
+        // For mobile, use only the genesis parameter (no URL) to prevent potential issues
         const vendor = await vechain.newConnexVendor({
           genesis: network.id
         });
+
+        console.log('Successfully created vendor, creating connex...');
 
         const connex = await vechain.newConnex({
           genesis: network.id
         });
 
+        console.log('Successfully created connex for mobile wallet');
         return { connex, vendor };
       } catch (mobileError) {
-        console.error('Mobile connection failed:', mobileError);
+        console.error('Mobile connection error details:', {
+          error: mobileError,
+          errorType: mobileError instanceof Error ? mobileError.constructor.name : 'Unknown',
+          errorMessage: mobileError instanceof Error ? mobileError.message : String(mobileError),
+          network: network
+        });
+        
+        // Try alternate approach for mobile
+        console.log('Trying alternate approach for mobile');
+        try {
+          // Use the request method format if available
+          if (typeof vechain.request === 'function') {
+            const connex = await vechain.request({
+              method: 'newConnex',
+              params: [{ genesis: network.id }]
+            });
+            
+            const vendor = await vechain.request({
+              method: 'newConnexVendor',
+              params: [{ genesis: network.id }]
+            });
+            
+            return { connex, vendor };
+          }
+        } catch (altError) {
+          console.error('Alternate mobile approach failed:', altError);
+        }
+        
         throw mobileError;
       }
     }
 
-    // Desktop connection with full configuration
+    // Desktop connection with full configuration and better error handling
     try {
-      console.log('Connecting with full configuration');
+      console.log('Connecting with recommended configuration for desktop');
       const vendor = await vechain.newConnexVendor({
         genesis: network.id,
         name: network.name
       });
+
+      console.log('Successfully created vendor, creating connex...');
 
       const connex = await vechain.newConnex({
         genesis: network.id,
         name: network.name
       });
 
+      console.log('Successfully created connex for desktop wallet');
       return { connex, vendor };
     } catch (error) {
-      console.error('Connection error:', error);
-      throw error;
+      console.error('Desktop connection error details:', {
+        error,
+        errorType: error instanceof Error ? error.constructor.name : 'Unknown',
+        errorMessage: error instanceof Error ? error.message : String(error),
+        network
+      });
+      
+      // Try simplified approach for desktop
+      console.log('Trying simplified approach for desktop');
+      try {
+        // Use minimal parameters
+        const vendor = await vechain.newConnexVendor({
+          genesis: network.id
+        });
+        
+        const connex = await vechain.newConnex({
+          genesis: network.id
+        });
+        
+        return { connex, vendor };
+      } catch (fallbackError) {
+        console.error('Simplified desktop approach failed:', fallbackError);
+        throw error; // Throw the original error
+      }
     }
   } catch (error) {
     console.error('VeWorld connection error:', error);

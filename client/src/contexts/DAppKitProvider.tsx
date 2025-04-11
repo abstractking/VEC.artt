@@ -109,17 +109,35 @@ export function DAppKitProvider({ children }: DAppKitProviderProps) {
     return createWeb3Modal(modalConfig);
   }, [walletConnectOptions.projectId, config.network, config.nodeUrl]);
   
-  // DAppKit provider options
+  // DAppKit provider options - following VeChain documentation recommendations
   const dappKitOptions: DAppKitProviderOptions = {
+    // Required - The URL of the node to connect to
     nodeUrl: config.nodeUrl,
-    genesis: config.network, // 'main' or 'test'
+    
+    // Network setting (main or test)
+    network: config.network, 
+    
+    // For backward compatibility - provide both network and genesis
+    genesis: config.network,
+    
+    // WalletConnect options
     walletConnectOptions,
+    
+    // Enable persistence to remember the user's wallet choice
     usePersistence: true,
-    logLevel: 'ERROR',
+    
+    // Let the user choose their wallet instead of auto-selecting
+    useFirstDetectedSource: false,
+    
+    // Enable debug logging in development
+    logLevel: process.env.NODE_ENV === 'development' ? 'DEBUG' : 'ERROR', 
+    
     // Make sure theme matches the application
     themeMode: 'LIGHT',
-    // Allow all available wallets
+    
+    // Allow all wallet types
     allowedWallets: ['wallet-connect', 'veworld', 'sync2', 'sync'],
+    
     children: null // Will be set later
   };
   
