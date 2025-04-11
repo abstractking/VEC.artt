@@ -1,0 +1,74 @@
+2:47:16 PM: Successfully ran improved patching script!
+2:47:16 PM: All patching operations complete!
+2:47:16 PM: 🔧 Patching VeWorld vendor...
+2:47:16 PM: Running VeWorld vendor patch to fix genesisId compatibility issues...
+2:47:16 PM: 📋 Found vechain.ts file at /opt/build/repo/client/src/lib/vechain.ts
+2:47:16 PM: 📋 Created backup of vechain.ts at /opt/build/repo/client/src/lib/vechain.ts.bak
+2:47:16 PM: ✅ VeWorld handler is already implemented in the code. Skipping patching.
+2:47:16 PM: VeWorld vendor patch ✅ completed successfully
+2:47:16 PM: Remember to rebuild the project after this patch!
+2:47:16 PM: 🏗️ Building the application...
+2:47:16 PM: failed to load config from /opt/build/repo/vite.config.ts
+2:47:16 PM: error during build:
+2:47:16 PM: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@vitejs/plugin-react' imported from /opt/build/repo/vite.config.ts.timestamp-1744400836601-249cc92080c6f.mjs
+2:47:16 PM:     at Object.getPackageJSONURL (node:internal/modules/package_json_reader:268:9)
+2:47:16 PM:     at packageResolve (node:internal/modules/esm/resolve:768:81)
+2:47:16 PM:     at moduleResolve (node:internal/modules/esm/resolve:854:18)
+2:47:16 PM:     at defaultResolve (node:internal/modules/esm/resolve:984:11)
+2:47:16 PM:     at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:685:12)
+2:47:16 PM:     at #cachedDefaultResolve (node:internal/modules/esm/loader:634:25)
+2:47:16 PM:     at ModuleLoader.resolve (node:internal/modules/esm/loader:617:38)
+2:47:16 PM:     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:273:38)
+2:47:16 PM:     at ModuleJob._link (node:internal/modules/esm/module_job:135:49)
+2:47:16 PM: ❌ Build failed: Command failed: npx vite build
+2:47:16 PM: ​
+2:47:16 PM: "build.command" failed                                        
+2:47:16 PM: ────────────────────────────────────────────────────────────────
+2:47:16 PM: ​
+2:47:16 PM:   Error message
+2:47:16 PM:   Command failed with exit code 1: node scripts/netlify-build.cjs (https://ntl.fyi/exit-code-1)
+2:47:16 PM: ​
+2:47:16 PM:   Error location
+2:47:16 PM:   In build.command from netlify.toml:
+2:47:16 PM:   node scripts/netlify-build.cjs
+2:47:16 PM: ​
+2:47:16 PM:   Resolved config
+2:47:16 PM:   build:
+2:47:16 PM:     command: node scripts/netlify-build.cjs
+2:47:16 PM:     commandOrigin: config
+2:47:16 PM:     environment:
+2:47:16 PM:       - ITE_DEPLOYMENT_ENV
+2:47:16 PM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+2:47:16 PM:       - VITE_REACT_APP_VECHAIN_NETWORK
+2:47:16 PM:       - VITE_VECHAIN_EXPLORER_URL
+2:47:16 PM:       - VITE_VECHAIN_MAINNET_GENESIS_ID
+2:47:16 PM:       - VITE_VECHAIN_PRIVATE_KEY
+2:47:16 PM:       - VITE_VECHAIN_TESTNET_GENESIS_ID
+2:47:16 PM:       - VITE_WALLETCONNECT_PROJECT_ID
+2:47:16 PM:       - NETLIFY_CACHE_BUST
+2:47:16 PM:       - NODE_ENV
+2:47:16 PM:       - NPM_FLAGS
+2:47:16 PM:       - CI_NPM_FLAGS
+2:47:16 PM:       - VITE_VECHAIN_NODE_URL_TESTNET
+2:47:16 PM:       - VITE_VECHAIN_NODE_URL_MAINNET
+2:47:16 PM:     publish: /opt/build/repo/dist/public
+2:47:16 PM:     publishOrigin: config
+2:47:16 PM:   headers:
+2:47:17 PM:     - for: /*
+      values:
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: /assets/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+2:47:17 PM: Build failed due to a user error: Build script returned non-zero exit code: 2
+2:47:17 PM: Failing build: Failed to build site
+2:47:17 PM: Finished processing build request in 1m14.528s
