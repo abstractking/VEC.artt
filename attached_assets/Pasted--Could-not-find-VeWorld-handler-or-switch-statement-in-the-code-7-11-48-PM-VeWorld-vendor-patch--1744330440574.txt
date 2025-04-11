@@ -1,0 +1,53 @@
+❌ Could not find VeWorld handler or switch statement in the code
+7:11:48 PM: VeWorld vendor patch ❌ failed
+7:11:48 PM: ​
+7:11:48 PM: "build.command" failed                                        
+7:11:48 PM: ────────────────────────────────────────────────────────────────
+7:11:48 PM: ​
+7:11:48 PM:   Error message
+7:11:48 PM:   Command failed with exit code 1: node scripts/netlify-build.cjs (https://ntl.fyi/exit-code-1)
+7:11:48 PM: ​
+7:11:48 PM:   Error location
+7:11:48 PM:   In build.command from netlify.toml:
+7:11:48 PM:   node scripts/netlify-build.cjs
+7:11:48 PM: ​
+7:11:48 PM:   Resolved config
+7:11:48 PM:   build:
+7:11:48 PM:     command: node scripts/netlify-build.cjs
+7:11:48 PM:     commandOrigin: config
+7:11:48 PM:     environment:
+7:11:48 PM:       - ITE_DEPLOYMENT_ENV
+7:11:48 PM:       - VITE_REACT_APP_NFT_CONTRACT_ADDRESS
+7:11:48 PM:       - VITE_REACT_APP_VECHAIN_NETWORK
+7:11:48 PM:       - VITE_VECHAIN_EXPLORER_URL
+7:11:48 PM:       - VITE_VECHAIN_MAINNET_GENESIS_ID
+7:11:48 PM:       - VITE_VECHAIN_PRIVATE_KEY
+7:11:48 PM:       - VITE_VECHAIN_TESTNET_GENESIS_ID
+7:11:48 PM:       - VITE_WALLETCONNECT_PROJECT_ID
+7:11:48 PM:       - NETLIFY_CACHE_BUST
+7:11:48 PM:       - NODE_ENV
+7:11:48 PM:       - NPM_FLAGS
+7:11:48 PM:       - CI_NPM_FLAGS
+7:11:48 PM:       - VITE_VECHAIN_NODE_URL_TESTNET
+7:11:48 PM:       - VITE_VECHAIN_NODE_URL_MAINNET
+7:11:48 PM:     publish: /opt/build/repo/dist/public
+7:11:48 PM:     publishOrigin: config
+7:11:48 PM:   headers:
+7:11:48 PM:     - for: /*
+      values:
+        Referrer-Policy: no-referrer-when-downgrade
+        X-Content-Type-Options: nosniff
+        X-Frame-Options: DENY
+        X-XSS-Protection: 1; mode=block
+    - for: /assets/*
+      values:
+        Cache-Control: public, max-age=31536000, immutable
+  headersOrigin: config
+  redirects:
+    - from: /*
+      status: 200
+      to: /index.html
+  redirectsOrigin: config
+7:11:48 PM: Build failed due to a user error: Build script returned non-zero exit code: 2
+7:11:48 PM: Failing build: Failed to build site
+7:11:49 PM: Finished processing build request in 46.089s
