@@ -1,0 +1,38 @@
+Running VeCollab preparation script for Vercel...
+No changes needed: /home/runner/workspace/node_modules/@vechain/connex-driver/esm/simple-net.js
+Patched: /home/runner/workspace/node_modules/@vechain/connex-driver/esm/simple-net.js
+Skip patching: File not found: /home/runner/workspace/node_modules/thor-devkit/dist/es/cry/secp256k1.js
+Skip patching: File not found: /home/runner/workspace/node_modules/@vechain/connex-framework/dist/esm/driver-interface.js
+Applied 1 patches out of 4 total.
+ vite v5.4.14 building for production... successfully!
+
+(!) outDir /home/runner/workspace/dist/public is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+Tailwind CSS configured in PostCSS
+Autoprefixer configured in PostCSS
+✓ 111 modules transformed.
+x Build failed in 2.24s
+error during build:
+[vite:esbuild] Transform failed with 1 error:
+/home/runner/workspace/client/src/lib/vechain.ts:142:18: ERROR: The symbol "networkType" has already been declared
+file: /home/runner/workspace/client/src/lib/vechain.ts:142:18
+
+The symbol "networkType" has already been declared
+140|  
+141|              // Import network descriptors from Network.ts
+142|              const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
+   |                    ^
+143|              const networkDescriptor = getNetwork(networkType);
+144|              
+
+    at failureErrorWithLog (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+    at /home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:755:50
+    at responseCallbacks.<computed> (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+    at handleIncomingPacket (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+    at Socket.readFromStdout (/home/runner/workspace/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+    at Pipe.onStreamRead (node:internal/stream_base_commons:191:23)
