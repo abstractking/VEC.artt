@@ -1,4 +1,4 @@
-import { useState, useRef, useContext } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,7 +8,6 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { insertNftSchema } from "@shared/schema";
-import { AuthContext } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,7 +36,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { UploadCloud, Info, Loader2, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
+import { UploadCloud, Loader2, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
 
 // Extend the schema for NFT creation form
@@ -77,10 +76,6 @@ export default function Create() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState<'details' | 'pricing' | 'review'>('details');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  // Access the AuthContext for login functionality
-  const authContext = useContext(AuthContext);
-  const login = authContext ? authContext.login : null;
 
   // Initialize form with default values
   const form = useForm<CreateNftFormValues>({
@@ -314,642 +309,457 @@ export default function Create() {
             <Card>
               <CardHeader>
                 <CardTitle>Create NFT</CardTitle>
-                <CardDescription>Fill in the details to mint your new NFT</CardDescription>
+                <CardDescription>Fill in the details to create your new NFT</CardDescription>
               </CardHeader>
               <CardContent>
                 <Form {...form}>
-                    <div className="mb-8">
-                      <div className="relative">
-                        <div className="flex items-center justify-between mb-4">
-                          <div 
-                            className={`flex items-center cursor-pointer ${currentStep === 'details' ? 'text-primary font-semibold' : 'text-gray-500 dark:text-gray-400'}`}
-                            onClick={() => setCurrentStep('details')}
-                          >
-                            <div className={`flex items-center justify-center w-8 h-8 rounded-full mr-2 ${currentStep === 'details' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
-                              1
-                            </div>
-                            <span>Details</span>
+                  <div className="mb-8">
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-4">
+                        <div 
+                          className={`flex items-center cursor-pointer ${currentStep === 'details' ? 'text-primary font-semibold' : 'text-gray-500 dark:text-gray-400'}`}
+                          onClick={() => setCurrentStep('details')}
+                        >
+                          <div className={`flex items-center justify-center w-8 h-8 rounded-full mr-2 ${currentStep === 'details' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
+                            1
                           </div>
-                          <div className="flex-1 h-0.5 mx-4 bg-gray-200 dark:bg-gray-700">
-                            <div className={`h-full bg-primary transition-all ${currentStep === 'details' ? 'w-0' : currentStep === 'pricing' ? 'w-1/2' : 'w-full'}`}></div>
+                          <span>Details</span>
+                        </div>
+                        <div className="flex-1 h-0.5 mx-4 bg-gray-200 dark:bg-gray-700">
+                          <div className={`h-full bg-primary transition-all ${currentStep === 'details' ? 'w-0' : currentStep === 'pricing' ? 'w-1/2' : 'w-full'}`}></div>
+                        </div>
+                        <div 
+                          className={`flex items-center cursor-pointer ${currentStep === 'pricing' ? 'text-primary font-semibold' : 'text-gray-500 dark:text-gray-400'}`}
+                          onClick={() => {
+                            if (Object.keys(form.formState.errors).length === 0 || currentStep === 'pricing' || currentStep === 'review') {
+                              setCurrentStep('pricing');
+                            } else {
+                              form.trigger(['name', 'description', 'category', 'file']);
+                            }
+                          }}
+                        >
+                          <div className={`flex items-center justify-center w-8 h-8 rounded-full mr-2 ${currentStep === 'pricing' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
+                            2
                           </div>
-                          <div 
-                            className={`flex items-center cursor-pointer ${currentStep === 'pricing' ? 'text-primary font-semibold' : 'text-gray-500 dark:text-gray-400'}`}
-                            onClick={() => {
-                              if (Object.keys(form.formState.errors).length === 0 || currentStep === 'pricing' || currentStep === 'review') {
-                                setCurrentStep('pricing');
-                              } else {
-                                form.trigger(['name', 'description', 'category', 'file']);
-                              }
-                            }}
-                          >
-                            <div className={`flex items-center justify-center w-8 h-8 rounded-full mr-2 ${currentStep === 'pricing' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
-                              2
-                            </div>
-                            <span>Pricing</span>
+                          <span>Pricing</span>
+                        </div>
+                        <div className="flex-1 h-0.5 mx-4 bg-gray-200 dark:bg-gray-700">
+                          <div className={`h-full bg-primary transition-all ${currentStep === 'review' ? 'w-full' : 'w-0'}`}></div>
+                        </div>
+                        <div 
+                          className={`flex items-center cursor-pointer ${currentStep === 'review' ? 'text-primary font-semibold' : 'text-gray-500 dark:text-gray-400'}`}
+                          onClick={() => {
+                            if (Object.keys(form.formState.errors).length === 0 || currentStep === 'review') {
+                              setCurrentStep('review');
+                            } else {
+                              form.trigger();
+                            }
+                          }}
+                        >
+                          <div className={`flex items-center justify-center w-8 h-8 rounded-full mr-2 ${currentStep === 'review' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
+                            3
                           </div>
-                          <div className="flex-1 h-0.5 mx-4 bg-gray-200 dark:bg-gray-700">
-                            <div className={`h-full bg-primary transition-all ${currentStep === 'review' ? 'w-full' : 'w-0'}`}></div>
-                          </div>
-                          <div 
-                            className={`flex items-center cursor-pointer ${currentStep === 'review' ? 'text-primary font-semibold' : 'text-gray-500 dark:text-gray-400'}`}
-                            onClick={() => {
-                              if (Object.keys(form.formState.errors).length === 0 || currentStep === 'review') {
-                                setCurrentStep('review');
-                              } else {
-                                form.trigger();
-                              }
-                            }}
-                          >
-                            <div className={`flex items-center justify-center w-8 h-8 rounded-full mr-2 ${currentStep === 'review' ? 'bg-primary text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'}`}>
-                              3
-                            </div>
-                            <span>Review</span>
-                          </div>
+                          <span>Review</span>
                         </div>
                       </div>
                     </div>
-                    
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                      {/* Step 1: Details */}
-                      {currentStep === 'details' && (
-                        <>
-                          <FormField
-                            control={form.control}
-                            name="file"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>NFT Image</FormLabel>
-                                <FormControl>
-                                  <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                                    onClick={() => fileInputRef.current?.click()}
-                                  >
-                                    <input
-                                      type="file"
-                                      ref={fileInputRef}
-                                      className="hidden"
-                                      accept="image/*"
-                                      onChange={handleFileChange}
-                                    />
-                                    {previewUrl ? (
-                                      <div className="relative">
-                                        <img 
-                                          src={previewUrl} 
-                                          alt="Preview" 
-                                          className="max-h-48 rounded-lg" 
-                                        />
-                                        <Button
-                                          type="button"
-                                          variant="secondary"
-                                          size="sm"
-                                          className="mt-2"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            setPreviewUrl("");
-                                            form.setValue("file", undefined as any);
-                                          }}
-                                        >
-                                          Change Image
-                                        </Button>
-                                      </div>
-                                    ) : (
-                                      <>
-                                        <UploadCloud className="h-12 w-12 text-gray-400 mb-3" />
-                                        <p className="text-gray-600 dark:text-gray-300 font-medium">Click to upload</p>
-                                        <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
-                                          Supports JPG, PNG, GIF (Max 10MB)
-                                        </p>
-                                      </>
-                                    )}
-                                  </div>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel htmlFor="nft-name">NFT Name</FormLabel>
-                                <FormControl>
-                                  <Input 
-                                    id="nft-name"
-                                    placeholder="Enter the name of your NFT" 
-                                    autoComplete="off"
-                                    {...field} 
+                  </div>
+                  
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    {/* Step 1: Details */}
+                    {currentStep === 'details' && (
+                      <>
+                        <FormField
+                          control={form.control}
+                          name="file"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>NFT Image</FormLabel>
+                              <FormControl>
+                                <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-6 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                  onClick={() => fileInputRef.current?.click()}
+                                >
+                                  <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={handleFileChange}
                                   />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name="description"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel htmlFor="nft-description">Description</FormLabel>
-                                <FormControl>
-                                  <Textarea 
-                                    id="nft-description"
-                                    placeholder="Describe your NFT..." 
-                                    className="resize-none"
-                                    {...field} 
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name="category"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel htmlFor="nft-category">Category</FormLabel>
-                                <Select value={field.value} onValueChange={field.onChange}>
-                                  <FormControl>
-                                    <SelectTrigger id="nft-category">
-                                      <SelectValue placeholder="Select category" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    <SelectItem value="art">Art</SelectItem>
-                                    <SelectItem value="collectibles">Collectibles</SelectItem>
-                                    <SelectItem value="photography">Photography</SelectItem>
-                                    <SelectItem value="music">Music</SelectItem>
-                                    <SelectItem value="games">Games</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </>
-                      )}
-
-                      {/* Step 2: Pricing */}
-                      {currentStep === 'pricing' && (
-                        <>
-                          <FormField
-                            control={form.control}
-                            name="isForSale"
-                            render={({ field }) => (
-                              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 dark:border-gray-700">
-                                <div className="space-y-0.5">
-                                  <FormLabel htmlFor="nft-for-sale" className="text-base">Put on sale</FormLabel>
-                                  <FormDescription>
-                                    List your NFT for sale on the marketplace
-                                  </FormDescription>
-                                </div>
-                                <FormControl>
-                                  <Switch
-                                    id="nft-for-sale"
-                                    checked={field.value}
-                                    onCheckedChange={field.onChange}
-                                    aria-label="Put NFT for sale"
-                                  />
-                                </FormControl>
-                              </FormItem>
-                            )}
-                          />
-
-                          {form.watch("isForSale") && (
-                            <>
-                              <FormField
-                                control={form.control}
-                                name="price"
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormLabel htmlFor="nft-price">Price (VET)</FormLabel>
-                                    <FormControl>
-                                      <Input
-                                        id="nft-price"
-                                        type="number"
-                                        placeholder="Enter price in VET"
-                                        min="0"
-                                        step="0.01"
-                                        autoComplete="off"
-                                        inputMode="decimal"
-                                        aria-label="NFT price in VET"
-                                        {...field}
+                                  {previewUrl ? (
+                                    <div className="relative">
+                                      <img 
+                                        src={previewUrl} 
+                                        alt="Preview" 
+                                        className="max-h-48 rounded-lg" 
                                       />
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
-                                )}
-                              />
-
-                              <FormField
-                                control={form.control}
-                                name="isBiddable"
-                                render={({ field }) => (
-                                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 dark:border-gray-700">
-                                    <div className="space-y-0.5">
-                                      <FormLabel htmlFor="nft-biddable" className="text-base">Allow bids</FormLabel>
-                                      <FormDescription>
-                                        Allow users to place bids on your NFT
-                                      </FormDescription>
+                                      <Button
+                                        type="button"
+                                        variant="secondary"
+                                        size="sm"
+                                        className="mt-2"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setPreviewUrl("");
+                                          form.setValue("file", undefined as any);
+                                        }}
+                                      >
+                                        Change Image
+                                      </Button>
                                     </div>
-                                    <FormControl>
-                                      <Switch
-                                        id="nft-biddable"
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                        aria-label="Allow bids on NFT"
-                                      />
-                                    </FormControl>
-                                  </FormItem>
-                                )}
-                              />
-
-                              {/* NFT Revenue Settings Section */}
-                              <div className="mt-6 pt-6 border-t dark:border-gray-700">
-                                <h3 className="text-base font-semibold mb-4 dark:text-white">Revenue Settings</h3>
-                                
-                                {/* Initial Sale Split Section */}
-                                <div className="mb-8">
-                                  <h4 className="text-sm font-medium mb-4 text-gray-700 dark:text-gray-300">Initial Sale Split</h4>
-                                  
-                                  {/* Collab Percentage Slider */}
-                                  <FormField
-                                    control={form.control}
-                                    name="collabPercentage"
-                                    render={({ field }) => (
-                                      <FormItem className="space-y-4 mb-4">
-                                        <div>
-                                          <FormLabel>
-                                            Collaborator Percentage: {field.value}%
-                                          </FormLabel>
-                                          <FormDescription>
-                                            Set how much of the initial sale proceeds go to a collaborator
-                                          </FormDescription>
-                                        </div>
-                                        <FormControl>
-                                          <div className="pt-2">
-                                            <Slider
-                                              min={0}
-                                              max={100}
-                                              step={1}
-                                              defaultValue={[field.value]}
-                                              onValueChange={(vals) => {
-                                                field.onChange(vals[0]);
-                                              }}
-                                              aria-label="Collaborator Percentage"
-                                            />
-                                            <div className="flex justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                              <span>0%</span>
-                                              <span>50%</span>
-                                              <span>100%</span>
-                                            </div>
-                                          </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-
-                                  {/* Your/Collaborator Split Preview */}
-                                  <div className="flex justify-between items-center mb-4 px-2">
-                                    <div className="text-sm">
-                                      <span className="text-gray-600 dark:text-gray-400">You receive: </span>
-                                      <span className="font-medium dark:text-white">{100 - form.watch("collabPercentage")}%</span>
-                                    </div>
-                                    <div className="text-sm">
-                                      <span className="text-gray-600 dark:text-gray-400">Collaborator receives: </span>
-                                      <span className="font-medium dark:text-white">{form.watch("collabPercentage")}%</span>
-                                    </div>
-                                  </div>
-
-                                  {/* Collaborator Wallet Address */}
-                                  {form.watch("collabPercentage") > 0 && (
-                                    <FormField
-                                      control={form.control}
-                                      name="collabWalletAddress"
-                                      render={({ field }) => (
-                                        <FormItem>
-                                          <FormLabel>Collaborator Wallet Address</FormLabel>
-                                          <FormDescription>
-                                            Enter the wallet address of your collaborator
-                                          </FormDescription>
-                                          <FormControl>
-                                            <Input
-                                              placeholder="0x..."
-                                              {...field}
-                                              className="font-mono text-sm"
-                                            />
-                                          </FormControl>
-                                          <FormMessage />
-                                        </FormItem>
-                                      )}
-                                    />
+                                  ) : (
+                                    <>
+                                      <UploadCloud className="h-12 w-12 text-gray-400 mb-3" />
+                                      <p className="text-gray-600 dark:text-gray-300 font-medium">Click to upload</p>
+                                      <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">
+                                        Supports JPG, PNG, GIF (Max 10MB)
+                                      </p>
+                                    </>
                                   )}
                                 </div>
-                                
-                                {/* Secondary Sales Royalties Section */}
-                                <div>
-                                  <h4 className="text-sm font-medium mb-4 text-gray-700 dark:text-gray-300">Secondary Sales Royalties</h4>
-                                  
-                                  {/* Royalty Percentage Slider */}
-                                  <FormField
-                                    control={form.control}
-                                    name="royaltyPercentage"
-                                    render={({ field }) => (
-                                      <FormItem className="space-y-4">
-                                        <div>
-                                          <FormLabel>
-                                            Royalty Percentage: {field.value}%
-                                          </FormLabel>
-                                          <FormDescription>
-                                            Set the percentage (0-70%) that will apply as royalties on all future secondary sales
-                                          </FormDescription>
-                                        </div>
-                                        <FormControl>
-                                          <div className="pt-2">
-                                            <Slider
-                                              min={0}
-                                              max={70}
-                                              step={1}
-                                              defaultValue={[field.value]}
-                                              onValueChange={(vals) => {
-                                                field.onChange(vals[0]);
-                                              }}
-                                              aria-label="Royalty Percentage"
-                                              className="active:bg-primary/90"
-                                            />
-                                            <div className="flex justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                              <span>0%</span>
-                                              <span>15%</span>
-                                              <span>30%</span>
-                                              <span>45%</span>
-                                              <span>60%</span>
-                                              <span>70%</span>
-                                            </div>
-                                          </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                      </FormItem>
-                                    )}
-                                  />
-                                  
-                                  {/* Royalty Collaborator Split */}
-                                  {form.watch("royaltyPercentage") > 0 && (
-                                    <FormField
-                                      control={form.control}
-                                      name="royaltyCollabPercentage"
-                                      render={({ field }) => (
-                                        <FormItem className="space-y-4 mt-6 border-t pt-6 border-dashed border-gray-200 dark:border-gray-700">
-                                          <div>
-                                            <FormLabel>
-                                              Royalty Split with Collaborator: {field.value}%
-                                            </FormLabel>
-                                            <FormDescription>
-                                              Set the percentage of royalties that goes to your collaborator (the rest goes to you)
-                                            </FormDescription>
-                                          </div>
-                                          <FormControl>
-                                            <div className="pt-2">
-                                              <Slider
-                                                min={0}
-                                                max={100}
-                                                step={5}
-                                                defaultValue={[field.value]}
-                                                onValueChange={(vals) => {
-                                                  field.onChange(vals[0]);
-                                                }}
-                                                aria-label="Royalty Collaborator Percentage"
-                                                className="active:bg-primary/90"
-                                              />
-                                              <div className="flex justify-between mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                                <span>0%</span>
-                                                <span>25%</span>
-                                                <span>50%</span>
-                                                <span>75%</span>
-                                                <span>100%</span>
-                                              </div>
-                                            </div>
-                                          </FormControl>
-                                          
-                                          {/* Split visualization */}
-                                          <div className="flex flex-col space-y-2 my-4">
-                                            <div className="flex justify-between items-center">
-                                              <span className="text-sm text-gray-600 dark:text-gray-300">You</span>
-                                              <span className="text-sm font-medium text-gray-900 dark:text-white">{100 - field.value}%</span>
-                                            </div>
-                                            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                                              <div 
-                                                className="bg-primary h-2.5 rounded-full" 
-                                                style={{ width: `${100 - field.value}%` }}
-                                              ></div>
-                                            </div>
-                                            <div className="flex justify-between items-center">
-                                              <span className="text-sm text-gray-600 dark:text-gray-300">Collaborator</span>
-                                              <span className="text-sm font-medium text-gray-900 dark:text-white">{field.value}%</span>
-                                            </div>
-                                          </div>
-                                          
-                                          {field.value > 0 && (
-                                            <FormField
-                                              control={form.control}
-                                              name="collabWalletAddress"
-                                              render={({ field }) => (
-                                                <FormItem>
-                                                  <FormLabel>Collaborator Wallet Address</FormLabel>
-                                                  <FormDescription>
-                                                    Enter the VeChain wallet address of your collaborator
-                                                  </FormDescription>
-                                                  <FormControl>
-                                                    <Input
-                                                      {...field}
-                                                      placeholder="0x..."
-                                                      className="font-mono"
-                                                    />
-                                                  </FormControl>
-                                                  <FormMessage />
-                                                </FormItem>
-                                              )}
-                                            />
-                                          )}
-                                          <FormMessage />
-                                        </FormItem>
-                                      )}
-                                    />
-                                  )}
-                                  
-                                  {/* Royalty Info Text */}
-                                  <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
-                                    <p className="text-sm text-blue-700 dark:text-blue-300">
-                                      Royalties of up to {form.watch("royaltyPercentage")}% will be automatically distributed on secondary sales. 
-                                      {form.watch("royaltyCollabPercentage") > 0 
-                                        ? ` ${form.watch("royaltyCollabPercentage")}% of these royalties will go to your collaborator.` 
-                                        : ""}
-                                      The remaining {100 - form.watch("royaltyPercentage")}% of each sale goes to the seller.
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
                           )}
-                        </>
-                      )}
+                        />
 
-                      {/* Step 3: Review */}
-                      {currentStep === 'review' && (
-                        <div className="space-y-8">
-                          <div className="border rounded-lg p-6 dark:border-gray-700">
-                            <h3 className="text-lg font-semibold mb-4 dark:text-white">NFT Details</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Name</p>
-                                <p className="font-medium dark:text-white">{form.getValues("name")}</p>
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel htmlFor="nft-name">NFT Name</FormLabel>
+                              <FormControl>
+                                <Input 
+                                  id="nft-name"
+                                  placeholder="Enter the name of your NFT" 
+                                  autoComplete="off"
+                                  {...field} 
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="description"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel htmlFor="nft-description">Description</FormLabel>
+                              <FormControl>
+                                <Textarea 
+                                  id="nft-description"
+                                  placeholder="Describe your NFT..." 
+                                  className="resize-none"
+                                  {...field} 
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="category"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel htmlFor="nft-category">Category</FormLabel>
+                              <Select value={field.value} onValueChange={field.onChange}>
+                                <FormControl>
+                                  <SelectTrigger id="nft-category">
+                                    <SelectValue placeholder="Select category" />
+                                  </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                  <SelectItem value="art">Art</SelectItem>
+                                  <SelectItem value="collectibles">Collectibles</SelectItem>
+                                  <SelectItem value="photography">Photography</SelectItem>
+                                  <SelectItem value="music">Music</SelectItem>
+                                  <SelectItem value="games">Games</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </>
+                    )}
+
+                    {/* Step 2: Pricing */}
+                    {currentStep === 'pricing' && (
+                      <>
+                        <FormField
+                          control={form.control}
+                          name="isForSale"
+                          render={({ field }) => (
+                            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 dark:border-gray-700">
+                              <div className="space-y-0.5">
+                                <FormLabel htmlFor="nft-for-sale" className="text-base">Put on sale</FormLabel>
+                                <FormDescription>
+                                  List your NFT for sale on the marketplace
+                                </FormDescription>
                               </div>
-                              <div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Category</p>
-                                <p className="font-medium dark:text-white">{form.getValues("category")}</p>
+                              <FormControl>
+                                <Switch
+                                  id="nft-for-sale"
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                  aria-label="Put NFT for sale"
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+
+                        {form.watch("isForSale") && (
+                          <>
+                            <FormField
+                              control={form.control}
+                              name="price"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel htmlFor="nft-price">Price (VET)</FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      id="nft-price"
+                                      type="number"
+                                      placeholder="Enter price in VET"
+                                      min="0"
+                                      step="0.01"
+                                      autoComplete="off"
+                                      inputMode="decimal"
+                                      aria-label="NFT price in VET"
+                                      {...field}
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="isBiddable"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 dark:border-gray-700">
+                                  <div className="space-y-0.5">
+                                    <FormLabel htmlFor="nft-biddable" className="text-base">Allow bids</FormLabel>
+                                    <FormDescription>
+                                      Allow users to place bids on your NFT
+                                    </FormDescription>
+                                  </div>
+                                  <FormControl>
+                                    <Switch
+                                      id="nft-biddable"
+                                      checked={field.value}
+                                      onCheckedChange={field.onChange}
+                                      aria-label="Allow bids on NFT"
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
+                            />
+
+                            {/* NFT Revenue Settings Section */}
+                            <div className="mt-6 pt-6 border-t dark:border-gray-700">
+                              <h3 className="text-base font-semibold mb-4 dark:text-white">Revenue Settings</h3>
+                              
+                              {/* Initial Sale Split Section */}
+                              <div className="mb-8">
+                                <h4 className="text-sm font-medium mb-4 text-gray-700 dark:text-gray-300">Initial Sale Split</h4>
+                                
+                                {/* Royalty Percentage Slider */}
+                                <FormField
+                                  control={form.control}
+                                  name="royaltyPercentage"
+                                  render={({ field }) => (
+                                    <FormItem className="space-y-4">
+                                      <div>
+                                        <FormLabel>
+                                          Creator Royalty: {field.value}%
+                                        </FormLabel>
+                                        <FormDescription>
+                                          Set royalty percentage that you'll receive on future sales
+                                        </FormDescription>
+                                      </div>
+                                      <FormControl>
+                                        <div className="pt-2">
+                                          <Slider
+                                            defaultValue={[field.value]}
+                                            max={70}
+                                            step={1}
+                                            onValueChange={(values) => {
+                                              field.onChange(values[0]);
+                                            }}
+                                          />
+                                        </div>
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
                               </div>
-                              <div className="md:col-span-2">
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Description</p>
-                                <p className="font-medium dark:text-white">{form.getValues("description")}</p>
+
+                              {/* Collaborator Settings Section */}
+                              <div className="mt-6">
+                                <h4 className="text-sm font-medium mb-4 text-gray-700 dark:text-gray-300">Collaboration Settings</h4>
+                                
+                                {/* Collaborator Percentage Slider */}
+                                <FormField
+                                  control={form.control}
+                                  name="collabPercentage"
+                                  render={({ field }) => (
+                                    <FormItem className="space-y-4">
+                                      <div>
+                                        <FormLabel>
+                                          Collaborator Percentage: {field.value}%
+                                        </FormLabel>
+                                        <FormDescription>
+                                          Percentage of sales that will go to your collaborator
+                                        </FormDescription>
+                                      </div>
+                                      <FormControl>
+                                        <div className="pt-2">
+                                          <Slider
+                                            defaultValue={[field.value]}
+                                            max={100}
+                                            step={1}
+                                            onValueChange={(values) => {
+                                              field.onChange(values[0]);
+                                            }}
+                                          />
+                                        </div>
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                {form.watch("collabPercentage") > 0 && (
+                                  <FormField
+                                    control={form.control}
+                                    name="collabWalletAddress"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel>Collaborator Address</FormLabel>
+                                        <FormControl>
+                                          <Input 
+                                            placeholder="e.g. 0x123..." 
+                                            autoComplete="off"
+                                            {...field} 
+                                          />
+                                        </FormControl>
+                                        <FormDescription>
+                                          Enter the wallet address of your collaborator
+                                        </FormDescription>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                )}
                               </div>
                             </div>
-                          </div>
+                          </>
+                        )}
+                      </>
+                    )}
 
-                          <div className="border rounded-lg p-6 dark:border-gray-700">
-                            <h3 className="text-lg font-semibold mb-4 dark:text-white">Pricing</h3>
+                    {/* Step 3: Review */}
+                    {currentStep === 'review' && (
+                      <div className="space-y-6">
+                        <div className="rounded-lg border dark:border-gray-700 overflow-hidden">
+                          <div className="p-4 bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
+                            <h3 className="text-lg font-semibold dark:text-white">Review Your NFT Details</h3>
+                          </div>
+                          <div className="p-4 space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">For Sale</p>
-                                <p className="font-medium dark:text-white">{form.getValues("isForSale") ? "Yes" : "No"}</p>
+                                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Name</h4>
+                                <p className="font-medium dark:text-white">{form.getValues('name')}</p>
                               </div>
-                              {form.getValues("isForSale") && (
+                              <div>
+                                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Category</h4>
+                                <p className="font-medium dark:text-white capitalize">{form.getValues('category')}</p>
+                              </div>
+                              <div className="md:col-span-2">
+                                <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Description</h4>
+                                <p className="font-medium dark:text-white">{form.getValues('description')}</p>
+                              </div>
+                              
+                              {form.getValues('isForSale') && (
                                 <>
                                   <div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">Price</p>
-                                    <p className="font-medium dark:text-white">{form.getValues("price")} VET</p>
+                                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Price</h4>
+                                    <p className="font-medium dark:text-white">{form.getValues('price')} VET</p>
                                   </div>
                                   <div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">Allow Bids</p>
-                                    <p className="font-medium dark:text-white">{form.getValues("isBiddable") ? "Yes" : "No"}</p>
+                                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Sale Type</h4>
+                                    <p className="font-medium dark:text-white">{form.getValues('isBiddable') ? 'Auction' : 'Fixed Price'}</p>
                                   </div>
                                   <div>
-                                    <p className="text-sm text-gray-500 dark:text-gray-400">Secondary Sale Royalty</p>
-                                    <p className="font-medium dark:text-white">{form.getValues("royaltyPercentage")}%</p>
+                                    <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Royalty</h4>
+                                    <p className="font-medium dark:text-white">{form.getValues('royaltyPercentage')}%</p>
                                   </div>
-                                  
-                                  {form.getValues("royaltyPercentage") > 0 && form.getValues("royaltyCollabPercentage") > 0 && (
-                                    <div className="md:col-span-2 mt-2 border border-gray-100 dark:border-gray-800 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">Royalty Split Distribution:</p>
-                                      <div className="grid grid-cols-2 gap-3">
-                                        <div>
-                                          <p className="text-xs text-gray-500 dark:text-gray-400">Creator (You)</p>
-                                          <p className="font-medium dark:text-white">{100 - form.getValues("royaltyCollabPercentage")}%</p>
-                                        </div>
-                                        <div>
-                                          <p className="text-xs text-gray-500 dark:text-gray-400">Collaborator</p>
-                                          <p className="font-medium dark:text-white">{form.getValues("royaltyCollabPercentage")}%</p>
-                                        </div>
-                                        <div className="col-span-2 mt-1">
-                                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-                                            <div 
-                                              className="bg-primary h-1.5 rounded-full" 
-                                              style={{ width: `${100 - form.getValues("royaltyCollabPercentage")}%` }}
-                                            ></div>
-                                          </div>
-                                        </div>
-                                      </div>
+                                  {form.getValues('collabPercentage') > 0 && (
+                                    <div>
+                                      <h4 className="text-sm font-medium text-gray-500 dark:text-gray-400">Collaborator Split</h4>
+                                      <p className="font-medium dark:text-white">{form.getValues('collabPercentage')}%</p>
                                     </div>
-                                  )}
-                                  
-                                  {form.getValues("collabPercentage") > 0 && (
-                                    <>
-                                      <div>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">Initial Sale Collaboration Split</p>
-                                        <p className="font-medium dark:text-white">{form.getValues("collabPercentage")}%</p>
-                                      </div>
-                                      <div className="md:col-span-2">
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">Collaborator Wallet</p>
-                                        <p className="font-medium dark:text-white font-mono text-sm truncate">
-                                          {form.getValues("collabWalletAddress") || "Not specified"}
-                                        </p>
-                                      </div>
-                                    </>
                                   )}
                                 </>
                               )}
                             </div>
                           </div>
-
-                          <div className="border rounded-lg p-6 dark:border-gray-700">
-                            <h3 className="text-lg font-semibold mb-4 dark:text-white">Technical Details</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              <div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Creator</p>
-                                <p className="font-medium dark:text-white">{user?.username || "Unknown"}</p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Wallet Address</p>
-                                <p className="font-medium truncate dark:text-white">{walletAddress || "Not connected"}</p>
-                              </div>
-                              <div>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Network</p>
-                                <p className="font-medium dark:text-white">VeChain</p>
-                              </div>
-                            </div>
-                          </div>
                         </div>
-                      )}
-                    </form>
-                  </Form>
-                )}
+                      </div>
+                    )}
+                  </form>
+                </Form>
               </CardContent>
               
-              {isConnected && (
-                <CardFooter className="flex justify-between">
-                  {currentStep !== 'details' && (
-                    <Button 
-                      variant="outline" 
-                      onClick={goToPrevStep}
-                      className="flex items-center"
-                    >
-                      <ChevronLeft className="w-4 h-4 mr-2" />
-                      Previous
-                    </Button>
-                  )}
-                  
-                  {currentStep !== 'review' ? (
-                    <Button
-                      className="ml-auto bg-primary hover:bg-primary-dark text-white"
-                      onClick={goToNextStep}
-                    >
-                      Next Step
-                      <ChevronRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  ) : (
-                    <Button
-                      className="ml-auto bg-primary hover:bg-primary-dark text-white"
-                      onClick={form.handleSubmit(onSubmit)}
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Minting on VeChain...
-                        </>
-                      ) : (
-                        <>
-                          Mint NFT on VeChain
-                          <CheckCircle2 className="ml-2 h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
-                  )}
-                </CardFooter>
-              )}
+              <CardFooter className="flex justify-between">
+                {currentStep !== 'details' && (
+                  <Button 
+                    variant="outline" 
+                    onClick={goToPrevStep}
+                    className="flex items-center"
+                  >
+                    <ChevronLeft className="w-4 h-4 mr-2" />
+                    Previous
+                  </Button>
+                )}
+                
+                {currentStep !== 'review' ? (
+                  <Button
+                    className="ml-auto bg-primary hover:bg-primary-dark text-white"
+                    onClick={goToNextStep}
+                  >
+                    Next Step
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
+                ) : (
+                  <Button
+                    className="ml-auto bg-primary hover:bg-primary-dark text-white"
+                    onClick={form.handleSubmit(onSubmit)}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating NFT...
+                      </>
+                    ) : (
+                      <>
+                        Create NFT
+                        <CheckCircle2 className="ml-2 h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                )}
+              </CardFooter>
             </Card>
           </div>
         </div>
