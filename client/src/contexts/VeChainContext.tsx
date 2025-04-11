@@ -353,7 +353,13 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
       // Process specific wallet types with dedicated handling
       if (specificWalletType === 'veworld') {
         console.log('Specifically connecting to VeWorld wallet...');
-        if (!window.vechain || !window.vechain.isVeWorld) {
+        
+        // Check if VeWorld wallet is detected
+        const isVeWorldWallet = typeof window !== 'undefined' && 
+                               window.vechain !== undefined && 
+                               window.vechain.isVeWorld === true;
+        
+        if (!isVeWorldWallet) {
           throw new Error('VeWorld wallet not detected. Please install the VeWorld extension or app and try again.');
         }
         
@@ -510,6 +516,49 @@ export const VeChainProvider: React.FC<VeChainProviderProps> = ({ children }) =>
           console.error('Certificate error:', certError);
           throw new Error('Failed to authenticate with VeWorld wallet: ' + 
             (certError instanceof Error ? certError.message : String(certError)));
+        }
+      } else if (specificWalletType === 'sync') {
+        console.log('Specifically connecting to Sync (VeThor) wallet...');
+        
+        // For Sync (VeThor), check if we have a Thor wallet available
+        // Detect if VeThor wallet is injecting window.connex
+        const isThorWallet = typeof window !== 'undefined' && 
+                            window.connex !== undefined && 
+                            !window.vechain; // No window.vechain means it's likely Thor not VeWorld
+        
+        if (!isThorWallet) {
+          throw new Error('VeThor wallet not detected. Please ensure the VeThor wallet extension is installed and running.');
+        }
+        
+        try {
+          // Make sure window.connex exists
+          if (window.connex && window.connex.vendor) {
+            const cert = {
+              purpose: "identification" as const, // Specify literal type to satisfy TS
+              payload: {
+                type: "text" as const,  // Specify literal type to satisfy TS
+                content: `Login to VeCollab using VeThor at ${new Date().toISOString()}`
+              }
+            };
+            
+            try {
+              const result = await window.connex.vendor.sign('cert', cert).request();
+              if (result.annex && result.annex.signer) {
+                setAccount(result.annex.signer);
+                return { connex: window.connex, vendor: window.connex.vendor };
+              } else {
+                throw new Error('No signer address returned from certificate');
+              }
+            } catch (certError) {
+              console.error('VeThor certificate error:', certError);
+              throw new Error('Failed to authenticate with VeThor wallet.');
+            }
+          } else {
+            throw new Error('VeThor wallet not detected or not properly initialized');
+          }
+        } catch (syncError) {
+          console.error('Error connecting to VeThor:', syncError);
+          throw new Error('Failed to connect to VeThor wallet. Please ensure it is installed and running.');
         }
       } else if (specificWalletType === 'sync2') {
         console.log('Specifically connecting to Sync2 wallet...');
