@@ -9,6 +9,7 @@ import { queryClient } from "@/lib/queryClient";
 import { NFT, User, Bid } from "@shared/schema";
 import EditListingDialog from "@/components/EditListingDialog";
 import BuyNFTDialog from "@/components/BuyNFTDialog";
+import SocialShareButtons from "@/components/SocialShareButtons";
 import { 
   Clock, 
   Tag, 
@@ -53,6 +54,7 @@ export default function NFTDetail() {
   const [isTogglingFavorite, setIsTogglingFavorite] = useState<boolean>(false);
   const [isEditListingOpen, setEditListingOpen] = useState(false);
   const [isBuyDialogOpen, setBuyDialogOpen] = useState(false);
+  const [isShareDialogOpen, setShareDialogOpen] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string>("");
 
   // Fetch NFT details
