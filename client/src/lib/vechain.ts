@@ -64,50 +64,50 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
   try {
     console.log(`Connecting to ${walletType} wallet...`);
     const network = getNetwork();
-    
+
     // If privateKey is provided, directly use that
     if (privateKey) {
       console.log("Creating wallet with provided private key");
-      
+
       // Create a new wallet from the private key
       const wallet = new SimpleWallet();
       wallet.import(privateKey);
-      
+
       // Create a driver and framework with the wallet
       const net = new BrowserNet(network.url);
       const driver = await Driver.connect(net, wallet);
       const framework = new Framework(driver);
-      
+
       return {
         connex: framework,
         vendor: { name: 'Private Key', sign: wallet }
       };
     }
-    
+
     // If we're in development environment and have env key, use that
     if ((import.meta.env.DEV || 
         window.location.hostname.includes('replit') ||
         window.location.hostname === 'localhost') && 
         import.meta.env.VITE_VECHAIN_PRIVATE_KEY && 
         !window.location.hostname.includes('netlify.app')) {
-      
+
       console.log("Development environment with private key detected");
-      
+
       // Create framework and driver using the environment key
       const wallet = new SimpleWallet();
       wallet.import(import.meta.env.VITE_VECHAIN_PRIVATE_KEY);
-      
+
       // Initialize connex with the wallet
       const net = new BrowserNet(network.url);
       const driver = await Driver.connect(net, wallet);
       const framework = new Framework(driver);
-      
+
       return {
         connex: framework,
         vendor: { name: 'Dev Private Key', sign: wallet }
       };
     }
-    
+
     // Handle different wallet types
     switch(walletType.toLowerCase()) {
       case 'veworld':
@@ -115,10 +115,10 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
         if (typeof window !== 'undefined' && (window as any).vechain) {
           try {
             console.log("Connecting to VeWorld wallet...");
-            
+
             const vechain = (window as any).vechain;
             console.log("VeWorld API methods available:", Object.keys(vechain));
-            
+
             // Log all available window objects for debugging
             console.log("Available window objects:", 
               Object.keys(window).filter(key => 
@@ -127,56 +127,52 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
                 key.toLowerCase() === 'connex'
               )
             );
-            
+
             if (!vechain.isVeWorld) {
               throw new Error("Not a valid VeWorld wallet extension");
             }
-            
+
             console.log("VeWorld wallet detected, creating Connex instance...");
-            
+
             // Get the network parameters based on configuration
             const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
             const isMainNet = networkType === Network.MAIN;
-            
-            // Use environment variables with fallback to hardcoded genesis ID values
-            const GENESIS_ID_MAINNET = import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || 
-                                      "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a";
-            const GENESIS_ID_TESTNET = import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || 
-                                      "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127";
-            
+
+            // VeWorld requires specific genesis IDs
+            const GENESIS_ID_MAINNET = "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a";
+            const GENESIS_ID_TESTNET = "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127";
+
             // Log the genesis IDs we're using
-            console.log("Genesis IDs from environment:", {
-              mainnet: import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID,
-              testnet: import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID,
-              fallbackMainnet: "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a",
-              fallbackTestnet: "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127"
+            console.log("Genesis IDs:", {
+              mainnet: GENESIS_ID_MAINNET,
+              testnet: GENESIS_ID_TESTNET
             });
-            
+
             // Hard-coded network names exactly as expected by VeWorld
             const NETWORK_NAME_MAIN = "main";
             const NETWORK_NAME_TEST = "test";
-            
+
             // Select appropriate values
             const genesisId = isMainNet ? GENESIS_ID_MAINNET : GENESIS_ID_TESTNET;
             const networkName = isMainNet ? NETWORK_NAME_MAIN : NETWORK_NAME_TEST;
-            
+
             console.log("Using network parameters:", {
               networkType,
               genesisId,
               networkName
             });
-            
+
             // APPROACH 1: Create a new Connex instance using VeWorld API
             if (typeof vechain.newConnex === 'function' && typeof vechain.newConnexVendor === 'function') {
               console.log("Using VeWorld's native Connex creation API");
-              
+
               try {
                 // First create a vendor for transaction signing
                 console.log("Creating vendor with parameters:", { genesis: genesisId });
                 const vendor = await vechain.newConnexVendor({
                   genesis: genesisId
                 });
-                
+
                 // Then create a Connex instance
                 console.log("Creating Connex with parameters:", { 
                   node: network.url,
@@ -188,7 +184,7 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
                   network: networkName,
                   genesis: genesisId
                 });
-                
+
                 return { connex, vendor };
               } catch (error) {
                 console.error("Error creating Connex with VeWorld API:", error);
@@ -204,24 +200,24 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
         } else {
           throw new Error("VeWorld wallet extension not detected. Please install VeWorld extension and try again.");
         }
-        
+
       case 'thor':
         // Support for VeChainThor wallet extension
         if (typeof window !== 'undefined' && (window as any).thor) {
           try {
             console.log("Connecting to VeChainThor wallet...");
             const thor = (window as any).thor;
-            
+
             // Enable the wallet which returns a vendor object
             const vendor = await thor.enable();
             console.log("VeChainThor wallet enabled, vendor:", vendor);
-            
+
             // Check if we have window.connex available
             if (window.connex) {
               console.log("Using window.connex for Thor wallet connection");
               return { connex: window.connex, vendor };
             }
-            
+
             // Fallback to creating our own connex instance
             console.log("Creating Connex instance for Thor wallet");
             const connexInstance = await getConnex();
@@ -233,17 +229,17 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
         } else {
           throw new Error("VeChainThor wallet extension not detected");
         }
-        
+
       case 'sync':
       case 'sync2':
         // Support for Sync/Sync2 wallets
         try {
           console.log(`Connecting to ${walletType} wallet...`);
-          
+
           // Try to detect if Sync is installed by looking for window.connex
           if (window.connex) {
             console.log("Found window.connex, checking for Sync capabilities");
-            
+
             // Try to create a certificate to identify the wallet
             try {
               // Define a properly typed request
@@ -254,7 +250,7 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
                   content: string;
                 }
               };
-              
+
               // Create the certificate message with proper typing
               const certMessage: CertMessage = {
                 purpose: 'identification',
@@ -263,10 +259,10 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
                   content: 'Connecting to VeCollab'
                 }
               };
-              
+
               const certResult = await window.connex.vendor.sign('cert', certMessage).request();
               console.log("Wallet certificate response:", certResult);
-              
+
               // If we get a result, we have a compatible wallet
               return { 
                 connex: window.connex, 
@@ -283,25 +279,25 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
           console.error(`${walletType} wallet connection error:`, error);
           throw error;
         }
-        
+
       case 'walletconnect':
       case 'wallet-connect':
         // Support for WalletConnect
         throw new Error("WalletConnect support is not yet fully implemented");
-        
+
       default:
         // Check if we have a provider already
         const provider = await detectVechainProvider().catch(e => {
           console.error("Could not detect VeChain provider:", e);
           return null;
         });
-        
+
         if (provider) {
           try {
             console.log("Using detected VeChain provider");
             const accounts = await provider.request({ method: 'requestAccounts' });
             console.log("Connected accounts:", accounts);
-            
+
             // If we have window.connex, use that
             if (window.connex) {
               return { 
@@ -309,7 +305,7 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
                 vendor: window.connex.vendor 
               };
             }
-            
+
             // Otherwise create a new connex instance
             const connexInstance = await getConnex();
             return { 
@@ -321,7 +317,7 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
             throw error;
           }
         }
-        
+
         throw new Error(`Unsupported wallet type: ${walletType}`);
     }
   } catch (error) {
@@ -391,25 +387,25 @@ const setupCryptoEnvironment = () => {
   try {
     if (typeof window !== 'undefined' && (window as any).cryptoPolyfill) {
       console.log("Setting up crypto environment with cryptoPolyfill");
-      
+
       // Store a reference to the global crypto object first
       const originalCrypto = global.crypto || {};
-      
+
       // Create a temporary crypto object that combines browser's crypto with our polyfill
       const tempCrypto = {
         ...(window as any).cryptoPolyfill,
         subtle: originalCrypto.subtle
       };
-      
+
       // Add any missing methods from cryptoPolyfill
       if (!(global as any).crypto) {
         (global as any).crypto = tempCrypto;
       }
-      
+
       if (!(global as any).crypto.randomBytes && (window as any).cryptoPolyfill.randomBytes) {
         (global as any).crypto.randomBytes = (window as any).cryptoPolyfill.randomBytes;
       }
-      
+
       return true;
     }
     return false;
@@ -511,29 +507,29 @@ let connexInstance: any = null;
 export const initializeConnex = async (wallet?: SimpleWallet) => {
   try {
     if (connexInstance) return connexInstance;
-    
+
     const network = getNetwork();
-    
+
     // Check if we're in browser or Node.js environment
     if (typeof window !== 'undefined') {
       if (isReplit) {
         console.log("Replit environment detected - using HTTP polling for VeChain connection");
-        
+
         // For Replit environment, use a specialized configuration
         try {
           // Check if we have a private key for test environment
           const privateKey = import.meta.env.VITE_VECHAIN_PRIVATE_KEY;
-          
+
           if (privateKey) {
             // Create a wallet with the private key
             const wallet = new SimpleWallet();
             wallet.import(privateKey);
-            
+
             // Create a dedicated network instance for this wallet
             const net = new BrowserNet(network.url);
             const driver = await Driver.connect(net, wallet);
             const framework = new Framework(driver);
-            
+
             connexInstance = framework;
             return framework;
           } else {
@@ -541,7 +537,7 @@ export const initializeConnex = async (wallet?: SimpleWallet) => {
             const net = new BrowserNet(network.url);
             const driver = await Driver.connect(net);
             const framework = new Framework(driver);
-            
+
             connexInstance = framework;
             return framework;
           }
@@ -550,7 +546,7 @@ export const initializeConnex = async (wallet?: SimpleWallet) => {
           throw connexError;
         }
       }
-      
+
       // Default initialization for non-Replit environments or fallback
       const driver = await Driver.connect(new BrowserNet(network.url), wallet);
       connexInstance = new Framework(driver);
@@ -573,24 +569,24 @@ export const getConnex = async () => {
     if (connexInstance) {
       return connexInstance;
     }
-    
+
     const network = getNetwork();
-    
+
     // For Replit/development environment
     if (isReplit || 
         window.location.hostname === 'localhost' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') {
-      
+
       console.log("Development environment detected - using HTTP polling for VeChain connection");
-      
+
       try {
         // Check if we have a private key to use for signing transactions
         if (import.meta.env.VITE_VECHAIN_PRIVATE_KEY) {
           // Create a wallet with the private key
           const wallet = new SimpleWallet();
           wallet.import(import.meta.env.VITE_VECHAIN_PRIVATE_KEY);
-          
+
           // Use the wallet to connect to TestNet
           const driver = await Driver.connect(new BrowserNet(network.url), wallet);
           connexInstance = new Framework(driver);
@@ -599,10 +595,10 @@ export const getConnex = async () => {
         } else {
           // No private key, use regular connection
           console.log("Initializing VeChain connection to:", network.url);
-          
+
           const net = new BrowserNet(network.url);
           console.log("Created BrowserNet instance");
-          
+
           const driver = await Driver.connect(net).catch(error => {
             console.error("Driver connection failed:", {
               error,
@@ -613,10 +609,10 @@ export const getConnex = async () => {
             throw error;
           });
           console.log("Driver connected successfully");
-          
+
           const framework = new Framework(driver);
           console.log("Framework initialized");
-          
+
           connexInstance = framework;
           return connexInstance;
         }
@@ -636,7 +632,7 @@ export const getConnex = async () => {
         return mockConnex();
       }
     }
-    
+
     // For production: Try WebSocket first, then fallback to HTTP
     try {
       // WebSocket URL (if available)
@@ -652,15 +648,15 @@ export const getConnex = async () => {
           ? 'wss://mainnet.veblocks.net'
           : 'wss://testnet.veblocks.net';
       }
-        
+
       // Try WebSocket connection first for better performance
       console.log("Attempting WebSocket connection to:", wsUrl);
       const wsDriver = await Driver.connect(new BrowserNet(wsUrl));
       console.log("WebSocket driver connected successfully");
-      
+
       connexInstance = new Framework(wsDriver);
       console.log("WebSocket Connex framework initialized");
-      
+
       return connexInstance;
     } catch (wsError) {
       console.warn("WebSocket connection failed, falling back to HTTP:", {
@@ -670,16 +666,16 @@ export const getConnex = async () => {
         wsUrl: network.socketUrl || 'unknown',
         network
       });
-      
+
       // Fall back to HTTP
       try {
         console.log("Attempting HTTP fallback connection to:", network.url);
         const driver = await Driver.connect(new BrowserNet(network.url));
         console.log("HTTP driver connected successfully");
-        
+
         connexInstance = new Framework(driver);
         console.log("HTTP Connex framework initialized");
-        
+
         return connexInstance;
       } catch (httpError) {
         console.error("HTTP fallback connection failed:", {
@@ -713,7 +709,7 @@ const formatWei = (weiValue: string, decimals = 2): string => {
     // Convert wei string to a number (wei is 10^18 of an ether)
     const wei = BigInt(weiValue);
     const divisor = BigInt(10 ** 18); // 1 ether = 10^18 wei
-    
+
     // Calculate ether value with proper precision
     const etherValue = Number(wei) / Number(divisor);
     return etherValue.toFixed(decimals);
@@ -733,7 +729,7 @@ export const getWalletBalance = async (address: string): Promise<{ vet: string; 
         import.meta.env.MODE === 'development') && 
         !import.meta.env.VITE_VECHAIN_PRIVATE_KEY &&
         !window.location.hostname.includes('netlify.app')) {
-      
+
       // Return mock balance for development/testing
       console.log("Using mock wallet balance for development only");
       return {
@@ -741,23 +737,23 @@ export const getWalletBalance = async (address: string): Promise<{ vet: string; 
         vtho: "25.50"
       };
     }
-    
+
     // Get actual balance from blockchain
     const connex = await getConnex();
     if (!connex) {
       throw new Error("Failed to initialize Connex");
     }
-    
+
     // Get VET balance (main token)
     const account = await connex.thor.account(address).get();
     if (!account) {
       throw new Error("Failed to get account information");
     }
-    
+
     // Format the balances - VET is in balance, VTHO is in energy
     const vetFormatted = formatWei(account.balance || '0');
     const vthoFormatted = formatWei(account.energy || '0');
-    
+
     return {
       vet: vetFormatted,
       vtho: vthoFormatted
@@ -781,14 +777,14 @@ export const getWalletAddress = async () => {
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') && 
         !window.location.hostname.includes('netlify.app')) {
-      
+
       // Try to get address from environment private key first
       if (import.meta.env.VITE_VECHAIN_PRIVATE_KEY) {
         try {
           console.log("Getting wallet address from environment private key");
           const wallet = new SimpleWallet();
           wallet.import(import.meta.env.VITE_VECHAIN_PRIVATE_KEY);
-          
+
           if (wallet.list.length > 0) {
             const address = wallet.list[0].address;
             console.log('Retrieved wallet address from environment key:', address);
@@ -798,14 +794,14 @@ export const getWalletAddress = async () => {
           console.warn("Failed to get address from environment key, falling back to mock:", error);
         }
       }
-      
+
       // Only use mock address in development environments, not in production
       if (!window.location.hostname.includes('netlify.app')) {
         console.log("Development environment detected, using mock wallet address");
         return '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed';
       }
     }
-    
+
     // Check if Thor wallet is available
     if (typeof window !== 'undefined' && (window as any).thor) {
       try {
@@ -842,33 +838,33 @@ export const signMessage = async (message: string) => {
         content: message
       }
     };
-    
+
     // For the Replit environment or development mode
     if (window.location.hostname.includes('replit') || 
         window.location.hostname === 'localhost' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') {
-      
+
       console.log(`Development environment detected for message signing`);
-      
+
       // Try to use environment private key first if available
       if (import.meta.env.VITE_VECHAIN_PRIVATE_KEY) {
         try {
           console.log(`Using TestNet wallet to sign message`);
-          
+
           // Initialize wallet from private key
           const wallet = new SimpleWallet();
           wallet.import(import.meta.env.VITE_VECHAIN_PRIVATE_KEY);
           const account = wallet.list[0];
-          
+
           console.log(`Simulating message signing for: ${message}`);
-          
+
           // Get connex instance
           const connex = await getConnex();
           if (!connex) {
             throw new Error("Failed to initialize Connex");
           }
-          
+
           // In Replit environment, we create a realistic signature
           // This is still a mock signature, but it's based on the real account
           const realSignature = {
@@ -880,14 +876,14 @@ export const signMessage = async (message: string) => {
             signature: '0x' + Math.random().toString(16).substring(2, 66),
             certified: true
           };
-          
+
           console.log(`Message signed successfully for account: ${account.address}`);
           return realSignature;
         } catch (error: any) {
           console.warn("TestNet wallet signing failed, falling back to mock:", error);
         }
       }
-      
+
       // Fall back to mock if environment key fails or is not available
       console.log("Mocking message signature");
       return {
@@ -900,7 +896,7 @@ export const signMessage = async (message: string) => {
         certified: true
       };
     }
-    
+
     // For production: Check if Thor wallet is available in the browser
     if (typeof window !== 'undefined' && (window as any).thor) {
       const vendor = await (window as any).thor.enable();
@@ -925,7 +921,7 @@ export const callContractMethod = async (
   try {
     const connex = await getConnex();
     const contract = connex.thor.account(contractAddress);
-    
+
     const method = contract.method(abi.find((item: any) => item.name === methodName));
     return await method.call(...params);
   } catch (error) {
@@ -945,57 +941,57 @@ export const executeContractMethod = async (
   try {
     // Check if user wants to use real wallet interactions even in development
     const useRealWallet = localStorage.getItem('useRealWallet') === 'true';
-    
+
     // For the Replit environment or development mode, but only if not explicitly using real wallet
     if (!useRealWallet && (
         window.location.hostname.includes('replit') || 
         window.location.hostname === 'localhost' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development')) {
-      
+
       console.log(`Development environment detected for executing ${methodName}, using TestNet interaction`);
-      
+
       // Try to use environment private key first if available
       if (import.meta.env.VITE_VECHAIN_PRIVATE_KEY) {
         try {
           console.log(`Using TestNet wallet to execute ${methodName}`);
-          
+
           // Initialize wallet from private key
           const wallet = new SimpleWallet();
           wallet.import(import.meta.env.VITE_VECHAIN_PRIVATE_KEY);
           const account = wallet.list[0];
-          
+
           // Get connex instance
           const connex = await getConnex();
           const contract = connex.thor.account(contractAddress);
-          
+
           // Find the method in the ABI
           const abiMethod = abi.find((item: any) => item.name === methodName);
           if (!abiMethod) {
             throw new Error(`Method ${methodName} not found in ABI`);
           }
-          
+
           // Create method and clause
           const method = contract.method(abiMethod);
           const clause = method.asClause(...params);
           console.log(`Created clause for ${methodName} with params:`, params);
-          
+
           // Execute a real transaction with the TestNet wallet
           // This will still use the private key but will actually send the transaction
           // to the TestNet instead of just returning a mock txid
-          
+
           // For Replit environment, we'll use a simpler approach with the connex instance
           console.log("Creating transaction using Connex in Replit environment");
-          
+
           // Use connex directly to create and send the transaction
           // This avoids lower-level Transaction object handling
           const signedTx = await connex.vendor.sign('tx', [clause]);
-          
+
           // Log the transaction details
           console.log(`Transaction signed with ID: ${signedTx.txid}`);
-          
+
           // No need to send manually - the vendor.sign method does this in one step
-          
+
           // Return the result from the signed transaction
           return {
             txid: signedTx.txid,
@@ -1009,43 +1005,43 @@ export const executeContractMethod = async (
         throw new Error("No private key available. Please enable real wallet interaction or add a test private key.");
       }
     }
-    
+
     // For production: Check if Thor wallet is available in the browser
     if (typeof window !== 'undefined' && (window as any).thor) {
       // Check if Thor wallet is available
       console.log(`Executing contract method ${methodName} on ${contractAddress}`);
-      
+
       // Enable the Thor wallet
       const vendor = await (window as any).thor.enable();
       if (!vendor) {
         throw new Error("Failed to enable Thor wallet");
       }
-      
+
       // Initialize Connex
       const connex = await getConnex();
       if (!connex) {
         throw new Error("Failed to initialize Connex");
       }
-      
+
       // Get contract instance
       const contract = connex.thor.account(contractAddress);
-      
+
       // Find the method in the ABI
       const abiMethod = abi.find((item: any) => item.name === methodName);
       if (!abiMethod) {
         throw new Error(`Method ${methodName} not found in ABI`);
       }
-      
+
       // Create method and clause
       const method = contract.method(abiMethod);
       const clause = method.asClause(...params);
-      
+
       console.log(`Signing transaction for ${methodName} with params:`, params);
-      
+
       // Sign and execute transaction
       const result = await vendor.sign('tx', [clause]);
       console.log(`Transaction result for ${methodName}:`, result);
-      
+
       return result;
     } else {
       throw new Error("VeChain Thor wallet extension not detected. Please install the extension to continue.");
@@ -1063,50 +1059,50 @@ export const deployContract = async (abi: any, bytecode: string, params: any[] =
     if (!bytecode || bytecode.length < 2) {
       throw new Error("Invalid bytecode: Bytecode cannot be empty");
     }
-    
+
     // Ensure bytecode has 0x prefix
     const formattedBytecode = bytecode.startsWith('0x') ? bytecode : `0x${bytecode}`;
-    
+
     // Create deployment clause
     const clause = {
       to: null, // null 'to' field indicates contract deployment
       value: '0x0',
       data: formattedBytecode
     };
-    
+
     // For the Replit environment or development mode
     if (window.location.hostname.includes('replit') || 
         window.location.hostname === 'localhost' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') {
-      
+
       console.log(`Development environment detected for contract deployment`);
-      
+
       // Try to use environment private key first if available
       if (import.meta.env.VITE_VECHAIN_PRIVATE_KEY) {
         try {
           console.log(`Using TestNet wallet to deploy contract`);
-          
+
           // Initialize wallet from private key
           const wallet = new SimpleWallet();
           wallet.import(import.meta.env.VITE_VECHAIN_PRIVATE_KEY);
           const account = wallet.list[0];
-          
+
           console.log(`Contract deployment bytecode length: ${formattedBytecode.length}`);
           console.log("Simulating contract deployment transaction...");
-          
+
           // Get connex instance
           const connex = await getConnex();
           if (!connex) {
             throw new Error("Failed to initialize Connex");
           }
-          
+
           // Use connex to sign and deploy the contract
           console.log("Signing contract deployment transaction...");
           const signedTx = await connex.vendor.sign('tx', [clause]);
-          
+
           console.log(`Contract deployed successfully. Transaction ID: ${signedTx.txid}`);
-          
+
           return {
             txid: signedTx.txid,
             signer: account.address
@@ -1115,7 +1111,7 @@ export const deployContract = async (abi: any, bytecode: string, params: any[] =
           console.warn("TestNet wallet deployment failed, falling back to mock:", error);
         }
       }
-      
+
       // Fall back to mock if environment key fails or is not available
       console.log(`Mocking contract deployment`);
       return {
@@ -1123,35 +1119,35 @@ export const deployContract = async (abi: any, bytecode: string, params: any[] =
         signer: '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed'
       };
     }
-    
+
     // For production: Check if Thor wallet is available
     if (typeof window !== 'undefined' && (window as any).thor) {
       // Check if Thor wallet is available
       console.log(`Attempting to deploy contract with bytecode length: ${bytecode.length}`);
-      
+
       // Enable the Thor wallet
       const vendor = await (window as any).thor.enable();
       if (!vendor) {
         throw new Error("Failed to enable Thor wallet");
       }
-      
+
       // Initialize Connex
       const connex = await getConnex();
       if (!connex) {
         throw new Error("Failed to initialize Connex");
       }
-      
+
       console.log("Signing contract deployment transaction...");
-      
+
       // Sign and execute deployment transaction
       const result = await vendor.sign('tx', [clause]);
-      
+
       if (!result || !result.txid) {
         throw new Error("Contract deployment failed: Transaction didn't complete");
       }
-      
+
       console.log(`Contract deployed successfully. Transaction ID: ${result.txid}`);
-      
+
       return result;
     } else {
       throw new Error("VeChain Thor wallet extension not detected. Please install the extension to continue.");
@@ -1168,33 +1164,33 @@ export const getTransactionReceipt = async (txId: string) => {
     if (!txId) {
       throw new Error("Transaction ID is required to get receipt");
     }
-    
+
     // Validate transaction ID format
     if (!txId.startsWith('0x') || txId.length !== 66) {
       console.warn(`Unusual transaction ID format: ${txId}`);
     }
-    
+
     console.log(`Fetching receipt for transaction: ${txId}`);
-    
+
     const connex = await getConnex();
     if (!connex) {
       throw new Error("Failed to initialize Connex");
     }
-    
+
     // Get transaction receipt
     const receipt = await connex.thor.transaction(txId).getReceipt();
-    
+
     if (!receipt) {
       throw new Error("Receipt not found for transaction");
     }
-    
+
     // Check if transaction was reverted
     if (receipt.reverted) {
       console.warn(`Transaction ${txId} was reverted`);
     }
-    
+
     console.log(`Receipt retrieved for transaction ${txId}:`, receipt);
-    
+
     return receipt;
   } catch (error: any) {
     console.error('Failed to get transaction receipt:', error);
@@ -1209,30 +1205,30 @@ export const getTransactionReceipt = async (txId: string) => {
  */
 function mockConnex() {
   console.warn("Using enhanced mock Connex implementation for development");
-  
+
   // First, ensure crypto environment is properly set up
   setupCryptoEnvironment();
-  
+
   try {
     // Check if we have a private key in the environment
     const privateKey = import.meta.env.VITE_VECHAIN_PRIVATE_KEY;
-    
+
     if (privateKey) {
       console.log("Mock Connex has detected environment key");
     } else {
       console.log("No private key found, using fully mocked Connex");
     }
-    
+
     // Add detailed debug info
     console.debug("Browser crypto availability:", !!window.crypto);
     console.debug("CryptoPolyfill availability:", !!(window as any).cryptoPolyfill);
-    
+
     // Generate mock blockchain data
     const mockBlockTime = Math.floor(Date.now() / 1000);
     const mockBlockNumber = 12345678;
     const mockBlockId = '0x' + Array(64).fill('1').join('');
     const testAddress = '0x7567D83b7b8d80ADdCb281A71d54Fc7B3364ffed';
-    
+
     // Return a more complete mock object
     return {
       thor: {
@@ -1295,7 +1291,7 @@ function mockConnex() {
     };
   } catch (error) {
     console.error("Error creating enhanced mock Connex:", error);
-    
+
     // Return the original simplified mock if anything fails
     return {
       thor: {
