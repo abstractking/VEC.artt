@@ -807,7 +807,7 @@ export const getWalletBalance = async (address: string): Promise<{ vet: string; 
   try {
     // Default mock balance for development environments only
     if ((window.location.hostname.includes('replit') || 
-        window.location.hostname === 'localhost' || 
+        window.location.hostname === '0.0.0.0' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') && 
         !import.meta.env.VITE_VECHAIN_PRIVATE_KEY &&
