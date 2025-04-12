@@ -199,8 +199,11 @@ export default function Hero() {
                               </svg>
                             </div>
                           </div>
-                          <div className="absolute bottom-6 left-6 right-6 bg-background/90 backdrop-blur-sm p-4 rounded-lg border border-border">
-                            <h3 className="font-poppins font-bold text-foreground">Cosmic Wanderer #371</h3>
+                          <div 
+                            className="absolute bottom-6 left-6 right-6 bg-background/90 backdrop-blur-sm p-4 rounded-lg border border-border cursor-pointer hover:bg-background/95 transition-all"
+                            onClick={() => window.location.href = `/nft/${nftId}`}
+                          >
+                            <h3 className="font-poppins font-bold text-foreground">Cosmic Wanderer #{Math.floor(Math.random() * 1000)}</h3>
                             <div className="flex justify-between items-center mt-2">
                               <div className="flex items-center">
                                 <div className="rounded-full w-8 h-8 bg-primary/20 flex items-center justify-center text-primary font-semibold">
@@ -211,7 +214,7 @@ export default function Hero() {
                                 </span>
                               </div>
                               <div className="text-primary font-semibold">
-                                5.2 VET
+                                {(Math.random() * 10).toFixed(1)} VET
                               </div>
                             </div>
                           </div>
