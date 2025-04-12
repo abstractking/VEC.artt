@@ -1,0 +1,94 @@
+### Task List for Debugging and Fixing the `genesisId` Issue in VeWorld Wallet Connection
+
+#### **1. Understand the Current Implementation**
+1. **Review Genesis ID Logic:**
+   - Confirm how the `genesisId` is resolved in `getNetwork` and `getGenesisId` functions.
+   - Verify the `genesisId` values in the `NETWORKS` object for `main` and `test` networks.
+
+2. **Trace API Calls:**
+   - Debug the calls to `vechain.newConnexVendor` and `vechain.newConnex`.
+   - Log the parameters passed to these methods, particularly `genesisId`.
+
+3. **Check Environment Configuration:**
+   - Verify `VITE_REACT_APP_VECHAIN_NETWORK` and other related environment variables.
+   - Ensure they are set correctly in the deployment environment (e.g., Vercel).
+
+---
+
+#### **2. Debugging the Issue**
+1. **Add Detailed Logging:**
+   - Log the resolved `genesisId` and network configuration before each API call:
+     ```typescript
+     console.log("Resolved network parameters:", network);
+     console.log("Using genesisId:", genesisId);
+     ```
+
+2. **Validate Genesis ID Format:**
+   - Add a validation step before passing the `genesisId`:
+     ```typescript
+     if (!genesisId || !genesisId.startsWith('0x') || genesisId.length !== 66) {
+       console.error('Invalid genesis ID format:', genesisId);
+       throw new Error('Invalid genesis ID format');
+     }
+     ```
+
+3. **Handle Retry Logic:**
+   - Enhance the retry logic in `connectWallet` with exponential backoff:
+     ```typescript
+     await new Promise(resolve => setTimeout(resolve, retryCount * 1000));
+     ```
+
+4. **Debug API Errors:**
+   - Capture and log detailed error messages from `newConnexVendor` and `newConnex`:
+     ```typescript
+     console.error("API Error Details:", error);
+     ```
+
+---
+
+#### **3. Verify Against VeWorld API Documentation**
+1. **Check API Requirements:**
+   - Verify if additional parameters are required for `newConnexVendor` or `newConnex`.
+   - Confirm the expected `genesisId` format for VeWorld API calls.
+
+2. **Update Code to Match API:**
+   - Modify `connectWallet` to include any missing parameters or adjustments based on the API documentation.
+
+---
+
+#### **4. Test and Validate**
+1. **Create Unit Tests:**
+   - Write tests for the `getNetwork` and `getGenesisId` functions to ensure they return the correct values.
+
+2. **Test Across Environments:**
+   - Test wallet connection on both `main` and `test` networks.
+   - Validate functionality on different deployment environments like localhost, staging, and Vercel.
+
+3. **Mock API for Debugging:**
+   - Use `mockConnex` to simulate API responses and validate the retry logic.
+
+---
+
+#### **5. Deployment and Monitoring**
+1. **Environment Variable Audit:**
+   - Ensure all required environment variables are correctly configured in the deployment environment.
+
+2. **Monitor Logs:**
+   - Deploy the updated code and monitor logs for any issues with `genesisId` or wallet connections.
+
+3. **Add Alerts:**
+   - Set up alerts for repeated connection failures to catch future issues early.
+
+---
+
+#### **6. Documentation**
+1. **Update Developer Guide:**
+   - Document the network selection process and how to configure the environment variables.
+   - Add details about `genesisId` requirements and troubleshooting steps.
+
+2. **Comment Updates:**
+   - Add inline comments to the `connectWallet` function explaining key steps and logic.
+
+---
+
+Would you like me to assist with implementing or reviewing any specific part of this task list?
