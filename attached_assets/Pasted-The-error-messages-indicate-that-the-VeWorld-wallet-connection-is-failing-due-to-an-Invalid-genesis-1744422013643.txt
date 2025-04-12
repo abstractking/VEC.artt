@@ -1,0 +1,31 @@
+The error messages indicate that the VeWorld wallet connection is failing due to an "Invalid genesisId." This typically means that the genesis ID being used for the connection is incorrect or not supported by the network you're trying to connect to.
+
+Steps to Debug the Issue:
+Validate the genesisId: Ensure that the genesis ID being used in the connection is correct and aligns with the network you intend to connect to. If you're using testnet, make sure that the genesis ID corresponds to the testnet setup.
+In your vechain.ts, check how the genesis ID is being set. You might find it around line 184 as indicated by the stack trace. Here's a snippet to modify it with a proper validation check:
+
+// Assuming you have a function to get genesisId based on network
+export const getGenesisId = (): string => {
+  const selectedNetwork = getNetwork();  // Your existing function to get network
+  if (selectedNetwork.name === 'testnet') {
+    return '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'; // Example genesisId for testnet
+  } 
+  // Add conditions for other networks if necessary
+  console.warn("No valid genesisId found for the selected network.");
+  return ''; // Return an empty string or handle as needed
+};
+// Use getGenesisId() where you create the VeWorld connection
+const genesisId = getGenesisId();
+if (!genesisId) {
+  console.error("Unable to connect. Invalid genesisId.");
+  return; // Exit out if the genesisId is invalid
+}
+Network Configuration Check: Confirm whether the network configuration is set appropriately in your environment variables. If using VITE environment variables, ensure they are correctly defined. You may need to check that VITE_REACT_APP_VECHAIN_NETWORK is correctly set.
+
+Retry Connection Logic: Ensure that your retry logic for connecting to the wallet does not repeat indefinitely without a proper condition to break out or notify the user that something is wrong.
+
+Next Steps:
+Implement the changes to validate the genesis ID.
+Restart your development environment using:
+npm run dev
+This should help in diagnosing and potentially resolving the wallet connection issue due to the invalid genesis ID. If the problem persists, consider checking documentation for the respective API or the VeWorld wallet for any updates regarding the genesis ID you are using.
