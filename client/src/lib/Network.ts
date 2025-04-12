@@ -59,10 +59,6 @@ export function getNetwork(networkType: Network): NetworkDescriptor {
   return network;
 }
 
-function validateGenesisId(id: string): boolean {
-  return Boolean(id && id.startsWith('0x') && id.length === 66);
-}
-
 export function getNodeUrl(network: Network): string {
   return NETWORKS[network].nodeUrl || 
     (network === Network.MAIN ? getMainnetNodeUrl() : getTestnetNodeUrl());
