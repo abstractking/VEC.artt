@@ -1,8 +1,11 @@
+/**
+ * Vercel-specific Vite Configuration
+ * Extends the unified base configuration with Vercel-specific overrides
+ */
+
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import { baseConfig } from './vite.config.unified';
 import path from 'path';
-import fs from 'fs';
 
 // Inject polyfills into HTML for Vercel deployment
 const injectPolyfillsToHTML = () => {
@@ -18,18 +21,12 @@ const injectPolyfillsToHTML = () => {
   };
 };
 
+// Merge the base configuration with Vercel-specific overrides
 export default defineConfig({
+  ...baseConfig,
   root: path.resolve(__dirname, 'client'),
   plugins: [
-    react(),
-    nodePolyfills({
-      globals: {
-        Buffer: true,
-        global: true,
-        process: true,
-      },
-      protocolImports: true,
-    }),
+    ...baseConfig.plugins,
     injectPolyfillsToHTML(),
   ],
   define: {

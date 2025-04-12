@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "node scripts/prepare-vercel.cjs && vite build --config vite.config.vercel.js",
+  "buildCommand": "node scripts/prepare-vercel.cjs && vite build --config vite.config.vercel.js && node scripts/post-build-vercel.cjs",
   "outputDirectory": "dist/public",
   "framework": "vite",
   "functions": {
