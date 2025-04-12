@@ -134,31 +134,35 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
 
             console.log("VeWorld wallet detected, creating Connex instance...");
 
-            // Get the network parameters based on configuration
-            const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
-            const isMainNet = networkType === Network.MAIN;
-
-            // Get network descriptor from Network module
+            // Get network information using the correct methods
+            // VeWorld requires exact lowercase 'main' or 'test' for networks
+            const networkName = network.name.toLowerCase();
+            console.log("Network name (normalized):", networkName);
+            
+            // Determine the correct network type
+            const networkType = networkName.includes('main') ? Network.MAIN : Network.TEST;
+            
+            // Get network descriptor with the correct genesis ID from Network module
             const networkDescriptor = NETWORK_DESCRIPTORS[networkType];
             
             if (!networkDescriptor || !networkDescriptor.id) {
+              console.error('Invalid network configuration:', networkDescriptor);
               throw new Error('Invalid network configuration');
             }
 
+            // VeWorld expects the exact genesis ID as defined in their API
             const genesisId = networkDescriptor.id;
-            const networkName = networkDescriptor.name;
+            
+            // Verify the genesis ID is correctly formatted
+            if (!genesisId || !genesisId.startsWith('0x') || genesisId.length !== 66) {
+              console.error('Invalid genesis ID format:', genesisId);
+              throw new Error('Invalid genesis ID format');
+            }
 
             console.log("Using VeWorld network parameters:", {
               networkType,
               genesisId,
-              networkName,
-              networkDescriptor
-            });
-
-            console.log("Using network parameters:", {
-              networkType,
-              genesisId,
-              networkName,
+              networkName: networkDescriptor.name, // This must be lowercase 'main' or 'test'
               networkDescriptor
             });
 
@@ -167,18 +171,42 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
               console.log("Using VeWorld's native Connex creation API");
 
               try {
-                // Create vendor with minimal parameters
-                console.log("Creating VeWorld vendor with genesis:", genesisId);
-                const vendor = await vechain.newConnexVendor({
-                  genesis: genesisId
-                });
-
-                // Create Connex with minimal parameters
-                console.log("Creating VeWorld Connex instance");
-                const connex = await vechain.newConnex({
-                  genesis: genesisId
-                });
-
+                // In development/test environments, add more resilience with retry logic
+                let vendor = null;
+                let connex = null;
+                let maxRetries = 2;
+                let retryCount = 0;
+                
+                while (retryCount <= maxRetries) {
+                  try {
+                    // Create vendor with minimal parameters
+                    console.log(`Attempt ${retryCount + 1}: Creating VeWorld vendor with genesis:`, genesisId);
+                    vendor = await vechain.newConnexVendor({
+                      genesis: genesisId
+                    });
+                    
+                    // Create Connex with minimal parameters
+                    console.log(`Attempt ${retryCount + 1}: Creating VeWorld Connex instance`);
+                    connex = await vechain.newConnex({
+                      genesis: genesisId
+                    });
+                    
+                    console.log("VeWorld connection successful!");
+                    break; // Success! Exit the retry loop
+                  } catch (retryError) {
+                    retryCount++;
+                    console.warn(`VeWorld connection attempt ${retryCount} failed:`, retryError);
+                    
+                    if (retryCount > maxRetries) {
+                      console.error("All VeWorld connection attempts failed");
+                      throw retryError;
+                    }
+                    
+                    // Brief pause before retry
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                  }
+                }
+                
                 return { connex, vendor };
               } catch (error) {
                 console.error("Error creating Connex with VeWorld API:", error);
