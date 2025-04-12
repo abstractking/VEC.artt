@@ -7,15 +7,35 @@ import { defineConfig } from 'vite';
 import { baseConfig } from './vite.config.unified';
 import path from 'path';
 
-// Inject polyfills into HTML for Vercel deployment
+// Inject polyfills into HTML for Vercel deployment (as inline script to avoid MIME type issues)
 const injectPolyfillsToHTML = () => {
+  const fs = require('fs');
+  const path = require('path');
+  
   return {
     name: 'inject-polyfills-html',
     transformIndexHtml(html) {
+      // Read the polyfills script
+      let polyfillsContent;
+      try {
+        // Read the script file directly, this avoids MIME type issues
+        polyfillsContent = fs.readFileSync(
+          path.resolve(__dirname, 'client/src/vercel-polyfills.js'),
+          'utf-8'
+        );
+      } catch (error) {
+        console.error('Failed to read vercel-polyfills.js:', error);
+        // Fallback to empty content if file not found
+        polyfillsContent = '';
+      }
+      
+      // Inject as inline script to avoid MIME type issues with Vercel
       return html.replace(
         '<head>',
         `<head>
-    <script type="module" src="/src/vercel-polyfills.js"></script>`
+    <script type="text/javascript">
+    ${polyfillsContent}
+    </script>`
       );
     },
   };

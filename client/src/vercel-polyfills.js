@@ -3,26 +3,41 @@
  * This file gets imported early in the app's lifecycle to ensure critical polyfills are available
  */
 
-// Ensure global i1s defined
+// Ensure global is defined
 if (typeof window !== 'undefined' && !window.global) {
   window.global = window;
 }
 
 // Ensure process is defined with environment variables
-if (typeof window !== 'undefined' && !window.process) {
-  window.process = { 
-    env: {
-      NODE_ENV: process.env.NODE_ENV || 'production',
-      VITE_VECHAIN_NETWORK: process.env.VITE_VECHAIN_NETWORK,
-      VITE_VECHAIN_NODE_URL_TESTNET: process.env.VITE_VECHAIN_NODE_URL_TESTNET,
-      VITE_VECHAIN_NODE_URL_MAINNET: process.env.VITE_VECHAIN_NODE_URL_MAINNET,
-      VITE_VECHAIN_TESTNET_GENESIS_ID: process.env.VITE_VECHAIN_TESTNET_GENESIS_ID,
-      VITE_VECHAIN_MAINNET_GENESIS_ID: process.env.VITE_VECHAIN_MAINNET_GENESIS_ID,
-      VITE_DEPLOYMENT_ENV: process.env.VITE_DEPLOYMENT_ENV
-    }, 
-    browser: true,
-    nextTick: (cb) => setTimeout(cb, 0)
+if (typeof window !== 'undefined') {
+  // Create or update process.env with environment variables
+  window.process = window.process || {};
+  window.process.env = window.process.env || {};
+  
+  // Explicitly define critical environment variables for VeChain
+  const envVars = {
+    NODE_ENV: 'production',
+    VITE_VECHAIN_NETWORK: 'test',
+    VITE_VECHAIN_NODE_URL_TESTNET: 'https://testnet.veblocks.net',
+    VITE_VECHAIN_NODE_URL_MAINNET: 'https://mainnet.veblocks.net',
+    VITE_VECHAIN_TESTNET_GENESIS_ID: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
+    VITE_VECHAIN_MAINNET_GENESIS_ID: '0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409',
+    VITE_DEPLOYMENT_ENV: 'vercel'
   };
+  
+  // Merge with existing values, preferring existing values if present
+  Object.keys(envVars).forEach(key => {
+    if (!(key in window.process.env) || !window.process.env[key]) {
+      window.process.env[key] = envVars[key];
+    }
+  });
+  
+  // Add process properties
+  window.process.browser = true;
+  window.process.nextTick = window.process.nextTick || ((cb) => setTimeout(cb, 0));
+  
+  // For debugging
+  console.log('Vercel environment variables set:', window.process.env.VITE_VECHAIN_NETWORK);
 }
 
 // Ensure Buffer is available
