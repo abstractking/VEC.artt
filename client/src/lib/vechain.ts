@@ -921,7 +921,7 @@ export const signMessage = async (message: string) => {
     };
 
     // For the Replit environment or development mode
-    if (window.location.hostname.includes('replit')` || 
+    if (window.location.hostname.includes('replit') || 
         window.location.hostname === '0.0.0.0' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') {
