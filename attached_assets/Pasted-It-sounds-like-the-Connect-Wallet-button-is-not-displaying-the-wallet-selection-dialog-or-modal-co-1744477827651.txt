@@ -1,0 +1,66 @@
+It sounds like the "Connect Wallet" button is not displaying the wallet selection dialog or modal correctly. This can occur for a few reasons, so let's go through some potential solutions based on your current implementation.
+
+1. Check event handling
+Make sure the click event for the button is correctly triggering the function that opens the wallet selection dialog. In your WalletPopoverMenu.tsx, the onClick event should set isDialogOpen to true.
+
+Here's the relevant part of the code:
+
+<Button
+  className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-full transition-colors font-semibold focus:ring-2 focus:ring-ring focus:ring-offset-2"
+  disabled={isConnecting}
+  onClick={() => setIsDialogOpen(true)} // Ensure this triggers correctly
+>
+  <Wallet className="mr-2 h-4 w-4" />
+  {isConnecting ? (
+    <>
+      <span className="mr-2">Connecting</span>
+      <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+    </>
+  ) : (
+    "Connect Wallet"
+  )}
+</Button>
+2. Verify the dialog component
+Ensure that your WalletSelectionDialog is displaying when isDialogOpen is true. Here’s a simplified version of how it should look:
+
+<WalletSelectionDialog 
+  isOpen={isDialogOpen} // Should be true when button is clicked
+  onClose={() => setIsDialogOpen(false)}
+  onSelectWallet={handleSelectWallet}
+/>
+Make sure that the WalletSelectionDialog uses the isOpen prop to manage its visibility. For instance, it may look something like this:
+
+const WalletSelectionDialog = ({ isOpen, onClose, onSelectWallet }) => {
+  if (!isOpen) return null; // Do not render anything if isOpen is false
+  return (
+    <div className="modal">
+      <button onClick={onClose}>Close</button>
+      {/* Wallet selection options, handleSelectWallet should be called on selection */}
+    </div>
+  );
+};
+3. Confirm state management
+Ensure that useState is properly imported and that there’s no other component re-rendering causing isDialogOpen to reset:
+
+import { useState } from 'react';
+export default function WalletPopoverMenu({
+  onSelectWallet,
+  isConnecting
+}) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  // Rest of your code...
+}
+4. Debugging
+Use console.log statements to help track down where the issue may be:
+
+const handleSelectWallet = async (walletType) => {
+  console.log("Selected wallet type:", walletType);
+  setIsDialogOpen(false);
+  
+  try {
+    // your connection code...
+  } catch (error) {
+    console.error("Wallet selection error:", error);
+  }
+};
+Please ensure all these components interface correctly with each other. If everything appears correct and it is still not working, please consider checking for any additional CSS that may be hiding the dialog or interfering with its display

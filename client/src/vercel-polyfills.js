@@ -3,7 +3,7 @@
  * This file gets imported early in the app's lifecycle to ensure critical polyfills are available
  */
 
-// Ensure global is defined
+// Ensure global i1s defined
 if (typeof window !== 'undefined' && !window.global) {
   window.global = window;
 }
