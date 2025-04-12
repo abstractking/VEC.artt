@@ -235,8 +235,8 @@ const createDevelopmentWallet = async (): Promise<WalletConnectionResult> => {
 };
 
 // Connect to a wallet with specific wallet type
-// Extended wallet type to include 'auto' option
-export type ExtendedWalletType = VeChainWalletType | 'auto';
+// Extended wallet type to include 'auto' and 'environment' options
+export type ExtendedWalletType = VeChainWalletType | 'auto' | 'environment';
 
 export const connectWallet = async (walletType: ExtendedWalletType = 'veworld'): Promise<WalletConnectionResult> => {
   // If auto mode, detect the best wallet to use

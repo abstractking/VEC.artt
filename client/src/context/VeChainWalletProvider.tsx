@@ -4,7 +4,8 @@ import {
   checkExistingConnection,
   saveWalletConnection,
   clearWalletConnection,
-  WalletConnectionResult
+  WalletConnectionResult,
+  ExtendedWalletType
 } from '../lib/wallet-service';
 import { isVeWorldWalletAvailable } from '../lib/wallet-detection';
 
@@ -76,7 +77,14 @@ export const VeChainWalletProvider: React.FC<{ children: ReactNode }> = ({ child
           
           // Persist connection info using the wallet service
           if (result.address) {
-            saveWalletConnection(result, walletType === 'auto' ? 'veworld' : walletType);
+            // If auto, use the wallet name to determine type, defaulting to veworld
+            const actualWalletType = walletType === 'auto' 
+              ? (result.name.toLowerCase().includes('thor') ? 'thor' : 
+                 result.name.toLowerCase().includes('sync') ? 'sync' : 'veworld')
+              : walletType;
+              
+            // Cast to valid VeChainWalletType (excluding 'auto' which isn't a valid VeChainWalletType)
+            saveWalletConnection(result, actualWalletType as any);
           }
         } else {
           console.warn("[VeChainWalletProvider] Wallet connection failed:", result.error);
