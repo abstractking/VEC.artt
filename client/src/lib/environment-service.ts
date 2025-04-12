@@ -43,7 +43,9 @@ export const environments = {
   isVercel: typeof window !== 'undefined' && (
     window.location.hostname.includes('vercel.app') ||
     window.location.hostname.includes('.now.sh') ||
-    import.meta.env.VITE_DEPLOYMENT_ENV === 'vercel'
+    window.location.port === '3000' || // Vercel dev uses port 3000 by default
+    import.meta.env.VITE_DEPLOYMENT_ENV === 'vercel' ||
+    (typeof process !== 'undefined' && process.env && process.env.VERCEL === '1')
   ),
 
   // Is this a Replit environment specifically?
