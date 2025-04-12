@@ -1,0 +1,434 @@
+listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+/src/vercel-polyfills.js:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+(index):135 Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+thor-polyfills.ts:102 Setting up crypto environment with cryptoPolyfill
+crypto-setup.ts:15 Critical polyfills initialized via inline script
+thor-polyfills.ts:102 Setting up crypto environment with cryptoPolyfill
+vechain.ts:408 Setting up crypto environment with cryptoPolyfill
+NFTShuffle.tsx:76 NFTShuffle mounted, setting up rotation with interval: 20000
+WalletModal.tsx:60 Available wallets: Array(5)
+/api/nfts:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+/api/collections:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+/api/users:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()Understand this errorAI
+NFTShuffle.tsx:76 NFTShuffle mounted, setting up rotation with interval: 20000
+VeChainWalletProvider.tsx:66 Checking for real VeWorld wallet: Available
+VeChainWalletProvider.tsx:73 Connecting to wallet via vechain.ts connectWallet function
+VeChainWalletProvider.tsx:101 Using wallet type: veworld in environment: production
+vechain.ts:65 Connecting to veworld wallet...
+vechain.ts:117 Connecting to VeWorld wallet...
+vechain.ts:120 VeWorld API methods available: Array(7)
+vechain.ts:123 Available window objects: Array(1)
+vechain.ts:135 VeWorld wallet detected, creating Connex instance...
+(index):95 VeWorld wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error details: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error in connectToWallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error connecting to wallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+VeChainWalletProvider.tsx:66 Checking for real VeWorld wallet: Available
+VeChainWalletProvider.tsx:73 Connecting to wallet via vechain.ts connectWallet function
+VeChainWalletProvider.tsx:101 Using wallet type: veworld in environment: production
+vechain.ts:65 Connecting to veworld wallet...
+vechain.ts:117 Connecting to VeWorld wallet...
+vechain.ts:120 VeWorld API methods available: Array(7)
+vechain.ts:123 Available window objects: Array(1)
+vechain.ts:135 VeWorld wallet detected, creating Connex instance...
+(index):95 VeWorld wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error details: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error in connectToWallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error connecting to wallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+VeChainWalletProvider.tsx:66 Checking for real VeWorld wallet: Available
+VeChainWalletProvider.tsx:73 Connecting to wallet via vechain.ts connectWallet function
+VeChainWalletProvider.tsx:101 Using wallet type: veworld in environment: production
+vechain.ts:65 Connecting to veworld wallet...
+vechain.ts:117 Connecting to VeWorld wallet...
+vechain.ts:120 VeWorld API methods available: Array(7)
+vechain.ts:123 Available window objects: Array(1)
+vechain.ts:135 VeWorld wallet detected, creating Connex instance...
+(index):95 VeWorld wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error details: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error in connectToWallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error connecting to wallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+VeChainWalletProvider.tsx:66 Checking for real VeWorld wallet: Available
+VeChainWalletProvider.tsx:73 Connecting to wallet via vechain.ts connectWallet function
+VeChainWalletProvider.tsx:101 Using wallet type: veworld in environment: production
+vechain.ts:65 Connecting to veworld wallet...
+vechain.ts:117 Connecting to VeWorld wallet...
+vechain.ts:120 VeWorld API methods available: Array(7)
+vechain.ts:123 Available window objects: Array(1)
+vechain.ts:135 VeWorld wallet detected, creating Connex instance...
+(index):95 VeWorld wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error details: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error in connectToWallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error connecting to wallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+VeChainWalletProvider.tsx:66 Checking for real VeWorld wallet: Available
+VeChainWalletProvider.tsx:73 Connecting to wallet via vechain.ts connectWallet function
+VeChainWalletProvider.tsx:101 Using wallet type: veworld in environment: production
+vechain.ts:65 Connecting to veworld wallet...
+vechain.ts:117 Connecting to VeWorld wallet...
+vechain.ts:120 VeWorld API methods available: Array(7)
+vechain.ts:123 Available window objects: Array(1)
+vechain.ts:135 VeWorld wallet detected, creating Connex instance...
+(index):95 VeWorld wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error details: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error in connectToWallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error connecting to wallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+VeChainWalletProvider.tsx:66 Checking for real VeWorld wallet: Available
+VeChainWalletProvider.tsx:73 Connecting to wallet via vechain.ts connectWallet function
+VeChainWalletProvider.tsx:101 Using wallet type: veworld in environment: production
+vechain.ts:65 Connecting to veworld wallet...
+vechain.ts:117 Connecting to VeWorld wallet...
+vechain.ts:120 VeWorld API methods available: Array(7)
+vechain.ts:123 Available window objects: Array(1)
+vechain.ts:135 VeWorld wallet detected, creating Connex instance...
+(index):95 VeWorld wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Wallet connection error details: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error in connectToWallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
+console.error @ (index):95Understand this errorAI
+(index):95 Error connecting to wallet: Error: Invalid network configuration
+    at connectWallet (vechain.ts:145:21)
+    at j (VeChainWalletProvider.tsx:105:30)
+    at j (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+    at nf (react-dom.production.min.js:105:68)
+    at se (react-dom.production.min.js:106:380)
+    at react-dom.production.min.js:117:104
+    at Qk (react-dom.production.min.js:273:42)
