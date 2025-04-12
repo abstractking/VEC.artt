@@ -179,11 +179,17 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
 
                 while (retryCount <= maxRetries) {
                   try {
-                    // Create vendor with minimal parameters
+                    // Create vendor with exact parameters VeWorld expects
                     console.log(`Attempt ${retryCount + 1}: Creating VeWorld vendor with genesis:`, genesisId);
                     vendor = await vechain.newConnexVendor({
-                      genesis: genesisId
+                      genesis: genesisId,
+                      name: network.name.toLowerCase()
                     });
+
+                    // Validate the connection
+                    if (!vendor) {
+                      throw new Error('VeWorld vendor creation failed');
+                    }
 
                     // Create Connex with minimal parameters
                     console.log(`Attempt ${retryCount + 1}: Creating VeWorld Connex instance`);
@@ -316,48 +322,7 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
           // WalletConnect integration will be handled by the dapp-kit
           const connex = await getConnex();
 
-          // Validate genesis ID format
-function validateGenesisId(genesisId: string): boolean {
-  return genesisId && genesisId.startsWith('0x') && genesisId.length === 66;
-}
-
-// Handle VeWorld connection with proper validation
-async function handleVeWorldConnection(vechain: any, genesisId: string, networkName: string) {
-  if (!validateGenesisId(genesisId)) {
-    console.error('Invalid genesis ID format:', genesisId);
-    throw new Error('Invalid genesis ID format');
-  }
-
-  console.log('Attempting VeWorld connection with:', {
-    genesisId,
-    networkName,
-    hasNewConnex: typeof vechain.newConnex === 'function',
-    hasNewConnexVendor: typeof vechain.newConnexVendor === 'function'
-  });
-
-  try {
-    // Create vendor with minimal parameters
-    const vendor = await vechain.newConnexVendor({
-      genesis: genesisId
-    });
-
-    console.log('Successfully created VeWorld vendor');
-
-    // Create connex with minimal parameters
-    const connex = await vechain.newConnex({
-      genesis: genesisId
-    });
-
-    console.log('Successfully created VeWorld connex');
-
-    return { connex, vendor };
-  } catch (error) {
-    console.error('VeWorld connection error:', error);
-    throw error;
-  }
-}
-
-// Using temporary implementation until full WalletConnect integration
+          // Using temporary implementation until full WalletConnect integration
           return {
             connex,
             vendor: {
@@ -959,7 +924,7 @@ export const signMessage = async (message: string) => {
 
     // For the Replit environment or development mode
     if (window.location.hostname.includes('replit') || 
-                window.location.hostname === 'localhost' || 
+                window.location.hostname === ''localhost' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') {
 

@@ -21,7 +21,7 @@ const getMainnetNodeUrl = (): string => {
   return import.meta.env.VITE_VECHAIN_NODE_URL_MAINNET || 'https://mainnet.veblocks.net';
 };
 
-// Network definitions with correct genesis IDs
+// Network definitions with correct genesis IDs matching VeWorld format exactly
 export const NETWORKS: Record<Network, NetworkDescriptor> = {
   [Network.MAIN]: {
     id: '0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409',
@@ -34,6 +34,14 @@ export const NETWORKS: Record<Network, NetworkDescriptor> = {
     nodeUrl: getTestnetNodeUrl(),
   },
 };
+
+// Validate genesis ID format
+export function validateGenesisId(id: string): boolean {
+  if (!id || typeof id !== 'string') return false;
+  if (!id.startsWith('0x')) return false;
+  if (id.length !== 66) return false;
+  return true;
+}
 
 export function getNetwork(networkType: Network): NetworkDescriptor {
   const network = NETWORKS[networkType];
