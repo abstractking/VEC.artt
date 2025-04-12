@@ -35,8 +35,24 @@ export const NETWORKS: Record<Network, NetworkDescriptor> = {
   },
 };
 
-export function getNetwork(network: Network): NetworkDescriptor {
-  return NETWORKS[network];
+export function getNetwork(networkType: Network): NetworkDescriptor {
+  const network = NETWORKS[networkType];
+  if (!network) {
+    throw new Error(`Invalid network type: ${networkType}`);
+  }
+  if (!validateGenesisId(network.id)) {
+    throw new Error(`Invalid genesis ID for network ${networkType}: ${network.id}`);
+  }
+  console.log(`Network configuration resolved:`, {
+    type: networkType,
+    name: network.name,
+    id: network.id
+  });
+  return network;
+}
+
+function validateGenesisId(id: string): boolean {
+  return Boolean(id && id.startsWith('0x') && id.length === 66);
 }
 
 export function getNodeUrl(network: Network): string {

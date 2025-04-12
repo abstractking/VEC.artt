@@ -316,7 +316,48 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
           // WalletConnect integration will be handled by the dapp-kit
           const connex = await getConnex();
 
-          // Using temporary implementation until full WalletConnect integration
+          // Validate genesis ID format
+function validateGenesisId(genesisId: string): boolean {
+  return genesisId && genesisId.startsWith('0x') && genesisId.length === 66;
+}
+
+// Handle VeWorld connection with proper validation
+async function handleVeWorldConnection(vechain: any, genesisId: string, networkName: string) {
+  if (!validateGenesisId(genesisId)) {
+    console.error('Invalid genesis ID format:', genesisId);
+    throw new Error('Invalid genesis ID format');
+  }
+
+  console.log('Attempting VeWorld connection with:', {
+    genesisId,
+    networkName,
+    hasNewConnex: typeof vechain.newConnex === 'function',
+    hasNewConnexVendor: typeof vechain.newConnexVendor === 'function'
+  });
+
+  try {
+    // Create vendor with minimal parameters
+    const vendor = await vechain.newConnexVendor({
+      genesis: genesisId
+    });
+
+    console.log('Successfully created VeWorld vendor');
+
+    // Create connex with minimal parameters
+    const connex = await vechain.newConnex({
+      genesis: genesisId
+    });
+
+    console.log('Successfully created VeWorld connex');
+
+    return { connex, vendor };
+  } catch (error) {
+    console.error('VeWorld connection error:', error);
+    throw error;
+  }
+}
+
+// Using temporary implementation until full WalletConnect integration
           return {
             connex,
             vendor: {
