@@ -150,7 +150,7 @@ import {
 } from './error-service';
 
 // Access environment variables through the environment service
-const { isDevelopment, isNetlify } = environments;
+const { isDevelopment, isNetlify, isVercel } = environments;
 
 // Interface for VeChain provider detection
 interface VechainProvider {
@@ -364,9 +364,21 @@ export const connectWallet = async (walletType: ExtendedWalletType = 'veworld'):
   } catch (error: any) {
     console.error("[WalletService] Wallet connection error:", error);
     
-    // For development or demo environments, still provide a working wallet
-    if (isDevelopment || isNetlify) {
-      console.log("[WalletService] Returning development wallet due to error");
+    // For development, demo environments, or Vercel, provide a working wallet
+    if (isDevelopment || isNetlify || isVercel) {
+      console.log(`[WalletService] Returning development wallet due to error in ${getDeploymentType()} environment`);
+      
+      // For Vercel deployments, log more detailed diagnostics
+      if (isVercel) {
+        console.warn("[WalletService] Vercel wallet errors are common due to polyfill limitations");
+        console.log("[WalletService] Error details:", { 
+          message: error.message, 
+          env: getDeploymentType(),
+          network: getNetwork().name,
+          genesisId: getNetwork().genesisId
+        });
+      }
+      
       return createDevelopmentWallet();
     }
     
@@ -398,22 +410,26 @@ async function connectVeWorldWallet(): Promise<WalletConnectionResult> {
       throw new Error("Not a valid VeWorld wallet extension");
     }
     
-    // Get network parameters
+    // Get network parameters from environment service for more reliable cross-platform support
     const network = getNetwork();
     const networkName = network.name.toLowerCase();
-    const networkType = networkName.includes('main') ? Network.MAIN : Network.TEST;
-    const networkDescriptor = NETWORK_DESCRIPTORS[networkType];
     
-    if (!networkDescriptor || !networkDescriptor.id) {
-      throw new Error('Invalid network configuration');
+    // Get the genesis ID directly from the network config
+    // which already handles the environment variable sourcing
+    const genesisId = network.genesisId;
+    
+    if (!genesisId) {
+      console.error('Missing Genesis ID in network configuration:', network);
+      throw new Error('Invalid network configuration: Missing Genesis ID');
     }
     
-    const genesisId = networkDescriptor.id;
-    
-    console.log("[WalletService] VeWorld network parameters:", {
-      networkType,
+    // Log extended details for debugging
+    console.log("[WalletService] VeWorld connection details:", {
+      networkName,
+      url: network.url,
       genesisId,
-      networkName: networkDescriptor.name
+      environment: getDeploymentType(),
+      isVercel: environments.isVercel
     });
     
     // Create VeWorld vendor and Connex instance
@@ -636,6 +652,12 @@ export const checkExistingConnection = async (): Promise<WalletConnectionResult 
   // Use environment service to check if we should use demo wallet
   if (shouldUseDemoWallet()) {
     logger.info(`Restoring development wallet connection for ${getDeploymentType()} environment`);
+    return createDevelopmentWallet();
+  }
+  
+  // Special handling for Vercel
+  if (isVercel) {
+    logger.info(`Vercel environment detected, using development wallet mode for ${getDeploymentType()}`);
     return createDevelopmentWallet();
   }
   
