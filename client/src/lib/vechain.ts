@@ -87,7 +87,7 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
     // If we're in development environment and have env key, use that
     if ((import.meta.env.DEV || 
         window.location.hostname.includes('replit') ||
-        window.location.hostname === 'localhost') && 
+        window.location.hostname === '0.0.0.0') && 
         import.meta.env.VITE_VECHAIN_PRIVATE_KEY && 
         !window.location.hostname.includes('netlify.app')) {
 
@@ -784,8 +784,6 @@ export const getConnex = async () => {
 
 //Helper functions (unchanged from original)
 
-// ...rest of the original file (excluding the old connectWallet function and redundant parts)...
-
 // Helper function to format wei values to ether (1 ether = 10^18 wei)
 const formatWei = (weiValue: string, decimals = 2): string => {
   try {
@@ -923,8 +921,8 @@ export const signMessage = async (message: string) => {
     };
 
     // For the Replit environment or development mode
-if (window.location.hostname.includes('replit') || 
-                window.location.hostname === '0.0.0.0' || 
+    if (window.location.hostname.includes('replit')` || 
+        window.location.hostname === '0.0.0.0' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') {
 
