@@ -1,0 +1,57 @@
+The error ExtensionError: Invalid genesisId indicates that the genesisId being passed to VeWorld's newConnexVendor or newConnex methods is not valid or mismatched with the network configuration expected by the VeWorld API.
+
+Here’s a detailed step-by-step plan to debug and fix this issue:
+
+1. Confirm genesisId Value
+Action:
+Verify the genesisId being passed to newConnexVendor and newConnex.
+Log the genesisId before making the API call:
+TypeScript
+console.log('Using genesisId:', genesisId);
+Ensure that it matches one of the following:
+Mainnet: 0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409
+Testnet: 0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127
+2. Validate getNetwork Function
+Problem:
+The getNetwork function might be resolving an incorrect network or genesisId.
+Action:
+Log the resolved network details:
+TypeScript
+const network = getNetwork();
+console.log('Resolved network:', network);
+Ensure that the genesisId and network name (main or test) match the expected values.
+3. Check Environment Variables
+Problem:
+The environment variable VITE_REACT_APP_VECHAIN_NETWORK might not be set correctly.
+Action:
+Verify that the variable is set to main or test in the deployment environment (e.g., .env file or CI/CD configuration).
+If the variable is missing or invalid, default to the test network:
+TypeScript
+const selectedNetwork = import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK || 'test';
+4. Debug VeWorld API Calls
+Problem:
+The newConnexVendor or newConnex methods might require additional parameters or have stricter validation rules.
+Action:
+Log all parameters being passed to these methods:
+TypeScript
+console.log('Calling newConnexVendor with params:', { genesis: genesisId });
+Review the VeWorld API documentation for any updates or additional required parameters.
+5. Retry Logic Enhancements
+Problem:
+The retry logic doesn't account for potential fixes or adjustments between retries.
+Action:
+Add a delay and log each retry attempt with the parameters used:
+TypeScript
+let retryCount = 0;
+const maxRetries = 3;
+while (retryCount < maxRetries) {
+  try {
+    console.log(`Attempt ${retryCount + 1}: Connecting with genesisId:`, genesisId);
+    // Call newConnexVendor here...
+    break;
+  } catch (error) {
+    console.warn(`Retry ${retryCount + 1} failed with error:`, error);
+    retryCount++;
+    await new Promise(resolve => setTimeout(resolve, retryCount * 1000)); // Exponential backoff
+  }
+}
