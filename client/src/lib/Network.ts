@@ -24,7 +24,7 @@ const getMainnetNodeUrl = (): string => {
 // Network definitions with correct genesis IDs
 export const NETWORKS: Record<Network, NetworkDescriptor> = {
   [Network.MAIN]: {
-    id: '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a',
+    id: '0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409',
     name: 'main',
     nodeUrl: getMainnetNodeUrl(),
   },
