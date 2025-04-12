@@ -17,6 +17,12 @@
  */
 const initializePolyfills = () => {
   if (typeof window !== 'undefined') {
+    // Skip initialization if it's already been done
+    if ((window as any).__POLYFILLS_INITIALIZED__) {
+      console.log('Polyfills already initialized, skipping duplicate initialization');
+      return;
+    }
+    
     try {
       console.log('Setting up crypto environment with cryptoPolyfill');
       
@@ -85,6 +91,9 @@ const initializePolyfills = () => {
         (window as any).process = (window as any).process || {};
         (window as any).process.env = (window as any).process.env || {};
       }
+      
+      // Mark as initialized to prevent duplicate initialization
+      (window as any).__POLYFILLS_INITIALIZED__ = true;
       
     } catch (error) {
       console.error('Error initializing polyfills:', error);

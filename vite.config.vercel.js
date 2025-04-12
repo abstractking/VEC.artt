@@ -16,13 +16,16 @@ const POLYFILL_SCRIPT = `
  * This file is embedded directly in the HTML to avoid MIME type issues
  */
 
-// Ensure global is defined
-if (typeof window !== 'undefined' && !window.global) {
-  window.global = window;
-}
+// Skip initialization if it's already been done
+if (typeof window !== 'undefined' && window.__POLYFILLS_INITIALIZED__) {
+  console.log('Polyfills already initialized, skipping duplicate initialization');
+} else if (typeof window !== 'undefined') {
+  // Ensure global is defined
+  if (!window.global) {
+    window.global = window;
+  }
 
-// Ensure process is defined with environment variables
-if (typeof window !== 'undefined') {
+  // Ensure process is defined with environment variables
   // Create or update process.env with environment variables
   window.process = window.process || {};
   window.process.env = window.process.env || {};
@@ -48,6 +51,9 @@ if (typeof window !== 'undefined') {
   // Add process properties
   window.process.browser = true;
   window.process.nextTick = window.process.nextTick || ((cb) => setTimeout(cb, 0));
+
+  // Mark as initialized to prevent duplicate initialization
+  window.__POLYFILLS_INITIALIZED__ = true;
 }
 
 // Ensure Buffer is available

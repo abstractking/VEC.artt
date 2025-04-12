@@ -3,13 +3,16 @@
  * This file gets imported early in the app's lifecycle to ensure critical polyfills are available
  */
 
-// Ensure global is defined
-if (typeof window !== 'undefined' && !window.global) {
-  window.global = window;
-}
+// Skip initialization if it's already been done to prevent multiple initializations
+if (typeof window !== 'undefined' && window.__POLYFILLS_INITIALIZED__) {
+  console.log('Polyfills already initialized, skipping duplicate initialization');
+} else if (typeof window !== 'undefined') {
+  // Ensure global is defined
+  if (!window.global) {
+    window.global = window;
+  }
 
-// Ensure process is defined with environment variables
-if (typeof window !== 'undefined') {
+  // Ensure process is defined with environment variables
   // Create or update process.env with environment variables
   window.process = window.process || {};
   window.process.env = window.process.env || {};
@@ -35,6 +38,9 @@ if (typeof window !== 'undefined') {
   // Add process properties
   window.process.browser = true;
   window.process.nextTick = window.process.nextTick || ((cb) => setTimeout(cb, 0));
+  
+  // Mark as initialized to prevent duplicate initialization
+  window.__POLYFILLS_INITIALIZED__ = true;
   
   // For debugging
   console.log('Vercel environment variables set:', window.process.env.VITE_VECHAIN_NETWORK);
