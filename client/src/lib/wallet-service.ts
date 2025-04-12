@@ -49,21 +49,23 @@ declare global {
   }
 }
 
-// Detect environment
-const isDevelopment = 
-  typeof window !== 'undefined' && (
-    window.location.hostname.includes('replit') || 
-    window.location.hostname === 'localhost' ||
-    window.location.hostname === '127.0.0.1' ||
-    import.meta.env.DEV === true ||
-    window.location.href.includes('localhost') ||
-    window.location.href.includes('.app.github.dev') ||
-    window.location.href.includes('127.0.0.1')
-  );
+// Import environment and error services
+import { 
+  environments, 
+  getNetworkConfig,
+  hasPrivateKey,
+  shouldUseDemoWallet,
+  getDeploymentType,
+  getEnvVariable
+} from './environment-service';
+import {
+  handleWalletError,
+  logger, 
+  ErrorCategory
+} from './error-service';
 
-const isNetlify = 
-  typeof window !== 'undefined' && 
-  window.location.hostname.includes('netlify.app');
+// Access environment variables through the environment service
+const { isDevelopment, isNetlify } = environments;
 
 // Interface for VeChain provider detection
 interface VechainProvider {
@@ -122,28 +124,8 @@ export const detectVechainProvider = async (): Promise<VechainProvider> => {
   });
 };
 
-// Get the selected network
-export const getNetwork = () => {
-  const selectedNetwork = import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK || 'test';
-  const networks = {
-    main: {
-      url: 'https://mainnet.veblocks.net',
-      socketUrl: 'wss://mainnet.veblocks.net',
-      chainId: '0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409',
-      genesisId: '0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409',
-      name: 'MainNet',
-    },
-    test: {
-      url: 'https://testnet.veblocks.net',
-      socketUrl: 'wss://testnet.veblocks.net',
-      chainId: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
-      genesisId: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
-      name: 'TestNet',
-    }
-  };
-
-  return networks[selectedNetwork as keyof typeof networks] || networks.test;
-};
+// Get the selected network (using environment service)
+export const getNetwork = getNetworkConfig;
 
 // Initialize Connex (VeChain blockchain interface)
 export const initializeConnex = async (): Promise<Connex> => {
@@ -152,15 +134,14 @@ export const initializeConnex = async (): Promise<Connex> => {
     
     // Check if we're in development environment
     if (isDevelopment) {
-      console.log("Development environment detected - using HTTP polling for VeChain connection");
+      logger.info("Development environment detected - using HTTP polling for VeChain connection");
       
-      // Check if we have a private key for development environment
-      const privateKey = import.meta.env.VITE_VECHAIN_PRIVATE_KEY;
-      
-      if (privateKey) {
+      // Check if we have a private key for development environment (using environment service)
+      if (hasPrivateKey()) {
         // Create a wallet with the private key
         const wallet = new SimpleWallet();
-        wallet.import(privateKey);
+        const privateKey = getEnvVariable('VITE_VECHAIN_PRIVATE_KEY');
+        wallet.import(privateKey!);
         
         // Create a driver with our wallet
         const net = new BrowserNet(network.url);
@@ -209,18 +190,38 @@ const createDevelopmentWallet = async (): Promise<WalletConnectionResult> => {
     // Development test address
     const testAddress = '0x7567d83b7b8d80addcb281a71d54fc7b3364ffed';
     
-    // For Netlify or dev environments, try to return a usable Connex instance
+    // For development environments, try to return a usable Connex instance
     const connex = await initializeConnex();
+    
+    // Use environment service to determine deployment type for wallet name
+    const deploymentType = getDeploymentType();
+    let walletName = 'Development Wallet';
+    
+    switch (deploymentType) {
+      case 'netlify':
+        walletName = 'Netlify Demo Wallet';
+        break;
+      case 'replit':
+        walletName = 'Replit Demo Wallet';
+        break;
+      case 'vercel':
+        walletName = 'Vercel Demo Wallet';
+        break;
+      default:
+        walletName = 'Development Wallet';
+    }
+    
+    logger.info(`Created development wallet for ${deploymentType} environment`);
     
     return {
       connex,
       vendor: null, // No real vendor in development 
       address: testAddress,
-      name: isNetlify ? 'Netlify Demo Wallet' : 'Development Wallet',
+      name: walletName,
       isConnected: true
     };
   } catch (error) {
-    console.error("Error creating development wallet:", error);
+    logger.error("Error creating development wallet:", error);
     
     // Still return a working wallet for development
     return {
@@ -243,13 +244,12 @@ export const connectWallet = async (walletType: ExtendedWalletType = 'veworld'):
     walletType = detectBestWalletOption();
   }
   
-  console.log(`[WalletService] Connecting to ${walletType} wallet...`);
+  logger.info(`Connecting to ${walletType} wallet...`);
   
   try {
-    // For development or Netlify environments, use a test wallet
-    if ((isDevelopment || isNetlify) && 
-        (walletType === 'environment' || import.meta.env.VITE_FORCE_DEV_WALLET === 'true')) {
-      console.log("[WalletService] Using development wallet");
+    // Use environment service to check if we should use demo wallet
+    if (shouldUseDemoWallet() || walletType === 'environment') {
+      logger.info("Using development wallet based on environment");
       return createDevelopmentWallet();
     }
     
@@ -548,9 +548,9 @@ export const checkExistingConnection = async (): Promise<WalletConnectionResult 
     return null;
   }
   
-  // In development or Netlify, just restore the saved connection
-  if (isDevelopment || isNetlify) {
-    console.log(`[WalletService] Restoring development wallet connection`);
+  // Use environment service to check if we should use demo wallet
+  if (shouldUseDemoWallet()) {
+    logger.info(`Restoring development wallet connection for ${getDeploymentType()} environment`);
     return createDevelopmentWallet();
   }
   
