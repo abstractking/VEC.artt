@@ -1,0 +1,79 @@
+[INFO] (#Ext) -  Starting ContentScriptController listener...
+content-scripts.iife.js:47 Attempting in inject VeWorld iFrame container...
+(index):114 Critical polyfills initialized via Vercel inline script
+(index):247 Critical polyfills initialized via inline script
+content-scripts.iife.js:47 VeWorld iFrame container created
+thor-polyfills.ts:102 Setting up crypto environment with cryptoPolyfill
+crypto-setup.ts:15 Critical polyfills initialized via inline script
+thor-polyfills.ts:102 Setting up crypto environment with cryptoPolyfill
+wallet-service.ts:22 Polyfills already initialized, skipping duplicate initialization
+vechain.ts:442 Setting up crypto environment with cryptoPolyfill
+NFTShuffle.tsx:76 NFTShuffle mounted, setting up rotation with interval: 20000
+WalletModal.tsx:60 Available wallets: Array(5)
+VeChainWalletProvider.tsx:120 [VeChainWalletProvider] Checking for existing wallet connection
+2NFTShuffle.tsx:76 NFTShuffle mounted, setting up rotation with interval: 20000
+VeChainWalletProvider.tsx:59 [VeChainWalletProvider] Connecting to wallet...
+wallet-service.ts:413 [WalletService] Connecting to VeWorld wallet...
+wallet-service.ts:436 [WalletService] VeWorld connection details: Object
+wallet-service.ts:454 [WalletService] Attempt 1: Creating VeWorld vendor
+wallet-service.ts:474 [WalletService] Connection attempt 1 failed: ExtensionError: Invalid genesisId
+    at Object.invalidParams (VeWorldAPI.js:1:14331)
+    at validateGenesisId (VeWorldAPI.js:101:80355)
+    at Object.newConnexVendor (VeWorldAPI.js:101:79968)
+    at connectVeWorldWallet (wallet-service.ts:455:34)
+    at connectWallet (wallet-service.ts:353:16)
+    at h (VeChainWalletProvider.tsx:66:30)
+    at h (WalletButton.tsx:27:15)
+    at Object.Nb (react-dom.production.min.js:54:317)
+    at Tb (react-dom.production.min.js:54:471)
+    at Ub (react-dom.production.min.js:55:35)
+connectVeWorldWallet @ wallet-service.ts:474Understand this warningAI
+wallet-service.ts:454 [WalletService] Attempt 2: Creating VeWorld vendor
+wallet-service.ts:474 [WalletService] Connection attempt 2 failed: ExtensionError: Invalid genesisId
+    at Object.invalidParams (VeWorldAPI.js:1:14331)
+    at validateGenesisId (VeWorldAPI.js:101:80355)
+    at Object.newConnexVendor (VeWorldAPI.js:101:79968)
+    at connectVeWorldWallet (wallet-service.ts:455:34)
+    at async h (VeChainWalletProvider.tsx:66:24)
+    at async h (WalletButton.tsx:27:9)
+connectVeWorldWallet @ wallet-service.ts:474Understand this warningAI
+wallet-service.ts:454 [WalletService] Attempt 3: Creating VeWorld vendor
+wallet-service.ts:474 [WalletService] Connection attempt 3 failed: ExtensionError: Invalid genesisId
+    at Object.invalidParams (VeWorldAPI.js:1:14331)
+    at validateGenesisId (VeWorldAPI.js:101:80355)
+    at Object.newConnexVendor (VeWorldAPI.js:101:79968)
+    at connectVeWorldWallet (wallet-service.ts:455:34)
+    at async h (VeChainWalletProvider.tsx:66:24)
+    at async h (WalletButton.tsx:27:9)
+connectVeWorldWallet @ wallet-service.ts:474Understand this warningAI
+(index):207 [WalletService] VeWorld connection error: ExtensionError: Invalid genesisId
+    at Object.invalidParams (VeWorldAPI.js:1:14331)
+    at validateGenesisId (VeWorldAPI.js:101:80355)
+    at Object.newConnexVendor (VeWorldAPI.js:101:79968)
+    at connectVeWorldWallet (wallet-service.ts:455:34)
+    at async h (VeChainWalletProvider.tsx:66:24)
+    at async h (WalletButton.tsx:27:9)
+console.error @ (index):207Understand this errorAI
+(index):207 [VeChainWalletProvider] Wallet connection error: ExtensionError: Invalid genesisId
+    at Object.invalidParams (VeWorldAPI.js:1:14331)
+    at validateGenesisId (VeWorldAPI.js:101:80355)
+    at Object.newConnexVendor (VeWorldAPI.js:101:79968)
+    at connectVeWorldWallet (wallet-service.ts:455:34)
+    at async h (VeChainWalletProvider.tsx:66:24)
+    at async h (WalletButton.tsx:27:9)
+console.error @ (index):207Understand this errorAI
+(index):207 [VeChainWalletProvider] Error in connectToWallet: ExtensionError: Invalid genesisId
+    at Object.invalidParams (VeWorldAPI.js:1:14331)
+    at validateGenesisId (VeWorldAPI.js:101:80355)
+    at Object.newConnexVendor (VeWorldAPI.js:101:79968)
+    at connectVeWorldWallet (wallet-service.ts:455:34)
+    at async h (VeChainWalletProvider.tsx:66:24)
+    at async h (WalletButton.tsx:27:9)
+console.error @ (index):207Understand this errorAI
+(index):207 Error connecting to wallet: ExtensionError: Invalid genesisId
+    at Object.invalidParams (VeWorldAPI.js:1:14331)
+    at validateGenesisId (VeWorldAPI.js:101:80355)
+    at Object.newConnexVendor (VeWorldAPI.js:101:79968)
+    at connectVeWorldWallet (wallet-service.ts:455:34)
+    at async h (VeChainWalletProvider.tsx:66:24)
+    at async h (WalletButton.tsx:27:9)

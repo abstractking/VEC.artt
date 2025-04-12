@@ -21,15 +21,26 @@ const getMainnetNodeUrl = (): string => {
   return import.meta.env.VITE_VECHAIN_NODE_URL_MAINNET || 'https://mainnet.veblocks.net';
 };
 
+// Get genesis IDs from environment variables with fallbacks
+const getMainnetGenesisId = (): string => {
+  return import.meta.env.VITE_VECHAIN_MAINNET_GENESIS_ID || 
+         '0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a';
+};
+
+const getTestnetGenesisId = (): string => {
+  return import.meta.env.VITE_VECHAIN_TESTNET_GENESIS_ID || 
+         '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127';
+};
+
 // Network definitions with correct genesis IDs matching VeWorld format exactly
 export const NETWORKS: Record<Network, NetworkDescriptor> = {
   [Network.MAIN]: {
-    id: '0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409',
+    id: getMainnetGenesisId(),
     name: 'main',
     nodeUrl: getMainnetNodeUrl(),
   },
   [Network.TEST]: {
-    id: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
+    id: getTestnetGenesisId(),
     name: 'test',
     nodeUrl: getTestnetNodeUrl(),
   },
