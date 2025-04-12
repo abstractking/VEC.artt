@@ -1,15 +1,16 @@
-# Dependency directories
-node_modules/
-*/node_modules/
-**/node_modules/
-dist/
-build/
-.cache/
-.replit/
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
 
-# Environment files
+# Build outputs
+/dist
+/dist-ssr
+/build
+*.local
+
+# Environment variables
 .env
-.env.*
 .env.local
 .env.development.local
 .env.test.local
@@ -21,30 +22,31 @@ logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Zip files
-*.zip
-
-# Test directories
-coverage/
-.nyc_output/
-
-# Misc
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-.idea/
-.vscode/
-*.swp
-*.swo
-.replit.backup
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# Credentials and keys
-*.pem
-*.key
-*.cert
-.ssh/
-credentials.json
-*credentials*
-*api-key*
-*apikey*
-*secret*
-*private*
+# TypeScript cache
+*.tsbuildinfo
+
+# Testing
+/coverage
+
+# Vercel
+.vercel
+.turbo
+
+# Temp files
+.temp
+.tmp
+.cache
