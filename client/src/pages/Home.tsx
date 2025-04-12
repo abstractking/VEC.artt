@@ -10,10 +10,10 @@ import RandomArtGallery from "@/components/RandomArtGallery";
 import TestNetGuide from "@/components/TestNetGuide";
 import { useQuery } from "@tanstack/react-query";
 import type { Collection, NFT } from "@shared/schema";
-import { useWallet } from "../context/WalletContext";
+import { useVeChainWallet } from "../context/VeChainWalletProvider";
 
 export default function Home() {
-  const { walletInfo } = useWallet();
+  const { walletInfo } = useVeChainWallet();
   
   // Fetch collections for homepage
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
