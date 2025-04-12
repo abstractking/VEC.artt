@@ -138,13 +138,13 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
             // VeWorld requires exact lowercase 'main' or 'test' for networks
             const networkName = network.name.toLowerCase();
             console.log("Network name (normalized):", networkName);
-            
+
             // Determine the correct network type
             const networkType = networkName.includes('main') ? Network.MAIN : Network.TEST;
-            
+
             // Get network descriptor with the correct genesis ID from Network module
             const networkDescriptor = NETWORK_DESCRIPTORS[networkType];
-            
+
             if (!networkDescriptor || !networkDescriptor.id) {
               console.error('Invalid network configuration:', networkDescriptor);
               throw new Error('Invalid network configuration');
@@ -152,7 +152,7 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
 
             // VeWorld expects the exact genesis ID as defined in their API
             const genesisId = networkDescriptor.id;
-            
+
             // Verify the genesis ID is correctly formatted
             if (!genesisId || !genesisId.startsWith('0x') || genesisId.length !== 66) {
               console.error('Invalid genesis ID format:', genesisId);
@@ -176,7 +176,7 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
                 let connex = null;
                 let maxRetries = 2;
                 let retryCount = 0;
-                
+
                 while (retryCount <= maxRetries) {
                   try {
                     // Create vendor with minimal parameters
@@ -184,29 +184,29 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
                     vendor = await vechain.newConnexVendor({
                       genesis: genesisId
                     });
-                    
+
                     // Create Connex with minimal parameters
                     console.log(`Attempt ${retryCount + 1}: Creating VeWorld Connex instance`);
                     connex = await vechain.newConnex({
                       genesis: genesisId
                     });
-                    
+
                     console.log("VeWorld connection successful!");
                     break; // Success! Exit the retry loop
                   } catch (retryError) {
                     retryCount++;
                     console.warn(`VeWorld connection attempt ${retryCount} failed:`, retryError);
-                    
+
                     if (retryCount > maxRetries) {
                       console.error("All VeWorld connection attempts failed");
                       throw retryError;
                     }
-                    
+
                     // Brief pause before retry
                     await new Promise(resolve => setTimeout(resolve, 500));
                   }
                 }
-                
+
                 return { connex, vendor };
               } catch (error) {
                 console.error("Error creating Connex with VeWorld API:", error);
@@ -307,7 +307,7 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
         try {
           console.log("Initializing WalletConnect connection...");
           const { walletConnectConfig } = await import('./dapp-kit-config');
-          
+
           if (!walletConnectConfig.projectId) {
             throw new Error("WalletConnect Project ID not configured");
           }
@@ -315,7 +315,7 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
           // For now, create a standard Connex instance
           // WalletConnect integration will be handled by the dapp-kit
           const connex = await getConnex();
-          
+
           // Using temporary implementation until full WalletConnect integration
           return {
             connex,
@@ -498,7 +498,7 @@ export const NODES = {
 };
 
 // Combined network configuration for backwards compatibility
-export const NETWORKS = {
+export const NETWORKS_OLD = {
   main: {
     ...NODES.main,
     chainId: NETWORK_DESCRIPTORS[Network.MAIN].id,
@@ -519,6 +519,20 @@ export const NETWORKS = {
   }
 };
 
+// Network configurations with correct genesis IDs
+export const NETWORKS = {
+  main: {
+    name: 'main',
+    url: 'https://mainnet.veblocks.net',
+    genesisId: '0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409'
+  },
+  test: {
+    name: 'test',
+    url: 'https://testnet.veblocks.net',
+    genesisId: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127'
+  }
+} as const;
+
 // Determine if running in Replit
 const isReplit = 
   typeof window !== "undefined" && 
@@ -535,15 +549,20 @@ export type VeChainNetwork = {
 };
 
 // Get the selected network from environment variables
-export const getNetwork = (networkType?: string): VeChainNetwork => {
-  // First check environment variables with proper naming
-  const envNetwork = import.meta.env.VITE_VECHAIN_NETWORK || import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK || 'test';
-  const selectedNetwork = networkType || envNetwork;
-  
-  // Logging for debugging purpose
-  console.log("Selected network:", selectedNetwork);
-  
-  return NETWORKS[selectedNetwork as keyof typeof NETWORKS] || NETWORKS.test;
+export const getNetwork = (): VeChainNetwork => {
+  const selectedNetwork = import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK === 'main' ? 'main' : 'test';
+  const network = NETWORKS[selectedNetwork];
+  if (!network) {
+    console.warn(`Network ${selectedNetwork} not found, defaulting to TestNet`);
+    return NETWORKS.test;
+  }
+  return network;
+};
+
+// Get genesis ID for the current network
+export const getGenesisId = (): string => {
+  const network = getNetwork();
+  return network.genesisId;
 };
 
 // Get the proper network descriptor for a given network name
@@ -551,11 +570,11 @@ export const getNetworkDescriptor = (networkName: string): NetworkDescriptor => 
   // Convert any network name format to proper Network enum value
   const normalizedName = networkName.toLowerCase();
   const networkType = normalizedName.includes('main') ? Network.MAIN : Network.TEST;
-  
+
   // Logging for debugging purpose
   console.log("Network type:", networkType);
   console.log("Network descriptor:", NETWORK_DESCRIPTORS[networkType]);
-  
+
   return NETWORK_DESCRIPTORS[networkType];
 };
 
@@ -899,7 +918,7 @@ export const signMessage = async (message: string) => {
 
     // For the Replit environment or development mode
     if (window.location.hostname.includes('replit') || 
-        window.location.hostname === 'localhost' || 
+                window.location.hostname === 'localhost' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') {
 
