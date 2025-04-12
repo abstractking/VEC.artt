@@ -138,8 +138,8 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
             const networkType = network.name === 'MainNet' ? Network.MAIN : Network.TEST;
             const isMainNet = networkType === Network.MAIN;
 
-            // Get network descriptor
-            const networkDescriptor = getNetwork(networkType);
+            // Get network descriptor from Network module
+            const networkDescriptor = NETWORK_DESCRIPTORS[networkType];
             
             if (!networkDescriptor || !networkDescriptor.id) {
               throw new Error('Invalid network configuration');
@@ -507,8 +507,8 @@ export type VeChainNetwork = {
 };
 
 // Get the selected network from environment variables
-export const getNetwork = (): VeChainNetwork => {
-  const selectedNetwork = import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK || 'test';
+export const getNetwork = (networkType?: string): VeChainNetwork => {
+  const selectedNetwork = networkType || import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK || 'test';
   return NETWORKS[selectedNetwork as keyof typeof NETWORKS] || NETWORKS.test;
 };
 
