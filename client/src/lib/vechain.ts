@@ -284,30 +284,18 @@ export const connectWallet = async (walletType = 'veworld', privateKey?: string)
             throw new Error("WalletConnect Project ID not configured");
           }
 
-          // Initialize WalletConnect client
-          const { EthereumClient } = await import('@walletconnect/ethereum-client');
-          const client = await EthereumClient.init(walletConnectConfig);
-
-          // Connect and get accounts
-          const accounts = await client.enable();
-          if (!accounts || accounts.length === 0) {
-            throw new Error("No accounts returned from WalletConnect");
-          }
-
-          // Create Connex instance
+          // For now, create a standard Connex instance
+          // WalletConnect integration will be handled by the dapp-kit
           const connex = await getConnex();
           
+          // Using temporary implementation until full WalletConnect integration
           return {
             connex,
             vendor: {
               name: 'WalletConnect',
-              address: accounts[0],
+              address: '0x0000000000000000000000000000000000000000', // Placeholder address
               sign: async (type: string, params: any) => {
-                // Implement signing logic here
-                return client.request({
-                  method: type === 'tx' ? 'eth_sendTransaction' : 'eth_sign',
-                  params: [accounts[0], params]
-                });
+                throw new Error("WalletConnect signing not implemented. Use VeChain DApp Kit for WalletConnect integration.");
               }
             }
           };
