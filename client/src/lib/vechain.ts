@@ -508,15 +508,26 @@ export type VeChainNetwork = {
 
 // Get the selected network from environment variables
 export const getNetwork = (networkType?: string): VeChainNetwork => {
-  const selectedNetwork = networkType || import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK || 'test';
+  // First check environment variables with proper naming
+  const envNetwork = import.meta.env.VITE_VECHAIN_NETWORK || import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK || 'test';
+  const selectedNetwork = networkType || envNetwork;
+  
+  // Logging for debugging purpose
+  console.log("Selected network:", selectedNetwork);
+  
   return NETWORKS[selectedNetwork as keyof typeof NETWORKS] || NETWORKS.test;
 };
 
 // Get the proper network descriptor for a given network name
 export const getNetworkDescriptor = (networkName: string): NetworkDescriptor => {
-  // Convert "MainNet" or "TestNet" to proper Network enum value
+  // Convert any network name format to proper Network enum value
   const normalizedName = networkName.toLowerCase();
   const networkType = normalizedName.includes('main') ? Network.MAIN : Network.TEST;
+  
+  // Logging for debugging purpose
+  console.log("Network type:", networkType);
+  console.log("Network descriptor:", NETWORK_DESCRIPTORS[networkType]);
+  
   return NETWORK_DESCRIPTORS[networkType];
 };
 
