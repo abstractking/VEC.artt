@@ -9,7 +9,6 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
   SheetDescription,
   SheetFooter,
 } from "@/components/ui/sheet";
@@ -57,69 +56,72 @@ export default function DAppKitWalletButton() {
   const [isOpen, setIsOpen] = useState(false);
   const [availableWallets, setAvailableWallets] = useState<VeChainWalletType[]>([]);
   const [isMobile, setIsMobile] = useState(false);
-  
+  const [connectError, setConnectError] = useState(''); // Added state for connection errors
+
   // Check for available wallets when the component mounts
   useEffect(() => {
     // Set mobile state
     setIsMobile(isMobileDevice());
-    
+
     // Determine available wallets
     const checkWallets = () => {
       const available: VeChainWalletType[] = [];
-      
+
       // Always add WalletConnect as it doesn't require a browser extension
       available.push('wallet-connect');
-      
+
       // Check for VeWorld and Sync2 wallets
       if (isWalletExtensionAvailable('veworld')) {
         available.push('veworld');
         console.log("[WalletButton] VeWorld wallet detected");
       }
-      
+
       if (isWalletExtensionAvailable('sync2')) {
         available.push('sync2');
         console.log("[WalletButton] Sync2 wallet detected");
       }
-      
+
       // On mobile, only show appropriate options
       if (isMobileDevice()) {
         console.log("[WalletButton] Mobile device detected");
       }
-      
+
       console.log("[WalletButton] Available wallets:", available);
       setAvailableWallets(available);
     };
-    
+
     checkWallets();
-    
+
     // Re-check when window is focused (user might have installed a wallet)
     const handleFocus = () => {
       checkWallets();
     };
-    
+
     window.addEventListener('focus', handleFocus);
     return () => {
       window.removeEventListener('focus', handleFocus);
     };
   }, []);
-  
+
   // Format address for display
   const formatAddress = (address: string) => {
     if (!address) return '';
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
-  
-  // Handle wallet connection
+
+  // Handle wallet connection with improved error handling
   const handleConnectWallet = async (walletType: VeChainWalletType) => {
     try {
       console.log("[WalletButton] Attempting to connect to wallet type:", walletType);
       await connect(walletType);
       setIsOpen(false);
-    } catch (error) {
-      console.error('[WalletButton] Wallet connection error:', error);
+      setConnectError(''); // Clear error on successful connection
+    } catch (err: any) {
+      console.error('[WalletButton] Wallet connection error:', err);
+      setConnectError(err.message || 'An unexpected error occurred.');
     }
   };
-  
+
   // Handle wallet disconnection
   const handleDisconnectWallet = async () => {
     try {
@@ -128,25 +130,25 @@ export default function DAppKitWalletButton() {
       console.error('[WalletButton] Wallet disconnection error:', error);
     }
   };
-  
+
   // Check if a wallet is installed
   const isWalletInstalled = (walletType: VeChainWalletType): boolean => {
     if (walletType === 'wallet-connect') return true; // Always available
     return isWalletExtensionAvailable(walletType);
   };
-  
+
   // Open wallet install URL
   const openInstallUrl = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
-  
+
   // Close sheet on successful connection
   useEffect(() => {
     if (isConnected) {
       setIsOpen(false);
     }
   }, [isConnected]);
-  
+
   return (
     <>
       {isConnected ? (
@@ -167,7 +169,10 @@ export default function DAppKitWalletButton() {
       ) : (
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button>
+            <Button onClick={() => {
+              console.log('Opening wallet dialog');
+              setIsOpen(true); //Corrected this line
+            }}>
               <Wallet className="mr-2 h-4 w-4" />
               Connect Wallet
             </Button>
@@ -179,15 +184,23 @@ export default function DAppKitWalletButton() {
                 Select a wallet to connect to the VeChain {import.meta.env.VITE_REACT_APP_VECHAIN_NETWORK === 'main' ? 'Mainnet' : 'Testnet'}.
               </SheetDescription>
             </SheetHeader>
-            
-            {error && (
+
+            {connectError && ( // Display connection error
+              <Alert variant="destructive" className="my-4">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{connectError}</AlertDescription>
+              </Alert>
+            )}
+
+            {error && ( // Display other errors
               <Alert variant="destructive" className="my-4">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertTitle>Error</AlertTitle>
                 <AlertDescription>{error.message}</AlertDescription>
               </Alert>
             )}
-            
+
             {isMobile && (
               <Alert className="my-4">
                 <InfoIcon className="h-4 w-4" />
@@ -197,18 +210,18 @@ export default function DAppKitWalletButton() {
                 </AlertDescription>
               </Alert>
             )}
-            
+
             <Separator className="my-4" />
-            
+
             <div className="grid gap-4 py-4">
               {walletOptions.map((wallet) => {
                 // Skip desktop extensions on mobile and vice versa
                 if (isMobile && wallet.type === 'extension' && wallet.id !== 'wallet-connect') {
                   return null;
                 }
-                
+
                 const isInstalled = isWalletInstalled(wallet.id);
-                
+
                 return (
                   <div key={wallet.id} className="relative">
                     <Button
@@ -268,7 +281,7 @@ export default function DAppKitWalletButton() {
                 );
               })}
             </div>
-            
+
             <SheetFooter className="flex flex-col pt-4 gap-2">
               <div className="text-sm text-muted-foreground">
                 Don't have a wallet?{' '}
@@ -281,7 +294,7 @@ export default function DAppKitWalletButton() {
                   Learn more about VeChain wallets
                 </a>
               </div>
-              
+
               <div className="text-xs text-muted-foreground/80">
                 By connecting your wallet, you agree to the Terms of Service and Privacy Policy.
               </div>

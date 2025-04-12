@@ -1,8 +1,10 @@
-import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Check, ExternalLink } from 'lucide-react';
+
+import React, { useEffect, useState } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { VeChainWalletType } from '@/lib/wallet-detection';
+import { useToast } from "@/hooks/use-toast";
+import { Check, AlertTriangle } from 'lucide-react';
 
 interface DAppKitWalletDialogProps {
   isOpen: boolean;
@@ -10,66 +12,114 @@ interface DAppKitWalletDialogProps {
   onSelectWallet: (walletType: VeChainWalletType) => void;
 }
 
-const wallets = [
-  {
-    type: 'veworld' as VeChainWalletType,
-    name: 'VeWorld',
-    icon: '/wallets/veworld.svg',
-    available: true,
-    recommended: true,
-    installUrl: 'https://www.veworld.net/install'
-  },
-  {
-    type: 'sync2' as VeChainWalletType,
-    name: 'Sync2',
-    icon: '/wallets/sync.svg',
-    available: true,
-    installUrl: 'https://sync.vecha.in/#download'
-  },
-  {
-    type: 'wallet-connect' as VeChainWalletType,
-    name: 'WalletConnect',
-    icon: '/wallets/walletconnect.svg',
-    available: true,
-    installUrl: 'https://walletconnect.com/explorer'
-  }
-];
+export default function DAppKitWalletDialog({
+  isOpen,
+  onClose,
+  onSelectWallet
+}: DAppKitWalletDialogProps) {
+  const { toast } = useToast();
+  const [selectedWallet, setSelectedWallet] = useState<VeChainWalletType | null>(null);
 
-export default function DAppKitWalletDialog({ isOpen, onClose, onSelectWallet }: DAppKitWalletDialogProps) {
+  // Reset selected wallet when dialog closes
+  useEffect(() => {
+    if (!isOpen) {
+      setSelectedWallet(null);
+    }
+  }, [isOpen]);
+
+  const wallets = [
+    {
+      type: 'veworld' as VeChainWalletType,
+      name: 'VeWorld',
+      description: 'Official VeChain Wallet',
+      icon: '/wallets/veworld.svg',
+      recommended: true
+    },
+    {
+      type: 'sync2' as VeChainWalletType,
+      name: 'Sync2',
+      description: 'VeChain Desktop Wallet',
+      icon: '/wallets/sync.svg'
+    },
+    {
+      type: 'wallet-connect' as VeChainWalletType,
+      name: 'WalletConnect',
+      description: 'Connect mobile wallets',
+      icon: '/wallets/walletconnect.svg'
+    }
+  ];
+
+  const handleWalletSelect = async (wallet: VeChainWalletType) => {
+    try {
+      setSelectedWallet(wallet);
+      console.log('Selected wallet:', wallet);
+      
+      toast({
+        title: `Connecting to ${wallet}`,
+        description: "Please approve the connection request in your wallet",
+      });
+
+      await onSelectWallet(wallet);
+      onClose();
+    } catch (error) {
+      console.error('Wallet connection error:', error);
+      toast({
+        title: "Connection Failed",
+        description: error instanceof Error ? error.message : "Failed to connect wallet",
+        variant: "destructive"
+      });
+    }
+  };
+
+  if (!isOpen) return null;
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Connect Wallet</DialogTitle>
           <DialogDescription>
-            Select a wallet to connect to VeChain
+            Choose your preferred wallet to connect
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-3 py-4">
+        <div className="grid gap-4 py-4">
           {wallets.map((wallet) => (
-            <Button
+            <button
               key={wallet.type}
-              variant="outline"
-              className="flex items-center justify-start h-auto p-4 gap-3"
-              onClick={() => onSelectWallet(wallet.type)}
+              className={`
+                flex items-center space-x-4 p-4 rounded-lg border 
+                transition-colors hover:bg-accent
+                ${selectedWallet === wallet.type ? 'border-primary' : 'border-border'}
+              `}
+              onClick={() => handleWalletSelect(wallet.type)}
             >
-              <div className="bg-muted rounded-full p-2">
-                <img src={wallet.icon} alt={wallet.name} className="h-6 w-6" />
-              </div>
-              <div className="flex flex-col items-start">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium">{wallet.name}</span>
+              <img 
+                src={wallet.icon} 
+                alt={wallet.name} 
+                className="w-8 h-8"
+              />
+              <div className="flex-1 text-left">
+                <div className="flex items-center">
+                  <p className="font-medium">{wallet.name}</p>
                   {wallet.recommended && (
-                    <span className="bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded-full flex items-center">
-                      <Check className="h-3 w-3 mr-0.5" />
+                    <span className="ml-2 text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
                       Recommended
                     </span>
                   )}
                 </div>
+                <p className="text-sm text-muted-foreground">
+                  {wallet.description}
+                </p>
               </div>
-            </Button>
+            </button>
           ))}
+        </div>
+
+        <div className="flex justify-between mt-4">
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
