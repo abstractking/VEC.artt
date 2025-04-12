@@ -1,16 +1,26 @@
 {
-  "buildCommand": "./scripts/vercel-build.sh",
-  "installCommand": "npm ci --legacy-peer-deps",
+  "version": 2,
+  "buildCommand": "node scripts/prepare-vercel.cjs && vite build --config vite.config.vercel.js",
   "outputDirectory": "dist/public",
   "framework": "vite",
+  "functions": {
+    "api/*.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
     },
     {
+      "source": "/games/(.*)",
+      "destination": "/games/$1"
+    },
+    {
       "source": "/(.*)",
-      "destination": "/$1"
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -18,17 +28,16 @@
       "source": "/(.*)",
       "headers": [
         {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/assets/(.*)",
-      "headers": [
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
         {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "X-Requested-With, Content-Type, Accept"
         }
       ]
     }
@@ -38,7 +47,7 @@
     "VITE_VECHAIN_NODE_URL_TESTNET": "https://testnet.veblocks.net",
     "VITE_VECHAIN_NODE_URL_MAINNET": "https://mainnet.veblocks.net",
     "VITE_VECHAIN_TESTNET_GENESIS_ID": "0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127",
-    "VITE_VECHAIN_MAINNET_GENESIS_ID": "0x00000000851caf3cfdb6e899cf5958bfb1ac3413d346d43539627e6be7ec1b4a",
+    "VITE_VECHAIN_MAINNET_GENESIS_ID": "0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409",
     "VITE_DEPLOYMENT_ENV": "vercel"
   }
 }
