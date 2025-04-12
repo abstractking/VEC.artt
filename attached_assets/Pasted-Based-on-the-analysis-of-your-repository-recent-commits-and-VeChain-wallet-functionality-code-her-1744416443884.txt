@@ -1,0 +1,48 @@
+Based on the analysis of your repository, recent commits, and VeChain wallet functionality code, here is a detailed task list to clean and update your wallet functionality, referencing the latest VeChain documentation:
+
+Task List for Wallet Functionality Updates and Cleanup:
+1. Code Cleanup
+Refactor Wallet Detection Logic:
+
+Simplify the detectVechainProvider logic to ensure robust detection of VeWorld and VeChainThor wallets.
+Remove redundant console logs after debugging wallet detection.
+Standardize Error Handling:
+
+Standardize all try-catch blocks for wallet connection errors.
+Replace generic error messages with precise, actionable messages.
+Optimize Imports:
+
+Remove unused imports across wallet-related files (e.g., SimpleWallet, Framework).
+Consolidate utility functions like formatWei into a shared utility file.
+Modularize Wallet Types:
+
+Break down wallet-specific logic (e.g., VeWorld, Thor, Sync2) into separate modules for better maintainability.
+2. Functional Updates
+Update Genesis IDs:
+
+Validate and update genesis IDs in client/src/lib/vechain.ts for testnet and mainnet, referring to VeChain's latest documentation.
+Ensure that genesis IDs match the network configuration.
+Integrate WalletConnect:
+
+Verify the WalletConnect integration in dapp-kit-config.ts and enhance its configuration for RPC endpoints and project ID validation.
+Add detailed error handling for WalletConnect initialization.
+Ensure Mobile Compatibility:
+
+Test and update the mobile wallet detection logic in WalletModal.tsx.
+Add user-friendly prompts for unsupported wallet types or environments.
+Test Environment Support:
+
+Ensure robust handling of test environment keys in development mode.
+Validate fallback mechanisms for mock wallets in getConnex.
+3. Documentation and Testing
+Update Documentation:
+
+Add comments to explain critical wallet-related functions (e.g., connectWallet, getWalletBalance).
+Include a README section for developers on how to configure wallet functionality.
+Create Test Cases:
+
+Write unit tests for wallet connection functions, focusing on edge cases like unsupported wallets or invalid genesis IDs.
+Implement integration tests for WalletConnect using simulated environments.
+Verify Against VeChain Documentation:
+
+Cross-check all wallet-related configurations and methods with the latest VeChain wallet documentation.
