@@ -12,15 +12,42 @@ interface RandomArtGalleryProps {
 
 export default function RandomArtGallery({ nfts = [], isLoading = false }: RandomArtGalleryProps) {
   const [randomNfts, setRandomNfts] = useState<NFT[]>([]);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-  // Function to get random NFTs
-  const getRandomNfts = () => {
+  // Function to get random NFTs with real-time data
+  const getRandomNfts = async () => {
     if (nfts.length === 0) return [];
     
     // Create a copy of the array to avoid modifying the original
     const nftsCopy = [...nfts];
     const result: NFT[] = [];
     const count = Math.min(3, nftsCopy.length);
+    
+    // Get fresh data for selected NFTs
+    for (let i = 0; i < count; i++) {
+      if (nftsCopy.length === 0) break;
+      
+      const randomIndex = Math.floor(Math.random() * nftsCopy.length);
+      const selectedNFT = nftsCopy[randomIndex];
+      
+      try {
+        // Fetch latest NFT data
+        const response = await fetch(`/api/nfts/${selectedNFT.id}`);
+        if (response.ok) {
+          const updatedNFT = await response.json();
+          result.push(updatedNFT);
+        } else {
+          result.push(selectedNFT); // Fallback to cached data
+        }
+      } catch (error) {
+        console.error("Error fetching NFT data:", error);
+        result.push(selectedNFT); // Fallback to cached data
+      }
+      
+      nftsCopy.splice(randomIndex, 1);
+    }
+    
+    return result;
     
     // Select random NFTs
     for (let i = 0; i < count; i++) {
@@ -37,16 +64,29 @@ export default function RandomArtGallery({ nfts = [], isLoading = false }: Rando
     return result;
   };
 
-  // Initialize with random NFTs
+  // Initialize and update NFTs every 20 minutes
   useEffect(() => {
-    if (nfts.length > 0) {
-      setRandomNfts(getRandomNfts());
-    }
+    const updateNFTs = async () => {
+      if (nfts.length > 0) {
+        const freshNFTs = await getRandomNfts();
+        setRandomNfts(freshNFTs);
+        setLastUpdate(new Date());
+      }
+    };
+
+    updateNFTs();
+    
+    // Set up 20-minute interval
+    const interval = setInterval(updateNFTs, 20 * 60 * 1000);
+    
+    return () => clearInterval(interval);
   }, [nfts]);
 
-  // Handle refresh
-  const handleRefresh = () => {
-    setRandomNfts(getRandomNfts());
+  // Handle manual refresh
+  const handleRefresh = async () => {
+    const freshNFTs = await getRandomNfts();
+    setRandomNfts(freshNFTs);
+    setLastUpdate(new Date());
   };
 
   if (isLoading) {
