@@ -6,9 +6,94 @@
  * 
  * 1. Wallet detection using wallet-detection.ts
  * 2. Wallet connection through a unified API
- * 3. Environment-specific behavior (dev, production, Netlify)
+ * 3. Environment-specific behavior (dev, production, Netlify, Vercel)
  * 4. Proper error handling and recovery
+ * 5. Browser compatibility via polyfills
  */
+
+/**
+ * Initialize crypto-related polyfills if needed
+ * This happens automatically when this module is imported
+ */
+const initializePolyfills = () => {
+  if (typeof window !== 'undefined') {
+    try {
+      console.log('Setting up crypto environment with cryptoPolyfill');
+      
+      // Ensure Buffer is available - critical for VeChain functions
+      if (!window.Buffer) {
+        const textEncoder = new TextEncoder();
+        const textDecoder = new TextDecoder();
+        
+        class Buffer {
+          static from(data: any, encoding?: string) {
+            if (typeof data === 'string') {
+              return textEncoder.encode(data);
+            }
+            if (data instanceof Uint8Array) {
+              return data;
+            }
+            return new Uint8Array(data);
+          }
+          
+          static isBuffer(obj: any) { 
+            return obj instanceof Uint8Array; 
+          }
+          
+          static alloc(size: number) {
+            return new Uint8Array(size);
+          }
+          
+          static concat(list: Uint8Array[], length?: number) {
+            if (length === undefined) {
+              length = list.reduce((acc, val) => acc + val.length, 0);
+            }
+            
+            const result = new Uint8Array(length);
+            let offset = 0;
+            
+            for (const buf of list) {
+              result.set(buf, offset);
+              offset += buf.length;
+            }
+            
+            return result;
+          }
+        }
+        
+        (window as any).Buffer = Buffer;
+      }
+      
+      // Ensure crypto.getRandomValues is available for older browsers
+      if (!window.crypto || !window.crypto.getRandomValues) {
+        (window as any).crypto = (window as any).crypto || {};
+        (window as any).crypto.getRandomValues = function(buffer: Uint8Array) {
+          for (let i = 0; i < buffer.length; i++) {
+            buffer[i] = Math.floor(Math.random() * 256);
+          }
+          return buffer;
+        };
+      }
+      
+      // Ensure global is defined (needed for Vercel environment)
+      if (typeof global === 'undefined') {
+        (window as any).global = window;
+      }
+      
+      // Ensure process.env is available (needed for Vercel environment)
+      if (typeof process === 'undefined' || !process.env) {
+        (window as any).process = (window as any).process || {};
+        (window as any).process.env = (window as any).process.env || {};
+      }
+      
+    } catch (error) {
+      console.error('Error initializing polyfills:', error);
+    }
+  }
+};
+
+// Run polyfill initialization immediately when this module is imported
+initializePolyfills();
 
 import { 
   VeChainWalletType, 

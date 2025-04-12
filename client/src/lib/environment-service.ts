@@ -42,7 +42,8 @@ export const environments = {
   // Is this a Vercel environment?
   isVercel: typeof window !== 'undefined' && (
     window.location.hostname.includes('vercel.app') ||
-    window.location.hostname.includes('.now.sh')
+    window.location.hostname.includes('.now.sh') ||
+    import.meta.env.VITE_DEPLOYMENT_ENV === 'vercel'
   ),
 
   // Is this a Replit environment specifically?
@@ -116,25 +117,50 @@ export const getBooleanEnvVariable = (key: string, defaultValue = false): boolea
 
 // Get network configuration based on environment
 export const getNetworkConfig = (): NetworkConfig => {
-  const selectedNetwork = getEnvVariable('VITE_REACT_APP_VECHAIN_NETWORK') || 'test';
+  // Check both possible environment variable names (VITE_VECHAIN_NETWORK or VITE_REACT_APP_VECHAIN_NETWORK)
+  const selectedNetwork = getEnvVariable('VITE_VECHAIN_NETWORK') || 
+                          getEnvVariable('VITE_REACT_APP_VECHAIN_NETWORK') || 
+                          'test';
+  
+  // Allow overriding of specific network parameters using environment variables
+  const mainnetUrl = getEnvVariable('VITE_VECHAIN_NODE_URL_MAINNET') || 'https://mainnet.veblocks.net';
+  const testnetUrl = getEnvVariable('VITE_VECHAIN_NODE_URL_TESTNET') || 'https://testnet.veblocks.net';
+  
+  // Get genesis IDs from environment variables if available
+  const mainnetGenesisId = getEnvVariable('VITE_VECHAIN_MAINNET_GENESIS_ID') || 
+                           '0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409';
+  const testnetGenesisId = getEnvVariable('VITE_VECHAIN_TESTNET_GENESIS_ID') || 
+                           '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127';
   
   // Define networks with appropriate values
   const networks: Record<string, NetworkConfig> = {
     main: {
       name: 'MainNet',
-      url: 'https://mainnet.veblocks.net',
-      socketUrl: 'wss://mainnet.veblocks.net',
-      chainId: '0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409',
-      genesisId: '0x00000000851caf3cfdb44d49a556a3e1defc0ae1207be6ac36cc2d1b1c232409',
+      url: mainnetUrl,
+      socketUrl: mainnetUrl.replace('https://', 'wss://').replace('http://', 'ws://'),
+      chainId: mainnetGenesisId,
+      genesisId: mainnetGenesisId,
     },
     test: {
       name: 'TestNet',
-      url: 'https://testnet.veblocks.net',
-      socketUrl: 'wss://testnet.veblocks.net',
-      chainId: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
-      genesisId: '0x000000000b2bce3c70bc649a02749e8687721b09ed2e15997f466536b20bb127',
+      url: testnetUrl,
+      socketUrl: testnetUrl.replace('https://', 'wss://').replace('http://', 'ws://'),
+      chainId: testnetGenesisId,
+      genesisId: testnetGenesisId,
     }
   };
+  
+  // Log configuration for debugging in non-production environments
+  if (getEnvironmentType() !== 'production') {
+    console.info('[Network Config]', {
+      selectedNetwork,
+      mainnetUrl,
+      testnetUrl,
+      mainnetGenesisId,
+      testnetGenesisId,
+      environment: getDeploymentType()
+    });
+  }
   
   // Validate network selection
   if (!networks[selectedNetwork]) {
