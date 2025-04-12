@@ -657,7 +657,7 @@ export const getConnex = async () => {
 
     // For Replit/development environment
     if (isReplit || 
-        window.location.hostname === 'localhost' || 
+        window.location.hostname === '0.0.0.0' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') {
 
@@ -856,7 +856,7 @@ export const getWalletAddress = async () => {
   try {
     // For the Replit environment or development mode
     if ((window.location.hostname.includes('replit') || 
-        window.location.hostname === 'localhost' || 
+        window.location.hostname === '0.0.0.0' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') && 
         !window.location.hostname.includes('netlify.app')) {
@@ -923,8 +923,8 @@ export const signMessage = async (message: string) => {
     };
 
     // For the Replit environment or development mode
-    if (window.location.hostname.includes('replit') || 
-                window.location.hostname === ''localhost' || 
+if (window.location.hostname.includes('replit') || 
+                window.location.hostname === '0.0.0.0' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') {
 
@@ -1028,7 +1028,7 @@ export const executeContractMethod = async (
     // For the Replit environment or development mode, but only if not explicitly using real wallet
     if (!useRealWallet && (
         window.location.hostname.includes('replit') || 
-        window.location.hostname === 'localhost' || 
+        window.location.hostname === '0.0.0.0' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development')) {
 
@@ -1155,7 +1155,7 @@ export const deployContract = async (abi: any, bytecode: string, params: any[] =
 
     // For the Replit environment or development mode
     if (window.location.hostname.includes('replit') || 
-        window.location.hostname === 'localhost' || 
+        window.location.hostname === '0.0.0.0' || 
         import.meta.env.DEV || 
         import.meta.env.MODE === 'development') {
 
