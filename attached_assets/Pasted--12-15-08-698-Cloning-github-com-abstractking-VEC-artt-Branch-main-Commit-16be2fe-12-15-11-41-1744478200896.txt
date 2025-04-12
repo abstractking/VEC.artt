@@ -1,0 +1,94 @@
+[12:15:08.698] Cloning github.com/abstractking/VEC.artt (Branch: main, Commit: 16be2fe)
+[12:15:11.413] Cloning completed: 2.714s
+[12:15:11.931] Restored build cache from previous deployment (CFtvu46AddgLxxp2FuquS79sZWAf)
+[12:15:12.121] Running build in Washington, D.C., USA (East) – iad1
+[12:15:13.045] Running "vercel build"
+[12:15:13.423] Vercel CLI 41.5.0
+[12:15:14.023] Running "install" command: `npm ci --legacy-peer-deps`...
+[12:15:22.391] npm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
+[12:15:22.739] npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+[12:15:22.807] npm warn deprecated glob@8.1.0: Glob versions prior to v9 are no longer supported
+[12:15:24.165] npm warn deprecated @web3modal/core@2.7.1: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[12:15:25.234] npm warn deprecated @web3modal/html@2.7.1: Please use new @web3modal/wagmi package
+[12:15:26.006] npm warn deprecated @web3modal/wagmi@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[12:15:26.198] npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+[12:15:26.226] npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+[12:15:27.528] npm warn deprecated @web3modal/siwe@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[12:15:27.967] npm warn deprecated uuid@2.0.1: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+[12:15:28.426] npm warn deprecated @motionone/vue@10.16.4: Motion One for Vue is deprecated. Use Oku Motion instead https://oku-ui.com/motion
+[12:15:28.714] npm warn deprecated @walletconnect/sign-client@2.11.3: Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases
+[12:15:30.000] npm warn deprecated @web3modal/ui@2.7.1: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[12:15:31.783] npm warn deprecated @walletconnect/sign-client@2.16.1: Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases
+[12:15:31.816] npm warn deprecated @walletconnect/sign-client@2.16.1: Reliability and performance improvements. See: https://github.com/WalletConnect/walletconnect-monorepo/releases
+[12:15:32.102] npm warn deprecated @web3modal/ethereum@2.7.1: Please use new @web3modal/wagmi package
+[12:15:32.170] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[12:15:32.202] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[12:15:32.203] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[12:15:32.203] npm warn deprecated @web3modal/core@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[12:15:37.520] npm warn deprecated @web3modal/ui@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[12:15:37.524] npm warn deprecated @web3modal/ui@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[12:15:37.525] npm warn deprecated @web3modal/ui@5.1.11: Web3Modal is now Reown AppKit. Please follow the upgrade guide at https://docs.reown.com/appkit/upgrade/from-w3m-to-reown
+[12:15:43.208] 
+[12:15:43.209] added 1142 packages, and audited 1143 packages in 29s
+[12:15:43.210] 
+[12:15:43.210] 170 packages are looking for funding
+[12:15:43.210]   run `npm fund` for details
+[12:15:43.266] 
+[12:15:43.266] 23 vulnerabilities (6 low, 7 moderate, 9 high, 1 critical)
+[12:15:43.266] 
+[12:15:43.267] To address issues that do not require attention, run:
+[12:15:43.267]   npm audit fix
+[12:15:43.267] 
+[12:15:43.267] To address all issues possible (including breaking changes), run:
+[12:15:43.267]   npm audit fix --force
+[12:15:43.268] 
+[12:15:43.268] Some issues need review, and may require choosing
+[12:15:43.268] a different dependency.
+[12:15:43.268] 
+[12:15:43.268] Run `npm audit` for details.
+[12:15:43.467] 🔄 Starting Vercel build process
+[12:15:43.495] 🔄 Checking for duplicated agent declarations...
+[12:15:43.496] ✅ Fixed agent declarations in /vercel/path0/node_modules/@vechain/connex-driver/esm/simple-net.js
+[12:15:43.529] 🔄 Running VeCollab preparation script for Vercel...
+[12:15:43.529] No changes needed: /vercel/path0/node_modules/@vechain/connex-driver/esm/simple-net.js
+[12:15:43.530] Patched: /vercel/path0/node_modules/@vechain/connex-driver/esm/simple-net.js
+[12:15:43.530] Skip patching: File not found: /vercel/path0/node_modules/thor-devkit/dist/es/cry/secp256k1.js
+[12:15:43.531] Skip patching: File not found: /vercel/path0/node_modules/@vechain/connex-framework/dist/esm/driver-interface.js
+[12:15:43.531] Applied 1 patches out of 4 total.
+[12:15:43.531] ✅ VeCollab preparation script completed successfully!
+[12:15:43.893] [36mvite v5.4.14 [32mbuilding for production...[36m[39m
+[12:15:43.895] [33m
+[12:15:43.895] [1m(!)[22m outDir [37m[2m/vercel/path0/dist/public[22m[33m is not inside project root and will not be emptied.
+[12:15:43.895] Use --emptyOutDir to override.
+[12:15:43.895] [39m
+[12:15:43.975] transforming...
+[12:15:44.000] Tailwind CSS configured in PostCSS
+[12:15:44.001] Autoprefixer configured in PostCSS
+[12:15:46.777] [32m✓[39m 103 modules transformed.
+[12:15:46.779] [31mx[39m Build failed in 2.86s
+[12:15:46.779] [31merror during build:
+[12:15:46.779] [31m[vite:esbuild] Transform failed with 1 error:
+[12:15:46.779] /vercel/path0/client/src/lib/vechain.ts:927:47: ERROR: Expected ")" but found "localhost"[31m
+[12:15:46.779] file: [36m/vercel/path0/client/src/lib/vechain.ts:927:47[31m
+[12:15:46.780] [33m
+[12:15:46.780] [33mExpected ")" but found "localhost"[33m
+[12:15:46.780] 925|      // For the Replit environment or development mode
+[12:15:46.780] 926|      if (window.location.hostname.includes('replit') || 
+[12:15:46.780] 927|                  window.location.hostname === ''localhost' || 
+[12:15:46.780]    |                                                 ^
+[12:15:46.780] 928|          import.meta.env.DEV || 
+[12:15:46.780] 929|          import.meta.env.MODE === 'development') {
+[12:15:46.780] [31m
+[12:15:46.780]     at failureErrorWithLog (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:1472:15)
+[12:15:46.780]     at /vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:755:50
+[12:15:46.781]     at responseCallbacks.<computed> (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:622:9)
+[12:15:46.781]     at handleIncomingPacket (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:677:12)
+[12:15:46.781]     at Socket.readFromStdout (/vercel/path0/node_modules/vite/node_modules/esbuild/lib/main.js:600:7)
+[12:15:46.781]     at Socket.emit (node:events:518:28)
+[12:15:46.781]     at addChunk (node:internal/streams/readable:561:12)
+[12:15:46.781]     at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+[12:15:46.781]     at Readable.push (node:internal/streams/readable:392:5)
+[12:15:46.781]     at Pipe.onStreamRead (node:internal/stream_base_commons:189:23)[39m
+[12:15:46.795] ❌ Vercel build failed with status: 1
+[12:15:46.798] Error: Command "./scripts/vercel-build.sh" exited with 1
+[12:15:47.387] 
