@@ -1,11 +1,34 @@
 {
   "extends": "./tsconfig.json",
+  "exclude": [
+    "node_modules",
+    "attached_assets",
+    "netlify",
+    "temp-key-gen",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
   "compilerOptions": {
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo-vercel",
+    "noEmit": false,
+    "module": "ESNext",
     "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2020",
-    "outDir": "dist"
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "paths": {
+      "@/*": ["./client/src/*"],
+      "@shared/*": ["./shared/*"],
+      "@server/*": ["./server/*"],
+      "crypto": ["./client/src/shims/crypto-shim.js"],
+      "stream": ["./client/src/shims/stream-shim.js"],
+      "http": ["./client/src/shims/http-shim.js"],
+      "https": ["./client/src/shims/https-shim.js"],
+      "util": ["./client/src/shims/util-shim.js"],
+      "vm": ["./client/src/shims/vm-shim.js"]
+    }
   }
 }

@@ -1,71 +1,149 @@
 /**
- * Vercel Post-build Script
- * This script runs after the build process on Vercel to make final adjustments
+ * Post-Build Script for Vercel Deployment
+ * 
+ * This script runs after the Vite build process completes on Vercel.
+ * It performs several optimizations and fixes to ensure the built
+ * application works correctly in Vercel's environment.
  */
 
 const fs = require('fs');
 const path = require('path');
 
-console.log("Running post-build steps for Vercel deployment...");
+// Constants for paths
+const PUBLIC_DIR = path.resolve(__dirname, '../dist/public');
+const INDEX_HTML = path.resolve(PUBLIC_DIR, 'index.html');
+const ASSETS_DIR = path.resolve(PUBLIC_DIR, 'assets');
 
-// Define paths
-const distDir = path.resolve(__dirname, '../dist');
-const publicDir = path.resolve(distDir, 'public');
-const apiDir = path.resolve(distDir, 'api');
+console.log('🔧 Running post-build optimizations for Vercel deployment...');
 
-// Ensure directories exist
-if (!fs.existsSync(apiDir)) {
-  fs.mkdirSync(apiDir, { recursive: true });
-}
+// Function to recursively list all files in a directory
+function getAllFiles(dirPath, arrayOfFiles = []) {
+  const files = fs.readdirSync(dirPath);
 
-// Create Vercel API adapter file if it doesn't exist
-const apiHandlerPath = path.join(apiDir, 'index.js');
-if (!fs.existsSync(apiHandlerPath)) {
-  console.log("Creating Vercel API adapter...");
-  
-  const apiHandlerContent = `
-// Vercel API Handler
-// This file adapts the Express API to Vercel's serverless functions
-import { createServer } from 'http';
-import { URL } from 'url';
-import app from '../server/index.js';
-
-const server = createServer(app);
-
-export default async (req, res) => {
-  // Parse the request URL
-  const parsedUrl = new URL(req.url, 'http://localhost');
-  
-  // Add original URL to the request object (used by Express)
-  req.originalUrl = req.url;
-  req.path = parsedUrl.pathname;
-  req.query = Object.fromEntries(parsedUrl.searchParams);
-  
-  // Handle the request with the Express app
-  return new Promise((resolve) => {
-    app(req, res);
-    res.on('finish', resolve);
+  files.forEach(file => {
+    const filePath = path.join(dirPath, file);
+    if (fs.statSync(filePath).isDirectory()) {
+      arrayOfFiles = getAllFiles(filePath, arrayOfFiles);
+    } else {
+      arrayOfFiles.push(filePath);
+    }
   });
-};
-`;
-  
-  fs.writeFileSync(apiHandlerPath, apiHandlerContent);
-  console.log("API adapter created successfully.");
+
+  return arrayOfFiles;
 }
 
-// Create a _redirects file for Vercel to handle client-side routing
-const redirectsPath = path.join(publicDir, '_redirects');
-if (!fs.existsSync(redirectsPath)) {
-  console.log("Creating _redirects file...");
-  
-  const redirectsContent = `
-# Redirects for client-side routing
-/api/*  /api/:splat  200
-/*      /index.html  200
-`;
-  
-  fs.writeFileSync(redirectsPath, redirectsContent);
-  console.log("_redirects file created successfully.");
+// Function to ensure a directory exists
+function ensureDirectoryExists(dirPath) {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+    console.log(`Created directory: ${dirPath}`);
+  }
 }
 
-console.log("Post-build tasks completed successfully.");
+// 1. Ensure API directory exists at the destination (Vercel serverless functions requirement)
+const apiDestDir = path.resolve(__dirname, '../dist/api');
+ensureDirectoryExists(apiDestDir);
+
+// 2. Copy API adapter to the correct location
+const apiSourceFile = path.resolve(__dirname, '../api/index.js');
+const apiDestFile = path.resolve(apiDestDir, 'index.js');
+
+try {
+  if (fs.existsSync(apiSourceFile)) {
+    fs.copyFileSync(apiSourceFile, apiDestFile);
+    console.log(`✅ Copied API adapter to ${apiDestFile}`);
+  } else {
+    console.error(`❌ API source file not found: ${apiSourceFile}`);
+  }
+} catch (error) {
+  console.error(`❌ Error copying API adapter: ${error.message}`);
+}
+
+// 3. Ensure all HTML files include the critical polyfills
+try {
+  if (fs.existsSync(INDEX_HTML)) {
+    let htmlContent = fs.readFileSync(INDEX_HTML, 'utf8');
+    
+    // Check if polyfills are already included
+    if (!htmlContent.includes('vercel-polyfills.js') && !htmlContent.includes('Critical polyfills initialized via Vercel')) {
+      // Add polyfill script before the first script tag
+      htmlContent = htmlContent.replace(
+        '<head>',
+        `<head>
+    <!-- Vercel polyfills -->
+    <script>
+      // Define global object
+      window.global = window;
+      global = window;
+      
+      // Define process object with minimal properties needed
+      window.process = window.process || {
+        env: {},
+        nextTick: function(cb) { setTimeout(cb, 0); },
+        browser: true,
+        version: '',
+        versions: {},
+        platform: 'browser'
+      };
+      
+      // Define Buffer placeholder
+      window.Buffer = window.Buffer || { 
+        from: function() { return []; },
+        isBuffer: function() { return false; }
+      };
+      
+      console.log("Critical polyfills initialized via Vercel inline script");
+    </script>`
+      );
+      
+      fs.writeFileSync(INDEX_HTML, htmlContent);
+      console.log('✅ Added inline polyfills to index.html');
+    } else {
+      console.log('✅ Polyfills already present in index.html');
+    }
+  } else {
+    console.error(`❌ Index HTML file not found: ${INDEX_HTML}`);
+  }
+} catch (error) {
+  console.error(`❌ Error modifying HTML: ${error.message}`);
+}
+
+// 4. Copy static assets from public folder if needed
+const publicSourceDir = path.resolve(__dirname, '../public');
+if (fs.existsSync(publicSourceDir)) {
+  try {
+    const publicFiles = getAllFiles(publicSourceDir);
+    publicFiles.forEach(filePath => {
+      const relativePath = path.relative(publicSourceDir, filePath);
+      const destPath = path.join(PUBLIC_DIR, relativePath);
+      
+      // Ensure the destination directory exists
+      const destDir = path.dirname(destPath);
+      ensureDirectoryExists(destDir);
+      
+      // Copy the file
+      fs.copyFileSync(filePath, destPath);
+    });
+    console.log('✅ Copied public assets to build output');
+  } catch (error) {
+    console.error(`❌ Error copying public assets: ${error.message}`);
+  }
+}
+
+// 5. Create a verification file to confirm the build completed successfully
+const verificationFile = path.join(PUBLIC_DIR, 'vercel-build-verification.json');
+try {
+  fs.writeFileSync(
+    verificationFile,
+    JSON.stringify({
+      buildTimestamp: new Date().toISOString(),
+      buildType: 'vercel',
+      success: true
+    }, null, 2)
+  );
+  console.log('✅ Created build verification file');
+} catch (error) {
+  console.error(`❌ Error creating verification file: ${error.message}`);
+}
+
+console.log('✅ Post-build optimizations completed');
